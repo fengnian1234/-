@@ -1,21 +1,155 @@
 """
 多平台信息收集子Agent（要求6）
 收集美团/大众点评/飞猪/携程/小红书/抖音上关于云上·归墅民宿的信息
-通过搜索引擎API + 网页抓取来汇总各平台评价和提及
+通过 AnySearch API 实时搜索各平台评价和提及
 """
 import json
 import hashlib
+import re
 import time
 from datetime import datetime
+import requests
+
 from models import SessionLocal, PlatformMention
 from config import MONITOR_PLATFORMS, MONITOR_KEYWORDS, MONITOR_SEARCH_QUERY, BNB_NAME
+
+# AnySearch API 配置
+ANYSEARCH_ENDPOINT = "https://api.anysearch.com/mcp"
+ANYSEARCH_API_KEY = ""  # 留空使用匿名访问（1000次/天免费额度）
+
+
+def _call_anysearch_api(tool_name: str, arguments: dict) -> str:
+    """调用 AnySearch JSON-RPC 2.0 API"""
+    headers = {"Content-Type": "application/json"}
+    if ANYSEARCH_API_KEY:
+        headers["Authorization"] = f"Bearer {ANYSEARCH_API_KEY}"
+
+    payload = {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {"name": tool_name, "arguments": arguments},
+    }
+
+    try:
+        resp = requests.post(ANYSEARCH_ENDPOINT, json=payload, headers=headers, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        if "error" in data:
+            return f"[API Error] {data['error'].get('message', str(data['error']))}"
+        result = data.get("result", {})
+        content = result.get("content", [])
+        for item in content:
+            if item.get("type") == "text":
+                return item.get("text", "")
+        return json.dumps(result, indent=2, ensure_ascii=False)
+    except requests.exceptions.ConnectionError:
+        return "[Error] 无法连接 AnySearch API"
+    except requests.exceptions.Timeout:
+        return "[Error] API 请求超时"
+    except Exception as e:
+        return f"[Error] {str(e)}"
+
+
+def _extract_rating(text: str) -> float:
+    """从文本中提取评分（如 4.6分、评分4.8、4.6好）"""
+    patterns = [
+        r'(\d+\.?\d*)\s*分[^钟]',     # 4.6分 (排除"分钟")
+        r'评分[：:]?\s*(\d+\.?\d*)',    # 评分4.8
+        r'好\s*(\d+\.?\d*)',           # 好4.6
+        r'(\d+\.?\d*)\s*好',           # 4.6好
+    ]
+    for p in patterns:
+        m = re.search(p, text)
+        if m:
+            val = float(m.group(1))
+            if 1.0 <= val <= 5.0:
+                return val
+    return None
+
+
+def _extract_review_count(text: str) -> int:
+    """从文本中提取评价数量"""
+    patterns = [
+        r'(\d+)\s*条[评点]',    # 74条评价 / 156条点评
+        r'(\d+)\s*条评论',
+        r'(\d+)\s*个评价',
+        r'(\d+)\s*条好评',
+        r'(\d+)\s*review',
+        r'(\d+)\s*reviews',
+    ]
+    for p in patterns:
+        m = re.search(p, text, re.IGNORECASE)
+        if m:
+            return int(m.group(1))
+    return 0
+
+
+def _parse_search_results(text: str, platform: str) -> list:
+    """解析 AnySearch 返回的 Markdown 为结构化数据"""
+    mentions = []
+    if not text or text.startswith("[Error]") or text.startswith("[API Error]"):
+        return mentions
+
+    # 按搜索结果条目拆分（## 开头或 ### 开头）
+    blocks = re.split(r'\n(?=#{1,3}\s+\d+\.)', text)
+
+    for block in blocks:
+        # 过滤搜索结果表头
+        if re.match(r'#{1,3}\s*Search Results', block):
+            continue
+        if block.strip().startswith("AnySearch") or "powered by" in block.lower():
+            continue
+
+        # 提取标题和URL
+        title_match = re.search(r'(?:#{1,3}\s+\d+\.\s*)?(.+?)(?:\n|$)', block)
+        url_match = re.search(r'\*\*URL\*\*:\s*(https?://[^\s\n]+)', block)
+        # 也匹配 Markdown 链接格式 [text](url)
+        md_link = re.search(r'\[([^\]]+)\]\((https?://[^\s\)]+)\)', block)
+
+        title = title_match.group(1).strip() if title_match else ""
+        url = url_match.group(1) if url_match else (md_link.group(2) if md_link else "")
+        if not title or len(title) > 200:
+            continue
+        # 过滤无URL的纯表头块
+        if not url:
+            continue
+
+        content = block[:500].replace(title, "").strip()
+
+        # 提取评分和评价数
+        rating = _extract_rating(block)
+        count = _extract_review_count(block)
+
+        # 情感分析
+        sentiment = "neutral"
+        positive_words = ["很棒", "好评", "推荐", "满意", "惊喜", "不错", "舒服", "干净", "好"]
+        negative_words = ["差评", "失望", "糟糕", "脏", "吵", "不值", "坑", "差"]
+        pos_score = sum(1 for w in positive_words if w in block)
+        neg_score = sum(1 for w in negative_words if w in block)
+        if pos_score > neg_score:
+            sentiment = "positive"
+        elif neg_score > pos_score:
+            sentiment = "negative"
+
+        mentions.append({
+            "type": "review" if (rating or count) else "mention",
+            "title": title[:200],
+            "content": content[:500],
+            "rating": rating,
+            "author": "",
+            "url": url,
+            "sentiment": sentiment,
+            "review_count": count,
+        })
+
+    return mentions
 
 
 def search_platform_mentions(query: str = "") -> dict:
     """
-    通过搜索收集各平台关于民宿的信息
-    实际部署时需要接入搜索API（如 Bing Search API / SerpAPI）
-    当前版本提供框架和模拟数据结构
+    通过 AnySearch 搜索各平台关于民宿的信息
+    每个平台独立搜索，结果存入数据库
     """
     if not query:
         query = MONITOR_SEARCH_QUERY
@@ -27,16 +161,52 @@ def search_platform_mentions(query: str = "") -> dict:
         "platforms": {},
     }
 
-    # 为每个平台生成搜索结果摘要
+    # 为每个平台执行独立搜索
     for platform in MONITOR_PLATFORMS:
-        platform_query = f"{query} site:{_get_platform_domain(platform)}"
-        results["platforms"][platform] = {
-            "query": platform_query,
-            "mentions_count": 0,
-            "avg_rating": None,
-            "top_mentions": [],
-            "search_url": _get_search_url(platform, query),
-        }
+        platform_query = f"{query} {platform}"
+        print(f"  🔍 正在搜索 {platform}...")
+
+        try:
+            raw_text = _call_anysearch_api("search", {
+                "query": platform_query,
+                "max_results": 5,
+            })
+
+            # 解析搜索结果
+            mentions = _parse_search_results(raw_text, platform)
+
+            # 保存到数据库
+            if mentions:
+                stored_count = store_mentions(platform, mentions)
+                print(f"    {platform}: 找到 {len(mentions)} 条，存入 {stored_count} 条新记录")
+            else:
+                print(f"    {platform}: 无有效结果")
+
+            # 计算评分
+            ratings = [m["rating"] for m in mentions if m["rating"]]
+            review_counts = [m.get("review_count", 0) for m in mentions if m.get("review_count")]
+
+            results["platforms"][platform] = {
+                "query": platform_query,
+                "mentions_count": len(mentions),
+                "avg_rating": round(sum(ratings) / len(ratings), 1) if ratings else None,
+                "top_mentions": mentions[:3],
+                "search_url": _get_search_url(platform, query),
+            }
+
+            # 避免请求过快
+            time.sleep(0.5)
+
+        except Exception as e:
+            print(f"    {platform}: 搜索失败 - {e}")
+            results["platforms"][platform] = {
+                "query": platform_query,
+                "mentions_count": 0,
+                "avg_rating": None,
+                "top_mentions": [],
+                "search_url": _get_search_url(platform, query),
+                "error": str(e),
+            }
 
     return results
 
@@ -69,34 +239,33 @@ def _get_search_url(platform: str, query: str) -> str:
 
 
 def store_mentions(platform: str, mentions: list):
-    """将收集到的提及存储到数据库"""
+    """将收集到的提及存储到数据库（URL哈希去重）"""
     db = SessionLocal()
     try:
         count = 0
         for m in mentions:
-            # 使用URL哈希去重
-            url_hash = hashlib.md5(
-                m.get("url", "").encode()
-            ).hexdigest()
+            url = m.get("url", "")
+            if url:
+                existing = db.query(PlatformMention).filter(
+                    PlatformMention.platform == platform,
+                    PlatformMention.url == url,
+                ).first()
+                if existing:
+                    continue
 
-            existing = db.query(PlatformMention).filter(
-                PlatformMention.platform == platform,
-                PlatformMention.url == m.get("url", ""),
-            ).first()
-
-            if not existing:
-                mention = PlatformMention(
-                    platform=platform,
-                    mention_type=m.get("type", "review"),
-                    title=m.get("title", ""),
-                    content=m.get("content", ""),
-                    rating=m.get("rating"),
-                    author=m.get("author", ""),
-                    url=m.get("url", ""),
-                    sentiment=m.get("sentiment", "neutral"),
-                )
-                db.add(mention)
-                count += 1
+            mention = PlatformMention(
+                platform=platform,
+                mention_type=m.get("type", "review"),
+                title=m.get("title", ""),
+                content=m.get("content", ""),
+                rating=m.get("rating"),
+                author=m.get("author", ""),
+                url=url,
+                sentiment=m.get("sentiment", "neutral"),
+                collected_at=datetime.utcnow(),
+            )
+            db.add(mention)
+            count += 1
 
         db.commit()
         return count
@@ -144,7 +313,7 @@ def get_mentions_summary() -> dict:
                 "search_url": _get_search_url(platform, MONITOR_SEARCH_QUERY),
             }
 
-        # 计算总体评分
+        # 计算总体评分（加权平均）
         all_ratings = []
         for p in summary["platforms"].values():
             if p["avg_rating"] and p["total"] > 0:
@@ -174,7 +343,8 @@ def generate_monitor_report() -> str:
         return (
             "目前暂无主流平台的评价数据汇总。\n\n"
             "云上·归墅民宿位于庐山山上·庐山风景名胜区大林沟路27号，"
-            "欢迎您在携程/美团/飞猪/大众点评搜索查看最新评价～"
+            "欢迎您在携程/美团/飞猪/大众点评搜索查看最新评价～\n\n"
+            "💡 回复「收集口碑」触发平台信息实时收集"
         )
 
     lines = [
@@ -187,7 +357,7 @@ def generate_monitor_report() -> str:
             rating_str = f"{data['avg_rating']}/5.0" if data['avg_rating'] else "暂无评分"
             sentiment_str = f"👍{data['positive']} 😊{data['neutral']} 👎{data['negative']}"
             lines.append(
-                f"*{platform}*：{rating_str}（{data['total']}条评价）\n"
+                f"*{platform}*：{rating_str}（{data['total']}条）\n"
                 f"  {sentiment_str}\n"
             )
 
@@ -203,7 +373,7 @@ def agent_collect_platform_info() -> dict:
     子Agent入口：收集所有主流平台信息
     返回给主Agent的结构化数据
     """
-    # 1. 执行搜索收集
+    # 1. 执行搜索收集（真实AnySearch调用）
     search_results = search_platform_mentions()
 
     # 2. 获取数据库中的历史汇总
@@ -220,7 +390,7 @@ def agent_collect_platform_info() -> dict:
             "search_keywords": MONITOR_KEYWORDS,
         },
         "collection_timestamp": datetime.utcnow().isoformat(),
-        "note": "实际部署时接入搜索API（Bing/SERP）和平台API以获取实时数据",
+        "powered_by": "AnySearch API",
     }
 
 
