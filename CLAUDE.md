@@ -2,11 +2,21 @@
 
 ## 信息获取规则
 
-**WebSearch 优先原则**：需要搜索信息时，优先使用 Claude Code 内置的 `WebSearch` 工具（而非 AnySearch 或其他渠道）。
+**数据优先级链**（从高到低）：
 
-- WebSearch 获得的信息具有**最高优先级和置信度**，直接采信
-- 当 WebSearch 结果与其他来源矛盾时，以 WebSearch 为准
-- 需要验证事实或获取最新数据时，直接用 WebSearch 搜索而非依赖本地缓存/旧数据
+```
+本地数据 (local_data/)  >  WebSearch  >  其他渠道
+     最高优先级              次优先        最低
+```
+
+1. **`local_data/` 目录** — 最高优先级。民宿官方提供的图片、价目表、介绍文案等信息文件，其数据压倒一切其他来源。
+   - `local_data/images/` — 房型照片、环境图、菜单图等
+   - `local_data/documents/` — 房源清单、价目表、官方介绍等
+2. **WebSearch** — 次优先级。当 `local_data/` 中没有对应信息时，使用 Claude Code 内置的 `WebSearch` 工具获取，优先于 AnySearch 等第三方渠道。
+3. **其他来源** — 最低优先级。AnySearch API、本地缓存、旧数据等仅供补充参考。
+
+- 不同层级数据冲突时，按优先级链采信
+- 需要验证事实或获取最新数据时，先查 `local_data/`，再查 WebSearch
 
 ## 项目概述
 
