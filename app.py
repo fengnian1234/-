@@ -378,6 +378,23 @@ def api_booking_platforms():
 
 
 # ══════════════════════════════════════════════════════════
+#  周报生成（DOCX）
+# ══════════════════════════════════════════════════════════
+@app.route("/api/report/weekly", methods=["POST"])
+def api_generate_weekly_report():
+    """
+    生成口碑监控周报（DOCX格式）
+    触发平台数据收集 → 生成 .docx 文档
+    """
+    from services.report import generate_weekly_report
+    try:
+        result = generate_weekly_report()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+# ══════════════════════════════════════════════════════════
 #  健康检查
 # ══════════════════════════════════════════════════════════
 @app.route("/health")
