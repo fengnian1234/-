@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}山间美餐 - 云上归墅{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>🍜 山间美餐</h1>
+        <p>庐山本味，山泉煮就，云雾入馔</p>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        {% if categories %}
+        <div class="menu-container">
+            {% for cat in categories %}
+            {% if cat.items and cat.items|length > 0 %}
+            <div class="menu-category" id="cat-{{ cat.id }}">
+                <h2 class="menu-cat-title">{{ cat.icon }} {{ cat.name }}</h2>
+                <div class="menu-items">
+                    {% for item in cat.items %}
+                    <div class="menu-item {% if item.is_recommended %}recommended{% endif %}">
+                        <div class="menu-item-info">
+                            <div class="menu-item-header">
+                                <h4>
+                                    {{ item.name }}
+                                    {% if item.is_recommended %}
+                                    <span class="rec-badge">⭐推荐</span>
+                                    {% endif %}
+                                </h4>
+                                <span class="menu-item-price">¥{{ item.price }}</span>
+                            </div>
+                            {% if item.description %}
+                            <p class="menu-item-desc">{{ item.description }}</p>
+                            {% endif %}
+                        </div>
+                        <button class="btn btn-sm btn-order" onclick="addToOrder({{ item.id }}, '{{ item.name }}', {{ item.price }})">
+                            + 点单
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon">🍽️</span>
+            <p>暂无菜单信息</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- 点餐浮窗 -->
+<div id="order-panel" class="order-panel" style="display:none;">
+    <div class="order-panel-header">
+        <h3>🛒 已选菜品</h3>
+        <button class="btn-close" onclick="toggleOrderPanel()">✕</button>
+    </div>
+    <div class="order-panel-body" id="order-items">
+        <p class="empty-hint">还没有选择菜品～</p>
+    </div>
+    <div class="order-panel-footer">
+        <div class="order-total">
+            <span>合计</span>
+            <span class="total-price">¥0</span>
+        </div>
+        <div class="order-input">
+            <input type="text" id="room-number" placeholder="房间号（选填）">
+            <input type="text" id="order-remark" placeholder="备注（选填）">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="submitOrder()">确认下单</button>
+    </div>
+</div>
+
+<!-- 点餐按钮 -->
+<button class="fab" onclick="toggleOrderPanel()">
+    <span class="fab-icon">🛒</span>
+    <span class="fab-count" id="cart-count" style="display:none;">0</span>
+</button>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let cart = [];
+
+function addToOrder(id, name, price) {
+    const existing = cart.find(item => item.id === id);
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({ id, name, price, quantity: 1 });
+    }
+    updateOrderPanel();
+}
+
+function removeFromOrder(id) {
+    cart = cart.filter(item => item.id !== id);
+    updateOrderPanel();
+}
+
+function updateOrderPanel() {
+    const container = document.getElementById('order-items');
+    const countEl = document.getElementById('cart-count');
+    const totalEl = document.querySelector('.total-price');
+
+    if (cart.length === 0) {
+        container.innerHTML = '<p class="empty-hint">还没有选择菜品～</p>';
+        countEl.style.display = 'none';
+        totalEl.textContent = '¥0';
+    } else {
+        container.innerHTML = cart.map(item => `
+            <div class="order-item">
+                <span class="order-item-name">${item.name}</span>
+                <span class="order-item-qty">×${item.quantity}</span>
+                <span class="order-item-price">¥${item.price * item.quantity}</span>
+                <button class="btn-remove" onclick="removeFromOrder(${item.id})">删除</button>
+            </div>
+        `).join('');
+        const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        totalEl.textContent = '¥' + total;
+        countEl.style.display = 'flex';
+        countEl.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+    }
+}
+
+function toggleOrderPanel() {
+    const panel = document.getElementById('order-panel');
+    panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+}
+
+function submitOrder() {
+    if (cart.length === 0) {
+        alert('请先选择菜品～');
+        return;
+    }
+    const roomNumber = document.getElementById('room-number').value;
+    const remark = document.getElementById('order-remark').value;
+
+    const orderData = {
+        openid: 'web_user',
+        items: cart.map(item => ({
+            id: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price
+        })),
+        room_number: roomNumber,
+        remark: remark
+    };
+
+    fetch('/api/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('下单成功！我们会尽快为您准备～');
+            cart = [];
+            updateOrderPanel();
+            toggleOrderPanel();
+        } else {
+            alert('下单失败：' + data.message);
+        }
+    })
+    .catch(err => {
+        alert('网络错误，请稍后重试。或直接拨打前台电话点餐～');
+    });
+}
+</script>
+{% endblock %}

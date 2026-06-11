@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ route.name }} - 云上归墅{% endblock %}
+
+{% block content %}
+<section class="route-detail">
+    <div class="container">
+        <div class="route-header">
+            <h1>{{ route.name }}</h1>
+            <div class="route-meta">
+                <span class="difficulty-badge difficulty-{{ route.difficulty }}">
+                    {% if route.difficulty == 'easy' %}🟢 轻松
+                    {% elif route.difficulty == 'medium' %}🟡 适中
+                    {% else %}🔴 挑战
+                    {% endif %}
+                </span>
+                <span>⏱️ {{ route.duration }}</span>
+            </div>
+        </div>
+
+        <div class="route-description">
+            <p>{{ route.description }}</p>
+        </div>
+
+        {% if route.spots and route.spots|length > 0 %}
+        <div class="route-spots">
+            <h3>🏞️ 途经景点</h3>
+            <div class="spots-timeline">
+                {% for spot in route.spots %}
+                <div class="spot-item">
+                    <div class="spot-number">{{ loop.index }}</div>
+                    <div class="spot-content">
+                        {% if spot is mapping %}
+                        <h4>{{ spot.name }}</h4>
+                        <p>{{ spot.description }}</p>
+                        {% if spot.image %}
+                        <img src="{{ spot.image }}" alt="{{ spot.name }}" loading="lazy" class="spot-image">
+                        {% endif %}
+                        {% else %}
+                        <h4>{{ spot }}</h4>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if route.tips %}
+        <div class="route-tips">
+            <h3>💡 小贴士</h3>
+            <p>{{ route.tips }}</p>
+        </div>
+        {% endif %}
+
+        {% if route.map_link %}
+        <div class="route-map-link">
+            <a href="{{ route.map_link }}" class="btn btn-primary btn-large" target="_blank">
+                🗺️ 查看导航路线
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="route-back">
+            <a href="/travel" class="btn btn-outline">← 返回攻略列表</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

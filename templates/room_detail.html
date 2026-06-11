@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}{{ room.name }} - 云上归墅{% endblock %}
+
+{% block content %}
+<section class="room-detail">
+    <!-- 图片轮播区 -->
+    <div class="room-gallery">
+        {% if room.images and room.images|length > 0 %}
+            {% for img in room.images %}
+                {% if img is string %}
+                <img src="{{ img }}" alt="{{ room.name }}" class="gallery-img">
+                {% else %}
+                <img src="{{ img.url }}" alt="{{ room.name }}" class="gallery-img">
+                {% endif %}
+            {% endfor %}
+        {% else %}
+        <div class="room-gallery-placeholder">
+            <span>🏡</span>
+            <p>暂无房间图片</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 房间信息 -->
+    <div class="container room-info-section">
+        <div class="room-info-header">
+            <h1>{{ room.name }}</h1>
+            <span class="room-type-badge">{{ room.room_type }}</span>
+        </div>
+
+        <div class="room-price-block">
+            <span class="current-price">¥{{ room.price }}</span>
+            <span class="per-night">/晚</span>
+            {% if room.original_price and room.original_price > room.price %}
+            <span class="original-price">¥{{ room.original_price }}</span>
+            <span class="discount-tag">省¥{{ room.original_price - room.price }}</span>
+            {% endif %}
+        </div>
+
+        <div class="room-info-grid">
+            <div class="info-item">
+                <span class="info-label">👤 可住人数</span>
+                <span class="info-value">{{ room.capacity }}人</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">🛏️ 床型</span>
+                <span class="info-value">{{ room.bed_type }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">📐 面积</span>
+                <span class="info-value">{{ room.area }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">🌅 景观</span>
+                <span class="info-value">{{ room.view_type }}</span>
+            </div>
+        </div>
+
+        <div class="room-description">
+            <h3>📝 房间介绍</h3>
+            <p>{{ room.description }}</p>
+        </div>
+
+        {% if room.amenities and room.amenities|length > 0 %}
+        <div class="room-amenities">
+            <h3>✨ 房间设施</h3>
+            <div class="amenities-list">
+                {% for amenity in room.amenities %}
+                <span class="amenity-tag">{{ amenity }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="room-actions">
+            <button class="btn btn-primary btn-large" onclick="alert('请拨打前台电话预订：0792-XXXXXXX\n或关注微信公众号直接咨询～')">
+                📞 预订咨询
+            </button>
+            <a href="/rooms" class="btn btn-outline btn-large">← 返回房型列表</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}游玩攻略 - 云上归墅{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>🗺️ 游玩攻略</h1>
+        <p>庐山胜景，一网打尽</p>
+    </div>
+</section>
+
+<!-- 游玩路线 -->
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title">🏞️ 推荐路线</h2>
+        {% if routes %}
+        <div class="routes-list">
+            {% for route in routes %}
+            <a href="/travel/{{ route.id }}" class="route-card">
+                <div class="route-card-header">
+                    <h3>{{ route.name }}</h3>
+                    <span class="difficulty-badge difficulty-{{ route.difficulty }}">
+                        {% if route.difficulty == 'easy' %}🟢 轻松
+                        {% elif route.difficulty == 'medium' %}🟡 适中
+                        {% else %}🔴 挑战
+                        {% endif %}
+                    </span>
+                </div>
+                <p class="route-card-desc">{{ route.description[:100] }}{% if route.description|length > 100 %}...{% endif %}</p>
+                <div class="route-card-meta">
+                    <span>⏱️ {{ route.duration }}</span>
+                    {% if route.is_recommended %}
+                    <span class="rec-tag">⭐ 精选推荐</span>
+                    {% endif %}
+                </div>
+                {% if route.spots %}
+                <div class="route-spots-preview">
+                    {% for spot in route.spots[:3] %}
+                        {% if spot is mapping %}
+                        <span class="spot-tag">{{ spot.name }}</span>
+                        {% else %}
+                        <span class="spot-tag">{{ spot }}</span>
+                        {% endif %}
+                    {% endfor %}
+                    {% if route.spots|length > 3 %}
+                    <span class="spot-more">+{{ route.spots|length - 3 }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon">🗺️</span>
+            <p>暂无路线信息</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- 周边美食 -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <h2 class="section-title">🍜 周边美食</h2>
+        {% if foods %}
+        <div class="foods-list">
+            {% for food in foods %}
+            <div class="food-card">
+                <div class="food-card-body">
+                    <div class="food-card-header">
+                        <h4>{{ food.name }}</h4>
+                        <span class="food-category">{{ food.category }}</span>
+                    </div>
+                    {% if food.description %}
+                    <p class="food-card-desc">{{ food.description }}</p>
+                    {% endif %}
+                    <div class="food-card-meta">
+                        <span>💰 {{ food.price_range }}</span>
+                        {% if food.must_try %}
+                        <span>🥢 必点：{{ food.must_try }}</span>
+                        {% endif %}
+                    </div>
+                    {% if food.address %}
+                    <p class="food-address">📍 {{ food.address }}</p>
+                    {% endif %}
+                    {% if food.map_link %}
+                    <a href="{{ food.map_link }}" class="btn btn-sm btn-outline" target="_blank">🗺️ 导航前往</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon">🍜</span>
+            <p>暂无美食推荐</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

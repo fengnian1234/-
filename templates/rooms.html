@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}房型展示 - 云上归墅{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>🛏️ 房型展示</h1>
+        <p>每间房都是一处独一无二的风景</p>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        {% if rooms %}
+        <div class="rooms-list">
+            {% for room in rooms %}
+            <a href="/rooms/{{ room.id }}" class="room-card">
+                <div class="room-card-image">
+                    {% if room.images and room.images|length > 0 %}
+                        {% if room.images[0] is string %}
+                        <img src="{{ room.images[0] }}" alt="{{ room.name }}" loading="lazy">
+                        {% else %}
+                        <img src="{{ room.images[0].url }}" alt="{{ room.name }}" loading="lazy">
+                        {% endif %}
+                    {% else %}
+                    <div class="room-card-placeholder">
+                        <span>🏡</span>
+                    </div>
+                    {% endif %}
+                    <div class="room-card-badge">
+                        {% if room.view_type == "山景" %}🏔️ 山景
+                        {% elif room.view_type == "云海" %}☁️ 云海
+                        {% elif room.view_type == "竹林" %}🎋 竹林
+                        {% else %}🏡 {{ room.view_type }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="room-card-body">
+                    <div class="room-card-header">
+                        <h3>{{ room.name }}</h3>
+                        <span class="room-type-tag">{{ room.room_type }}</span>
+                    </div>
+                    <p class="room-card-desc">{{ room.description[:100] }}{% if room.description|length > 100 %}...{% endif %}</p>
+                    <div class="room-card-meta">
+                        <span>👤 {{ room.capacity }}人</span>
+                        <span>🛏️ {{ room.bed_type }}</span>
+                        <span>📐 {{ room.area }}</span>
+                    </div>
+                    <div class="room-card-footer">
+                        <span class="room-price">¥{{ room.price }}<small>/晚</small></span>
+                        {% if room.original_price and room.original_price > room.price %}
+                        <span class="room-original-price">¥{{ room.original_price }}</span>
+                        {% endif %}
+                        <span class="btn btn-sm">查看详情</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon">🛏️</span>
+            <p>暂无房间信息</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

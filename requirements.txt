@@ -1,0 +1,20 @@
+# 云上归墅 - 微信公众号客服系统依赖
+# Python 3.10+
+
+# Web框架
+flask==3.1.2
+gunicorn==23.0.0
+
+# 微信公众号SDK
+wechatpy==2.1.10
+
+# 数据库
+sqlalchemy==2.0.41
+
+# AI对话 (Anthropic Claude)
+anthropic==0.64.0
+
+# 工具
+python-dotenv==1.2.1
+requests==2.32.4
+pydantic==2.12.2

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>云上归墅 - 庐山民宿</title>
+<style>
+:root {
+    --color-primary: #3d5347; --color-primary-light: #5b7b6f; --color-primary-dark: #2a3d33;
+    --color-accent: #8b7355; --color-accent-light: #a0896e;
+    --color-bg: #faf8f5; --color-bg-light: #f3f0eb; --color-bg-dark: #e8e4dc;
+    --color-text: #333330; --color-text-light: #6b6b66; --color-text-lighter: #999990;
+    --color-white: #ffffff; --color-border: #e0dcd5;
+    --color-shadow: rgba(0,0,0,0.06); --color-shadow-hover: rgba(0,0,0,0.10);
+    --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-xl: 20px;
+    --font-serif: "Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;
+    --font-sans: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    --shadow-sm: 0 1px 3px var(--color-shadow); --shadow-md: 0 4px 12px var(--color-shadow);
+    --shadow-lg: 0 8px 24px var(--color-shadow-hover); --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+    --max-width: 720px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--color-primary);text-decoration:none;transition:color var(--transition)}
+a:hover{color:var(--color-primary-dark)}
+img{max-width:100%;height:auto;display:block}
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:var(--color-text)}
+h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05rem}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 1rem}
+/* Header */
+.header{background:rgba(255,255,255,0.92);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none}
+.logo-icon{font-size:1.4rem}
+.logo-text{font-family:var(--font-serif);font-size:1.15rem;font-weight:700;color:var(--color-primary-dark);letter-spacing:0.05em}
+.nav-links{display:flex;gap:0.2rem}
+.nav-links a{padding:0.35rem 0.7rem;border-radius:var(--radius-sm);font-size:0.9rem;color:var(--color-text-light);transition:all var(--transition)}
+.nav-links a:hover{color:var(--color-primary);background:var(--color-bg-light)}
+/* Hero */
+.hero{height:50vh;min-height:300px;max-height:450px;background:linear-gradient(170deg,#3d5347 0%,#5b7b6f 30%,#8b9d83 60%,#c4b99a 100%);display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(255,255,255,0.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(255,255,255,0.05) 0%,transparent 50%)}
+.hero-overlay{position:relative;z-index:1;padding:2rem}
+.hero-title{font-family:var(--font-serif);font-size:2.4rem;font-weight:700;color:var(--color-white);letter-spacing:0.12em;margin-bottom:0.6rem;text-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.hero-subtitle{font-size:1.1rem;color:rgba(255,255,255,0.9);letter-spacing:0.06em;margin-bottom:0.4rem}
+.hero-desc{font-size:0.9rem;color:rgba(255,255,255,0.7)}
+/* Quick Entry */
+.quick-entry{padding:1.5rem 0;margin-top:-1rem;position:relative;z-index:2}
+.entry-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem}
+.entry-card{background:var(--color-white);border-radius:var(--radius-md);padding:1rem 0.5rem;text-align:center;box-shadow:var(--shadow-sm);transition:all var(--transition);display:flex;flex-direction:column;align-items:center;gap:0.3rem}
+.entry-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.entry-icon{font-size:1.6rem}
+.entry-title{font-size:0.85rem;font-weight:600;color:var(--color-text)}
+.entry-desc{font-size:0.72rem;color:var(--color-text-lighter)}
+/* Sections */
+.section-padding{padding:2rem 0}
+.bg-light{background:var(--color-bg-light)}
+.section-title{text-align:center;margin-bottom:0.4rem;color:var(--color-primary-dark)}
+.section-desc{text-align:center;color:var(--color-text-light);margin-bottom:1.5rem;font-size:0.95rem}
+.section-action{text-align:center}
+/* Intro */
+.intro-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:1.5rem}
+.intro-item{text-align:center;padding:1.2rem 1rem;background:var(--color-white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm)}
+.intro-icon{font-size:2rem;display:block;margin-bottom:0.5rem}
+.intro-item h3{margin-bottom:0.4rem;color:var(--color-primary-dark)}
+.intro-item p{font-size:0.85rem;color:var(--color-text-light);line-height:1.6}
+/* Room Preview */
+.rooms-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;margin-bottom:1.5rem}
+.room-preview-card{background:var(--color-white);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm);text-align:center}
+.room-preview-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.room-preview-card h4{padding:0.6rem 0.5rem 0.2rem;font-size:0.9rem}
+.room-preview-card .price{padding:0 0.5rem 0.6rem;color:var(--color-accent);font-weight:600;font-size:0.9rem}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:0.55rem 1.2rem;border-radius:var(--radius-sm);font-size:0.9rem;font-weight:500;cursor:pointer;border:none;transition:all var(--transition);font-family:var(--font-sans);text-decoration:none;gap:0.3rem}
+.btn-primary{background:var(--color-primary);color:var(--color-white)}
+.btn-primary:hover{background:var(--color-primary-dark);color:var(--color-white)}
+.btn-outline{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary)}
+.btn-outline:hover{background:var(--color-primary);color:var(--color-white)}
+.btn-sm{padding:0.3rem 0.8rem;font-size:0.8rem}
+.btn-large{padding:0.7rem 1.6rem;font-size:1rem}
+/* Feature section */
+.feature-list{display:flex;flex-direction:column;gap:1.2rem}
+.feature-item{display:flex;align-items:flex-start;gap:1rem;padding:1.2rem;background:var(--color-white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm)}
+.feature-icon{font-size:2rem;flex-shrink:0;width:50px;text-align:center}
+.feature-content h3{font-size:1rem;margin-bottom:0.3rem}
+.feature-content p{font-size:0.85rem;color:var(--color-text-light);line-height:1.6}
+/* FAQ */
+.faq-list{display:flex;flex-direction:column;gap:0.5rem}
+.faq-item{padding:1rem 1.2rem;background:var(--color-white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);cursor:pointer}
+.faq-q{font-weight:600;font-size:0.95rem;display:flex;justify-content:space-between;align-items:center}
+.faq-a{font-size:0.85rem;color:var(--color-text-light);margin-top:0.5rem;display:none;line-height:1.6}
+.faq-item.open .faq-a{display:block}
+/* Footer */
+.footer{background:var(--color-primary-dark);color:rgba(255,255,255,0.7);padding:1.5rem 1rem;text-align:center;margin-top:auto}
+.footer p{font-size:0.8rem;margin-bottom:0.2rem;line-height:1.8}
+.footer-copy{color:rgba(255,255,255,0.4);font-size:0.72rem!important;margin-top:0.4rem}
+@media (max-width:480px){
+    .entry-grid{grid-template-columns:repeat(2,1fr)}
+    .rooms-preview{grid-template-columns:repeat(2,1fr)}
+    .room-preview-card:last-child{display:none}
+    .intro-grid{grid-template-columns:1fr}
+    .hero-title{font-size:1.8rem}
+    .hero{height:40vh;min-height:250px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <a href="#" class="logo"><span class="logo-icon">🏔️</span><span class="logo-text">云上归墅</span></a>
+        <nav class="nav-links">
+            <a href="rooms.html">房型</a><a href="menu.html">点餐</a><a href="travel.html">攻略</a><a href="services.html">服务</a>
+        </nav>
+    </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-overlay">
+        <h1 class="hero-title">云上归墅</h1>
+        <p class="hero-subtitle">庐山之巅，云雾深处，归心之所</p>
+        <p class="hero-desc">坐拥庐山云海，每一扇窗都是一幅山水画</p>
+    </div>
+</section>
+
+<!-- 快捷入口 -->
+<section class="quick-entry">
+    <div class="container">
+        <div class="entry-grid">
+            <a href="rooms.html" class="entry-card"><span class="entry-icon">🛏️</span><span class="entry-title">房型展示</span><span class="entry-desc">6种精品房型</span></a>
+            <a href="menu.html" class="entry-card"><span class="entry-icon">🍜</span><span class="entry-title">山间美餐</span><span class="entry-desc">在线点餐</span></a>
+            <a href="travel.html" class="entry-card"><span class="entry-icon">🗺️</span><span class="entry-title">游玩攻略</span><span class="entry-desc">路线&美食</span></a>
+            <a href="services.html" class="entry-card"><span class="entry-icon">🛎️</span><span class="entry-title">快捷服务</span><span class="entry-desc">一键呼叫</span></a>
+        </div>
+    </div>
+</section>
+
+<!-- 关于云上归墅 -->
+<section class="intro section-padding">
+    <div class="container">
+        <h2 class="section-title">关于云上归墅</h2>
+        <div class="intro-grid">
+            <div class="intro-item"><span class="intro-icon">🏔️</span><h3>云海之上</h3><p>海拔千米的庐山牯岭镇，推窗即是云海翻涌，日出日落尽收眼底。</p></div>
+            <div class="intro-item"><span class="intro-icon">🎋</span><h3>竹林深处</h3><p>独栋院落隐于竹林之间，听风品茶，感受庐山独有的禅意时光。</p></div>
+            <div class="intro-item"><span class="intro-icon">🍵</span><h3>云雾茶香</h3><p>正宗庐山云雾茶原产地，在茶室泡一壶明前茶，看云卷云舒。</p></div>
+            <div class="intro-item"><span class="intro-icon">🏡</span><h3>归心之所</h3><p>不只是住宿，更是一种回归自然、回归内心的山居生活体验。</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- 精选房型 -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <h2 class="section-title">精选房型</h2>
+        <p class="section-desc">每间房都有独特的风景</p>
+        <div class="rooms-preview">
+            <div class="room-preview-card"><div class="room-preview-img" style="background:linear-gradient(135deg,#8b7355,#a0896e)">🏔️</div><h4>云隐·大床房</h4><p class="price">¥688/晚</p></div>
+            <div class="room-preview-card"><div class="room-preview-img" style="background:linear-gradient(135deg,#5b7b6f,#7a9a8e)">☁️</div><h4>云顶·观景套房</h4><p class="price">¥1288/晚</p></div>
+            <div class="room-preview-card"><div class="room-preview-img" style="background:linear-gradient(135deg,#6b8f71,#8aaa8e)">🎋</div><h4>竹韵·庭院房</h4><p class="price">¥788/晚</p></div>
+        </div>
+        <div class="section-action"><a href="rooms.html" class="btn btn-primary">查看全部房型 →</a></div>
+    </div>
+</section>
+
+<!-- 核心功能 -->
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title">智能客服功能</h2>
+        <p class="section-desc">在微信公众号中回复关键词即可使用</p>
+        <div class="feature-list">
+            <div class="feature-item"><span class="feature-icon">🤖</span><div class="feature-content"><h3>AI 智能对话</h3><p>接入了大模型，可以和您自然语言交流。问房型、问路线、问天气，像和真人管家聊天一样～</p></div></div>
+            <div class="feature-item"><span class="feature-icon">🔑</span><div class="feature-content"><h3>关键词秒回</h3><p>回复「房型」「菜单」「攻略」「服务」等关键词，秒获所需信息。回复「人工」可转人工客服。</p></div></div>
+            <div class="feature-item"><span class="feature-icon">📱</span><div class="feature-content"><h3>H5精美页面</h3><p>手机端专属页面，房间图文展示、在线点餐购物车、路线导航一应俱全。</p></div></div>
+            <div class="feature-item"><span class="feature-icon">🛎️</span><div class="feature-content"><h3>15项快捷服务</h3><p>一键呼叫续住、打扫、维修、叫醒、送餐、叫车、行李寄存等服务，即刻响应。</p></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- 常见问题 -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <h2 class="section-title">常见问题</h2>
+        <div class="faq-list">
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🕐 入住和退房时间是几点？<span>▾</span></div><div class="faq-a">入住时间：14:00 以后<br>退房时间：12:00 以前<br>如需提前入住或延迟退房，请提前联系前台，我们会尽量安排～</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🚗 民宿有停车场吗？<span>▾</span></div><div class="faq-a">有免费停车场！到达牯岭镇后导航「云上归墅」即可。庐山山路弯多，建议慢行注意安全。</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🍳 有早餐吗？<span>▾</span></div><div class="faq-a">有的！每间房都含双人早餐，提供庐山特色早点：云雾茶粥、手工包子、山泉水豆浆、时令小菜等。早餐时间 7:30-9:30。</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">👶 可以带小孩入住吗？<span>▾</span></div><div class="faq-a">当然可以！我们有专门的亲子套房，配有儿童床、玩具角和儿童用品。其他房型也可加儿童床（需提前预约）。</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🐕 可以带宠物吗？<span>▾</span></div><div class="faq-a">目前部分房型支持携带中小型宠物（需收取清洁费），请在预订时提前告知，我们会为您安排合适的房间。</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-inner"><p>🏔️ 云上归墅 · 庐山之巅的静谧之所</p><p>📍 江西省九江市庐山市牯岭镇</p><p>📞 0792-XXXXXXX</p><p class="footer-copy">© 2024 云上归墅 YunShang GuiShu</p></div>
+</footer>
+
+</body>
+</html>

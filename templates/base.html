@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>{% block title %}云上归墅{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🏔️</span>
+                <span class="logo-text">云上归墅</span>
+            </a>
+            <nav class="nav-links">
+                <a href="/rooms">房型</a>
+                <a href="/menu">点餐</a>
+                <a href="/travel">攻略</a>
+                <a href="/services">服务</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <p>🏔️ 云上归墅 · 庐山之巅的静谧之所</p>
+            <p>📍 江西省九江市庐山市牯岭镇</p>
+            <p>📞 0792-XXXXXXX</p>
+            <p class="footer-copy">© 2024 云上归墅 YunShang GuiShu</p>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
