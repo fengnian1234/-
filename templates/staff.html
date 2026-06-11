@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>员工通知看板 - 云上·归墅</title>
+<style>
+:root{--primary:#2a3d33;--danger:#c4554a;--warning:#c9954a;--success:#5b8c5a;--bg:#f5f3ee;--card-bg:#fff;--border:#e0dcd5;--text:#333;--text-light:#888;--radius:10px;--shadow:0 2px 8px rgba(0,0,0,0.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.header{background:var(--primary);color:#fff;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header h1{font-size:1.2rem;font-weight:600}
+.header-badge{background:var(--danger);color:#fff;padding:0.3rem 0.8rem;border-radius:20px;font-size:0.9rem;font-weight:700;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.container{max-width:900px;margin:0 auto;padding:1rem}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0.8rem;margin-bottom:1.5rem}
+.stat-card{background:var(--card-bg);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:var(--shadow)}
+.stat-value{font-size:2rem;font-weight:700;line-height:1.2}
+.stat-label{font-size:0.8rem;color:var(--text-light);margin-top:0.2rem}
+.stat-pending .stat-value{color:var(--danger)}
+.stat-today .stat-value{color:var(--primary)}
+.stat-done .stat-value{color:var(--success)}
+.stat-rate .stat-value{color:var(--warning)}
+/* Alert banner */
+.alert-banner{background:var(--danger);color:#fff;padding:0.8rem 1.2rem;border-radius:var(--radius);margin-bottom:1rem;display:none;align-items:center;gap:0.8rem;font-weight:600}
+.alert-banner.show{display:flex}
+.alert-banner .dot{width:10px;height:10px;background:#fff;border-radius:50%;animation:pulse 1s infinite}
+/* Request List */
+.section-title{font-size:1rem;font-weight:600;margin-bottom:0.8rem;color:var(--primary);padding-bottom:0.4rem;border-bottom:2px solid var(--primary)}
+.request-list{display:flex;flex-direction:column;gap:0.6rem}
+.request-card{background:var(--card-bg);border-radius:var(--radius);padding:1rem 1.2rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:1rem;border-left:4px solid var(--border);transition:all 0.2s}
+.request-card.pending{border-left-color:var(--danger);animation:slideIn 0.3s ease-out}
+.request-card.acknowledged{border-left-color:var(--warning)}
+.request-card.completed{border-left-color:var(--success);opacity:0.6}
+@keyframes slideIn{from{transform:translateX(-20px);opacity:0}to{transform:translateX(0);opacity:1}}
+.request-icon{font-size:2rem;flex-shrink:0}
+.request-info{flex:1}
+.request-name{font-weight:600;font-size:1rem}
+.request-meta{font-size:0.8rem;color:var(--text-light);display:flex;gap:1rem;margin-top:0.2rem}
+.request-actions{display:flex;gap:0.4rem;flex-shrink:0}
+.btn{padding:0.4rem 0.8rem;border-radius:6px;border:none;cursor:pointer;font-size:0.8rem;font-weight:500;transition:all 0.2s;font-family:inherit}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:#1a2d23}
+.btn-warning{background:var(--warning);color:#fff}
+.btn-warning:hover{background:#b87d30}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{background:#4a7a49}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{background:var(--bg)}
+/* Sound toggle */
+.sound-toggle{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;gap:0.3rem}
+.empty-state{text-align:center;padding:2rem;color:var(--text-light)}
+.empty-icon{font-size:3rem;margin-bottom:0.5rem}
+/* Responsive */
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.request-card{flex-wrap:wrap}.request-actions{width:100%;justify-content:flex-end}}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <h1>🛎️ 云上·归墅 · 员工看板</h1>
+    <div style="display:flex;align-items:center;gap:0.8rem">
+        <span class="header-badge" id="pendingBadge" style="display:none">0 待处理</span>
+        <button class="sound-toggle" onclick="toggleSound()" id="soundBtn">🔇 声音提醒：关</button>
+    </div>
+</header>
+
+<div class="container">
+    <!-- 紧急提醒 -->
+    <div class="alert-banner" id="alertBanner">
+        <span class="dot"></span>
+        <span id="alertText">有新的服务请求！</span>
+    </div>
+
+    <!-- 统计 -->
+    <div class="stats" id="statsArea"></div>
+
+    <!-- 待处理 -->
+    <h2 class="section-title">📋 待处理请求</h2>
+    <div class="request-list" id="pendingList"><div class="empty-state"><span class="empty-icon">✅</span><p>暂无待处理请求</p></div></div>
+
+    <!-- 已处理 -->
+    <h2 class="section-title" style="margin-top:1.5rem">✔️ 今日已完成</h2>
+    <div class="request-list" id="completedList"><div class="empty-state"><span class="empty-icon">📭</span><p>今天还没有完成记录</p></div></div>
+</div>
+
+<script>
+const REFRESH_INTERVAL = 5000; // 5秒刷新
+let soundEnabled = false;
+let lastPendingCount = 0;
+
+// 音效（使用AudioContext生成提示音）
+function playAlertSound() {
+    if (!soundEnabled) return;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        [800, 1000, 1200].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.frequency.value = freq; osc.type = 'sine';
+            gain.gain.value = 0.1;
+            osc.start(ctx.currentTime + i * 0.15);
+            osc.stop(ctx.currentTime + i * 0.15 + 0.1);
+        });
+    } catch(e) {}
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    document.getElementById('soundBtn').textContent = soundEnabled ? '🔊 声音提醒：开' : '🔇 声音提醒：关';
+    if (soundEnabled) playAlertSound();
+}
+
+// 获取数据
+async function fetchData() {
+    try {
+        const resp = await fetch('/api/staff/dashboard');
+        const data = await resp.json();
+        renderStats(data.stats);
+        renderPending(data.pending);
+        renderCompleted(data.completed);
+        // 新请求提醒
+        if (data.stats.pending > lastPendingCount && lastPendingCount > 0) {
+            showAlert(data.stats.pending);
+            playAlertSound();
+        }
+        lastPendingCount = data.stats.pending;
+        document.getElementById('pendingBadge').style.display = data.stats.pending > 0 ? 'inline' : 'none';
+        document.getElementById('pendingBadge').textContent = data.stats.pending + ' 待处理';
+    } catch(e) {
+        console.error('获取数据失败:', e);
+    }
+}
+
+function renderStats(stats) {
+    document.getElementById('statsArea').innerHTML = `
+        <div class="stat-card stat-pending"><div class="stat-value">${stats.pending}</div><div class="stat-label">待处理</div></div>
+        <div class="stat-card stat-today"><div class="stat-value">${stats.today_total}</div><div class="stat-label">今日总量</div></div>
+        <div class="stat-card stat-done"><div class="stat-value">${stats.today_completed}</div><div class="stat-label">已完成</div></div>
+        <div class="stat-card stat-rate"><div class="stat-value">${stats.completion_rate}</div><div class="stat-label">完成率</div></div>`;
+}
+
+function renderPending(list) {
+    const el = document.getElementById('pendingList');
+    if (!list || list.length === 0) {
+        el.innerHTML = '<div class="empty-state"><span class="empty-icon">✅</span><p>暂无待处理请求</p></div>';
+        return;
+    }
+    el.innerHTML = list.map(r => `
+        <div class="request-card ${r.status}">
+            <span class="request-icon">🔔</span>
+            <div class="request-info">
+                <div class="request-name">${r.service_name}</div>
+                <div class="request-meta">
+                    <span>🕐 ${r.created_at}</span>
+                    <span>🚪 ${r.room_number || '未填'}</span>
+                    <span>📊 ${r.status === 'acknowledged' ? '处理中' : '待确认'}</span>
+                </div>
+            </div>
+            <div class="request-actions">
+                ${r.status === 'pending' ? `<button class="btn btn-warning" onclick="ack(${r.id})">确认收到</button>` : ''}
+                <button class="btn btn-success" onclick="done(${r.id})">✓ 完成</button>
+            </div>
+        </div>`).join('');
+}
+
+function renderCompleted(list) {
+    const el = document.getElementById('completedList');
+    if (!list || list.length === 0) {
+        el.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span><p>今天还没有完成记录</p></div>';
+        return;
+    }
+    el.innerHTML = list.map(r => `
+        <div class="request-card completed">
+            <span class="request-icon">✅</span>
+            <div class="request-info">
+                <div class="request-name">${r.service_name}</div>
+                <div class="request-meta"><span>🕐 ${r.created_at}</span><span>🚪 ${r.room_number || '未填'}</span><span>👤 ${r.handler || '系统'}</span></div>
+            </div>
+        </div>`).join('');
+}
+
+function showAlert(count) {
+    const banner = document.getElementById('alertBanner');
+    document.getElementById('alertText').textContent = `🔔 有新的服务请求！当前待处理：${count} 条`;
+    banner.classList.add('show');
+    setTimeout(() => banner.classList.remove('show'), 5000);
+}
+
+async function ack(id) {
+    await fetch('/api/staff/acknowledge', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});
+    fetchData();
+}
+async function done(id) {
+    await fetch('/api/staff/complete', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});
+    fetchData();
+}
+
+// 初始加载 & 定时刷新
+fetchData();
+setInterval(fetchData, REFRESH_INTERVAL);
+</script>
+</body>
+</html>

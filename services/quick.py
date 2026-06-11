@@ -1,8 +1,10 @@
 """
 快捷服务 - 续住、卫生打扫、维修、叫醒等
+要求2：服务请求自动创建通知给员工
 """
 from datetime import datetime
 from models import SessionLocal, QuickService
+from services.notify import create_service_request
 
 
 def get_all_services():
@@ -72,8 +74,9 @@ def format_services_text():
     return "\n".join(lines)
 
 
-def handle_service_request(service_name: str) -> str:
-    """处理服务请求，返回确认信息"""
+def handle_service_request(service_name: str, openid: str = "",
+                          room_number: str = "") -> str:
+    """处理服务请求，返回确认信息（要求2：同时创建通知）"""
     services = get_all_services()
 
     # 模糊匹配
@@ -90,11 +93,22 @@ def handle_service_request(service_name: str) -> str:
             f"或直接拨打前台电话咨询"
         )
 
+    # 要求2：创建服务请求通知
+    try:
+        create_service_request(
+            openid=openid,
+            service_name=matched['name'],
+            room_number=room_number,
+            urgency="normal",
+        )
+    except Exception:
+        pass  # 通知创建失败不影响主流程
+
     icon = matched.get("icon", "✅")
     return (
         f"{icon} *{matched['name']}* 已收到您的请求！\n\n"
         f"📝 {matched.get('description', '')}\n"
         f"⏱️ 预计处理时间：{matched.get('estimated_time', '尽快处理')}\n\n"
-        f"我们的工作人员会尽快为您处理～\n"
+        f"✅ 已通知工作人员，请稍候～\n"
         f"如有紧急需求，请拨打前台电话 ☎️"
     )

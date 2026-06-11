@@ -1,8 +1,9 @@
 """
-种子数据 - 云上归墅民宿和庐山旅游信息
+种子数据 - 云上·归墅民宿和庐山旅游信息
+v2：菜单改为咖啡简餐，地址更新为大林沟路27号
 初始化数据库时自动填充
 """
-from models import SessionLocal, init_db, Room, MenuCategory, MenuItem, QuickService, TravelRoute, FoodRecommend
+from models import SessionLocal, init_db, Room, MenuCategory, MenuItem, QuickService, TravelRoute, FoodRecommend, Booking
 
 
 def seed_all():
@@ -148,61 +149,51 @@ def seed_rooms(db):
 
 
 def seed_menu(db):
-    """菜单数据"""
-    # 分类
+    """咖啡简餐菜单数据（要求5：仅咖啡和简餐，不提供正餐）"""
     categories = [
-        MenuCategory(name="庐山本味", icon="🏔️", sort_order=1),
-        MenuCategory(name="清爽小菜", icon="🥒", sort_order=2),
-        MenuCategory(name="暖心汤羹", icon="🍲", sort_order=3),
-        MenuCategory(name="主食面点", icon="🍚", sort_order=4),
-        MenuCategory(name="茶饮甜品", icon="🍵", sort_order=5),
-        MenuCategory(name="酒水饮料", icon="🍶", sort_order=6),
+        MenuCategory(name="精品咖啡", icon="☕", sort_order=1),
+        MenuCategory(name="茶饮", icon="🍵", sort_order=2),
+        MenuCategory(name="简餐轻食", icon="🥐", sort_order=3),
+        MenuCategory(name="甜点", icon="🍰", sort_order=4),
+        MenuCategory(name="饮品", icon="🥤", sort_order=5),
     ]
     db.add_all(categories)
     db.flush()
 
-    # 菜品
     items = [
-        # 庐山本味
-        MenuItem(category_id=1, name="庐山石鸡", price=128, description="庐山特产石鸡，红烧烹制，肉质鲜嫩", is_recommended=True, sort_order=1),
-        MenuItem(category_id=1, name="庐山云雾笋", price=68, description="高山云雾笋尖，清炒保留原味", is_recommended=True, sort_order=2),
-        MenuItem(category_id=1, name="九江茶饼蒸肉", price=88, description="九江传统茶饼配五花肉，茶香肉嫩", sort_order=3),
-        MenuItem(category_id=1, name="庐山豆腐煲", price=58, description="庐山山泉水豆腐，文火慢炖", sort_order=4),
-        MenuItem(category_id=1, name="鄱阳湖银鱼煎蛋", price=48, description="鄱阳湖鲜银鱼配土鸡蛋", sort_order=5),
-        MenuItem(category_id=1, name="庐山石耳炖鸡", price=168, description="庐山特产石耳与土鸡同炖，滋补养颜", is_recommended=True, sort_order=6),
-        MenuItem(category_id=1, name="山珍野菌煲", price=98, description="庐山野生菌菇，砂锅慢煲", sort_order=7),
+        # 精品咖啡
+        MenuItem(category_id=1, name="庐山云雾冷萃", price=38, description="高山泉水冷萃12小时，清爽回甘", is_recommended=True, sort_order=1),
+        MenuItem(category_id=1, name="手冲单品咖啡", price=42, description="精选埃塞俄比亚耶加雪菲，现场手冲", is_recommended=True, sort_order=2),
+        MenuItem(category_id=1, name="意式浓缩", price=22, description="双份浓缩，浓郁醇厚", sort_order=3),
+        MenuItem(category_id=1, name="拿铁", price=28, description="经典意式拿铁，可选燕麦奶", sort_order=4),
+        MenuItem(category_id=1, name="卡布奇诺", price=28, description="绵密奶泡配浓缩咖啡", sort_order=5),
+        MenuItem(category_id=1, name="桂花拿铁", price=32, description="秋季限定，手采桂花入咖", is_recommended=True, sort_order=6),
 
-        # 清爽小菜
-        MenuItem(category_id=2, name="庐山泉水泡菜", price=28, description="山泉水腌制时蔬，清脆爽口", sort_order=1),
-        MenuItem(category_id=2, name="蒜泥白肉", price=38, description="薄切五花配蒜泥酱汁", sort_order=2),
-        MenuItem(category_id=2, name="凉拌云耳", price=32, description="庐山野生木耳凉拌", sort_order=3),
-        MenuItem(category_id=2, name="糖渍桂花藕", price=28, description="桂花时节采摘，蜜渍脆藕", sort_order=4),
-        MenuItem(category_id=2, name="山椒拌笋尖", price=35, description="嫩笋尖配自制山椒酱", sort_order=5),
+        # 茶饮
+        MenuItem(category_id=2, name="庐山云雾茶（一壶）", price=68, description="明前特级云雾茶，配手工茶点", is_recommended=True, sort_order=1),
+        MenuItem(category_id=2, name="桂花红茶", price=38, description="祁门红茶配手采桂花", sort_order=2),
+        MenuItem(category_id=2, name="茉莉花茶", price=28, description="福州茉莉花窨制绿茶", sort_order=3),
+        MenuItem(category_id=2, name="陈皮普洱", price=35, description="五年陈皮配熟普，暖胃养生", sort_order=4),
+        MenuItem(category_id=2, name="蜂蜜柚子茶", price=25, description="自制柚子酱配庐山蜂蜜", sort_order=5),
 
-        # 暖心汤羹
-        MenuItem(category_id=3, name="庐山云雾茶羹", price=38, description="高山云雾茶入羹，清雅回甘", is_recommended=True, sort_order=1),
-        MenuItem(category_id=3, name="瓦罐土鸡汤", price=88, description="庐山走地鸡，瓦罐慢煨4小时", sort_order=2),
-        MenuItem(category_id=3, name="野菌豆腐汤", price=42, description="山菌与泉水豆腐同煮", sort_order=3),
+        # 简餐轻食
+        MenuItem(category_id=3, name="牛角包三明治", price=38, description="现烤牛角包夹火腿芝士生菜", is_recommended=True, sort_order=1),
+        MenuItem(category_id=3, name="庐山茶香沙拉", price=35, description="高山茶叶入酱，配时蔬坚果", sort_order=2),
+        MenuItem(category_id=3, name="意式肉酱面", price=42, description="手工意面配番茄肉酱", sort_order=3),
+        MenuItem(category_id=3, name="酸奶水果碗", price=28, description="希腊酸奶配时令山果坚果", sort_order=4),
+        MenuItem(category_id=3, name="芝士焗红薯", price=25, description="庐山本地红薯芝士焗烤", sort_order=5),
 
-        # 主食面点
-        MenuItem(category_id=4, name="九江炒粉", price=32, description="九江地道炒粉，镬气十足", sort_order=1),
-        MenuItem(category_id=4, name="庐山笋干肉丝面", price=38, description="自制面条配笋干肉丝汤底", sort_order=2),
-        MenuItem(category_id=4, name="农家柴火饭", price=22, description="土灶柴火煮饭，配时蔬", sort_order=3),
-        MenuItem(category_id=4, name="桂花米糕", price=28, description="手打米浆蒸制，桂花点缀", sort_order=4),
-        MenuItem(category_id=4, name="山泉煮粥", price=18, description="庐山泉水配新米慢熬", sort_order=5),
+        # 甜点
+        MenuItem(category_id=4, name="手工桂花糕", price=28, description="秋季手采桂花古法蒸制", is_recommended=True, sort_order=1),
+        MenuItem(category_id=4, name="提拉米苏", price=35, description="经典意式提拉米苏", sort_order=2),
+        MenuItem(category_id=4, name="庐山茶冻", price=22, description="云雾茶汤冷凝，清凉消暑", sort_order=3),
+        MenuItem(category_id=4, name="桂花酒酿圆子", price=22, description="甜酒酿配手搓糯米圆子", sort_order=4),
 
-        # 茶饮甜品
-        MenuItem(category_id=5, name="庐山云雾茶（一壶）", price=88, description="明前特级云雾茶，配茶点", is_recommended=True, sort_order=1),
-        MenuItem(category_id=5, name="手工桂花糕", price=32, description="秋季手采桂花，古法蒸制", sort_order=2),
-        MenuItem(category_id=5, name="庐山茶冻", price=28, description="云雾茶汤冷凝，清凉消暑", sort_order=3),
-        MenuItem(category_id=5, name="桂花酒酿圆子", price=26, description="甜酒酿配手搓糯米圆子", sort_order=4),
-        MenuItem(category_id=5, name="山泉冰粉", price=22, description="庐山泉水手搓冰粉，红糖配", sort_order=5),
-
-        # 酒水饮料
-        MenuItem(category_id=6, name="庐山啤酒", price=15, description="九江本地精酿", sort_order=1),
-        MenuItem(category_id=6, name="九江陈年封缸酒", price=68, description="九江传统黄酒，醇厚甘甜", sort_order=2),
-        MenuItem(category_id=6, name="鲜榨山果汁", price=28, description="时令山果鲜榨", sort_order=3),
-        MenuItem(category_id=6, name="山泉柠檬水", price=18, description="庐山泉水配鲜柠檬", sort_order=4),
+        # 饮品
+        MenuItem(category_id=5, name="鲜榨山果汁", price=28, description="时令庐山山果鲜榨", sort_order=1),
+        MenuItem(category_id=5, name="山泉柠檬水", price=18, description="庐山泉水配鲜柠檬薄荷", sort_order=2),
+        MenuItem(category_id=5, name="手工酸奶", price=22, description="自制发酵酸奶，可选蜂蜜", sort_order=3),
+        MenuItem(category_id=5, name="气泡水", price=15, description="巴黎水/圣培露", sort_order=4),
     ]
     db.add_all(items)
 
