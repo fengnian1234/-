@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>山间美餐 - 云上归墅</title>
+<title>咖啡简餐 - 云上·归墅</title>
 <style>
 :root{--color-primary:#3d5347;--color-primary-light:#5b7b6f;--color-primary-dark:#2a3d33;--color-accent:#8b7355;--color-bg:#faf8f5;--color-bg-light:#f3f0eb;--color-text:#333330;--color-text-light:#6b6b66;--color-text-lighter:#999990;--color-white:#fff;--color-border:#e0dcd5;--color-shadow:rgba(0,0,0,0.06);--color-shadow-hover:rgba(0,0,0,0.10);--color-warning:#c9954a;--color-danger:#c4554a;--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 1px 3px var(--color-shadow);--shadow-md:0 4px 12px var(--color-shadow);--transition:0.25s cubic-bezier(0.4,0,0.2,1);--max-width:720px}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -61,6 +61,7 @@ a{color:var(--color-primary);text-decoration:none}
 .order-input{display:flex;gap:0.5rem;margin-bottom:0.6rem}
 .order-input input{flex:1;padding:0.5rem 0.8rem;border:1px solid var(--color-border);border-radius:var(--radius-sm);font-size:0.85rem;outline:none;font-family:var(--font-sans)}
 .order-input input:focus{border-color:var(--color-primary-light)}
+.order-notice{background:#fef9e7;border-radius:var(--radius-sm);padding:0.6rem 0.8rem;font-size:0.78rem;color:#8b6d20;margin-bottom:0.6rem;text-align:center;line-height:1.5}
 /* FAB */
 .fab{position:fixed;bottom:1.5rem;right:1rem;width:52px;height:52px;border-radius:50%;background:var(--color-primary);color:white;border:none;box-shadow:var(--shadow-md);cursor:pointer;z-index:150;display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all var(--transition)}
 .fab:hover{transform:scale(1.05)}
@@ -75,16 +76,21 @@ a{color:var(--color-primary);text-decoration:none}
 
 <header class="header">
     <div class="header-inner">
-        <a href="index.html" class="logo"><span class="logo-icon">🏔️</span><span class="logo-text">云上归墅</span></a>
+        <a href="index.html" class="logo"><span class="logo-icon">🏔️</span><span class="logo-text">云上·归墅</span></a>
         <nav class="nav-links">
             <a href="rooms.html">房型</a><a href="menu.html">点餐</a><a href="travel.html">攻略</a><a href="services.html">服务</a>
         </nav>
     </div>
 </header>
 
-<section class="page-header"><div class="container"><h1>🍜 山间美餐</h1><p>庐山本味，山泉煮就，云雾入馔</p></div></section>
+<section class="page-header"><div class="container"><h1>☕ 咖啡简餐</h1><p>精品咖啡与简餐轻食 · 本民宿不提供正餐</p></div></section>
 
-<section class="section-padding"><div class="container"><div class="menu-container" id="menuContainer"></div></div></section>
+<section class="section-padding"><div class="container"><div class="menu-container" id="menuContainer"></div>
+    <p style="text-align:center;color:var(--color-text-lighter);font-size:0.85rem;margin-top:1rem;line-height:1.8">
+        🍜 需要正餐？请查看「<a href="travel.html">游玩攻略</a>」中的周边美食推荐<br>
+        💡 支持微信支付，下单后送至房间
+    </p>
+</div></section>
 
 <!-- 点餐浮窗 -->
 <div class="order-panel" id="orderPanel">
@@ -93,6 +99,7 @@ a{color:var(--color-primary);text-decoration:none}
     <div class="order-panel-footer">
         <div class="order-total"><span>合计</span><span class="total-price" id="totalPrice">¥0</span></div>
         <div class="order-input"><input type="text" id="roomNo" placeholder="房间号（选填）"><input type="text" id="remark" placeholder="备注（选填）"></div>
+        <div class="order-notice">☕ 仅提供咖啡茶饮与简餐轻食，不提供正餐<br>💳 支持微信支付，确认后送餐到房</div>
         <button class="btn btn-primary btn-block" onclick="submitOrder()">确认下单</button>
     </div>
 </div>
@@ -100,52 +107,45 @@ a{color:var(--color-primary);text-decoration:none}
 <button class="fab" onclick="togglePanel()"><span class="fab-icon">🛒</span><span class="fab-count" id="cartCount">0</span></button>
 
 <footer class="footer">
-    <div class="footer-inner"><p>🏔️ 云上归墅 · 庐山之巅的静谧之所</p><p>📍 江西省九江市庐山市牯岭镇</p><p>📞 0792-XXXXXXX</p><p class="footer-copy">© 2024 云上归墅 YunShang GuiShu</p></div>
+    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · 庐山之巅的静谧之所</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 0792-XXXXXXX</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
 </footer>
 
 <script>
-// 菜单数据（来自 seed_data.py）
+// 菜单数据（咖啡简餐 - 来自 seed_data.py v2）
 const menu = [
-    {cat:"🏔️ 庐山本味", items:[
-        {id:1,name:"庐山石鸡",price:128,desc:"庐山特产石鸡，红烧烹制，肉质鲜嫩",rec:true},
-        {id:2,name:"庐山云雾笋",price:68,desc:"高山云雾笋尖，清炒保留原味",rec:true},
-        {id:3,name:"九江茶饼蒸肉",price:88,desc:"九江传统茶饼配五花肉，茶香肉嫩"},
-        {id:4,name:"庐山豆腐煲",price:58,desc:"庐山山泉水豆腐，文火慢炖"},
-        {id:5,name:"鄱阳湖银鱼煎蛋",price:48,desc:"鄱阳湖鲜银鱼配土鸡蛋"},
-        {id:6,name:"庐山石耳炖鸡",price:168,desc:"庐山特产石耳与土鸡同炖，滋补养颜",rec:true},
-        {id:7,name:"山珍野菌煲",price:98,desc:"庐山野生菌菇，砂锅慢煲"}
+    {cat:"☕ 精品咖啡", items:[
+        {id:1,name:"庐山云雾冷萃",price:38,desc:"庐山云雾茶与冷萃咖啡融合，清凉回甘",rec:true},
+        {id:2,name:"手冲单品",price:42,desc:"精选单品豆手冲慢萃，风味纯净",rec:true},
+        {id:3,name:"意式浓缩",price:22,desc:"经典意式浓缩，浓烈醇厚"},
+        {id:4,name:"拿铁",price:28,desc:"浓缩与蒸汽牛奶的经典搭配"},
+        {id:5,name:"卡布奇诺",price:28,desc:"浓缩、牛奶与奶泡的完美比例"},
+        {id:6,name:"桂花拿铁",price:32,desc:"拿铁加入秋季手采桂花，花香四溢",rec:true}
     ]},
-    {cat:"🥒 清爽小菜", items:[
-        {id:8,name:"庐山泉水泡菜",price:28,desc:"山泉水腌制时蔬，清脆爽口"},
-        {id:9,name:"蒜泥白肉",price:38,desc:"薄切五花配蒜泥酱汁"},
-        {id:10,name:"凉拌云耳",price:32,desc:"庐山野生木耳凉拌"},
-        {id:11,name:"糖渍桂花藕",price:28,desc:"桂花时节采摘，蜜渍脆藕"},
-        {id:12,name:"山椒拌笋尖",price:35,desc:"嫩笋尖配自制山椒酱"}
+    {cat:"🍵 茶饮", items:[
+        {id:7,name:"庐山云雾茶（壶）",price:68,desc:"明前特级云雾茶，山泉冲泡",rec:true},
+        {id:8,name:"桂花红茶",price:38,desc:"祁门红茶配庐山金桂，温润香甜"},
+        {id:9,name:"茉莉花茶",price:28,desc:"茉莉花与绿茶窨制，花香茶韵"},
+        {id:10,name:"陈皮普洱",price:35,desc:"新会陈皮配云南普洱，理气健脾"},
+        {id:11,name:"蜂蜜柚子茶",price:25,desc:"自制蜂蜜柚子酱，酸甜可口"}
     ]},
-    {cat:"🍲 暖心汤羹", items:[
-        {id:13,name:"庐山云雾茶羹",price:38,desc:"高山云雾茶入羹，清雅回甘",rec:true},
-        {id:14,name:"瓦罐土鸡汤",price:88,desc:"庐山走地鸡，瓦罐慢煨4小时"},
-        {id:15,name:"野菌豆腐汤",price:42,desc:"山菌与泉水豆腐同煮"}
+    {cat:"🥐 简餐轻食", items:[
+        {id:12,name:"牛角包三明治",price:38,desc:"现烤牛角包夹火腿芝士，配沙拉",rec:true},
+        {id:13,name:"茶香沙拉",price:35,desc:"庐山云雾茶油醋汁拌时蔬"},
+        {id:14,name:"意式肉酱面",price:42,desc:"意式番茄肉酱面，配帕玛森芝士"},
+        {id:15,name:"酸奶水果碗",price:28,desc:"手工酸奶配时令鲜果和坚果麦片"},
+        {id:16,name:"芝士焗红薯",price:25,desc:"红薯与马苏里拉芝士焗烤"}
     ]},
-    {cat:"🍚 主食面点", items:[
-        {id:16,name:"九江炒粉",price:32,desc:"九江地道炒粉，镬气十足"},
-        {id:17,name:"庐山笋干肉丝面",price:38,desc:"自制面条配笋干肉丝汤底"},
-        {id:18,name:"农家柴火饭",price:22,desc:"土灶柴火煮饭，配时蔬"},
-        {id:19,name:"桂花米糕",price:28,desc:"手打米浆蒸制，桂花点缀"},
-        {id:20,name:"山泉煮粥",price:18,desc:"庐山泉水配新米慢熬"}
+    {cat:"🍰 甜点", items:[
+        {id:17,name:"手工桂花糕",price:28,desc:"手采桂花古法蒸制，软糯香甜",rec:true},
+        {id:18,name:"提拉米苏",price:35,desc:"经典意式提拉米苏，咖啡与奶酪"},
+        {id:19,name:"庐山茶冻",price:22,desc:"云雾茶汤冷凝，清凉消暑"},
+        {id:20,name:"桂花酒酿圆子",price:22,desc:"甜酒酿配手搓圆子，桂花香"}
     ]},
-    {cat:"🍵 茶饮甜品", items:[
-        {id:21,name:"庐山云雾茶（一壶）",price:88,desc:"明前特级云雾茶，配茶点",rec:true},
-        {id:22,name:"手工桂花糕",price:32,desc:"秋季手采桂花，古法蒸制"},
-        {id:23,name:"庐山茶冻",price:28,desc:"云雾茶汤冷凝，清凉消暑"},
-        {id:24,name:"桂花酒酿圆子",price:26,desc:"甜酒酿配手搓糯米圆子"},
-        {id:25,name:"山泉冰粉",price:22,desc:"庐山泉水手搓冰粉，红糖配"}
-    ]},
-    {cat:"🍶 酒水饮料", items:[
-        {id:26,name:"庐山啤酒",price:15,desc:"九江本地精酿"},
-        {id:27,name:"九江陈年封缸酒",price:68,desc:"九江传统黄酒，醇厚甘甜"},
-        {id:28,name:"鲜榨山果汁",price:28,desc:"时令山果鲜榨"},
-        {id:29,name:"山泉柠檬水",price:18,desc:"庐山泉水配鲜柠檬"}
+    {cat:"🥤 饮品", items:[
+        {id:21,name:"鲜榨山果汁",price:28,desc:"时令庐山野果鲜榨，维C满满"},
+        {id:22,name:"山泉柠檬水",price:18,desc:"庐山泉水配鲜柠檬，清新解渴"},
+        {id:23,name:"手工酸奶",price:22,desc:"自制发酵酸奶，浓稠醇厚"},
+        {id:24,name:"气泡水",price:15,desc:"冰镇气泡水，夏日清凉之选"}
     ]}
 ];
 
@@ -175,7 +175,6 @@ function addToCart(id,name,price){
     const ex = cart.find(i=>i.id===id);
     if(ex) ex.qty++; else cart.push({id,name,price,qty:1});
     updateCart();
-    // 加入购物车的小动画
     const fab = document.querySelector('.fab');
     fab.style.transform = 'scale(1.1)';
     setTimeout(()=>fab.style.transform='',200);
@@ -213,7 +212,7 @@ function submitOrder(){
     const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
     const room = document.getElementById('roomNo').value||'未填';
     const rmk = document.getElementById('remark').value||'无';
-    alert(`✅ 下单成功！\n\n📦 ${items}\n💰 合计：¥${total}\n🚪 房间号：${room}\n📝 备注：${rmk}\n\n我们会尽快为您准备～`);
+    alert(`✅ 下单成功！\n\n📦 ${items}\n💰 合计：¥${total}\n🚪 房间号：${room}\n📝 备注：${rmk}\n\n☕ 仅咖啡简餐，支持微信支付\n我们会尽快为您准备并送至房间～`);
     cart=[];updateCart();togglePanel();
 }
 </script>
