@@ -91,9 +91,15 @@ a{color:var(--color-primary);text-decoration:none;transition:color var(--transit
     </div>
 </header>
 
-<section class="page-header"><div class="container"><h1>🛏️ 房型展示</h1><p>6种精品房型 · U型三层小楼 · 山景/云海/竹林</p></div></section>
+<section class="page-header"><div class="container"><h1>🛏️ 房型展示</h1><p>8种精品房型 · U型三层小楼 · 11间客房 · 山景/云海/竹林</p></div></section>
 
-<section class="section-padding"><div class="container"><div class="rooms-list" id="roomsList"></div></div></section>
+<section class="section-padding"><div class="container">
+    <div class="route-tips" style="margin-bottom:1.5rem;background:#fef9e7;border-radius:var(--radius-md);padding:1rem 1.2rem;border-left:4px solid #c9954a">
+        <h4 style="color:#8b6d20;margin-bottom:0.3rem">📋 预订须知</h4>
+        <p style="font-size:0.85rem;color:#6b5510;line-height:1.6">🍳 民宿<strong>不提供早餐</strong>，一楼「三山二水咖啡」供应咖啡简餐<br>🛏️ 所有房型<strong>不可加床</strong>，不提供婴儿床<br>🐾 <strong>宠物友好</strong>：可免费携带猫狗入住（需提前联系）<br>🅿️ 免费私家停车场  |  ⏰ 入住14:00后 · 退房12:00前  |  免押金</p>
+    </div>
+    <div class="rooms-list" id="roomsList"></div>
+</div></section>
 
 <!-- 详情弹窗 -->
 <div class="modal" id="roomModal">
@@ -102,47 +108,56 @@ a{color:var(--color-primary);text-decoration:none;transition:color var(--transit
 </div>
 
 <footer class="footer">
-    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 0792-XXXXXXX  |  携程 4.6分 · 74条评价</p><p class="footer-copy">© 2026 云上·归墅民宿 · 2016年开业 · 庐山大林沟路27号</p></div>
+    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 87条评价</p><p class="footer-copy">© 2026 云上·归墅民宿 · 2016年开业 · 庐山大林沟路27号</p></div>
 </footer>
 
 <script>
 // 房型数据（来自 seed_data.py）
 const rooms = [
-    {id:1,name:"云隐·大床房",room_type:"大床房",price:688,original_price:888,
-     description:"推开窗便是云雾缭绕的山景，1.8米大床配鹅绒被，独立卫浴带观景浴缸，是情侣和独行旅客的静谧之选。",
-     capacity:2,bed_type:"1.8m大床",area:"35㎡",view_type:"山景",
-     amenities:["观景阳台","地暖","智能马桶","观景浴缸","鹅绒床品","茶具套装","高速WiFi","迷你吧"],
-     images:["https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800"], // placeholder
+    {id:1,name:"特惠单人间",room_type:"单人间",price:388,original_price:488,
+     description:"紧凑温馨的单人空间，1.5米双人床，独立卫浴。小而精致，独行旅客的实惠之选。",
+     capacity:1,bed_type:"1.5m双人床",area:"15m²",view_type:"山景",
+     amenities:["观景窗","地暖","智能马桶","茶具套装","高速WiFi","迷你吧"],
      gradient:"linear-gradient(135deg, #8b7355, #b8a088)"},
-    {id:2,name:"云栖·双床房",room_type:"双床房",price:588,original_price:788,
-     description:"两张1.5米舒适床铺，适合闺蜜出游或亲子同行。房间宽敞明亮，配有儿童用品和亲子设施。",
-     capacity:2,bed_type:"1.5m双床",area:"40㎡",view_type:"山景",
-     amenities:["观景窗","地暖","儿童用品","书桌","茶具套装","高速WiFi","迷你吧"],
+    {id:2,name:"特惠标准间",room_type:"双床房",price:388,original_price:488,
+     description:"两张1.2米单人床，紧凑实用。适合闺蜜出游或预算有限的结伴旅客。",
+     capacity:2,bed_type:"2×1.2m单人床",area:"15m²",view_type:"山景",
+     amenities:["观景窗","地暖","书桌","茶具套装","高速WiFi"],
      gradient:"linear-gradient(135deg, #5b7b6f, #88a898)"},
-    {id:3,name:"云梦·亲子套房",room_type:"套房",price:988,original_price:1288,
-     description:"独立客厅+卧室的套房格局，儿童主题装饰，配有儿童床、玩具角和小帐篷，全家出行的温馨之选。",
-     capacity:4,bed_type:"1.8m大床 + 1.2m儿童床",area:"60㎡",view_type:"云海",
-     amenities:["独立客厅","观景阳台","地暖","儿童乐园角","智能马桶","浴缸","茶具套装","高速WiFi","迷你吧"],
-     gradient:"linear-gradient(135deg, #6b8aaa, #9ab8cc)"},
-    {id:4,name:"云顶·观景套房",room_type:"套房",price:1288,original_price:1688,
-     description:"位于顶层，270°全景落地窗，躺在床上即可看日出云海。独立起居室+茶室，配高端茶具和香道用品。",
-     capacity:2,bed_type:"2.0m帝王大床",area:"75㎡",view_type:"云海",
-     amenities:["270°全景窗","独立茶室","观景阳台","地暖","香道用品","高端茶具","智能马桶","双人浴缸","高速WiFi","迷你吧"],
-     gradient:"linear-gradient(135deg, #4a6b8a, #7a9bb8)"},
-    {id:5,name:"竹韵·庭院房",room_type:"大床房",price:788,original_price:988,
-     description:"自带私密竹院，在竹林掩映中品茶读书。日式简约设计，榻榻米茶座，感受庐山的禅意时光。",
-     capacity:2,bed_type:"1.8m大床",area:"42㎡",view_type:"竹林",
-     amenities:["私密竹院","榻榻米茶座","地暖","日式浴缸","茶具套装","香薰机","高速WiFi","迷你吧"],
+    {id:3,name:"知还标准间",room_type:"双床房",price:488,original_price:588,
+     description:"「云无心以出岫，鸟倦飞而知还」——以民宿命名出处的诗句命名。20m²宽敞双床房，两张1.2米单人床。",
+     capacity:2,bed_type:"2×1.2m单人床",area:"20m²",view_type:"山景",
+     amenities:["观景窗","地暖","书桌","茶具套装","高速WiFi","迷你吧"],
      gradient:"linear-gradient(135deg, #6b8f71, #8aaa8e)"},
-    {id:6,name:"归心·豪华家庭套房",room_type:"套房",price:1588,original_price:2088,
-     description:"两室两厅超大空间，主卧配观景阳台，次卧为双床儿童房。客厅有投影影院和壁炉，三代同堂的理想居所。",
-     capacity:6,bed_type:"1.8m大床 + 1.5m双床",area:"95㎡",view_type:"山景",
-     amenities:["两室两厅","观景阳台","投影影院","壁炉","地暖","儿童房","双卫","浴缸","厨房","高速WiFi"],
-     gradient:"linear-gradient(135deg, #7a5a3a, #a08060)"}
+    {id:4,name:"山野大床房",room_type:"大床房",price:588,original_price:688,
+     description:"1.8米大床房，推窗见山。简约自然的原木风格，是情侣和独行旅客的热门之选。",
+     capacity:2,bed_type:"1.8m大床",area:"20m²",view_type:"山景",
+     amenities:["观景窗","地暖","智能马桶","鹅绒床品","茶具套装","高速WiFi"],
+     gradient:"linear-gradient(135deg, #6b8aaa, #9ab8cc)"},
+    {id:5,name:"清舍·露台大床房",room_type:"大床房",price:788,original_price:888,
+     description:"自带独立露台，坐看云起云落。35m²宽敞空间，1.8米大床，是民宿最受欢迎的房型之一。",
+     capacity:2,bed_type:"1.8m大床",area:"35m²",view_type:"山景/露台",
+     amenities:["独立露台","观景阳台","地暖","智能马桶","鹅绒床品","茶具套装","高速WiFi","迷你吧"],
+     gradient:"linear-gradient(135deg, #4a6b8a, #7a9bb8)"},
+    {id:6,name:"山景·精致大床房",room_type:"大床房",price:688,original_price:788,
+     description:"30m²精致山景房，1.8米大床配全景窗。精心布置的简约现代风格，推窗即漫山青翠。",
+     capacity:2,bed_type:"1.8m大床",area:"30m²",view_type:"山景",
+     amenities:["全景窗","地暖","智能马桶","鹅绒床品","茶具套装","高速WiFi","迷你吧"],
+     gradient:"linear-gradient(135deg, #5b7b6f, #7a9a8e)"},
+    {id:7,name:"室雅茶香套房",room_type:"套房",price:988,original_price:1188,
+     description:"30m²套房格局，1.8米大床+1.5米双人床。独立茶室区域，配高端茶具，品庐山云雾茶，闻茶香入眠。",
+     capacity:4,bed_type:"1.8m大床 + 1.5m双人床",area:"30m²",view_type:"山景",
+     amenities:["独立茶室","观景阳台","地暖","智能马桶","浴缸","高端茶具","高速WiFi","迷你吧"],
+     gradient:"linear-gradient(135deg, #7a5a3a, #a08060)"},
+    {id:8,name:"田园家庭房",room_type:"家庭房",price:788,original_price:888,
+     description:"1.8米大床+1.2米单人床，20m²温馨家庭空间。适合三口之家出行，简约舒适的田园风格。",
+     capacity:3,bed_type:"1.8m大床 + 1.2m单人床",area:"20m²",view_type:"山景",
+     amenities:["观景窗","地暖","书桌","茶具套装","高速WiFi","迷你吧"],
+     gradient:"linear-gradient(135deg, #c9954a, #dab880)"}
 ];
 
 // 渲染房间列表
-const viewIcons = {"山景":"🏔️","云海":"☁️","竹林":"🎋"};
+const viewIcons = {"山景":"🏔️","云海":"☁️","竹林":"🎋","山景/露台":"🏔️🌿"};
 const list = document.getElementById('roomsList');
 rooms.forEach(r => {
     const card = document.createElement('div');
@@ -183,7 +198,7 @@ function showDetail(r) {
         <div class="modal-desc"><strong>📝 房间介绍</strong><br>${r.description}</div>
         <div class="modal-amenities"><strong style="width:100%;margin-bottom:0.3rem">✨ 房间设施</strong>${r.amenities.map(a=>`<span class="amenity-tag">${a}</span>`).join('')}</div>
         <div class="modal-actions">
-            <button class="btn btn-primary btn-block btn-large" onclick="alert('📞 请拨打前台电话预订：0792-XXXXXXX\n\n🏨 或通过携程/美团/飞猪/大众点评搜索「云上归墅」在线预订～')">📞 致电前台预订</button>
+            <button class="btn btn-primary btn-block btn-large" onclick="alert('📞 请拨打前台电话预订：16607927666\n\n🏨 或通过携程/美团/飞猪/大众点评搜索「云上归墅」在线预订～')">📞 致电前台预订</button>
             <button class="btn btn-outline btn-block" onclick="alert('请通过以下平台搜索「云上归墅」预订：\n\n🏨 携程旅行\n🏠 美团民宿\n✈️ 飞猪旅行\n⭐ 大众点评\n\n预订确认后即可解锁AI管家～')">🔗 平台预订链接</button>
             <button class="btn btn-outline btn-block" onclick="closeModal()">← 返回列表</button>
         </div>`;

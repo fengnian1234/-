@@ -69,7 +69,7 @@ a{color:var(--color-primary);text-decoration:none}
     <div class="emergency-contact">
         <h3>📞 紧急联系</h3>
         <p>如需紧急帮助，请直接拨打前台电话</p>
-        <a href="tel:0792-XXXXXXX" class="btn btn-primary btn-large">☎️ 拨打前台</a>
+        <a href="tel:16607927666" class="btn btn-primary btn-large">☎️ 拨打前台</a>
     </div>
 </div></section>
 
@@ -85,7 +85,7 @@ a{color:var(--color-primary);text-decoration:none}
 </div>
 
 <footer class="footer">
-    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 0792-XXXXXXX  |  携程 4.6分 · 74条  |  2016年开业</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
+    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 87条  |  2016年开业</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
 </footer>
 
 <script>
@@ -94,7 +94,6 @@ const services = [
         {name:"续住办理",desc:"延长入住时间，无需换房",icon:"🔑",time:"即刻办理"},
         {name:"房间打扫",desc:"全面清洁房间，更换床品毛巾",icon:"🧹",time:"约30分钟"},
         {name:"补充用品",desc:"补充洗漱用品、茶包、矿泉水等",icon:"🧴",time:"约10分钟"},
-        {name:"加床服务",desc:"增加一张单人床及配套床品",icon:"🛏️",time:"约20分钟"},
         {name:"送餐到房",desc:"将餐点送至您的房间",icon:"🍽️",time:"约30分钟"},
         {name:"衣物送洗",desc:"洗衣、烘干、熨烫服务",icon:"👔",time:"次日取"}
     ]},
@@ -132,7 +131,7 @@ services.forEach(group => {
 
 function requestService(name,desc,time,icon){
     document.getElementById('svcTitle').textContent = icon + ' ' + name;
-    document.getElementById('svcMsg').textContent = `📝 ${desc}\n⏱️ 预计处理时间：${time}\n\n✅ 已通知工作人员，请稍候～\n🛎️ 员工看板已实时收到提醒\n\n如有紧急需求，请拨打前台电话 ☎️`;
+    document.getElementById('svcMsg').textContent = `📝 ${desc}\n⏱️ 预计处理时间：${time}\n\n✅ 已通知工作人员，请稍候～\n\n如有紧急需求，请拨打前台电话 ☎️`;
     document.getElementById('svcModal').classList.add('show');
 }
 function closeModal(){document.getElementById('svcModal').classList.remove('show')}
