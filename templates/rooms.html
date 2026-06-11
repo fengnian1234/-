@@ -5,12 +5,19 @@
 <section class="page-header">
     <div class="container">
         <h1>🛏️ 房型展示</h1>
-        <p>每间房都是一处独一无二的风景</p>
+        <p>8种精品房型 · U型三层小楼 · 11间客房 · 山景/云海/露台</p>
     </div>
 </section>
 
 <section class="section-padding">
     <div class="container">
+        <div class="notice-card" style="background:#fef9e7;border-radius:10px;padding:1rem 1.2rem;border-left:4px solid #c9954a;margin-bottom:1.5rem;font-size:0.85rem;line-height:1.6">
+            <strong>📋 预订须知</strong><br>
+            🍳 民宿<strong>不提供早餐</strong>，一楼「三山二水咖啡」供应咖啡简餐<br>
+            🛏️ 所有房型<strong>不可加床</strong>，不提供婴儿床<br>
+            🐾 <strong>宠物友好</strong>：可免费携带猫狗入住（需提前联系）<br>
+            🅿️ 免费私家停车场  |  ⏰ 入住14:00后 · 退房12:00前  |  免押金
+        </div>
         {% if rooms %}
         <div class="rooms-list">
             {% for room in rooms %}
@@ -31,6 +38,7 @@
                         {% if room.view_type == "山景" %}🏔️ 山景
                         {% elif room.view_type == "云海" %}☁️ 云海
                         {% elif room.view_type == "竹林" %}🎋 竹林
+                        {% elif room.view_type == "山景/露台" %}🏔️🌿 山景/露台
                         {% else %}🏡 {{ room.view_type }}
                         {% endif %}
                     </div>

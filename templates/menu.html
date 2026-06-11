@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}山间美餐 - 云上归墅{% endblock %}
+{% block title %}咖啡简餐 - 云上归墅{% endblock %}
 
 {% block content %}
 <section class="page-header">
     <div class="container">
-        <h1>🍜 山间美餐</h1>
-        <p>庐山本味，山泉煮就，云雾入馔</p>
+        <h1>☕ 咖啡简餐</h1>
+        <p>「三山二水咖啡」· 精品咖啡与简餐轻食 · 本民宿不提供正餐</p>
     </div>
 </section>
 
@@ -14,11 +14,11 @@
         {% if categories %}
         <div class="menu-container">
             {% for cat in categories %}
-            {% if cat.items and cat.items|length > 0 %}
+            {% if cat['items'] and cat['items']|length > 0 %}
             <div class="menu-category" id="cat-{{ cat.id }}">
                 <h2 class="menu-cat-title">{{ cat.icon }} {{ cat.name }}</h2>
                 <div class="menu-items">
-                    {% for item in cat.items %}
+                    {% for item in cat['items'] %}
                     <div class="menu-item {% if item.is_recommended %}recommended{% endif %}">
                         <div class="menu-item-info">
                             <div class="menu-item-header">
