@@ -25,7 +25,7 @@ if __name__ == "__main__":
     print("\n✨ 服务启动中...")
     print(f"   📱 H5页面: http://127.0.0.1:5000")
     print(f"   🏠 房型展示: http://127.0.0.1:5000/rooms")
-    print(f"   🍜 在线点餐: http://127.0.0.1:5000/menu")
+    print(f"   ☕ 咖啡简餐: http://127.0.0.1:5000/menu")
     print(f"   🗺️ 游玩攻略: http://127.0.0.1:5000/travel")
     print(f"   🛎️ 快捷服务: http://127.0.0.1:5000/services")
     print(f"   📍 位置导航: http://127.0.0.1:5000/map")

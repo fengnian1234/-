@@ -10,7 +10,7 @@ load_dotenv()
 # ── 基础配置 ─────────────────────────────────────────────
 BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:5000")
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"
-SECRET_KEY = os.getenv("SECRET_KEY", "yunshang-guishu-secret-2024")
+SECRET_KEY = os.getenv("SECRET_KEY", "yunshang-guishu-secret-2026")
 
 # ── 微信配置 ─────────────────────────────────────────────
 WECHAT_TOKEN = os.getenv("WECHAT_TOKEN", "your_wechat_token_here")
@@ -34,7 +34,7 @@ AI_REQUIRES_BOOKING = True
 BNB_NAME = "云上·归墅民宿"
 BNB_SHORT_NAME = "云上归墅"
 BNB_ADDRESS = "庐山山上·庐山风景名胜区大林沟路27号"
-BNB_PHONE = "0792-XXXXXXX"
+BNB_PHONE = "16607927666"
 BNB_LATITUDE = 29.5568
 BNB_LONGITUDE = 115.9797
 
