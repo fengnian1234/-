@@ -441,13 +441,14 @@ def points_page():
 @app.route("/api/points/<openid>")
 def api_get_points(openid: str):
     """获取用户积分概览"""
-    from services.points import get_guest, get_logs, get_redeem_items, get_earn_rules
+    from services.points import get_guest, get_logs, get_redeem_items, get_earn_rules, get_membership_info
     guest = get_guest(openid)
     return jsonify({
         "guest": guest,
         "logs": get_logs(openid, 10) if guest else [],
         "redeem_items": get_redeem_items(),
         "earn_rules": get_earn_rules(),
+        "membership_info": get_membership_info(),
     })
 
 @app.route("/api/points/earn", methods=["POST"])

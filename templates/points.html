@@ -23,6 +23,20 @@
         <h3 style="margin-bottom:0.8rem;color:var(--color-primary-dark)">💡 如何获取积分</h3>
         <div id="earnRules" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-bottom:1.5rem"></div>
 
+        <!-- 会员等级 -->
+        <div id="membershipBar" style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:0.9rem 1rem;margin-bottom:1.5rem;display:none">
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:0.4rem;font-size:0.78rem;color:var(--color-text-lighter)">
+                <span>🥈 银卡</span><span>🥇 金卡</span><span>💎 钻石卡</span>
+            </div>
+            <div id="tierProgressBg" style="height:4px;background:var(--color-bg-light);border-radius:2px;position:relative;overflow:hidden">
+                <div id="tierProgressFill" style="height:100%;background:var(--color-accent);border-radius:2px;transition:width 0.6s ease;width:0%"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:var(--color-text-lighter);margin-top:0.3rem">
+                <span>0</span><span>3,000 分</span><span>8,000 分</span>
+            </div>
+            <div id="tierTip" style="text-align:center;font-size:0.72rem;color:var(--color-text-lighter);margin-top:0.4rem"></div>
+        </div>
+
         <!-- 兑换商城 -->
         <h3 style="margin-bottom:0.8rem;color:var(--color-primary-dark)">🎁 兑换商城</h3>
         <div id="redeemItems" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem;margin-bottom:1.5rem"></div>
@@ -36,7 +50,15 @@
 
 {% block extra_scripts %}
 <script>
-const OPENID = "web_user"; // H5演示用，实际从微信获取
+function getGuestId() {
+    let id = localStorage.getItem('guest_id');
+    if (!id) {
+        id = 'guest_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8);
+        localStorage.setItem('guest_id', id);
+    }
+    return id;
+}
+const OPENID = getGuestId(); // 基于 localStorage 的访客标识，实际微信部署时替换为 wx.openid
 let guestData = null;
 
 async function loadPoints() {
@@ -66,6 +88,27 @@ function renderAll(data) {
             <div style="color:var(--color-text-lighter);font-size:0.75rem;margin-top:0.2rem">${r.unit}</div>
         </div>
     `).join('');
+
+    // 会员等级进度
+    var bar = document.getElementById('membershipBar');
+    if (data.guest && data.membership_info) {
+        bar.style.display = 'block';
+        var totalEarned = data.guest.total_earned || 0;
+        var tiers = data.membership_info;
+        var goldMin = tiers.gold ? tiers.gold.min_points : 3000;
+        var diamondMin = tiers.diamond ? tiers.diamond.min_points : 8000;
+        var pct = totalEarned >= diamondMin ? 100 : totalEarned >= goldMin ? 50 + (totalEarned-goldMin)/(diamondMin-goldMin)*50 : (totalEarned/goldMin)*50;
+        document.getElementById('tierProgressFill').style.width = Math.min(100, pct) + '%';
+        var tip;
+        if (totalEarned >= diamondMin) {
+            tip = '🎉 已达最高等级钻石卡，享9折+免费升级+专属管家';
+        } else if (totalEarned >= goldMin) {
+            tip = '距💎钻石卡还差 ' + (diamondMin - totalEarned).toLocaleString() + ' 分 · 当前享92折+免费延迟退房';
+        } else {
+            tip = '距🥇金卡还差 ' + (goldMin - totalEarned).toLocaleString() + ' 分 · 当前享95折';
+        }
+        document.getElementById('tierTip').textContent = tip;
+    }
 
     // 兑换商品
     document.getElementById('redeemItems').innerHTML = data.redeem_items.map(item => `

@@ -161,6 +161,6 @@ def get_earn_rules() -> list:
     return [{"key": k, **v} for k, v in EARN_RULES.items()]
 
 
-def get_membership_info() -> list:
-    """获取会员等级信息"""
-    return [{"key": k, **v} for k, v in MEMBERSHIP_TIERS.items()]
+def get_membership_info() -> dict:
+    """获取会员等级信息（dict格式，方便前端按key访问）"""
+    return {k: {"key": k, **v} for k, v in MEMBERSHIP_TIERS.items()}
