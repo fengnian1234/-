@@ -17,6 +17,30 @@ from seed_data import seed_all
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
+# ── 简易限流（内存，单进程） ──────────────────────────────
+_rate_limit_store = {}
+
+def rate_limit(key: str, max_req: int = 10, window: int = 60) -> bool:
+    """简单的滑动窗口限流。返回 True 表示未超限。"""
+    now = time.time()
+    if key not in _rate_limit_store:
+        _rate_limit_store[key] = []
+    _rate_limit_store[key] = [t for t in _rate_limit_store[key] if now - t < window]
+    if len(_rate_limit_store[key]) >= max_req:
+        return False
+    _rate_limit_store[key].append(now)
+    return True
+
+
+# ── 错误页面 ─────────────────────────────────────────────
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def server_error(e):
+    return render_template('500.html'), 500
+
 
 # ── 应用初始化 ───────────────────────────────────────────
 def init_app():
@@ -111,7 +135,8 @@ def _handle_wechat_post():
 # ══════════════════════════════════════════════════════════
 @app.route("/")
 def index():
-    return render_template("index.html")
+    from services.rooms import get_featured_rooms
+    return render_template("index.html", featured_rooms=get_featured_rooms(4))
 
 @app.route("/rooms")
 def rooms_page():
@@ -141,6 +166,13 @@ def travel_detail(route_id: int):
     route = get_route_by_id(route_id)
     if not route: abort(404)
     return render_template("travel_detail.html", route=route)
+
+@app.route("/travel/food/<int:food_id>")
+def food_detail(food_id: int):
+    from services.travel import get_food_by_id
+    food = get_food_by_id(food_id)
+    if not food: abort(404)
+    return render_template("food_detail.html", food=food)
 
 @app.route("/services")
 def services_page():
@@ -227,7 +259,18 @@ def api_confirm_booking():
         check_out=data["check_out"],
         room_type=data.get("room_type", ""),
     )
-    return jsonify({"success": True, "booking": booking.to_dict()})
+    # 生成到店前关怀消息（Phase 3 通过微信客服消息发送）
+    from services.ai import generate_pre_arrival_message
+    pre_arrival_msg = generate_pre_arrival_message(
+        guest_name=data["guest_name"],
+        check_in_date=data["check_in"],
+        room_name=data.get("room_type", ""),
+    )
+    return jsonify({
+        "success": True,
+        "booking": booking.to_dict(),
+        "pre_arrival_message": pre_arrival_msg,
+    })
 
 @app.route("/api/booking/<int:booking_id>/checkin", methods=["POST"])
 def api_check_in(booking_id: int):
@@ -246,10 +289,17 @@ def api_check_out(booking_id: int):
     booking = check_out_booking(booking_id)
     if not booking:
         return jsonify({"success": False, "message": "预订不存在"}), 404
+    # 生成离店后关怀消息（Phase 3 通过微信客服消息发送）
+    from services.ai import generate_post_stay_message
+    post_stay_msg = generate_post_stay_message(
+        guest_name=booking.guest_name or "",
+        room_name=booking.room_type or "",
+    )
     return jsonify({
         "success": True,
         "message": f"退房成功，将在30分钟后推送好评提醒",
         "booking": booking.to_dict(),
+        "post_stay_message": post_stay_msg,
     })
 
 @app.route("/api/booking/check-ai", methods=["POST"])
@@ -304,6 +354,9 @@ def api_create_order():
 
     if not items:
         return jsonify({"success": False, "message": "请选择菜品"}), 400
+    # 限流：同一用户每分钟最多10次
+    if not rate_limit(f"order:{openid}", max_req=10, window=60):
+        return jsonify({"success": False, "message": "下单太频繁，请稍后再试"}), 429
 
     from services.menu import create_order
     order = create_order(openid, items, room_number, remark)
@@ -400,20 +453,32 @@ def api_get_points(openid: str):
 @app.route("/api/points/earn", methods=["POST"])
 def api_earn_points():
     """获取积分（签到/评价/分享等）"""
-    from services.points import earn_points
+    from services.points import earn_points, EARN_RULES
     data = request.get_json()
     if not data or "openid" not in data or "action" not in data:
         return jsonify({"success": False, "message": "缺少openid或action"}), 400
+    # 校验 action 合法性
+    if data["action"] not in EARN_RULES:
+        return jsonify({"success": False, "message": f"无效的action: {data['action']}"}), 400
+    # 限流：同一用户每分钟最多5次
+    if not rate_limit(f"earn:{data['openid']}", max_req=5, window=60):
+        return jsonify({"success": False, "message": "操作太频繁，请稍后再试"}), 429
     result = earn_points(data["openid"], data["action"], data.get("amount"), data.get("description", ""))
     return jsonify(result)
 
 @app.route("/api/points/redeem", methods=["POST"])
 def api_redeem():
     """兑换商品"""
-    from services.points import redeem
+    from services.points import redeem, REDEEM_ITEMS
     data = request.get_json()
     if not data or "openid" not in data or "item" not in data:
         return jsonify({"success": False, "message": "缺少openid或item"}), 400
+    # 校验 item 合法性
+    if data["item"] not in REDEEM_ITEMS:
+        return jsonify({"success": False, "message": f"无效的兑换项: {data['item']}"}), 400
+    # 限流：同一用户每分钟最多5次
+    if not rate_limit(f"redeem:{data['openid']}", max_req=5, window=60):
+        return jsonify({"success": False, "message": "操作太频繁，请稍后再试"}), 429
     result = redeem(data["openid"], data["item"], data.get("description", ""))
     return jsonify(result)
 
@@ -476,6 +541,26 @@ def api_generate_weekly_report():
         return jsonify(result)
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+# ══════════════════════════════════════════════════════════
+#  快捷服务 H5 请求
+# ══════════════════════════════════════════════════════════
+@app.route("/api/service/request", methods=["POST"])
+def api_create_service_request():
+    """H5页面创建服务请求（通知员工看板）"""
+    from services.notify import create_service_request
+    data = request.get_json()
+    if not data or "service_name" not in data:
+        return jsonify({"success": False, "message": "缺少service_name"}), 400
+    req = create_service_request(
+        openid=data.get("openid", "web_user"),
+        service_name=data["service_name"],
+        room_number=data.get("room_number", ""),
+        urgency=data.get("urgency", "normal"),
+        notes=data.get("notes", ""),
+    )
+    return jsonify({"success": True, "request": req.to_dict()})
 
 
 # ══════════════════════════════════════════════════════════

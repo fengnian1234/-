@@ -1,60 +1,64 @@
 /* ═══════════════════════════════════════════════════════
    云上归墅 - 主样式表
-   设计理念：简洁 · 干净 · 典雅
-   色调：墨色山水的现代演绎
+   设计理念：清新 · 自然 · 山水
+   色调：晨雾 · 竹青 · 山岚 · 暖木
    ═══════════════════════════════════════════════════════ */
 
 /* ── CSS 变量 ─────────────────────────────────────────── */
 :root {
-    --color-primary: #3d5347;      /* 墨绿 */
-    --color-primary-light: #5b7b6f;
-    --color-primary-dark: #2a3d33;
-    --color-accent: #8b7355;       /* 暖棕 */
-    --color-accent-light: #a0896e;
-    --color-bg: #f7f4ed;           /* 宣纸色 */
-    --color-bg-light: #f0ece4;
-    --color-bg-dark: #e6e1d6;
-    --color-text: #2a2722;         /* 浓墨 */
-    --color-text-light: #6e6a60;   /* 淡墨 */
-    --color-text-lighter: #9e9a90;
-    --color-white: #fffefb;        /* 宣纸白 */
-    --color-border: #d8d3c8;
-    --color-shadow: rgba(0, 0, 0, 0.04);
-    --color-shadow-hover: rgba(0, 0, 0, 0.07);
+    --color-primary: #4a7c59;        /* 竹青 — 雨后新竹 */
+    --color-primary-light: #6b9b7e;  /* 嫩绿 — 春山新叶 */
+    --color-primary-dark: #3b5e47;   /* 深林 — 远山含黛 */
+    --color-accent: #c8966a;         /* 暖木 — 山间木屋 */
+    --color-accent-light: #dbb88a;   /* 浅木 — 午后暖阳 */
+    --color-sky: #8eb8c9;            /* 山岚 — 远山天光 */
+    --color-mist: #d4e5d8;           /* 晨雾 — 山谷薄雾 */
+    --color-bg: #f5f9f4;             /* 晨雾白 — 带一丝山间绿意 */
+    --color-bg-light: #edf4ea;       /* 云白 — 飘浮的云 */
+    --color-bg-dark: #dce8d8;        /* 雾影 — 云层下的暗部 */
+    --color-text: #2a3328;           /* 深黛 — 远山的颜色 */
+    --color-text-light: #5a6558;     /* 青灰 — 山石的质感 */
+    --color-text-lighter: #8a9586;   /* 薄雾 — 远处的山 */
+    --color-white: #fffefb;          /* 云尖白 */
+    --color-border: #d8e0d4;         /* 雾边 */
+    --color-shadow: rgba(74, 100, 58, 0.06);
+    --color-shadow-hover: rgba(74, 100, 58, 0.12);
     --color-success: #5b8c5a;
     --color-warning: #c9954a;
     --color-danger: #c4554a;
     --radius-sm: 8px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 12px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 18px;
     --font-serif: "Noto Serif SC", "STSong", "SimSun", "Songti SC", "KaiTi", serif;
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
                  "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
-    --shadow-sm: 0 1px 3px var(--color-shadow);
-    --shadow-md: 0 4px 12px var(--color-shadow);
-    --shadow-lg: 0 8px 24px var(--color-shadow-hover);
-    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-sm: 0 2px 8px var(--color-shadow);
+    --shadow-md: 0 6px 20px var(--color-shadow-hover);
+    --shadow-lg: 0 12px 32px var(--color-shadow-hover);
+    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --max-width: 720px;
 }
 
 /* ── 深色模式变量 ─────────────────────────────────────── */
 [data-theme="dark"] {
-    --color-primary: #6b9b7e;
-    --color-primary-light: #557a64;
+    --color-primary: #6baf7e;
+    --color-primary-light: #558a64;
     --color-primary-dark: #3d5c48;
-    --color-accent: #b89060;
-    --color-accent-light: #c8a478;
-    --color-bg: #1a1c1a;
-    --color-bg-light: #202320;
-    --color-bg-dark: #262926;
-    --color-text: #dad5ca;
-    --color-text-light: #9a9588;
-    --color-text-lighter: #6a6560;
-    --color-white: #232521;
-    --color-border: #363830;
+    --color-accent: #c89b6a;
+    --color-accent-light: #dab080;
+    --color-sky: #6a95a8;
+    --color-mist: #2a3a2e;
+    --color-bg: #1a1f1b;
+    --color-bg-light: #1f2620;
+    --color-bg-dark: #252e26;
+    --color-text: #d8dfd4;
+    --color-text-light: #a0a898;
+    --color-text-lighter: #6a7268;
+    --color-white: #222722;
+    --color-border: #2e382f;
     --color-shadow: rgba(0, 0, 0, 0.35);
-    --color-shadow-hover: rgba(0, 0, 0, 0.55);
+    --color-shadow-hover: rgba(0, 0, 0, 0.50);
     --color-success: #5c9c5a;
     --color-warning: #d0a050;
     --color-danger: #cc6050;
@@ -112,9 +116,9 @@ body {
     transform: scale(0.98);
 }
 
-/* 卡片 hover 微缩放 */
+/* 卡片 hover — 轻盈上浮 */
 .room-card:hover, .route-card:hover, .food-card:hover {
-    transform: scale(1.005);
+    transform: translateY(-2px);
 }
 
 a {
@@ -191,16 +195,17 @@ h4 { font-size: 1.05rem; }
 
 /* ── 头部导航 ─────────────────────────────────────────── */
 .header {
-    background: var(--color-white);
+    background: rgba(245, 249, 244, 0.9);
     border-bottom: 1px solid var(--color-border);
     position: sticky;
     top: 0;
     z-index: 100;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 [data-theme="dark"] .header {
-    background: rgba(37, 41, 39, 0.92);
+    background: rgba(26, 31, 27, 0.94);
 }
 
 .header-inner {
@@ -283,35 +288,67 @@ h4 { font-size: 1.05rem; }
     background: var(--color-bg-light);
 }
 
-/* ── 页头 ─────────────────────────────────────────────── */
+/* ── 页头 — 山间晨雾渐变 ─────────────────────────────── */
 .page-header {
-    background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
-    color: var(--color-white);
-    padding: 2.5rem 1rem;
+    background: linear-gradient(170deg, #a8d0e0 0%, #8eb8c9 20%, #7aab8e 60%, #4a7c59 100%);
+    color: #fff;
+    padding: 3rem 1rem 2.5rem;
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
+/* 山顶云雾光晕 */
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -30px; left: -20%; right: -20%; height: 80px;
+    background: radial-gradient(ellipse at 30% 100%, rgba(255,255,255,0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 100%, rgba(255,255,255,0.2) 0%, transparent 55%);
+    pointer-events: none;
+}
+/* 底部山形波浪线 */
+.page-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0; height: 24px;
+    background: var(--color-bg);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0,20 C150,38 350,2 500,18 C650,34 850,6 1000,22 C1100,32 1180,10 1200,14 L1200,40 L0,40 Z' fill='white'/%3E%3C/svg%3E");
+    mask-size: 100% 100%; mask-repeat: no-repeat;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0,20 C150,38 350,2 500,18 C650,34 850,6 1000,22 C1100,32 1180,10 1200,14 L1200,40 L0,40 Z' fill='white'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%; -webkit-mask-repeat: no-repeat;
+}
+[data-theme="dark"] .page-header {
+    background: linear-gradient(170deg, #4a6868 0%, #3d5c48 40%, #2a3a28 100%);
+}
+[data-theme="dark"] .page-header::after { opacity: 0.25; }
 
 .page-header h1 {
-    color: var(--color-white);
-    margin-bottom: 0.3rem;
+    color: #fff;
+    margin-bottom: 0.4rem;
+    font-size: 1.7rem;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 1;
 }
 
 .page-header p {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.85);
     font-size: 0.95rem;
+    position: relative;
+    z-index: 1;
 }
 
-/* ── 首页 Hero ────────────────────────────────────────── */
+/* ── 首页 Hero — 山间晨雾渐变 ─────────────────────────── */
 .hero {
     height: 65vh;
     min-height: 360px;
     max-height: 560px;
     background:
-        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(61,83,71,0.9) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 70% at 20% 70%, rgba(91,123,111,0.6) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(139,115,85,0.4) 0%, transparent 50%),
-        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(196,185,154,0.3) 0%, transparent 55%),
-        linear-gradient(175deg, #2a3d33 0%, #3d5347 40%, #5b6b60 100%);
+        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(142,184,201,0.7) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 70% at 20% 70%, rgba(122,171,142,0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(200,150,106,0.35) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(180,210,190,0.4) 0%, transparent 55%),
+        linear-gradient(175deg, #3b5e47 0%, #4a7c59 40%, #6b9b7e 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -320,14 +357,14 @@ h4 { font-size: 1.05rem; }
     overflow: hidden;
 }
 
-/* 水墨光泽 */
+/* 云雾光泽 */
 .hero::before {
     content: '';
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(ellipse at 70% 10%, rgba(255,255,255,0.05) 0%, transparent 50%),
-        radial-gradient(circle at 30% 60%, rgba(255,255,255,0.03) 0%, transparent 40%);
+        radial-gradient(ellipse at 70% 10%, rgba(255,255,255,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 30% 60%, rgba(255,255,255,0.05) 0%, transparent 40%);
     z-index: 1;
 }
 
@@ -374,11 +411,11 @@ h4 { font-size: 1.05rem; }
 
 [data-theme="dark"] .hero {
     background:
-        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(30,42,35,0.9) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 70% at 20% 70%, rgba(40,55,45,0.6) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(60,45,30,0.4) 0%, transparent 50%),
-        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(80,70,50,0.3) 0%, transparent 55%),
-        linear-gradient(175deg, #141a16 0%, #1a241e 40%, #242e26 100%);
+        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(42,56,45,0.9) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 70% at 20% 70%, rgba(35,50,40,0.6) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(55,40,28,0.4) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(65,55,40,0.3) 0%, transparent 55%),
+        linear-gradient(175deg, #141a15 0%, #1a241e 40%, #242e26 100%);
 }
 [data-theme="dark"] .hero::after {
     background: var(--color-bg);
@@ -493,7 +530,7 @@ h4 { font-size: 1.05rem; }
 /* ── 精选房型预览 ─────────────────────────────────────── */
 .rooms-preview {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 0.8rem;
     margin-bottom: 1.5rem;
 }
@@ -514,25 +551,31 @@ h4 { font-size: 1.05rem; }
     font-size: 2.5rem;
 }
 
-/* 房型预览占位渐变 */
+/* 房型预览占位渐变 — 清新山水系 */
 .room-preview-gradient-sky {
-    background: linear-gradient(135deg, #4a6b8a, #7a9bb8);
+    background: linear-gradient(160deg, #8eb8c9, #b8d8e4);
 }
 .room-preview-gradient-forest {
-    background: linear-gradient(135deg, #5b7b6f, #7a9a8e);
+    background: linear-gradient(160deg, #7aab8e, #a8d0b8);
 }
 .room-preview-gradient-earth {
-    background: linear-gradient(135deg, #7a5a3a, #a08060);
+    background: linear-gradient(160deg, #b8946a, #d4b88a);
+}
+.room-preview-gradient-mountain {
+    background: linear-gradient(160deg, #c49b6e, #e0c8a8);
 }
 
 [data-theme="dark"] .room-preview-gradient-sky {
-    background: linear-gradient(135deg, #2a3d4a, #3d5560);
+    background: linear-gradient(160deg, #2a4048, #3d5560);
 }
 [data-theme="dark"] .room-preview-gradient-forest {
-    background: linear-gradient(135deg, #2a3d30, #3d5545);
+    background: linear-gradient(160deg, #2a4a38, #3d6048);
 }
 [data-theme="dark"] .room-preview-gradient-earth {
-    background: linear-gradient(135deg, #3d2a1a, #554030);
+    background: linear-gradient(160deg, #4a3820, #5c4830);
+}
+[data-theme="dark"] .room-preview-gradient-mountain {
+    background: linear-gradient(160deg, #3d3028, #504030);
 }
 
 .room-preview-card h4 {
@@ -571,11 +614,13 @@ h4 { font-size: 1.05rem; }
 .btn-primary {
     background: var(--color-primary);
     color: var(--color-white);
+    box-shadow: 0 2px 8px rgba(74, 124, 89, 0.25);
 }
 
 .btn-primary:hover {
     background: var(--color-primary-dark);
     color: var(--color-white);
+    box-shadow: 0 4px 14px rgba(74, 124, 89, 0.35);
 }
 
 .btn-outline {
@@ -607,22 +652,24 @@ h4 { font-size: 1.05rem; }
 .rooms-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.2rem;
 }
 
 .room-card {
     background: var(--color-white);
-    border: 1px solid var(--color-border);
+    border: 1px solid transparent;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    transition: all var(--transition);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     display: block;
     color: var(--color-text);
+    box-shadow: 0 2px 12px rgba(74, 100, 58, 0.06), 0 1px 3px rgba(0,0,0,0.04);
 }
 
 .room-card:hover {
-    transform: scale(1.01);
-    border-color: var(--color-primary-light);
+    transform: translateY(-3px);
+    border-color: var(--color-mist);
+    box-shadow: 0 8px 28px rgba(74, 100, 58, 0.12), 0 2px 6px rgba(0,0,0,0.06);
     color: var(--color-text);
 }
 
@@ -674,14 +721,16 @@ h4 { font-size: 1.05rem; }
 
 .room-card-header h3 {
     font-size: 1.1rem;
+    color: var(--color-primary-dark);
 }
 
 .room-type-tag {
-    font-size: 0.72rem;
-    background: var(--color-bg-light);
-    color: var(--color-text-light);
-    padding: 0.15rem 0.5rem;
+    font-size: 0.7rem;
+    background: var(--color-mist);
+    color: var(--color-primary);
+    padding: 0.2rem 0.6rem;
     border-radius: 20px;
+    font-weight: 500;
 }
 
 .room-card-desc {
@@ -726,20 +775,101 @@ h4 { font-size: 1.05rem; }
 }
 
 /* ── 房间详情 ─────────────────────────────────────────── */
-.room-gallery {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: 0;
-    max-height: 350px;
+/* ── 房间图片轮播 ── */
+.room-gallery-carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #1a1a1a;
 }
-
-.room-gallery img {
-    scroll-snap-align: start;
-    min-width: 100%;
-    height: 300px;
-    object-fit: cover;
+.gallery-main {
+    position: relative;
+    width: 100%;
+    height: 55vw;
+    max-height: 500px;
+    min-height: 280px;
+}
+.gallery-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+.gallery-slide.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.gallery-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.gallery-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-light);
+    font-size: 3rem;
+    color: var(--color-text-lighter);
+}
+.gallery-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.3);
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.gallery-arrow:hover { background: rgba(0,0,0,0.6); }
+.gallery-prev { left: 8px; }
+.gallery-next { right: 8px; }
+.gallery-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+}
+.gallery-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s;
+}
+.gallery-dot.active { background: #fff; }
+.gallery-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    z-index: 10;
+}
+@media(min-width:768px) {
+    .gallery-main { height: 420px; }
 }
 
 .room-gallery-placeholder {
@@ -798,15 +928,16 @@ h4 { font-size: 1.05rem; }
 }
 
 .discount-tag {
-    font-size: 0.75rem;
-    background: #fff0e6;
-    color: var(--color-warning);
+    font-size: 0.72rem;
+    background: rgba(200, 150, 106, 0.15);
+    color: var(--color-accent);
     padding: 0.15rem 0.5rem;
     border-radius: 10px;
+    font-weight: 500;
 }
 
 [data-theme="dark"] .discount-tag {
-    background: #3a2a1a;
+    background: rgba(200, 155, 106, 0.2);
 }
 
 .room-info-grid {
@@ -856,11 +987,12 @@ h4 { font-size: 1.05rem; }
 }
 
 .amenity-tag {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     padding: 0.3rem 0.7rem;
     background: var(--color-bg-light);
     border-radius: 20px;
-    color: var(--color-text-light);
+    color: var(--color-primary);
+    font-weight: 500;
 }
 
 .room-actions {
@@ -1084,20 +1216,65 @@ h4 { font-size: 1.05rem; }
     box-shadow: var(--shadow-lg);
 }
 
-.fab-count {
+.fab-badge {
     position: absolute;
-    top: -4px;
-    right: -4px;
+    top: -6px; right: -6px;
     background: var(--color-danger);
-    color: white;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    font-size: 0.7rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    color: #fff;
+    min-width: 22px; height: 22px;
+    border-radius: 11px;
+    font-size: 0.72rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 5px; line-height: 1;
+    box-shadow: 0 2px 6px rgba(196,85,74,0.4);
 }
+.fab-badge[data-count="0"], .fab-badge:empty { display: none; }
+
+/* ── 饮品定制弹窗 ─────────────────────────────────────── */
+.drink-modal {
+    position: fixed; inset: 0; z-index: 400;
+    display: none; align-items: center; justify-content: center; padding: 1rem;
+}
+.drink-modal.show, .drink-modal[style*="display:flex"] { display: flex; }
+.drink-modal-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.45); backdrop-filter: blur(3px);
+}
+.drink-modal-content {
+    position: relative; background: var(--color-white);
+    border-radius: var(--radius-lg); padding: 1.5rem;
+    max-width: 380px; width: 100%;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    max-height: 85vh; overflow-y: auto;
+}
+[data-theme="dark"] .drink-modal-content { background: #252927; }
+.option-group { margin-bottom: 1rem; }
+.option-group-label { font-size: 0.82rem; color: var(--color-text-light); margin-bottom: 0.4rem; font-weight: 600; }
+.option-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.option-chip {
+    padding: 0.5rem 0.9rem; border-radius: 20px;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-bg-light); font-size: 0.85rem;
+    cursor: pointer; transition: all 0.2s; color: var(--color-text);
+    font-family: var(--font-sans); white-space: nowrap;
+}
+.option-chip:hover { border-color: var(--color-primary-light); }
+.option-chip.selected {
+    background: var(--color-primary); color: #fff;
+    border-color: var(--color-primary); font-weight: 600;
+}
+[data-theme="dark"] .option-chip { background: #1f2620; border-color: #2e382f; color: #a0a898; }
+[data-theme="dark"] .option-chip.selected { background: #2a3d30; border-color: #4a7c59; color: #d8dfd4; }
+.drink-modal-actions { display: flex; gap: 0.6rem; margin-top: 1.2rem; }
+.drink-modal-actions button { flex: 1; }
+
+/* ── 订单面板提示 ─────────────────────────────────────── */
+.order-notice {
+    background: #fafcf6; border-radius: var(--radius-sm);
+    padding: 0.6rem 0.8rem; font-size: 0.78rem; color: #5a5a30;
+    margin-bottom: 0.6rem; text-align: center; line-height: 1.5;
+}
+[data-theme="dark"] .order-notice { background: #1e2318; color: #a0a860; }
 
 /* ── 旅游攻略 ─────────────────────────────────────────── */
 .routes-list {
@@ -1270,32 +1447,64 @@ h4 { font-size: 1.05rem; }
 }
 
 .route-tips {
-    background: #fef9e7;
+    background: #fafcf6;
     border-radius: var(--radius-md);
     padding: 1rem 1.2rem;
     margin: 1.5rem 0;
-    border-left: 4px solid var(--color-warning);
+    border-left: 4px solid var(--color-accent);
 }
 
 .route-tips h3 {
     margin-bottom: 0.4rem;
-    color: #8b6d20;
+    color: #6a6a30;
 }
 
 .route-tips p {
     font-size: 0.9rem;
-    color: #6b5510;
+    color: #5a5a30;
     line-height: 1.7;
 }
 
 [data-theme="dark"] .route-tips {
-    background: #2a2615;
+    background: #1e2318;
 }
 [data-theme="dark"] .route-tips h3 {
-    color: #c8a040;
+    color: #b8c058;
 }
 [data-theme="dark"] .route-tips p {
-    color: #a08840;
+    color: #a0a860;
+}
+
+/* ── 美食详情暗色模式 ──────────────────────────────────── */
+[data-theme="dark"] .food-tag {
+    color: #8fb89a;
+    background: rgba(143,184,154,0.12);
+}
+[data-theme="dark"] .food-detail-intro {
+    background: #1e2318;
+    border-left-color: #5a8c69;
+}
+[data-theme="dark"] .food-detail-musttry {
+    background: #25251f;
+    border-color: #8a6a4a;
+}
+[data-theme="dark"] .food-detail-musttry h3 {
+    color: #c8966a;
+}
+[data-theme="dark"] .food-detail-info {
+    background: #1f231f;
+}
+[data-theme="dark"] .food-detail-body p {
+    color: #c8ccc0;
+}
+[data-theme="dark"] .food-detail-hero {
+    background: #1a1c18;
+}
+[data-theme="dark"] .food-hero-img {
+    background: #1a1c18;
+}
+[data-theme="dark"] .food-card-img {
+    background: #1e201d;
 }
 
 .route-map-link {
@@ -1320,6 +1529,15 @@ h4 { font-size: 1.05rem; }
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     padding: 1rem 1.2rem;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all var(--transition);
+}
+
+.food-card:hover {
+    border-color: var(--color-primary-light);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 
 .food-card-header {
@@ -1331,6 +1549,7 @@ h4 { font-size: 1.05rem; }
 
 .food-card-header h4 {
     font-size: 1rem;
+    color: var(--color-text);
 }
 
 .food-category {
@@ -1360,6 +1579,171 @@ h4 { font-size: 1.05rem; }
     font-size: 0.82rem;
     color: var(--color-text-light);
     margin-bottom: 0.5rem;
+}
+
+.food-detail-link {
+    font-size: 0.82rem;
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+/* ── 美食详情页（XHS风格）──────────────────────────────── */
+.food-detail {
+    padding: 1.5rem 0 3rem;
+}
+
+.food-detail-hero {
+    margin: -1.5rem -1rem 1.5rem;
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
+    background: var(--color-bg-light);
+}
+
+.food-hero-img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    display: block;
+    background: var(--color-bg-light);
+}
+
+/* ── 美食卡片缩略图 ──────────────────────────────────── */
+.food-card-img {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.75rem;
+    background: var(--color-bg-light);
+}
+
+.food-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s;
+}
+
+.food-card:hover .food-card-img img {
+    transform: scale(1.05);
+}
+}
+
+.food-detail-header {
+    text-align: center;
+    margin-bottom: 0.8rem;
+}
+
+.food-detail-header h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.food-detail-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+}
+
+.food-category-badge {
+    font-size: 0.78rem;
+    background: var(--color-primary);
+    color: #fff;
+    padding: 0.2rem 0.7rem;
+    border-radius: 12px;
+}
+
+.food-price {
+    font-size: 1rem;
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+.food-detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+}
+
+.food-tag {
+    font-size: 0.75rem;
+    color: var(--color-primary);
+    background: rgba(74,124,89,0.08);
+    padding: 0.2rem 0.7rem;
+    border-radius: 14px;
+}
+
+.food-detail-intro {
+    background: var(--color-bg-light);
+    border-left: 3px solid var(--color-primary);
+    padding: 0.8rem 1rem;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    color: var(--color-text);
+    line-height: 1.7;
+}
+
+.food-detail-body {
+    margin-bottom: 1.5rem;
+}
+
+.food-detail-body p {
+    font-size: 0.92rem;
+    line-height: 1.9;
+    color: var(--color-text);
+    margin-bottom: 0.8rem;
+}
+
+.food-detail-musttry {
+    background: var(--color-white);
+    border: 1.5px dashed var(--color-accent);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.food-detail-musttry h3 {
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+    color: var(--color-accent);
+}
+
+.food-detail-musttry p {
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.food-detail-info {
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.food-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
+}
+
+.food-info-icon {
+    flex-shrink: 0;
+}
+
+.food-info-action {
+    text-align: center;
+}
+
+.food-detail-back {
+    text-align: center;
 }
 
 /* ── 快捷服务页 ───────────────────────────────────────── */
@@ -1674,11 +2058,11 @@ h4 { font-size: 1.05rem; }
     margin-bottom: 0.5rem;
 }
 
-/* ── 底部 ─────────────────────────────────────────────── */
+/* ── 底部 — 深林渐变 ─────────────────────────────────── */
 .footer {
-    background: var(--color-primary-dark);
+    background: linear-gradient(180deg, #3b5e47, #2a3d33);
     color: rgba(255, 255, 255, 0.7);
-    padding: 1.5rem 1rem;
+    padding: 2rem 1rem;
     text-align: center;
     margin-top: auto;
 }
@@ -1691,23 +2075,23 @@ h4 { font-size: 1.05rem; }
     margin-bottom: 0.6rem !important;
 }
 .footer p {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     margin-bottom: 0.2rem;
-    line-height: 1.8;
+    line-height: 2;
 }
 
 .footer-copy {
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 0.72rem !important;
-    margin-top: 0.4rem;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.7rem !important;
+    margin-top: 0.6rem;
 }
 
 [data-theme="dark"] .footer {
-    background: #141815;
-    color: rgba(220, 216, 207, 0.6);
+    background: linear-gradient(180deg, #1a2418, #141a15);
+    color: rgba(216, 223, 212, 0.6);
 }
 [data-theme="dark"] .footer-copy {
-    color: rgba(220, 216, 207, 0.3);
+    color: rgba(216, 223, 212, 0.3);
 }
 
 /* ── 通知卡片 ─────────────────────────────────────────── */
@@ -1829,26 +2213,26 @@ h4 { font-size: 1.05rem; }
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 600;
     padding: 0.2rem 0.6rem;
     border-radius: 20px;
 }
 .room-remaining.low {
-    background: #fce4ec;
-    color: #c62828;
+    background: #fef0f0;
+    color: #c44838;
 }
 .room-remaining.ok {
-    background: #e8f5e9;
-    color: #2e7d32;
+    background: #eaf5ea;
+    color: #3a7d3a;
 }
 [data-theme="dark"] .room-remaining.low {
-    background: #2e1518;
-    color: #e85550;
+    background: #2e1818;
+    color: #e86858;
 }
 [data-theme="dark"] .room-remaining.ok {
     background: #1a2e1a;
-    color: #6bbf6e;
+    color: #5cac5c;
 }
 
 /* ── 响应式 ───────────────────────────────────────────── */
@@ -1859,10 +2243,6 @@ h4 { font-size: 1.05rem; }
 
     .rooms-preview {
         grid-template-columns: repeat(2, 1fr);
-    }
-
-    .room-preview-card:last-child {
-        display: none;
     }
 
     .intro-grid {

@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>云上·归墅民宿 - 庐山 · 桌面版</title>
+<title>云上·归墅民宿</title>
+<meta name="description" content="云上·归墅民宿 — 庐山山上海拔千米的U型三层山居小院。AI智能管家全程陪伴，预订前免费旅行顾问，携程4.7分。">
 <script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
 :root {
@@ -29,15 +30,16 @@
     --color-white: #232521; --color-border: #363830;
     --color-shadow: rgba(0,0,0,0.35); --color-shadow-hover: rgba(0,0,0,0.55);
 }
-[data-theme="dark"] .header{background:rgba(37,41,39,0.92)}
+[data-theme="dark"] .header{background:rgba(26,31,27,0.94)}
 [data-theme="dark"] .hero{background:radial-gradient(ellipse 80% 60% at 60% 0%,rgba(30,42,35,0.9) 0%,transparent 70%),radial-gradient(ellipse 50% 70% at 20% 70%,rgba(40,55,45,0.6) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 90%,rgba(60,45,30,0.4) 0%,transparent 50%),radial-gradient(ellipse 70% 50% at 10% 20%,rgba(80,70,50,0.3) 0%,transparent 55%),linear-gradient(175deg,#141a16 0%,#1a241e 40%,#242e26 100%)}
 [data-theme="dark"] .hero::after{background:var(--color-bg)}
-[data-theme="dark"] .footer{background:#141815;color:rgba(220,216,207,0.6)}
-[data-theme="dark"] .footer-copy{color:rgba(220,216,207,0.3)}
+[data-theme="dark"] .footer{background:linear-gradient(180deg,#1a2418,#141a15);color:rgba(216,223,212,0.6)}
+[data-theme="dark"] .footer-copy{color:rgba(216,223,212,0.3)}
 .notice-success{background:#e8f5e9}[data-theme="dark"] .notice-success{background:#1a2e1a;border-left-color:#4a9e4a!important;color:#6bbf6e}
 .room-preview-g1{background:linear-gradient(135deg,#8b7355,#a0896e)}[data-theme="dark"] .room-preview-g1{background:linear-gradient(135deg,#5a4830,#705840)}
 .room-preview-g2{background:linear-gradient(135deg,#5b7b6f,#7a9a8e)}[data-theme="dark"] .room-preview-g2{background:linear-gradient(135deg,#2a3d30,#3d5545)}
 .room-preview-g3{background:linear-gradient(135deg,#6b8f71,#8aaa8e)}[data-theme="dark"] .room-preview-g3{background:linear-gradient(135deg,#2a3d2e,#3d5540)}
+.room-preview-g4{background:linear-gradient(135deg,#c49b6e,#e0c8a8)}[data-theme="dark"] .room-preview-g4{background:linear-gradient(135deg,#3d3028,#504030)}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px;-webkit-font-smoothing:antialiased}
 body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
@@ -48,7 +50,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:
 h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05rem}
 .container{max-width:var(--max-width);margin:0 auto;padding:0 1rem}
 /* Header */
-.header{background:rgba(255,255,255,0.92);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.header{background:rgba(245,249,244,0.9);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
 .logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none}
 .logo-icon{font-size:1.4rem}
@@ -83,11 +85,14 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
 .hero-title{font-family:var(--font-serif);font-size:3.4rem;font-weight:700;color:var(--color-white);letter-spacing:0.24em;margin-bottom:0.7rem;text-shadow:0 1px 4px rgba(0,0,0,0.2),0 4px 16px rgba(0,0,0,0.1)}
 .hero-subtitle{font-size:1.1rem;color:rgba(255,255,255,0.85);letter-spacing:0.1em;margin-bottom:0.5rem;font-family:var(--font-serif)}
 .hero-desc{font-size:0.88rem;color:rgba(255,255,255,0.65);letter-spacing:0.04em}
+[data-theme="dark"] .hero-title{color:#f0ece0}
+[data-theme="dark"] .hero-subtitle{color:rgba(240,236,224,0.85)}
+[data-theme="dark"] .hero-desc{color:rgba(240,236,224,0.65)}
 /* Desktop layout */
 .intro-grid{grid-template-columns:repeat(4,1fr);gap:1.2rem}
 .rooms-preview{grid-template-columns:repeat(4,1fr);gap:1rem}
 .room-preview-img{height:150px}
-.entry-grid{gap:1rem}.entry-card{padding:1.6rem 1rem}.entry-icon{font-size:2.2rem}
+.entry-grid{grid-template-columns:repeat(5,1fr);gap:1rem}.entry-card{padding:1.6rem 1rem}.entry-icon{font-size:2.2rem}
 .feature-list{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
 .feature-item{padding:1.2rem 1.2rem}
 .review-card{font-size:0.9rem;padding:1.4rem;line-height:1.8}
@@ -115,7 +120,7 @@ body{font-size:17px}
 .intro-item h3{margin-bottom:0.4rem;color:var(--color-primary-dark)}
 .intro-item p{font-size:0.85rem;color:var(--color-text-light);line-height:1.6}
 /* Room Preview */
-.rooms-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;margin-bottom:1.5rem}
+.rooms-preview{display:grid;grid-template-columns:repeat(4,1fr);gap:0.8rem;margin-bottom:1.5rem}
 .room-preview-card{background:var(--color-white);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm);text-align:center}
 .room-preview-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
 .room-preview-card h4{padding:0.6rem 0.5rem 0.2rem;font-size:0.9rem}
@@ -141,17 +146,18 @@ body{font-size:17px}
 .faq-a{font-size:0.85rem;color:var(--color-text-light);margin-top:0.5rem;display:none;line-height:1.6}
 .faq-item.open .faq-a{display:block}
 /* Footer */
-.footer{background:var(--color-primary-dark);color:rgba(255,255,255,0.7);padding:1.5rem 1rem;text-align:center;margin-top:auto}
+.footer{background:linear-gradient(180deg,#3b5e47,#2a3d33);color:rgba(255,255,255,0.7);padding:2rem 1rem;text-align:center;margin-top:auto}
 .footer p{font-size:0.8rem;margin-bottom:0.2rem;line-height:1.8}
 .footer-copy{color:rgba(255,255,255,0.4);font-size:0.72rem!important;margin-top:0.4rem}
 @media (max-width:480px){
     .entry-grid{grid-template-columns:repeat(2,1fr)}
     .rooms-preview{grid-template-columns:repeat(2,1fr)}
-    .room-preview-card:last-child{display:none}
     .intro-grid{grid-template-columns:1fr}
     .hero-title{font-size:1.8rem}
     .review-slide{grid-template-columns:1fr!important}\n\t    .hero{height:40vh;min-height:250px}
 }
+.fade-up{opacity:0;transform:translateY(12px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
@@ -183,6 +189,7 @@ body{font-size:17px}
             <a href="menu.html" class="entry-card"><span class="entry-icon">☕</span><span class="entry-title">咖啡简餐</span><span class="entry-desc">在线点餐</span></a>
             <a href="travel.html" class="entry-card"><span class="entry-icon">🗺️</span><span class="entry-title">游玩攻略</span><span class="entry-desc">路线&美食</span></a>
             <a href="services.html" class="entry-card"><span class="entry-icon">🛎️</span><span class="entry-title">快捷服务</span><span class="entry-desc">一键呼叫</span></a>
+            <a href="#" class="entry-card" onclick="alert('⭐ 积分中心：请通过微信公众号访问～\n\n入住消费得积分 · 每日签到 · 写评价赚积分\n兑换：咖啡/房型升级/延迟退房/房费抵扣')"><span class="entry-icon">⭐</span><span class="entry-title">积分中心</span><span class="entry-desc">签到兑换好礼</span></a>
         </div>
     </div>
 </section>
@@ -215,11 +222,22 @@ body{font-size:17px}
     <div class="container">
         <h2 class="section-title">精选房型</h2>
         <p class="section-desc">每间房都有独特的风景</p>
-        <div class="rooms-preview">
-            <div class="room-preview-card"><div class="room-preview-img room-preview-g1">🏔️</div><h4>清舍·露台大床房</h4><p class="price">¥788/晚</p></div>
-            <div class="room-preview-card"><div class="room-preview-img room-preview-g2">☁️</div><h4>山景·精致大床房</h4><p class="price">¥688/晚</p></div>
-            <div class="room-preview-card"><div class="room-preview-img room-preview-g3">🍵</div><h4>室雅茶香套房</h4><p class="price">¥988/晚</p></div>
-        </div>
+        <div class="rooms-preview" id="roomsPreview"></div>
+        <script>
+        (function(){
+            var rooms = [
+                {name:"特惠单人间", price:388, icon:"🏡", g:"room-preview-g1"},
+                {name:"特惠标准间", price:388, icon:"🛏️", g:"room-preview-g2"},
+                {name:"知还标准间", price:488, icon:"🏔️", g:"room-preview-g3"},
+                {name:"山野大床房", price:588, icon:"🌿", g:"room-preview-g4"}
+            ];
+            var html = '';
+            rooms.forEach(function(r){
+                html += '<a href="rooms.html" class="room-preview-card"><div class="room-preview-img '+r.g+'"><span>'+r.icon+'</span></div><h4>'+r.name+'</h4><p class="price">¥'+r.price+'/晚</p></a>';
+            });
+            document.getElementById('roomsPreview').innerHTML = html;
+        })();
+        </script>
         <div class="section-action"><a href="rooms.html" class="btn btn-primary">查看全部房型 →</a></div>
     </div>
 </section>
@@ -230,9 +248,9 @@ body{font-size:17px}
         <h2 class="section-title">智能客服功能</h2>
         <p class="section-desc">在微信公众号中回复关键词即可使用</p>
         <div class="feature-list">
-            <div class="feature-item"><span class="feature-icon">🤖</span><div class="feature-content"><h3>AI 智能管家</h3><p>预订确认后自动解锁AI管家，自然语言交流，问房型、问路线、问天气，像和真人管家聊天～</p></div></div>
+            <div class="feature-item"><span class="feature-icon">🤖</span><div class="feature-content"><h3>AI 智能管家</h3><p>🗺️ 预订前免费旅行顾问 · 🛎️ 预订后专属AI管家 · ☁️ 离店后温暖复购关怀～全链路陪伴，从咨询到再次归来。</p></div></div>
             <div class="feature-item"><span class="feature-icon">🔑</span><div class="feature-content"><h3>关键词秒回</h3><p>回复「房型」「菜单」「攻略」「服务」等关键词，秒获所需信息。回复「人工」可转接人工客服（8:00-22:00）。</p></div></div>
-            <div class="feature-item"><span class="feature-icon">🏨</span><div class="feature-content"><h3>平台预订</h3><p>通过携程/美团/飞猪/大众点评搜索「云上归墅」预订，前台确认后解锁AI管家。本服务号不直接收取房费。</p></div></div>
+            <div class="feature-item"><span class="feature-icon">🏨</span><div class="feature-content"><h3>平台预订</h3><p>通过携程/美团/飞猪/大众点评搜索「云上归墅」预订，确认后解锁专属AI管家。预订前也能免费使用旅行顾问～本服务号不直接收取房费。</p></div></div>
             <div class="feature-item"><span class="feature-icon">☕</span><div class="feature-content"><h3>「三山二水咖啡」点单</h3><p>精品咖啡、茶饮、简餐轻食在线点单，支持微信支付，送餐到房。正餐请查看周边美食推荐～</p></div></div>
         </div>
     </div>
@@ -269,16 +287,23 @@ body{font-size:17px}
         <div class="faq-list">
             <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🕐 入住和退房时间是几点？<span>▾</span></div><div class="faq-a">入住时间：14:00 以后<br>退房时间：12:00 以前<br>如需提前入住或延迟退房，请提前联系前台，我们会尽量安排～</div></div>
             <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🚗 民宿有停车场吗？<span>▾</span></div><div class="faq-a">有<strong>免费私家停车场</strong>！导航「云上归墅」至庐山山上·大林沟路27号。⚠️ 注意：每年7-8月暑期禁止私家车自驾上山，需换乘景区大巴、索道或打车。庐山山路弯多，建议慢行。</div></div>
-            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🏨 如何预订房间？<span>▾</span></div><div class="faq-a">请通过<strong>携程/美团/飞猪/大众点评</strong>搜索「云上归墅」在线预订，或致电前台 📞<strong>16607927666</strong>。预订确认后即可解锁AI智能管家～本服务号不直接收取房费。</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🏨 如何预订房间？<span>▾</span></div><div class="faq-a">请通过<strong>携程/美团/飞猪/大众点评</strong>搜索「云上归墅」在线预订，或致电前台 📞<strong>16607927666</strong>。预订确认后解锁专属AI管家～预订前也能免费使用旅行顾问哦～本服务号不直接收取房费。</div></div>
             <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🍳 有早餐吗？<span>▾</span></div><div class="faq-a">民宿暂不提供早餐，但一楼「三山二水咖啡」提供庐山云雾冷萃、手冲单品、牛角包三明治、意式肉酱面等咖啡简餐，支持微信支付下单～</div></div>
-            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">👶 可以带小孩入住吗？<span>▾</span></div><div class="faq-a">欢迎带小孩入住！但需注意：民宿所有房型不可加床，不提供婴儿床，请自行安排儿童寝具。🐾 宠物友好：可免费携带猫狗入住（需提前联系前台确认）。</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">👶 可以带小孩入住吗？<span>▾</span></div><div class="faq-a">欢迎带小孩入住！需注意：民宿所有房型不可加床，不提供婴儿床，请自行安排儿童寝具。</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🐾 可以带宠物吗？<span>▾</span></div><div class="faq-a"><strong>宠物友好！</strong>可免费携带猫狗入住。为方便安排房间，请<strong>提前联系前台确认</strong> 📞16607927666。入住时请照看好宠物，避免打扰其他客人～</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">📶 房间有WiFi吗？<span>▾</span></div><div class="faq-a">有！全楼覆盖<strong>免费高速WiFi</strong>，密码在前台或房间指引卡上。刷剧办公都流畅～</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🌡️ 有空调和暖气吗？<span>▾</span></div><div class="faq-a">全部房间配备<strong>冷暖空调 + 地暖</strong>。庐山冬季寒冷，地暖全屋覆盖，冬天也很温暖舒适～</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🧳 可以寄存行李吗？<span>▾</span></div><div class="faq-a">可以！前台提供<strong>免费行李寄存</strong>。退房后还想继续游玩庐山，行李放心交给我们～</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🚭 房间可以吸烟吗？<span>▾</span></div><div class="faq-a">室内<strong>禁止吸烟</strong>，请移步至室外指定区域。感谢配合，共同维护山居清新空气～</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">❌ 如何取消预订？<span>▾</span></div><div class="faq-a">取消政策因预订平台和房型而异。请通过<strong>原预订平台</strong>操作取消，或致电前台 📞<strong>16607927666</strong> 协助处理。</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">🚡 怎么到达民宿？<span>▾</span></div><div class="faq-a">📍 <strong>庐山山上·大林沟路27号</strong><br>🚡 乘索道上山 → 索道上站步行<strong>5分钟</strong>即达<br>🚗 自驾导航「云上归墅」→ 免费私家停车场<br>⚠️ 7-8月暑期禁止自驾上山，需换乘索道或景区大巴</div></div>
         </div>
     </div>
 </section>
 
 <!-- Footer -->
 <footer class="footer">
-    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · 庐山之巅的静谧之所</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
+    <div class="footer-inner"><p>云无心以出岫，鸟倦飞而知还</p><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 85条评价  |  2016年开业</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
 </footer>
 
 <script>
@@ -288,5 +313,6 @@ let currentSlide=0,totalSlides=3,autoTimer=setInterval(function(){moveSlide(1)},
 function goSlide(n){currentSlide=n;document.getElementById('reviewSlides').style.transform='translateX(-'+n*100+'%)';document.querySelectorAll('.carousel-dot').forEach(function(d,i){d.classList.toggle('active',i===n)});clearInterval(autoTimer);autoTimer=setInterval(function(){moveSlide(1)},4000)}
 function moveSlide(dir){currentSlide=(currentSlide+dir+totalSlides)%totalSlides;goSlide(currentSlide)}
 </script>
+<script>(function(){var o=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1});document.querySelectorAll('.section-padding,.hero,.quick-entry,.footer,.intro-grid,.review-carousel,.faq-list,.entry-grid').forEach(function(e){e.classList.add('fade-up');o.observe(e)})})();</script>
 </body>
 </html>

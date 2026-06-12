@@ -84,6 +84,19 @@ def format_room_detail_text(room_id: int):
     return "\n".join(lines)
 
 
+def get_featured_rooms(limit: int = 4):
+    """获取精选房型 — 按价格升序，优先有库存的可订房型"""
+    db = SessionLocal()
+    try:
+        rooms = db.query(Room).filter(
+            Room.is_available == True,
+            Room.total_count > 0
+        ).order_by(Room.price).limit(limit).all()
+        return [r.to_dict() for r in rooms]
+    finally:
+        db.close()
+
+
 def get_image_url(room: dict) -> str:
     """获取房间图片链接"""
     images = room.get("images", [])
