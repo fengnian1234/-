@@ -78,7 +78,12 @@
         {% if foods %}
         <div class="foods-list">
             {% for food in foods %}
-            <div class="food-card">
+            <a href="/travel/food/{{ food.id }}" class="food-card" onclick="showFoodModal({{ food.id }}); return false;">
+                {% if food.images and food.images|length > 0 %}
+                <div class="food-card-img">
+                    <img src="{{ food.images[0] }}" alt="{{ food.name }}" loading="lazy">
+                </div>
+                {% endif %}
                 <div class="food-card-body">
                     <div class="food-card-header">
                         <h4>{{ food.name }}</h4>
@@ -96,11 +101,9 @@
                     {% if food.address %}
                     <p class="food-address">📍 {{ food.address }}</p>
                     {% endif %}
-                    {% if food.map_link %}
-                    <a href="{{ food.map_link }}" class="btn btn-sm btn-outline" target="_blank">🗺️ 导航前往</a>
-                    {% endif %}
+                    <span class="food-detail-link">查看详情 →</span>
                 </div>
-            </div>
+            </a>
             {% endfor %}
         </div>
         {% else %}
@@ -111,4 +114,39 @@
         {% endif %}
     </div>
 </section>
+
+<!-- 美食详情弹窗 -->
+<div id="foodModal" class="modal" style="display:none;">
+    <div class="modal-overlay" onclick="closeFoodModal()"></div>
+    <div class="modal-content food-modal-content" id="foodModalContent"></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+var _foodsData = {{ foods | tojson | safe }};
+function showFoodModal(id) {
+    var f = _foodsData.find(function(f){return f.id===id;});
+    if (!f) { window.location.href='/travel/food/'+id; return; }
+    var tagsHtml = (f.tags||[]).map(function(t){return '<span class="food-tag">'+t+'</span>';}).join('');
+    var detailHtml = (f.detail_content||'').split('\n\n').filter(function(p){return p.trim();}).map(function(p){return '<p>'+p.trim().replace(/\n/g,'<br>')+'</p>';}).join('');
+    var imgs = f.images || [];
+    document.getElementById('foodModalContent').innerHTML =
+        (imgs.length?'<div class="food-detail-hero"><img src="'+imgs[0]+'" alt="'+f.name+'" class="food-hero-img"></div>':'')
+        +'<div class="food-detail-header"><h2>'+f.name+'</h2><div class="food-detail-meta"><span class="food-category-badge">'+f.category+'</span><span class="food-price">'+f.price_range+'</span></div></div>'
+        +'<div class="food-detail-tags">'+tagsHtml+'</div>'
+        +'<div class="food-detail-intro"><p>'+f.description+'</p></div>'
+        +(f.detail_content?'<div class="food-detail-body">'+detailHtml+'</div>':'')
+        +(f.must_try?'<div class="food-detail-musttry"><h3>🥢 必点清单</h3><p>'+f.must_try+'</p></div>':'')
+        +'<div class="food-detail-info"><div class="food-info-item"><span>📍</span><span>'+f.address+'</span></div>'
+        +(f.map_link?'<div class="food-info-action"><a href="'+f.map_link+'" class="btn btn-primary" target="_blank">🗺️ 导航前往</a></div>':'')
+        +'</div>';
+    document.getElementById('foodModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeFoodModal() {
+    document.getElementById('foodModal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+</script>
 {% endblock %}

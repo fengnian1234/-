@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>房型详情 - 云上·归墅民宿</title>
+<script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+:root{--color-primary:#4a7c59;--color-primary-light:#6b9b7e;--color-primary-dark:#3b5e47;--color-accent:#c8966a;--color-accent-light:#dbb88a;--color-bg:#f5f9f4;--color-bg-light:#edf4ea;--color-bg-dark:#dce8d8;--color-text:#2a3328;--color-text-light:#5a6558;--color-text-lighter:#8a9586;--color-white:#fffefb;--color-border:#d8e0d4;--color-shadow:rgba(74,100,58,0.06);--color-shadow-hover:rgba(74,100,58,0.12);--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 2px 8px var(--color-shadow);--shadow-md:0 6px 20px var(--color-shadow-hover);--transition:0.3s cubic-bezier(0.4,0,0.2,1);--max-width:720px}
+[data-theme="dark"]{--color-primary:#6baf7e;--color-primary-light:#558a64;--color-primary-dark:#3d5c48;--color-accent:#c89b6a;--color-accent-light:#dab080;--color-bg:#1a1f1b;--color-bg-light:#1f2620;--color-bg-dark:#252e26;--color-text:#d8dfd4;--color-text-light:#a0a898;--color-text-lighter:#6a7268;--color-white:#222722;--color-border:#2e382f;--color-shadow:rgba(0,0,0,0.35);--color-shadow-hover:rgba(0,0,0,0.50)}
+[data-theme="dark"] .header{background:rgba(26,31,27,0.94)}
+[data-theme="dark"] .footer{background:linear-gradient(180deg,#1a2418,#141a15);color:rgba(216,223,212,0.6)}
+[data-theme="dark"] .footer-copy{color:rgba(216,223,212,0.3)}
+[data-theme="dark"] .amenity-tag{background:#1a2e1a;color:#8cba8c}
+[data-theme="dark"] .detail-card{background:#252927}
+[data-theme="dark"] .booking-bar{background:#1e221f}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:var(--color-text)}
+h1{font-size:1.5rem}h2{font-size:1.25rem}h3{font-size:1.1rem}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 1rem}
+a{color:var(--color-primary);text-decoration:none}
+.header{background:rgba(245,249,244,0.9);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:0.4rem}
+.logo-icon{font-size:1.4rem}
+.logo-text{font-family:var(--font-serif);font-size:1.15rem;font-weight:700;color:var(--color-primary-dark);letter-spacing:0.05em}
+.nav-links{display:flex;gap:0.2rem}
+.nav-links a{padding:0.35rem 0.7rem;border-radius:var(--radius-sm);font-size:0.9rem;color:var(--color-text-light);transition:all var(--transition)}
+.nav-links a:hover{color:var(--color-primary);background:var(--color-bg-light)}
+.section-padding{padding:1.5rem 0}
+/* Gallery */
+.room-gallery-carousel{position:relative;width:100%;overflow:hidden;background:#1a1a1a;border-radius:var(--radius-md);margin-bottom:1.2rem}
+.gallery-main{position:relative;width:100%;height:50vw;max-height:450px;min-height:250px}
+.gallery-slide{position:absolute;inset:0;opacity:0;transition:opacity 0.4s;pointer-events:none;display:flex;align-items:center;justify-content:center;color:white;font-size:4rem}
+.gallery-slide.active{opacity:1;pointer-events:auto}
+.gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.3);color:white;border:none;width:36px;height:36px;border-radius:50%;font-size:1.4rem;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center}
+.gallery-prev{left:8px}.gallery-next{right:8px}
+.gallery-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:10}
+.gallery-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5);border:none;cursor:pointer;padding:0}
+.gallery-dot.active{background:#fff}
+.gallery-counter{position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,0.5);color:#fff;font-size:0.75rem;padding:2px 8px;border-radius:10px;z-index:10}
+/* Room info */
+.room-info h1{margin-bottom:0.2rem}
+.room-price{font-size:1.8rem;font-weight:700;color:var(--color-accent);font-family:var(--font-serif)}
+.room-price small{font-size:0.8rem;font-weight:400;color:var(--color-text-lighter)}
+.room-meta{display:flex;gap:1rem;flex-wrap:wrap;margin:0.8rem 0;font-size:0.85rem;color:var(--color-text-light)}
+.detail-card{background:var(--color-white);border-radius:var(--radius-md);padding:1.2rem;margin-bottom:0.8rem;box-shadow:var(--shadow-sm)}
+.detail-card h3{margin-bottom:0.5rem;color:var(--color-primary-dark)}
+.amenities{display:flex;flex-wrap:wrap;gap:0.4rem}
+.amenity-tag{font-size:0.78rem;background:var(--color-bg-light);color:var(--color-text-light);padding:0.25rem 0.6rem;border-radius:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:0.55rem 1.2rem;border-radius:var(--radius-sm);font-size:0.9rem;font-weight:500;cursor:pointer;border:none;transition:all var(--transition);font-family:var(--font-sans);text-decoration:none;gap:0.3rem}
+.btn-primary{background:var(--color-primary);color:white}
+.btn-primary:hover{background:var(--color-primary-dark);color:white}
+.btn-outline{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary)}
+.btn-outline:hover{background:var(--color-primary);color:white}
+.btn-large{padding:0.7rem 1.6rem;font-size:1rem}
+.room-remaining{display:inline-flex;align-items:center;gap:0.25rem;font-size:0.8rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:20px}
+.room-remaining.low{background:#fef0f0;color:#c44838}
+.room-remaining.ok{background:#eaf5ea;color:#3a7d3a}
+[data-theme="dark"] .room-remaining.low{background:#2e1818;color:#e86858}
+[data-theme="dark"] .room-remaining.ok{background:#1a2e1a;color:#5cac5c}
+.discount-tag{font-size:0.72rem;background:rgba(200,150,106,0.15);color:var(--color-accent);padding:0.15rem 0.5rem;border-radius:10px;margin-left:0.3rem;font-weight:500}
+.original-price{font-size:0.85rem;text-decoration:line-through;color:var(--color-text-lighter);margin-left:0.3rem}
+.booking-bar{position:sticky;bottom:0;background:var(--color-white);border-top:1px solid var(--color-border);padding:0.8rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:0.8rem;z-index:50}
+.back-link{display:inline-flex;align-items:center;gap:0.3rem;color:var(--color-text-light);margin-bottom:1rem;font-size:0.9rem}
+.footer{background:var(--color-primary-dark);color:rgba(255,255,255,0.7);padding:1.5rem 1rem;text-align:center;margin-top:auto;margin-bottom:70px}
+.footer p{font-size:0.8rem;margin-bottom:0.2rem;line-height:2}
+.footer-copy{color:rgba(255,255,255,0.35);font-size:0.72rem!important;margin-top:0.4rem}
+.fade-up{opacity:0;transform:translateY(12px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <a href="index.html" class="logo"><span class="logo-icon">🏔️</span><span class="logo-text">云上·归墅</span></a>
+        <nav class="nav-links">
+            <a href="rooms.html">房型</a><a href="menu.html">点餐</a><a href="travel.html">攻略</a><a href="services.html">服务</a>
+        </nav>
+        <button id="themeToggle" style="background:none;border:none;cursor:pointer;padding:0.35rem;border-radius:6px;font-size:1.1rem;line-height:1" title="切换深色/浅色模式">🌙</button>
+    </div>
+</header>
+
+<section class="section-padding"><div class="container">
+    <a href="rooms.html" class="back-link">← 返回房型列表</a>
+    <div id="roomContent"></div>
+</div></section>
+
+<div class="booking-bar" id="bookingBar">
+    <div><span class="room-price" id="barPrice">¥--</span><span style="font-size:0.8rem;color:var(--color-text-lighter)">/晚</span></div>
+    <div style="display:flex;gap:0.5rem">
+        <a href="tel:16607927666" class="btn btn-outline">📞 电话咨询</a>
+        <a href="https://hotels.ctrip.com/hotel/search?keyword=%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85" target="_blank" class="btn btn-primary">🏨 平台预订</a>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="footer-inner"><p>云无心以出岫，鸟倦飞而知还</p><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 85条评价  |  2016年开业</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
+</footer>
+
+<script>
+var rooms = [
+    {id:1,name:"特惠单人间",room_type:"单人间",price:388,original_price:488,description:"紧凑温馨的单人空间，1.5米双人床，独立卫浴。小而精致，独行旅客的实惠之选。",capacity:1,bed_type:"1.5m双人床",area:"15m²",view_type:"山景",amenities:["观景窗","地暖","智能马桶","茶具套装","高速WiFi","迷你吧"],gradient:"linear-gradient(135deg, #8b7355, #b8a088)",total_count:1},
+    {id:2,name:"特惠标准间",room_type:"双床房",price:388,original_price:488,description:"两张1.2米单人床，紧凑实用。适合闺蜜出游或预算有限的结伴旅客。",capacity:2,bed_type:"2×1.2m单人床",area:"15m²",view_type:"山景",amenities:["观景窗","地暖","书桌","茶具套装","高速WiFi"],gradient:"linear-gradient(135deg, #5b7b6f, #88a898)",total_count:2},
+    {id:3,name:"知还标准间",room_type:"双床房",price:488,original_price:588,description:"「云无心以出岫，鸟倦飞而知还」——以民宿命名出处的诗句命名。20m²宽敞双床房。",capacity:2,bed_type:"2×1.2m单人床",area:"20m²",view_type:"山景",amenities:["观景窗","地暖","书桌","茶具套装","高速WiFi","迷你吧"],gradient:"linear-gradient(135deg, #6b8f71, #8aaa8e)",total_count:2},
+    {id:4,name:"山野大床房",room_type:"大床房",price:588,original_price:688,description:"1.8米大床房，推窗见山。简约自然的原木风格，是情侣和独行旅客的热门之选。",capacity:2,bed_type:"1.8m大床",area:"20m²",view_type:"山景",amenities:["观景窗","地暖","智能马桶","鹅绒床品","茶具套装","高速WiFi"],gradient:"linear-gradient(135deg, #6b8aaa, #9ab8cc)",total_count:1},
+    {id:5,name:"清舍·露台大床房",room_type:"大床房",price:788,original_price:888,description:"自带独立露台，坐看云起云落。35m²宽敞空间，1.8米大床，是民宿最受欢迎的房型之一。",capacity:2,bed_type:"1.8m大床",area:"35m²",view_type:"山景/露台",amenities:["独立露台","观景阳台","地暖","智能马桶","鹅绒床品","茶具套装","高速WiFi","迷你吧"],gradient:"linear-gradient(135deg, #4a6b8a, #7a9bb8)",total_count:2},
+    {id:6,name:"山景·精致大床房",room_type:"大床房",price:688,original_price:788,description:"30m²精致山景房，1.8米大床配全景窗。精心布置的简约现代风格，推窗即漫山青翠。",capacity:2,bed_type:"1.8m大床",area:"30m²",view_type:"山景",amenities:["全景窗","地暖","智能马桶","鹅绒床品","茶具套装","高速WiFi","迷你吧"],gradient:"linear-gradient(135deg, #5b7b6f, #7a9a8e)",total_count:1},
+    {id:7,name:"室雅茶香套房",room_type:"套房",price:988,original_price:1188,description:"30m²套房格局，1.8米大床+1.5米双人床。独立茶室区域，配高端茶具。",capacity:4,bed_type:"1.8m大床 + 1.5m双人床",area:"30m²",view_type:"山景",amenities:["独立茶室","观景阳台","地暖","智能马桶","浴缸","高端茶具","高速WiFi","迷你吧"],gradient:"linear-gradient(135deg, #7a5a3a, #a08060)",total_count:1},
+    {id:8,name:"田园家庭房",room_type:"家庭房",price:788,original_price:888,description:"1.8米大床+1.2米单人床，20m²温馨家庭空间。适合三口之家出行。",capacity:3,bed_type:"1.8m大床 + 1.2m单人床",area:"20m²",view_type:"山景",amenities:["观景窗","地暖","书桌","茶具套装","高速WiFi","迷你吧"],gradient:"linear-gradient(135deg, #c9954a, #dab880)",total_count:1}
+];
+
+var hash = window.location.hash.replace('#','');
+var roomId = parseInt(hash) || 6;
+var r = rooms.find(function(r){return r.id===roomId;}) || rooms[5];
+document.title = r.name + ' - 云上·归墅民宿';
+
+// Build gallery with gradient slides
+var gallerySlides = '';
+for (var i = 0; i < 3; i++) {
+    gallerySlides += '<div class="gallery-slide'+(i===0?' active':'')+'" style="background:'+r.gradient+'"><span>🏡</span></div>';
+}
+var navHtml = '<button class="gallery-arrow gallery-prev" onclick="changeSlide(-1)">‹</button><button class="gallery-arrow gallery-next" onclick="changeSlide(1)">›</button><div class="gallery-dots" id="gDots">';
+for (var i = 0; i < 3; i++) {
+    navHtml += '<button class="gallery-dot'+(i===0?' active':'')+'" onclick="goSlide('+i+')"></button>';
+}
+navHtml += '</div><div class="gallery-counter" id="gCounter">1 / 3</div>';
+
+var remainingHtml = '';
+if (r.total_count && r.total_count <= 1) remainingHtml = '<span class="room-remaining low">🔥 仅剩1间</span>';
+else if (r.total_count && r.total_count <= 2) remainingHtml = '<span class="room-remaining low">仅剩'+r.total_count+'间</span>';
+else if (r.total_count) remainingHtml = '<span class="room-remaining ok">热订中</span>';
+
+var discountHtml = '';
+if (r.original_price && r.original_price > r.price) {
+    discountHtml = '<span class="original-price">¥'+r.original_price+'</span><span class="discount-tag">省¥'+(r.original_price-r.price)+'</span>';
+}
+
+document.getElementById('roomContent').innerHTML =
+    '<div class="room-gallery-carousel"><div class="gallery-main" id="gMain">'+gallerySlides+'</div>'+navHtml+'</div>'
+    +'<div class="room-info"><h1>'+r.name+'</h1>'
+    +'<div class="room-price">¥'+r.price+' <small>/ 晚</small> '+remainingHtml+' '+discountHtml+'</div>'
+    +'<div class="room-meta"><span>👤 '+r.capacity+'人入住</span><span>🛏️ '+r.bed_type+'</span><span>📐 '+r.area+'</span><span>'+{'山景':'🏔️','云海':'☁️','竹林':'🎋','山景/露台':'🏔️🌿'}[r.view_type]||'🏡'} '+r.view_type+'</span></div></div>'
+    +'<div class="detail-card"><h3>📝 房间描述</h3><p style="font-size:0.95rem;color:var(--color-text-light);line-height:1.8">'+r.description+'</p></div>'
+    +'<div class="detail-card"><h3>🛋️ 客房设施</h3><div class="amenities">'+r.amenities.map(function(a){return '<span class="amenity-tag">'+a+'</span>';}).join('')+'</div></div>';
+
+document.getElementById('barPrice').textContent = '¥'+r.price;
+
+// Gallery controls
+var cur = 0, total = 3;
+function goSlide(n) {
+    document.querySelector('.gallery-slide.active')?.classList.remove('active');
+    document.querySelector('.gallery-dot.active')?.classList.remove('active');
+    cur = (n + total) % total;
+    document.querySelectorAll('.gallery-slide')[cur]?.classList.add('active');
+    document.querySelectorAll('.gallery-dot')[cur]?.classList.add('active');
+    document.getElementById('gCounter').textContent = (cur+1)+' / '+total;
+}
+function changeSlide(dir) { goSlide(cur + dir); }
+</script>
+<script>
+(function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'})();
+document.getElementById('themeToggle').onclick=function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);this.textContent=n==='dark'?'☀️':'🌙'};
+</script>
+</body>
+</html>

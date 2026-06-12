@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美食详情 - 云上·归墅民宿</title>
+<script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+:root{--color-primary:#4a7c59;--color-primary-light:#6b9b7e;--color-primary-dark:#3b5e47;--color-accent:#c8966a;--color-accent-light:#dbb88a;--color-bg:#f5f9f4;--color-bg-light:#edf4ea;--color-bg-dark:#dce8d8;--color-text:#2a3328;--color-text-light:#5a6558;--color-text-lighter:#8a9586;--color-white:#fffefb;--color-border:#d8e0d4;--color-shadow:rgba(74,100,58,0.06);--color-shadow-hover:rgba(74,100,58,0.12);--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 2px 8px var(--color-shadow);--shadow-md:0 6px 20px var(--color-shadow-hover);--transition:0.3s cubic-bezier(0.4,0,0.2,1);--max-width:1100px}
+[data-theme="dark"]{--color-primary:#6baf7e;--color-primary-light:#558a64;--color-primary-dark:#3d5c48;--color-accent:#c89b6a;--color-accent-light:#dab080;--color-bg:#1a1f1b;--color-bg-light:#1f2620;--color-bg-dark:#252e26;--color-text:#d8dfd4;--color-text-light:#a0a898;--color-text-lighter:#6a7268;--color-white:#222722;--color-border:#2e382f;--color-shadow:rgba(0,0,0,0.35);--color-shadow-hover:rgba(0,0,0,0.50)}
+[data-theme="dark"] .header{background:rgba(26,31,27,0.94)}
+[data-theme="dark"] .footer{background:linear-gradient(180deg,#1a2418,#141a15);color:rgba(216,223,212,0.6)}
+[data-theme="dark"] .footer-copy{color:rgba(216,223,212,0.3)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:var(--color-text)}
+h1{font-size:1.6rem}h2{font-size:1.3rem}h3{font-size:1.1rem}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 1.5rem}
+a{color:var(--color-primary);text-decoration:none}
+.header{background:rgba(245,249,244,0.9);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none}
+.logo-icon{font-size:1.5rem}
+.logo-text{font-family:var(--font-serif);font-size:1.25rem;font-weight:700;color:var(--color-primary-dark);letter-spacing:0.05em}
+.nav-links{display:flex;gap:0.3rem}
+.nav-links a{padding:0.4rem 0.8rem;border-radius:var(--radius-sm);font-size:0.95rem;color:var(--color-text-light);transition:all var(--transition)}
+.nav-links a:hover{color:var(--color-primary);background:var(--color-bg-light)}
+.section-padding{padding:2rem 0}
+/* Desktop layout: hero + info side by side if wide */
+.food-detail-layout{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+.food-detail-hero{border-radius:var(--radius-md);overflow:hidden;background:var(--color-bg-light)}
+.food-hero-img{width:100%;max-height:400px;object-fit:contain;display:block;background:var(--color-bg-light)}
+.food-detail-header{margin-bottom:0.8rem}
+.food-category-badge{font-size:0.85rem;background:var(--color-bg-light);padding:0.3rem 0.8rem;border-radius:20px;color:var(--color-text-light)}
+.food-price{font-size:1.4rem;font-weight:700;color:var(--color-accent);margin-left:0.8rem}
+.food-detail-tags{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem}
+.food-tag{font-size:0.8rem;background:rgba(200,150,106,0.12);color:var(--color-accent);padding:0.25rem 0.7rem;border-radius:12px}
+[data-theme="dark"] .food-tag{background:rgba(200,155,106,0.15)}
+.food-detail-intro{margin-bottom:1.2rem}
+.food-detail-intro p{font-size:1rem;color:var(--color-text-light);line-height:1.7}
+.food-detail-body{margin-bottom:1rem}
+.food-detail-body p{font-size:0.95rem;color:var(--color-text-light);line-height:1.9;margin-bottom:0.8rem}
+.food-detail-musttry{background:var(--color-white);border-radius:var(--radius-md);padding:1.2rem 1.5rem;margin-bottom:1rem;box-shadow:var(--shadow-sm)}
+.food-detail-musttry h3{margin-bottom:0.5rem;color:var(--color-primary-dark)}
+.food-detail-musttry p{font-size:0.95rem;color:var(--color-text-light);line-height:1.7}
+[data-theme="dark"] .food-detail-musttry{background:#252927}
+.food-info-item{display:flex;align-items:center;gap:0.5rem;font-size:0.95rem;color:var(--color-text-light);margin-bottom:0.8rem}
+.food-info-action{margin:1rem 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:0.6rem 1.3rem;border-radius:var(--radius-sm);font-size:0.95rem;font-weight:500;cursor:pointer;border:none;transition:all var(--transition);font-family:var(--font-sans);text-decoration:none;gap:0.3rem}
+.btn-primary{background:var(--color-primary);color:white}
+.btn-primary:hover{background:var(--color-primary-dark);color:white}
+.btn-outline{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary)}
+.btn-outline:hover{background:var(--color-primary);color:white}
+.food-detail-back{text-align:center;padding:0 1.5rem 2rem}
+.footer{background:var(--color-primary-dark);color:rgba(255,255,255,0.7);padding:2rem 1.5rem;text-align:center;margin-top:auto}
+.footer p{font-size:0.85rem;margin-bottom:0.2rem;line-height:2}
+.footer-copy{color:rgba(255,255,255,0.35);font-size:0.75rem!important;margin-top:0.5rem}
+@media(max-width:768px){.food-detail-layout{grid-template-columns:1fr;gap:1rem}}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <a href="index.html" class="logo"><span class="logo-icon">🏔️</span><span class="logo-text">云上·归墅</span></a>
+        <nav class="nav-links">
+            <a href="rooms.html">房型</a><a href="menu.html">点餐</a><a href="travel.html">攻略</a><a href="services.html">服务</a>
+        </nav>
+        <button id="themeToggle" style="background:none;border:none;cursor:pointer;padding:0.35rem;border-radius:6px;font-size:1.1rem;line-height:1" title="切换深色/浅色模式">🌙</button>
+    </div>
+</header>
+
+<section class="section-padding">
+    <div class="container" id="foodContent"></div>
+</section>
+
+<footer class="footer">
+    <div class="footer-inner"><p>云无心以出岫，鸟倦飞而知还</p><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 85条评价  |  2016年开业</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
+</footer>
+
+<script>
+var foods = [
+    {id:1,name:"石牛酒家",category:"赣菜",desc:"牯岭街30年老店，老板娘热情实在，烟火气十足。庐山当地风味餐厅榜No.1",address:"牯岭镇庐山正街15-1号（街心花园马路对面）",map_link:"https://uri.amap.com/marker?position=115.9805,29.5570&name=石牛酒家",price_range:"人均 ¥55-65",must_try:"笋衣烧肉、石鱼爆蛋、黄豆烧皖鱼、野笋炒腊肉",tags:["#30年老店","#本地人推荐","#高性价比","#烟火气"],images:["/static/img/food/shiniu_01.jpg"],detail:"🥢 开了十几年的牯岭街老店，老板娘超热情，菜实在分量大！\n\n📍 就在正街街心花园对面，吃完下楼就是牯岭街。\n\n🥩 **笋衣烧肉**（每桌必点）— 嫩爽的笋衣配五花肉，不辣但超级下饭。\n\n🍳 **石鱼爆蛋** — 庐山特色！石鱼脆脆的，鸡蛋酥酥的，咬下去咔嚓响。\n\n🐟 **黄豆烧皖鱼** — 鱼很嫩很新鲜，黄豆软糯入味。\n\n🥬 **野笋炒腊肉** — 老板娘自己做的腊肉，烟熏香配山笋清甜。\n\n⚠️ 环境一般，是烟火气小店不是精致餐厅。\n💡 人均五六十，是牯岭街性价比最高的馆子之一。"},
+    {id:2,name:"847别墅餐厅",category:"赣菜",desc:"百年别墅改造的传承菜馆，几乎零差评！服务极好，前台小姐姐会主动提醒你用优惠券",address:"牯岭镇窑洼路与慧远路交叉口东120米",map_link:"https://uri.amap.com/marker?position=115.9795,29.5580&name=847别墅餐厅",price_range:"人均 ¥60-70",must_try:"土豆烧肉、红烧白鱼、菌菇汤、香煎豆腐、油爆河虾",tags:["#百年别墅","#零差评","#服务满分","#本地人强推"],images:["/static/img/food/847_01.jpg"],detail:"🏛️ 三天庐山行吃得最舒心的一餐！百年老别墅改造，复古氛围感拉满。\n\n👵 前台小姐姐和奶奶都特别和善，结账时提醒我们可以买券省钱，走的时候还送了茶饼！\n\n🥘 **土豆烧肉**（招牌）— 现炖的，端上来还咕嘟咕嘟冒热气，肉酥烂土豆绵密，超级入味。\n\n🐟 **红烧白鱼** — 庐山本地白鱼，鱼肉吃起来和普通鱼完全不一样，嫩、鲜、没土腥味。\n\n🍄 **菌菇汤** — 味正鲜美，喝一口就知道是真材实料熬的。\n\n🧈 **香煎豆腐** — 外焦里嫩，牙口不好的也能轻松吃。\n\n💡 强烈推荐！比那些网红营销店强太多了。"},
+    {id:3,name:"望庐说·本地菜馆",category:"赣菜",desc:"牯岭街网红餐厅，环境古色古香。口碑两极分化",address:"牯岭镇合面街10号（建设银行对面）",map_link:"https://uri.amap.com/marker?position=115.9800,29.5568&name=望庐说",price_range:"人均 ¥80-90",must_try:"板栗烧鸡、外婆家粉皮、炝鸭血、干锅笋",tags:["#网红餐厅","#环境好","#争议大","#需排队"],images:["/static/img/food/wanglu_01.jpg"],detail:"⚠️ 先说结论：这是一家评价两极分化的店，放在这里是让你自行判断的。\n\n👍 **好评方**：\n  · 板栗烧鸡超级下饭，鸡肉很嫩很香\n  · 环境蓝白风格很清新，进门古色古香\n  · 外婆家粉皮够辣够Q\n\n👎 **差评方**：\n  · 菜是预制菜，没有现做的锅气\n  · 凉皮全部粘在一起\n  · 营销过度，好评很多是刷出来的\n\n💡 如果你追求环境好+拍照好看，可以一试。追求锅气和性价比，去隔壁石牛酒家或847别墅。"},
+    {id:4,name:"庐人村·牯岭美食集",category:"赣菜",desc:"二楼靠窗位可看山景，拍照好看。云雾鸡用稻草荷叶裹烤，香气四溢",address:"牯岭镇合面街1号（正街上）",map_link:"https://uri.amap.com/marker?position=115.9803,29.5569&name=庐人村",price_range:"人均 ¥80-100",must_try:"云雾鸡（稻草荷叶裹烤）、老村长扣肉夹馍、炝鸭血",tags:["#山景餐厅","#拍照好看","#云雾鸡"],images:["/static/img/food/lurencun_01.jpg"],detail:"🍗 二楼靠窗位能看到山景，吃着饭拍张照，朋友圈赞爆！\n\n🐔 **云雾鸡**（必点）— 用稻草和荷叶裹着烤，鸡肉嫩到脱骨。荷叶的清香渗进鸡肉里，跟普通烤鸡完全两个档次。\n\n🥩 **老村长扣肉夹馍** — 扣肉肥而不腻，夹进热馍里，油香混着肉香，超满足。\n\n🦆 **炝鸭血** — 嫩滑入味，辣度刚好。\n\n💡 一楼有当地特产和奶茶店，吃完可以逛逛买伴手礼。"},
+    {id:5,name:"利民煨汤馆",category:"小吃/煨汤",desc:"牯岭街网红瓦罐煨汤专门店，茶树菇排骨汤和山药土鸡汤是招牌",address:"牯岭镇正街中段",map_link:"https://uri.amap.com/marker?position=115.9805,29.5572&name=利民煨汤馆",price_range:"人均 ¥30-50",must_try:"茶树菇排骨汤、山药土鸡汤、石鱼炒蛋、南昌拌粉",tags:["#瓦罐煨汤","#性价比之王","#暖胃","#小吃"],images:["/static/img/food/limin_01.jpg"],detail:"🍲 庐山爬山累了，来一碗瓦罐煨汤简直续命！\n\n🔥 瓦罐埋在炭火里慢煨，从早煨到晚，汤色浓白，鲜到掉眉毛。\n\n🍖 **茶树菇排骨汤**（招牌）— 茶树菇的清香和排骨的肉香完美融合，喝完整个人都暖了。\n\n🐔 **山药土鸡汤** — 土鸡+铁棍山药，煨到山药化在汤里，浓稠鲜甜。\n\n🍳 **石鱼炒蛋** — 庐山石鱼+土鸡蛋，石鱼鲜香酥脆，比普通炒蛋好吃十倍！\n\n🍜 **南昌拌粉** — 江西招牌！粉Q弹，拌上萝卜干花生辣椒油，一碗才十块出头。\n\n💡 人均三四十，是牯岭街最暖胃的存在。"},
+    {id:6,name:"庐山茶饼·伴手礼",category:"伴手礼/小吃",desc:"庐山特产茶饼，桂花味最受欢迎。酥脆香甜，10元一盒，送人自吃两相宜",address:"牯岭镇正街多家店铺有售",map_link:"",price_range:"约 ¥10/盒",must_try:"桂花茶饼、云雾茶饼、九江糍粑",tags:["#伴手礼","#桂花味","#10元一盒"],images:["/static/img/food/chabing_01.jpg"],detail:"🍪 来庐山必带的伴手礼！正街上很多店都有卖，推荐桂花味的。\n\n🌸 **桂花茶饼** — 用云雾茶汁和面，撒上桂花，酥脆中带着淡淡茶香和桂花甜。掰开层次分明，配茶一绝。\n\n🍵 **云雾茶饼** — 茶味更浓，喜欢茶香的首选。\n\n🍡 **九江糍粑** — 软糯拉丝，裹上芝麻花生粉，香甜不腻。\n\n💰 10元一盒，买5送1，买10送3。建议多买几盒回去送人。\n\n💡 别在景区门口买，比镇上贵一倍。"},
+    {id:7,name:"庐小仙",category:"茶饮",desc:"庐山高山上的鲜果茶饮！桃香云雾茶是招牌，史努比联名杯超可爱，小红书热门打卡店",address:"牯岭镇合面街（二楼可用餐）",map_link:"https://uri.amap.com/marker?position=115.9800,29.5570&name=庐小仙",price_range:"人均 ¥18-28",must_try:"桃香云雾茶、庐小仙奶茶（史努比杯）、草莓云雾鲜果茶",tags:["#庐山限定","#鲜果茶","#史努比联名","#小红书爆款"],images:["/static/img/food/luxiaoxian_01.jpg"],detail:"🍑 「赏庐山烟云美景，喝庐小仙茶饮」— 牯岭街最出片的茶饮店！\n\n开在合面街，楼下买茶、楼上可以用餐。好多朋友推荐必喝这家！\n\n🍑 **桃香云雾茶**（招牌必喝）— 用庐山云雾茶做茶底，加鲜桃果肉。茶香清高、桃香甜美，喝完嘴里还有淡淡回甘。\n\n🧋 **庐小仙奶茶** — 史努比联名杯子超可爱！配料有红豆+仙草，料多到像在喝粥。\n\n🍓 **草莓云雾鲜果茶** — 季节限定！新鲜草莓+云雾绿茶，酸酸甜甜超解暑。\n\n📸 拿着史努比杯子站在合面街拍照，背景是庐山街景，氛围感拉满～\n\n💡 旺季排队15-20分钟，建议错峰来。价格小贵但值得，毕竟\"庐山限定\"～"},
+    {id:8,name:"见山茶",category:"茶饮",desc:"江西人自己的奶茶！独家云雾茶底×新式茶饮，把千年名茶做成年轻人排队喝的单品",address:"牯岭镇牯岭正街88号（正街中段）",map_link:"https://uri.amap.com/marker?position=115.9802,29.5570&name=见山茶",price_range:"人均 ¥18-32",must_try:"云雾茉莉鲜奶茶、雪顶云雾奶茶、见山柠檬茶、桂花云雾奶盖",tags:["#庐山限定","#云雾茶底","#江西本土","#网红打卡","#中式美学"],images:["/static/img/food/jianshan_01.webp"],detail:"🍃 庐山本土最火的新式茶饮品牌！门头是石质纹理墙面+大写的「见山」二字，已经成了牯岭街新地标。\n\n所有茶底都用本地庐山云雾茶——千年贡茶终于被年轻人排队喝了！\n\n🍵 **云雾茉莉鲜奶茶**（销量冠军）— 庐山云雾绿茶底+鲜牛乳+茉莉花瓣。茶香清雅不涩，奶味不抢戏。\n\n🏔️ **雪顶云雾奶茶** — 奶盖绵密得像云朵，撒上抹茶粉做出庐山山峦的造型。\n\n🍋 **见山柠檬茶** — 暴打香水柠檬+云雾茶汤，酸爽解暑神器。\n\n🌸 **桂花云雾奶盖** — 咸奶盖上撒庐山金桂，桂花香+茶香+奶香三重奏。\n\n📸 店内「见山」二字背景墙+庐山诗句灯箱，随手拍都出片。\n\n💡 旺季排队30分钟起，建议错峰来。"}
+];
+
+var hash = window.location.hash.replace('#','');
+var foodId = parseInt(hash) || 1;
+var f = foods.find(function(f){return f.id===foodId;}) || foods[0];
+document.title = f.name + ' - 云上·归墅民宿';
+
+var tagsHtml = f.tags.map(function(t){return '<span class="food-tag">'+t+'</span>';}).join('');
+var detailHtml = f.detail.split('\n\n').filter(function(p){return p.trim();}).map(function(p){return '<p>'+p.trim().replace(/\n/g,'<br>')+'</p>';}).join('');
+
+var heroBlock = f.images.length ? '<div class="food-detail-hero"><img src="'+f.images[0]+'" alt="'+f.name+'" class="food-hero-img"></div>' : '';
+var infoBlock = '<div class="food-detail-header">'
+    + '<h1>'+f.name+'</h1>'
+    + '<div class="food-detail-meta"><span class="food-category-badge">'+f.category+'</span><span class="food-price">'+f.price_range+'</span></div>'
+    + '</div>'
+    + '<div class="food-detail-tags">'+tagsHtml+'</div>'
+    + '<div class="food-detail-intro"><p>'+f.desc+'</p></div>'
+    + '<div class="food-detail-body">'+detailHtml+'</div>'
+    + '<div class="food-detail-musttry"><h3>🥢 必点清单</h3><p>'+f.must_try+'</p></div>'
+    + '<div class="food-detail-info">'
+    + '<div class="food-info-item"><span>📍</span><span>'+f.address+'</span></div>'
+    + (f.map_link ? '<div class="food-info-action"><a href="'+f.map_link+'" class="btn btn-primary" target="_blank">🗺️ 导航前往</a></div>' : '')
+    + '</div>';
+
+var html = '<div class="food-detail-layout">' + heroBlock + '<div>' + infoBlock + '</div></div>';
+html += '<div class="food-detail-back"><a href="travel.html" class="btn btn-outline">← 返回攻略列表</a></div>';
+
+document.getElementById('foodContent').innerHTML = html;
+</script>
+<script>
+(function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'})();
+document.getElementById('themeToggle').onclick=function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);this.textContent=n==='dark'?'☀️':'🌙'};
+</script>
+</body>
+</html>
