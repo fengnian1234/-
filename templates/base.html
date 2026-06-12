@@ -13,8 +13,8 @@
     <title>{% block title %}云上归墅{% endblock %}</title>
     <script>
     (function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);})();
-    // 季节检测：3-5春 6-8夏 9-11秋 12-2冬
-    (function(){var m=new Date().getMonth()+1;var s=m>=3&&m<=5?'spring':m>=6&&m<=8?'summer':m>=9&&m<=11?'autumn':'winter';document.documentElement.setAttribute('data-season',s);})();
+    // 季节检测：3-5春 6-8夏 9-11秋 12-2冬（?season=可覆盖）
+    (function(){var p=new URLSearchParams(location.search);var s=p.get('season');if(!s){var m=new Date().getMonth()+1;s=m>=3&&m<=5?'spring':m>=6&&m<=8?'summer':m>=9&&m<=11?'autumn':'winter';}document.documentElement.setAttribute('data-season',s);})();
     </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block extra_head %}{% endblock %}
