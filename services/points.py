@@ -52,8 +52,9 @@ def get_logs(openid: str, limit: int = 20) -> list:
 def earn_points(openid: str, action: str, amount: int = None, description: str = "") -> dict:
     """
     获取积分
-    action: booking|checkin|review|share|birthday|xhs_note
+    action: booking|checkin|review|share|birthday|xhs_note|social_post
     """
+    from datetime import datetime as dt
     db = SessionLocal()
     try:
         gp = _get_or_create_points(db, openid)
@@ -61,13 +62,39 @@ def earn_points(openid: str, action: str, amount: int = None, description: str =
         if not rule:
             return {"success": False, "message": "未知的积分获取方式"}
 
+        # 特殊处理：设置生日月份
+        if action == "birthday":
+            birthday_month = amount if amount and 1 <= amount <= 12 else None
+            if birthday_month:
+                gp.birthday_month = birthday_month
+            db.commit()
+            return {
+                "success": True,
+                "earned": 0,
+                "total_points": gp.total_points,
+                "membership": gp.to_dict()["membership_name"],
+                "message": f"已登记生日月份：{gp.birthday_month}月，该月所有积分×1.5！" if birthday_month else "请告知您的生日月份（1-12）～",
+            }
+
         pts = amount or rule["points"]
+
+        # 生日月 1.5 倍积分
+        now = dt.utcnow()
+        birthday_bonus = False
+        if gp.birthday_month and gp.birthday_month == now.month and action != "birthday":
+            pts = int(pts * 1.5)
+            birthday_bonus = True
+
         gp.total_points += pts
         gp.total_earned += pts
 
+        desc = description or rule["name"]
+        if birthday_bonus:
+            desc += "（生日月×1.5）"
+
         log = PointLog(
             openid=openid, points=pts, action=f"earn_{action}",
-            description=description or rule["name"]
+            description=desc
         )
         db.add(log)
 
@@ -79,6 +106,7 @@ def earn_points(openid: str, action: str, amount: int = None, description: str =
             "earned": pts,
             "total_points": gp.total_points,
             "membership": gp.to_dict()["membership_name"],
+            "birthday_bonus": birthday_bonus,
         }
     finally:
         db.close()

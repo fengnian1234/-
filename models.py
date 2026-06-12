@@ -290,6 +290,9 @@ class FoodRecommend(Base):
     price_range = Column(String(50))
     must_try = Column(String(200))
     image = Column(String(500))
+    images = Column(JSON, comment="多图列表（XHS风格图文展示）")
+    detail_content = Column(Text, comment="XHS风格长文描述（含emoji、分段）")
+    tags = Column(JSON, comment="标签列表如 #庐山美食 #必打卡")
     is_recommended = Column(Boolean, default=False)
     sort_order = Column(Integer, default=0)
 
@@ -299,6 +302,9 @@ class FoodRecommend(Base):
             "description": self.description, "address": self.address,
             "map_link": self.map_link, "price_range": self.price_range,
             "must_try": self.must_try, "image": self.image,
+            "images": self.images or [],
+            "detail_content": self.detail_content or "",
+            "tags": self.tags or [],
         }
 
 
@@ -336,6 +342,7 @@ class PlatformMention(Base):
 #  消息日志
 # ══════════════════════════════════════════════════════════
 class MessageLog(Base):
+    """消息日志 — 预留：微信消息记录（Phase 3 接入微信客服消息API后启用）"""
     __tablename__ = "message_logs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -367,6 +374,7 @@ class GuestPoints(Base):
     total_earned = Column(Integer, default=0, comment="累计获取积分")
     total_spent = Column(Integer, default=0, comment="累计消费积分")
     membership = Column(String(20), default="silver", comment="会员等级: silver/gold/diamond")
+    birthday_month = Column(Integer, comment="生日月份(1-12)，激活当月积分1.5倍")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -380,6 +388,7 @@ class GuestPoints(Base):
             "membership": self.membership,
             "membership_name": {"silver": "银卡", "gold": "金卡", "diamond": "钻石卡"}.get(self.membership, "银卡"),
             "discount": {"silver": 0.95, "gold": 0.92, "diamond": 0.90}.get(self.membership, 0.95),
+            "birthday_month": self.birthday_month,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
@@ -416,12 +425,13 @@ REDEEM_ITEMS = {
 
 # ── 积分获取规则 ──────────────────────────────────────────
 EARN_RULES = {
-    "booking":    {"name": "入住消费",   "points": 1, "unit": "每消费¥1得1分"},
-    "checkin":    {"name": "每日签到",   "points": 1, "unit": "每天签到+1分"},
-    "review":     {"name": "写评价",     "points": 50, "unit": "携程/小红书评价+50分"},
-    "share":      {"name": "邀请好友",   "points": 20, "unit": "邀请关注公众号+20分"},
-    "birthday":   {"name": "生日礼",     "points": 100, "unit": "生日当月+100分"},
-    "xhs_note":   {"name": "小红书笔记", "points": 80, "unit": "带图发笔记+80分"},
+    "booking":     {"name": "入住消费",       "points": 1,   "unit": "每消费¥1得1分"},
+    "checkin":     {"name": "每日签到",       "points": 1,   "unit": "每天签到+1分"},
+    "review":      {"name": "写订单平台评价", "points": 80,  "unit": "携程/美团/飞猪/大众点评写评价+80分（截图发前台）"},
+    "share":       {"name": "邀请好友预订",   "points": 100, "unit": "好友通过分享首次入住+100分"},
+    "birthday":    {"name": "生日当月积分×1.5","points": 0,  "unit": "生日当月所有积分获取享1.5倍（联系前台登记生日月份）"},
+    "xhs_note":    {"name": "小红书笔记",     "points": 80,  "unit": "带图发笔记+80分"},
+    "social_post": {"name": "朋友圈打卡",     "points": 30,  "unit": "定位+民宿图片发朋友圈+30分（截图发前台）"},
 }
 
 # ── 会员等级 ──────────────────────────────────────────────
@@ -488,12 +498,3 @@ class AggregatedOrder(Base):
 def init_db():
     """创建所有表"""
     Base.metadata.create_all(engine)
-
-
-def get_db():
-    """获取数据库会话"""
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()

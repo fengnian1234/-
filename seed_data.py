@@ -233,10 +233,17 @@ def seed_services(db):
         QuickService(name="搭伙用餐", description="可与老板搭伙用餐，品尝家常庐山味道", icon="🍲", category="frontdesk", estimated_time="需提前联系", sort_order=12),
         QuickService(name="退房办理", description="快速退房，账单结算", icon="🏃", category="frontdesk", estimated_time="约5分钟", sort_order=13),
 
-        # 设施维修 (sort_order 14-16)
-        QuickService(name="设施报修", description="房间设施故障报修处理", icon="🔧", category="maintenance", estimated_time="尽快处理", sort_order=14),
-        QuickService(name="空调调节", description="空调温度调节或故障处理", icon="❄️", category="maintenance", estimated_time="约15分钟", sort_order=15),
-        QuickService(name="热水问题", description="热水器故障或水温调节", icon="🔥", category="maintenance", estimated_time="尽快处理", sort_order=16),
+        # 前台服务 - 新增 (sort_order 14-18)
+        QuickService(name="登山杖免费租借", description="押金¥50，归还退押金。住客点赞率最高的贴心服务", icon="🥾", category="frontdesk", estimated_time="即刻领取", sort_order=14),
+        QuickService(name="雨伞/雨衣租借", description="庐山多雨，免费借用雨伞或一次性雨衣，退房归还即可", icon="🌂", category="frontdesk", estimated_time="即刻领取", sort_order=15),
+        QuickService(name="充电宝租借", description="前台扫码借取，全山通用归还点，支持主流品牌", icon="🔋", category="frontdesk", estimated_time="即刻领取", sort_order=16),
+        QuickService(name="医药箱/急救包", description="创可贴/晕车药/退烧药/藿香正气水/碘伏棉签等常用药品", icon="💊", category="frontdesk", estimated_time="即刻取用", sort_order=17),
+        QuickService(name="特产代购", description="庐山茶饼/石鱼干/云雾茶等特产，按进价代购不加价", icon="🎁", category="frontdesk", estimated_time="次日可取", sort_order=18),
+
+        # 设施维修 (sort_order 19-21)
+        QuickService(name="设施报修", description="房间设施故障报修处理", icon="🔧", category="maintenance", estimated_time="尽快处理", sort_order=19),
+        QuickService(name="空调调节", description="空调温度调节或故障处理", icon="❄️", category="maintenance", estimated_time="约15分钟", sort_order=20),
+        QuickService(name="热水问题", description="热水器故障或水温调节", icon="🔥", category="maintenance", estimated_time="尽快处理", sort_order=21),
     ]
     db.add_all(services)
 

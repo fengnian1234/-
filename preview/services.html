@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>快捷服务 - 云上·归墅民宿</title>
+<meta name="description" content="云上·归墅14项贴心快捷服务。客房打扫、设施维修、叫醒、行李寄存、叫车、旅游咨询，一键呼叫前台。">
 <script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
-:root{--color-primary:#3d5347;--color-primary-light:#5b7b6f;--color-primary-dark:#2a3d33;--color-accent:#8b7355;--color-bg:#faf8f5;--color-bg-light:#f3f0eb;--color-text:#333330;--color-text-light:#6b6b66;--color-text-lighter:#999990;--color-white:#fff;--color-border:#e0dcd5;--color-shadow:rgba(0,0,0,0.06);--color-shadow-hover:rgba(0,0,0,0.10);--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 1px 3px var(--color-shadow);--shadow-md:0 4px 12px var(--color-shadow);--transition:0.25s cubic-bezier(0.4,0,0.2,1);--max-width:720px}
-[data-theme="dark"]{--color-primary:#6b9b7e;--color-primary-light:#557a64;--color-primary-dark:#3d5c48;--color-accent:#b89060;--color-bg:#1a1e1c;--color-bg-light:#212623;--color-text:#dcd8cf;--color-text-light:#a0a098;--color-text-lighter:#6e6e66;--color-white:#252927;--color-border:#3a3e3b;--color-shadow:rgba(0,0,0,0.30);--color-shadow-hover:rgba(0,0,0,0.50)}
-[data-theme="dark"] .header{background:rgba(37,41,39,0.92)}
-[data-theme="dark"] .footer{background:#141815;color:rgba(220,216,207,0.6)}
-[data-theme="dark"] .footer-copy{color:rgba(220,216,207,0.3)}
+:root{--color-primary:#4a7c59;--color-primary-light:#6b9b7e;--color-primary-dark:#3b5e47;--color-accent:#c8966a;--color-accent-light:#dbb88a;--color-sky:#8eb8c9;--color-mist:#d4e5d8;--color-bg:#f5f9f4;--color-bg-light:#edf4ea;--color-bg-dark:#dce8d8;--color-text:#2a3328;--color-text-light:#5a6558;--color-text-lighter:#8a9586;--color-white:#fffefb;--color-border:#d8e0d4;--color-shadow:rgba(74,100,58,0.06);--color-shadow-hover:rgba(74,100,58,0.12);--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 2px 8px var(--color-shadow);--shadow-md:0 6px 20px var(--color-shadow-hover);--shadow-lg:0 12px 32px var(--color-shadow-hover);--transition:0.3s cubic-bezier(0.4,0,0.2,1);--max-width:720px}
+[data-theme="dark"]{--color-primary:#6baf7e;--color-primary-light:#558a64;--color-primary-dark:#3d5c48;--color-accent:#c89b6a;--color-accent-light:#dab080;--color-sky:#6a95a8;--color-mist:#2a3a2e;--color-bg:#1a1f1b;--color-bg-light:#1f2620;--color-bg-dark:#252e26;--color-text:#d8dfd4;--color-text-light:#a0a898;--color-text-lighter:#6a7268;--color-white:#222722;--color-border:#2e382f;--color-shadow:rgba(0,0,0,0.35);--color-shadow-hover:rgba(0,0,0,0.50)}[data-theme="dark"] .page-header{background:linear-gradient(170deg,#4a6868 0%,#3d5c48 40%,#2a3a28 100%)}[data-theme="dark"] .page-header::after{opacity:0.25}
+[data-theme="dark"] .header{background:rgba(26,31,27,0.94)}
+[data-theme="dark"] .footer{background:linear-gradient(180deg,#1a2418,#141a15);color:rgba(216,223,212,0.6)}
+[data-theme="dark"] .footer-copy{color:rgba(216,223,212,0.3)}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px;-webkit-font-smoothing:antialiased}
 body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
@@ -18,7 +19,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:
 h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05rem}
 .container{max-width:var(--max-width);margin:0 auto;padding:0 1rem}
 a{color:var(--color-primary);text-decoration:none}
-.header{background:rgba(255,255,255,0.92);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.header{background:rgba(245,249,244,0.9);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
 .logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none}
 .logo-icon{font-size:1.4rem}
@@ -26,7 +27,7 @@ a{color:var(--color-primary);text-decoration:none}
 .nav-links{display:flex;gap:0.2rem}
 .nav-links a{padding:0.35rem 0.7rem;border-radius:var(--radius-sm);font-size:0.9rem;color:var(--color-text-light);transition:all var(--transition)}
 .nav-links a:hover{color:var(--color-primary);background:var(--color-bg-light)}
-.page-header{background:linear-gradient(135deg,var(--color-primary-dark),var(--color-primary));color:var(--color-white);padding:2.5rem 1rem;text-align:center}
+.page-header{background:linear-gradient(170deg,#a8d0e0 0%,#8eb8c9 20%,#7aab8e 60%,#4a7c59 100%);color:#fff;padding:3rem 1rem 2.5rem;text-align:center;position:relative;overflow:hidden}.page-header::before{content:;position:absolute;top:-30px;left:-20%;right:-20%;height:80px;background:radial-gradient(ellipse at 30% 100%,rgba(255,255,255,0.25) 0%,transparent 60%),radial-gradient(ellipse at 70% 100%,rgba(255,255,255,0.2) 0%,transparent 55%);pointer-events:none}.page-header::after{content:;position:absolute;bottom:-1px;left:0;right:0;height:24px;background:var(--color-bg);mask-image:url("data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40" preserveAspectRatio="none"%3E%3Cpath d="M0,20 C150,38 350,2 500,18 C650,34 850,6 1000,22 C1100,32 1180,10 1200,14 L1200,40 L0,40 Z" fill="white"/%3E%3C/svg%3E");mask-size:100% 100%;mask-repeat:no-repeat;-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40" preserveAspectRatio="none"%3E%3Cpath d="M0,20 C150,38 350,2 500,18 C650,34 850,6 1000,22 C1100,32 1180,10 1200,14 L1200,40 L0,40 Z" fill="white"/%3E%3C/svg%3E");-webkit-mask-size:100% 100%;-webkit-mask-repeat:no-repeat}.page-header h1{color:#fff;margin-bottom:0.4rem;font-size:1.7rem;text-shadow:0 1px 4px rgba(0,0,0,0.1);position:relative;z-index:1}.page-header p{color:rgba(255,255,255,0.85);font-size:0.95rem;position:relative;z-index:1}
 .page-header h1{color:var(--color-white);margin-bottom:0.3rem}
 .page-header p{color:rgba(255,255,255,0.8);font-size:0.95rem}
 .section-padding{padding:2rem 0}
@@ -52,9 +53,11 @@ a{color:var(--color-primary);text-decoration:none}
 .modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(2px)}
 .modal-content{position:relative;background:var(--color-white);border-radius:var(--radius-lg);padding:2rem 1.5rem;text-align:center;max-width:320px;width:100%;box-shadow:0 8px 24px var(--color-shadow-hover)}
 .modal-icon{font-size:3rem;margin-bottom:0.8rem}
-.footer{background:var(--color-primary-dark);color:rgba(255,255,255,0.7);padding:1.5rem 1rem;text-align:center;margin-top:auto}
+.footer{background:linear-gradient(180deg,#3b5e47,#2a3d33);color:rgba(255,255,255,0.7);padding:2rem 1rem;text-align:center;margin-top:auto}
 .footer p{font-size:0.8rem;margin-bottom:0.2rem;line-height:1.8}
 .footer-copy{color:rgba(255,255,255,0.4);font-size:0.72rem!important;margin-top:0.4rem}
+.fade-up{opacity:0;transform:translateY(12px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
@@ -91,7 +94,7 @@ a{color:var(--color-primary);text-decoration:none}
 </div>
 
 <footer class="footer">
-    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 85条  |  2016年开业</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
+    <div class="footer-inner"><p>云无心以出岫，鸟倦飞而知还</p><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 85条评价  |  2016年开业</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
 </footer>
 
 <script>
@@ -103,19 +106,25 @@ const services = [
         {name:"送餐到房",desc:"将餐点送至您的房间",icon:"🍽️",time:"约30分钟"},
         {name:"衣物送洗",desc:"洗衣、烘干、熨烫服务",icon:"👔",time:"次日取"}
     ]},
+    {cat:"🏨 前台服务",catKey:"frontdesk", items:[
+        {name:"行李寄存",desc:"退房后免费寄存行李",icon:"🧳",time:"即刻办理"},
+        {name:"旅游咨询",desc:"庐山景点介绍、门票预订、天气查询",icon:"🏞️",time:"即刻咨询"},
+        {name:"旅拍服务",desc:"专业摄影师跟拍，记录庐山美好时光",icon:"📸",time:"约2-3小时"},
+        {name:"免费路线规划",desc:"老板根据您的偏好定制游玩路线，不收费用",icon:"🗺️",time:"即刻咨询"},
+        {name:"叫车服务",desc:"预约出租车或包车游览庐山",icon:"🚕",time:"约15分钟到达"},
+        {name:"叫醒服务",desc:"设定叫醒时间，准时电话提醒",icon:"⏰",time:"准时执行"},
+        {name:"搭伙用餐",desc:"可与老板搭伙用餐，品尝家常庐山味道",icon:"🍲",time:"需提前联系"},
+        {name:"退房办理",desc:"快速退房，账单结算",icon:"🏃",time:"约5分钟"},
+        {name:"登山杖免费租借",desc:"押金¥50，归还退押金。住客点赞率最高",icon:"🥾",time:"即刻领取"},
+        {name:"雨伞/雨衣租借",desc:"庐山多雨，免费借用，退房归还即可",icon:"🌂",time:"即刻领取"},
+        {name:"充电宝租借",desc:"前台扫码借取，全山通用归还点",icon:"🔋",time:"即刻领取"},
+        {name:"医药箱/急救包",desc:"创可贴/晕车药/退烧药/藿香正气水等",icon:"💊",time:"即刻取用"},
+        {name:"特产代购",desc:"庐山茶饼/石鱼干/云雾茶等，按进价代购",icon:"🎁",time:"次日可取"}
+    ]},
     {cat:"🔧 设施维修",catKey:"maintenance", items:[
         {name:"设施报修",desc:"房间设施故障报修处理",icon:"🔧",time:"尽快处理"},
         {name:"空调调节",desc:"空调温度调节或故障处理",icon:"❄️",time:"约15分钟"},
         {name:"热水问题",desc:"热水器故障或水温调节",icon:"🔥",time:"尽快处理"}
-    ]},
-    {cat:"🏨 前台服务",catKey:"frontdesk", items:[
-        {name:"叫醒服务",desc:"设定叫醒时间，准时电话提醒",icon:"⏰",time:"准时执行"},
-        {name:"行李寄存",desc:"退房后免费寄存行李",icon:"🧳",time:"即刻办理"},
-        {name:"免费路线规划",desc:"老板根据您的偏好定制游玩路线，不收费用",icon:"🗺️",time:"即刻咨询"},
-        {name:"叫车服务",desc:"预约出租车或包车游览庐山",icon:"🚕",time:"约15分钟到达"},
-        {name:"旅游咨询",desc:"庐山景点介绍、门票预订、天气查询",icon:"🏞️",time:"即刻咨询"},
-        {name:"搭伙用餐",desc:"可与老板搭伙用餐，品尝家常庐山味道",icon:"🍲",time:"需提前联系"},
-        {name:"退房办理",desc:"快速退房，账单结算",icon:"🏃",time:"约5分钟"}
     ]}
 ];
 
@@ -137,10 +146,25 @@ services.forEach(group => {
     container.appendChild(div);
 });
 
+function getGuestId(){
+    let id = localStorage.getItem('guest_id');
+    if(!id){
+        id = 'guest_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8);
+        localStorage.setItem('guest_id', id);
+    }
+    return id;
+}
 function requestService(name,desc,time,icon){
     document.getElementById('svcTitle').textContent = icon + ' ' + name;
     document.getElementById('svcMsg').textContent = `📝 ${desc}\n⏱️ 预计处理时间：${time}\n\n✅ 已通知工作人员，请稍候～\n\n如有紧急需求，请拨打前台电话 ☎️`;
     document.getElementById('svcModal').classList.add('show');
+    try {
+        fetch('/api/service/request', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({service_name: name, openid: getGuestId()})
+        }).catch(function(){});
+    } catch(e) {}
 }
 function closeModal(){document.getElementById('svcModal').classList.remove('show')}
 </script>
@@ -148,5 +172,6 @@ function closeModal(){document.getElementById('svcModal').classList.remove('show
 (function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'})();
 document.getElementById('themeToggle').onclick=function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);this.textContent=n==='dark'?'☀️':'🌙'};
 </script>
+<script>(function(){var o=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1});document.querySelectorAll('.section-padding,.page-header,.footer,.service-grid').forEach(function(e){e.classList.add('fade-up');o.observe(e)})})();</script>
 </body>
 </html>
