@@ -64,6 +64,112 @@
     --color-danger: #cc6050;
 }
 
+/* ── 季节主题：秋 ──────────────────────────────────────── */
+[data-season="autumn"] {
+    --color-primary: #8b5e3c;        /* 枫棕 — 秋叶满山 */
+    --color-primary-light: #a67c52;  /* 暖棕 — 晒秋木色 */
+    --color-primary-dark: #6b3f28;   /* 深棕 — 老树根 */
+    --color-accent: #c47a38;         /* 柿橙 — 秋日暖阳 */
+    --color-accent-light: #d99a5a;   /* 浅橙 — 银杏叶 */
+    --color-sky: #c4a882;            /* 稻金 — 秋日晴空 */
+    --color-mist: #e8dcc8;           /* 薄暮 — 袅袅炊烟 */
+    --color-bg: #faf6ee;             /* 宣纸白 — 暖调基底 */
+    --color-bg-light: #f3ede0;       /* 米白 — 稻谷晒场 */
+    --color-bg-dark: #e6dcbf;        /* 枯草色 — 收割后的田野 */
+    --color-text: #3a2a18;           /* 墨棕 — 秋夜的颜色 */
+    --color-text-light: #6b5540;     /* 土棕 — 泥泞小路 */
+    --color-text-lighter: #9a8870;   /* 沙色 — 远山层林 */
+    --color-white: #fffdf8;          /* 暖白 */
+    --color-border: #ddd0b8;         /* 麻布边 */
+    --color-shadow: rgba(139, 94, 60, 0.06);
+    --color-shadow-hover: rgba(139, 94, 60, 0.12);
+    --color-success: #6b8c4a;
+    --color-warning: #c48230;
+    --color-danger: #b85540;
+}
+[data-season="autumn"][data-theme="dark"] {
+    --color-primary: #b88050;
+    --color-primary-light: #9a6b40;
+    --color-primary-dark: #705030;
+    --color-accent: #d09048;
+    --color-accent-light: #dab070;
+    --color-sky: #807060;
+    --color-mist: #302820;
+    --color-bg: #1e1a15;
+    --color-bg-light: #242018;
+    --color-bg-dark: #2a241c;
+    --color-text: #e8ddd0;
+    --color-text-light: #b0a898;
+    --color-text-lighter: #787060;
+    --color-white: #262218;
+    --color-border: #383020;
+    --color-shadow: rgba(0,0,0,0.35);
+    --color-shadow-hover: rgba(0,0,0,0.50);
+    --color-success: #5c8c4a;
+    --color-warning: #c89040;
+    --color-danger: #c86050;
+}
+
+/* ── 季节主题：冬 ──────────────────────────────────────── */
+[data-season="winter"] {
+    --color-primary: #5a7a8a;        /* 雪松青 — 冬雪压松 */
+    --color-primary-light: #7a9aaa;  /* 冰蓝 — 结冰的湖面 */
+    --color-primary-dark: #405a68;   /* 深湖蓝 — 冬日夜空 */
+    --color-accent: #b8684a;         /* 炉火橙 — 冬日暖炉 */
+    --color-accent-light: #d0886a;   /* 暖焰 — 壁炉火光 */
+    --color-sky: #a0c0d8;            /* 晴空蓝 — 雪后初晴 */
+    --color-mist: #dce8f0;           /* 霜白 — 清晨薄霜 */
+    --color-bg: #f4f8fb;             /* 雪白 — 初雪覆盖 */
+    --color-bg-light: #eaf0f6;       /* 冰白 — 雾凇挂枝 */
+    --color-bg-dark: #dce4ec;        /* 云灰 — 欲雪天空 */
+    --color-text: #2a3038;           /* 墨蓝 — 冬夜长空 */
+    --color-text-light: #506070;     /* 石青 — 冬日山岩 */
+    --color-text-lighter: #809098;   /* 雾灰 — 远山雪影 */
+    --color-white: #fcfdfe;          /* 纯白 — 新雪 */
+    --color-border: #d0dce4;         /* 冰棱边 */
+    --color-shadow: rgba(90, 122, 138, 0.06);
+    --color-shadow-hover: rgba(90, 122, 138, 0.12);
+    --color-success: #5a8a7a;
+    --color-warning: #b87040;
+    --color-danger: #b85050;
+}
+[data-season="winter"][data-theme="dark"] {
+    --color-primary: #7a9aaa;
+    --color-primary-light: #608090;
+    --color-primary-dark: #4a6068;
+    --color-accent: #c87858;
+    --color-accent-light: #d89878;
+    --color-sky: #607888;
+    --color-mist: #202830;
+    --color-bg: #181c20;
+    --color-bg-light: #1e2228;
+    --color-bg-dark: #242830;
+    --color-text: #d8e0e8;
+    --color-text-light: #a0a8b0;
+    --color-text-lighter: #687078;
+    --color-white: #202428;
+    --color-border: #2a3038;
+    --color-shadow: rgba(0,0,0,0.35);
+    --color-shadow-hover: rgba(0,0,0,0.50);
+    --color-success: #5a8a70;
+    --color-warning: #c08040;
+    --color-danger: #c06050;
+}
+
+/* 冬季特别文案 — 仅在冬显示 */
+.footer-winter { display: none; font-size: 0.78rem; margin-bottom: 0.3rem; color: var(--color-accent); }
+[data-season="winter"] .footer-winter { display: block; }
+
+/* 季节主题过渡 */
+body, .header, .footer, .hero, .hero-overlay, .page-header, .room-card, .room-card-body,
+.entry-card, .intro-item, .feature-item, .faq-item, .service-card, .route-card, .food-card,
+.menu-item, .modal-content, .room-preview-card, .notice-card, .btn, .btn-primary, .btn-outline,
+.detail-card, .amenity-tag, .spot-tag, .food-category, .room-type-tag, .food-tag,
+.room-preview-img, .section-title, .points-balance {
+    transition: background-color 0.5s ease, border-color 0.5s ease,
+                color 0.4s ease, box-shadow 0.5s ease;
+}
+
 /* ── 基础重置 ─────────────────────────────────────────── */
 *, *::before, *::after {
     margin: 0;
@@ -446,6 +552,57 @@ h4 { font-size: 1.05rem; }
     color: rgba(255, 255, 255, 0.65);
     letter-spacing: 0.04em;
 }
+
+/* 季节文案 — hero 第三行，季节特有 */
+.hero-seasonal {
+    font-size: 0.85rem;
+    opacity: 0.78;
+    margin-top: 0.5rem;
+    font-family: var(--font-serif);
+    letter-spacing: 0.05em;
+    transition: opacity 0.6s ease;
+}
+
+/* 冬季 hero 加强 — 雪景氛围 */
+[data-season="winter"] .hero {
+    background: radial-gradient(ellipse 80% 60% at 60% 0%, rgba(180,200,220,0.85) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 70% at 20% 70%, rgba(200,215,230,0.55) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 80% 90%, rgba(160,180,200,0.35) 0%, transparent 50%),
+                linear-gradient(175deg, #c8dae8 0%, #dce8f0 40%, #e8f0f6 100%);
+}
+[data-season="winter"] .hero-overlay h1,
+[data-season="winter"] .hero-overlay .hero-subtitle { color: #3a5068; text-shadow: 0 1px 3px rgba(255,255,255,0.3); }
+[data-season="winter"] .hero-overlay .hero-desc { color: rgba(50,70,90,0.6); }
+[data-season="winter"] .hero-overlay .hero-seasonal { color: #5a7a90; }
+[data-season="winter"][data-theme="dark"] .hero {
+    background: radial-gradient(ellipse 80% 60% at 60% 0%, rgba(40,50,70,0.8) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 70% at 20% 70%, rgba(30,40,60,0.5) 0%, transparent 60%),
+                linear-gradient(175deg, #1a2430 0%, #1e2838 40%, #242e3c 100%);
+}
+[data-season="winter"][data-theme="dark"] .hero-overlay h1,
+[data-season="winter"][data-theme="dark"] .hero-overlay .hero-subtitle { color: #d0e0f0; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+[data-season="winter"][data-theme="dark"] .hero-overlay .hero-desc { color: rgba(200,215,230,0.5); }
+[data-season="winter"][data-theme="dark"] .hero-overlay .hero-seasonal { color: #8ab0c8; }
+
+/* 秋季 hero — 暖色氛围 */
+[data-season="autumn"] .hero {
+    background: radial-gradient(ellipse 80% 60% at 60% 0%, rgba(200,160,100,0.75) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 70% at 20% 70%, rgba(180,140,80,0.45) 0%, transparent 60%),
+                linear-gradient(175deg, #d8c8a8 0%, #e8d8b8 40%, #f0e8d0 100%);
+}
+[data-season="autumn"] .hero-overlay h1,
+[data-season="autumn"] .hero-overlay .hero-subtitle { color: #4a3020; text-shadow: 0 1px 3px rgba(255,240,220,0.3); }
+[data-season="autumn"] .hero-overlay .hero-desc { color: rgba(80,50,30,0.6); }
+[data-season="autumn"] .hero-overlay .hero-seasonal { color: #8b5e3c; }
+[data-season="autumn"][data-theme="dark"] .hero {
+    background: radial-gradient(ellipse 80% 60% at 60% 0%, rgba(80,50,20,0.8) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 70% at 20% 70%, rgba(60,40,20,0.5) 0%, transparent 60%),
+                linear-gradient(175deg, #281a10 0%, #302018 40%, #3a2820 100%);
+}
+[data-season="autumn"][data-theme="dark"] .hero-overlay h1,
+[data-season="autumn"][data-theme="dark"] .hero-overlay .hero-subtitle { color: #e8d0b0; }
+[data-season="autumn"][data-theme="dark"] .hero-overlay .hero-desc { color: rgba(210,180,150,0.5); }
+[data-season="autumn"][data-theme="dark"] .hero-overlay .hero-seasonal { color: #c09060; }
 
 /* ── 快捷入口 ─────────────────────────────────────────── */
 .quick-entry {

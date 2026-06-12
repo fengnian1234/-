@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-season="spring_summer">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="description" content="{% block description %}云上·归墅民宿 — 庐山山上海拔千米的U型三层山居小院，11间精品客房，携程4.7分。AI智能管家全程陪伴，预订前免费旅行顾问。{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}云上·归墅民宿{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}庐山山上海拔千米的山居小院，推窗即云海。免费旅行顾问 · AI智能管家 · 携程4.7分。{% endblock %}">
+    <meta property="og:image" content="{{ url_for('static', filename='img/og-image.jpg', _external=True) }}">
+    <meta property="og:type" content="website">
     <title>{% block title %}云上归墅{% endblock %}</title>
     <script>
     (function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);})();
+    // 季节检测：3-5春 6-8夏 9-11秋 12-2冬
+    (function(){var m=new Date().getMonth()+1;var s=m>=3&&m<=5?'spring':m>=6&&m<=8?'summer':m>=9&&m<=11?'autumn':'winter';document.documentElement.setAttribute('data-season',s);})();
     </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block extra_head %}{% endblock %}
@@ -40,10 +47,11 @@
     <!-- 底部 -->
     <footer class="footer">
         <div class="footer-inner">
-            <p class="footer-poem">云无心以出岫，鸟倦飞而知还</p>
+            <p class="footer-poem" data-summer="云无心以出岫，鸟倦飞而知还" data-autumn="山山唯落晖，树树皆秋色" data-winter="庐山雪霁处，疑是玉京来">云无心以出岫，鸟倦飞而知还</p>
             <p>🏔️ 云上·归墅民宿 · U型三层山居小院</p>
             <p>📍 庐山山上·庐山风景名胜区大林沟路27号</p>
             <p>📞 16607927666  |  携程 4.7分 · 85条评价  |  2016年开业</p>
+            <p class="footer-winter">❄️ 冬日庐山银装素裹，雾凇云海雪景被誉为"江南雪乡"——雪后初晴最是出片</p>
             <p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p>
         </div>
     </footer>
@@ -76,6 +84,15 @@
             if(icon)icon.textContent=n==='dark'?'☀️':'🌙';
         }
     });
+    // 季节诗词切换
+    (function(){
+        var s=document.documentElement.getAttribute('data-season');
+        var poem=document.querySelector('.footer-poem');
+        if(poem&&s){
+            var t=poem.getAttribute('data-'+s);
+            if(t) poem.textContent = t;
+        }
+    })();
     </script>
     {% block extra_scripts %}{% endblock %}
 </body>

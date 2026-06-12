@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-season="summer">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -88,6 +88,8 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
 [data-theme="dark"] .hero-title{color:#f0ece0;text-shadow:0 1px 4px rgba(0,0,0,0.4),0 4px 20px rgba(0,0,0,0.2)}
 [data-theme="dark"] .hero-subtitle{color:rgba(240,236,224,0.85)}
 [data-theme="dark"] .hero-desc{color:rgba(240,236,224,0.65)}
+.hero-seasonal{font-size:0.85rem;opacity:0.78;margin-top:0.5rem;font-family:var(--font-serif);letter-spacing:0.05em;color:rgba(255,255,255,0.8)}[data-theme="dark"] .hero-seasonal{color:rgba(240,236,224,0.75)}
+.footer-winter{display:none;font-size:0.78rem;margin-bottom:0.3rem;color:var(--color-accent)}[data-season="winter"] .footer-winter{display:block}
 /* Quick Entry */
 .quick-entry{padding:1.5rem 0;margin-top:-1rem;position:relative;z-index:2}
 .entry-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem}
@@ -165,8 +167,9 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
 <section class="hero">
     <div class="hero-overlay">
         <h1 class="hero-title">云上·归墅</h1>
-        <p class="hero-subtitle">云无心以出岫，鸟倦飞而知还</p>
+        <p class="hero-subtitle" id="heroSubtitle">云无心以出岫，鸟倦飞而知还</p>
         <p class="hero-desc">2016年开业 · 11间客房 · U型三层小楼 · 前院后院 · 庐山索道上站步行5分钟</p>
+        <p class="hero-seasonal" id="heroSeasonal"></p>
     </div>
 </section>
 
@@ -292,12 +295,14 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
 
 <!-- Footer -->
 <footer class="footer">
-    <div class="footer-inner"><p>云无心以出岫，鸟倦飞而知还</p><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 85条评价  |  2016年开业</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
+    <div class="footer-inner"><p class="footer-poem" id="footerPoem">云无心以出岫，鸟倦飞而知还</p><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 85条评价  |  2016年开业</p><p class="footer-winter">❄️ 冬日庐山银装素裹，雾凇云海雪景被誉为"江南雪乡"</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
 </footer>
 
 <script>
 (function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'})();
 document.getElementById('themeToggle').onclick=function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);this.textContent=n==='dark'?'☀️':'🌙'};
+// 季节检测
+(function(){var m=new Date().getMonth()+1;var s=m>=3&&m<=5?'spring':m>=6&&m<=8?'summer':m>=9&&m<=11?'autumn':'winter';document.documentElement.setAttribute('data-season',s);var texts={summer:'🌿 夏日庐山均温22°C，天然空调房',spring:'🌸 春日庐山杜鹃满山，云雾茶新芽初绽',autumn:'🍂 秋日庐山层林尽染，枫红银杏黄',winter:'❄️ 冬日庐山银装素裹，雾凇云海雪景一绝——索道上站步行5分钟，踏雪即至'};var el=document.getElementById('heroSeasonal');if(el)el.textContent=texts[s]||texts.summer;var poems={summer:'云无心以出岫，鸟倦飞而知还',spring:'云无心以出岫，鸟倦飞而知还',autumn:'山山唯落晖，树树皆秋色',winter:'庐山雪霁处，疑是玉京来'};var pEl=document.getElementById('heroSubtitle');if(pEl)pEl.textContent=poems[s]||poems.summer;var fEl=document.getElementById('footerPoem');if(fEl)fEl.textContent=poems[s]||poems.summer;})();
 let currentSlide=0,totalSlides=3,autoTimer=setInterval(function(){moveSlide(1)},4000);
 function goSlide(n){currentSlide=n;document.getElementById('reviewSlides').style.transform='translateX(-'+n*100+'%)';document.querySelectorAll('.carousel-dot').forEach(function(d,i){d.classList.toggle('active',i===n)});clearInterval(autoTimer);autoTimer=setInterval(function(){moveSlide(1)},4000)}
 function moveSlide(dir){currentSlide=(currentSlide+dir+totalSlides)%totalSlides;goSlide(currentSlide)}

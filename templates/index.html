@@ -6,8 +6,9 @@
 <section class="hero">
     <div class="hero-overlay">
         <h1 class="hero-title">云上·归墅</h1>
-        <p class="hero-subtitle">云无心以出岫，鸟倦飞而知还</p>
+        <p class="hero-subtitle" id="heroSubtitle">云无心以出岫，鸟倦飞而知还</p>
         <p class="hero-desc">2016年开业 · 11间客房 · U型三层小楼 · 庐山索道上站步行5分钟</p>
+        <p class="hero-seasonal" id="heroSeasonal"></p>
     </div>
 </section>
 
@@ -309,4 +310,30 @@ function resetTimer() {
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function(){
+    var s = document.documentElement.getAttribute('data-season');
+    var texts = {
+        summer: '🌿 夏日庐山均温22°C，天然空调房。推开窗满眼葱翠，蝉鸣鸟叫伴入眠',
+        spring: '🌸 春日庐山杜鹃满山，云雾茶新芽初绽。山花烂漫时，最是人间四月天',
+        autumn: '🍂 秋日庐山层林尽染，枫红银杏黄。天高云淡，正是登山好时节',
+        winter: '❄️ 冬日庐山银装素裹，雾凇云海雪景一绝——索道上站步行5分钟，踏雪即至'
+    };
+    var el = document.getElementById('heroSeasonal');
+    if (el && s) el.textContent = texts[s] || texts.summer;
+    var subEl = document.getElementById('heroSubtitle');
+    if (subEl && s) {
+        var subs = {
+            summer: '云无心以出岫，鸟倦飞而知还',
+            spring: '云无心以出岫，鸟倦飞而知还',
+            autumn: '山山唯落晖，树树皆秋色',
+            winter: '庐山雪霁处，疑是玉京来'
+        };
+        subEl.textContent = subs[s] || subs.summer;
+    }
+})();
+</script>
 {% endblock %}
