@@ -12,15 +12,18 @@ from config import (
 )
 
 
-def get_booking_by_openid(openid: str):
-    """获取用户当前有效预订"""
+def get_booking_by_openid(openid: str, include_checked_out: bool = False):
+    """获取用户最近预订"""
     db = SessionLocal()
     try:
+        statuses = ["confirmed", "checked_in"]
+        if include_checked_out:
+            statuses.append("checked_out")
         booking = db.query(Booking).filter(
             Booking.openid == openid,
-            Booking.status.in_(["confirmed", "checked_in"]),
+            Booking.status.in_(statuses),
         ).order_by(Booking.created_at.desc()).first()
-        return booking
+        return booking.to_dict() if booking else None
     finally:
         db.close()
 

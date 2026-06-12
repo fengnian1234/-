@@ -35,6 +35,11 @@
                 <span class="entry-title">快捷服务</span>
                 <span class="entry-desc">一键呼叫</span>
             </a>
+            <a href="/points" class="entry-card">
+                <span class="entry-icon">⭐</span>
+                <span class="entry-title">积分中心</span>
+                <span class="entry-desc">签到兑换好礼</span>
+            </a>
         </div>
     </div>
 </section>
@@ -42,7 +47,7 @@
 <!-- 索道通知 -->
 <section class="section-padding" style="padding-bottom:0">
     <div class="container">
-        <div class="notice-card" style="background:#e8f5e9;border-radius:10px;padding:1rem 1.2rem;border-left:4px solid #2e7d32;font-size:0.85rem;line-height:1.6">
+        <div class="notice-card notice-card--success">
             <strong>🚡 庐山索道已恢复运营</strong> — 2026年度检修（5.11-6.9）已结束，<strong>6月10日7:30起恢复正常</strong>。索道上站步行5分钟即达民宿～ 🏔️
         </div>
     </div>
@@ -66,7 +71,7 @@
             <div class="intro-item">
                 <span class="intro-icon">⭐</span>
                 <h3>携程口碑</h3>
-                <p>官方评分 4.7/5.0 · 87条评价 · Trip.com 9.4/10<br>卫生4.8 设施4.6 环境4.7 服务4.7<br>「咖啡品质出众」「暖气超给力」「老板热情像家人」</p>
+                <p>官方评分 4.7/5.0 · 85条评价 · Trip.com 9.4/10<br>卫生4.7 设施4.4 环境4.7 服务4.7<br>「咖啡品质出众」「环境安静治愈」「老板热情像家人」</p>
             </div>
             <div class="intro-item">
                 <span class="intro-icon">📍</span>
@@ -84,21 +89,21 @@
         <p class="section-desc">每间房都有独特的风景</p>
         <div class="rooms-preview">
             <div class="room-preview-card">
-                <div class="room-preview-img" style="background: linear-gradient(135deg, #4a6b8a, #7a9bb8);">
+                <div class="room-preview-img room-preview-gradient-sky">
                     <span>🏔️</span>
                 </div>
                 <h4>清舍·露台大床房</h4>
                 <p class="price">¥788/晚</p>
             </div>
             <div class="room-preview-card">
-                <div class="room-preview-img" style="background: linear-gradient(135deg, #5b7b6f, #7a9a8e);">
+                <div class="room-preview-img room-preview-gradient-forest">
                     <span>☁️</span>
                 </div>
                 <h4>山景·精致大床房</h4>
                 <p class="price">¥688/晚</p>
             </div>
             <div class="room-preview-card">
-                <div class="room-preview-img" style="background: linear-gradient(135deg, #7a5a3a, #a08060);">
+                <div class="room-preview-img room-preview-gradient-earth">
                     <span>🍵</span>
                 </div>
                 <h4>室雅茶香套房</h4>
@@ -154,30 +159,109 @@
     <div class="container">
         <h2 class="section-title">住客好评</h2>
         <p class="section-desc">2026年最新携程住客真实评价</p>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem" class="review-grid">
-            <div style="background:var(--color-white);border-radius:var(--radius-md);padding:1rem;box-shadow:var(--shadow-sm);font-size:0.82rem;line-height:1.7">
-                <div style="color:var(--color-accent);margin-bottom:0.4rem">⭐⭐⭐⭐⭐</div>
-                <p style="margin-bottom:0.4rem">"带着小孩订的田园家庭房，体验感拉满。推窗就是满眼青山绿意，老板很热情，像住在朋友家一样自在～"</p>
-                <div style="color:var(--color-text-lighter);font-size:0.72rem">小敏 · 2026年4月 · 田园家庭房</div>
+        <div class="review-carousel" id="reviewCarousel">
+            <div class="review-slides" id="reviewSlides">
+                <!-- Slide 1 -->
+                <div class="review-slide">
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"麦姐超热情，提前一天加微信发了攻略和解答了问题。到索道站来接了我们，本来担心找不到路，结果一路顺畅～"</p>
+                        <div class="review-author">吃喝玩乐 · 2026年3月</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"民宿主理人麦姐品味太好了，每个角落都是精心布置，从小院风铃到房间茶具，处处透着中式美学的用心。"</p>
+                        <div class="review-author">十二分甜美式 · 2026年4月</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"推窗就是漫山云海，风铃轻响，咖啡品质出众。自种的茶清香回甘，还有自酿美酒，房间舒适整洁。"</p>
+                        <div class="review-author">小敏 · 2026年4月 · 田园家庭房</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"带着小孩订的田园家庭房，体验感拉满。推窗就是满眼青山绿意，像住在朋友家一样自在～"</p>
+                        <div class="review-author">M47122****** · 2026年2月</div>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="review-slide">
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"藏在庐山牯岭镇云雾中，环境安静治愈。咖啡品质出众，暖气超给力，冬天来庐山也能暖暖的～"</p>
+                        <div class="review-author">阿葱 · 2026年1月</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"麦姐帮忙规划了免费路线，还搭伙吃了晚饭，尝到了地道的庐山家常味道。像回到了山里的家一样温暖。"</p>
+                        <div class="review-author">Maxine✨ · 2025年8月</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"交通非常便利，索道上站步行5分钟即达。一楼是治愈感拉满的咖啡馆，老板免费路线规划，超贴心！"</p>
+                        <div class="review-author">大文文 · 2022年7月</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"民宿主理人自种的庐山云雾茶清香回甘，自酿美酒也很有特色。坐在院子里喝茶听风铃，惬意极了～"</p>
+                        <div class="review-author">渺渺兮君 · 2022年2月</div>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="review-slide">
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"离索道超近！房间超级暖和，空调➕暖气片感觉像夏天！楼下咖啡店很有个性，还有小猫咪晒太阳！🐱"</p>
+                        <div class="review-author">小敏猪 · 2026年4月</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"设施方便，房价实惠，环境很好住得很满意！前台服务也很好，有问题都会及时回应。"</p>
+                        <div class="review-author">龖馫 · 2025年8月</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"麦姐的咖啡馆太治愈了，猫咪在院子里晒太阳超可爱。三山二水咖啡的冷萃是庐山最好喝的！🐱☕"</p>
+                        <div class="review-author">杨杨杨 · 2025年12月</div>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"环境安静又治愈，服务也很贴心，来庐山玩住这里很合适。早上被鸟鸣叫醒，逃离城市喧嚣～"</p>
+                        <div class="review-author">粥粥 · 2026年4月</div>
+                    </div>
+                </div>
             </div>
-            <div style="background:var(--color-white);border-radius:var(--radius-md);padding:1rem;box-shadow:var(--shadow-sm);font-size:0.82rem;line-height:1.7">
-                <div style="color:var(--color-accent);margin-bottom:0.4rem">⭐⭐⭐⭐⭐</div>
-                <p style="margin-bottom:0.4rem">"藏在庐山牯岭镇云雾中，环境安静治愈，推窗便是漫山云海。咖啡品质出众，自种的茶清香回甘，还有自酿美酒～"</p>
-                <div style="color:var(--color-text-lighter);font-size:0.72rem">十二分甜美式 · 2026年4月</div>
-            </div>
-            <div style="background:var(--color-white);border-radius:var(--radius-md);padding:1rem;box-shadow:var(--shadow-sm);font-size:0.82rem;line-height:1.7">
-                <div style="color:var(--color-accent);margin-bottom:0.4rem">⭐⭐⭐⭐⭐</div>
-                <p style="margin-bottom:0.4rem">"交通非常便利，索道上站旁步行5分钟即达。一楼是治愈感拉满的咖啡馆，老板免费路线规划、可搭伙用餐，像回到山里的家。"</p>
-                <div style="color:var(--color-text-lighter);font-size:0.72rem">吃喝玩乐 · 2026年3月</div>
-            </div>
-            <div style="background:var(--color-white);border-radius:var(--radius-md);padding:1rem;box-shadow:var(--shadow-sm);font-size:0.82rem;line-height:1.7">
-                <div style="color:var(--color-accent);margin-bottom:0.4rem">⭐⭐⭐⭐⭐</div>
-                <p style="margin-bottom:0.4rem">"离索道超近！房间超级暖和，空调➕暖气片感觉像夏天！老板很热情会帮忙搬行李，楼下咖啡店很有个性，还有小猫咪晒太阳！🐱"</p>
-                <div style="color:var(--color-text-lighter);font-size:0.72rem">M47122****** · 2026年2月</div>
+            <div class="carousel-nav">
+                <button class="carousel-arrow" onclick="moveSlide(-1)" aria-label="上一页">◂</button>
+                <div class="carousel-dots" id="carouselDots">
+                    <button class="carousel-dot active" onclick="goSlide(0)"></button>
+                    <button class="carousel-dot" onclick="goSlide(1)"></button>
+                    <button class="carousel-dot" onclick="goSlide(2)"></button>
+                </div>
+                <button class="carousel-arrow" onclick="moveSlide(1)" aria-label="下一页">▸</button>
             </div>
         </div>
     </div>
 </section>
+<script>
+let currentSlide = 0;
+const totalSlides = 3;
+let autoTimer = setInterval(() => moveSlide(1), 4000);
+function goSlide(n) {
+    currentSlide = n;
+    document.getElementById('reviewSlides').style.transform = `translateX(-${n*100}%)`;
+    document.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i===n));
+    resetTimer();
+}
+function moveSlide(dir) {
+    currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
+    goSlide(currentSlide);
+}
+function resetTimer() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(() => moveSlide(1), 4000);
+}
+</script>
 
 <!-- 常见问题 -->
 <section class="section-padding bg-light">

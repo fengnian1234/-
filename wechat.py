@@ -21,7 +21,7 @@ from services.travel import (
     format_food_text, format_location_text,
 )
 from services.quick import format_services_text, handle_service_request
-from services.ai import chat, reset_conversation
+from services.ai import chat, chat_travel_advisor, chat_post_stay, reset_conversation, get_conversation_mode
 from services.booking import (
     is_ai_enabled, format_booking_platforms_text,
     generate_review_message, get_review_reminders_due,
@@ -265,9 +265,15 @@ def handle_wechat_message(msg):
         except Exception:
             pass  # 关键词失败，降级
 
-    # 2. 尝试AI智能对话（要求1：需预订验证）
+    # 2. AI智能对话（v3 全链路：预订前旅行顾问 / 预订后专属管家 / 离店后复购关怀）
     try:
-        ai_reply = chat(openid, content)
+        mode = get_conversation_mode(openid)
+        if mode == 'travel_advisor':
+            ai_reply = chat_travel_advisor(openid, content)
+        elif mode == 'post_stay':
+            ai_reply = chat_post_stay(openid, content)
+        else:
+            ai_reply = chat(openid, content)
         return ai_reply
     except Exception:
         pass

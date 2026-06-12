@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}订单聚合 - 云上归墅{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>📊 订单聚合</h1>
+        <p>携程 · 美团 · 飞猪 · 大众点评 · 直接预订 · 小红书 · 抖音</p>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="container">
+        <!-- 统计卡片 -->
+        <div id="statsRow" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem;margin-bottom:1.5rem"></div>
+
+        <!-- 房态日历 -->
+        <h3 style="color:var(--color-primary-dark);margin-bottom:0.8rem">📅 未来14天房态</h3>
+        <div id="calendar" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:1.5rem"></div>
+
+        <!-- 平台分布 -->
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:1rem;margin-bottom:1.5rem">
+            <div>
+                <h3 style="color:var(--color-primary-dark);margin-bottom:0.8rem">📋 订单列表</h3>
+                <div id="orderList" style="display:flex;flex-direction:column;gap:0.5rem"></div>
+            </div>
+            <div>
+                <div style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:1.2rem">
+                    <h3 style="color:var(--color-primary-dark);margin-bottom:0.8rem;font-size:0.95rem">➕ 录入新订单</h3>
+                    <form id="addOrderForm" onsubmit="addOrder(event)" style="display:flex;flex-direction:column;gap:0.5rem">
+                        <select name="platform" required style="padding:0.5rem;border:1px solid var(--color-border);border-radius:6px;font-size:0.85rem;background:var(--color-white);color:var(--color-text)">
+                            <option value="">选择平台</option>
+                            <option value="ctrip">🏨 携程</option><option value="meituan">🏠 美团</option><option value="fliggy">✈️ 飞猪</option>
+                            <option value="dianping">⭐ 大众点评</option><option value="direct">📞 直接预订</option>
+                            <option value="xiaohongshu">📕 小红书</option><option value="douyin">🎵 抖音</option>
+                        </select>
+                        <input name="guest_name" placeholder="客人姓名 *" required style="padding:0.5rem;border:1px solid var(--color-border);border-radius:6px;font-size:0.85rem;background:var(--color-white);color:var(--color-text)">
+                        <input name="guest_phone" placeholder="电话" style="padding:0.5rem;border:1px solid var(--color-border);border-radius:6px;font-size:0.85rem;background:var(--color-white);color:var(--color-text)">
+                        <select name="room_type" style="padding:0.5rem;border:1px solid var(--color-border);border-radius:6px;font-size:0.85rem;background:var(--color-white);color:var(--color-text)">
+                            <option value="">房型</option>
+                            <option>特惠单人间</option><option>特惠标准间</option><option>知还标准间</option>
+                            <option>山野大床房</option><option>清舍·露台大床房</option><option>山景·精致大床房</option>
+                            <option>室雅茶香套房</option><option>田园家庭房</option>
+                        </select>
+                        <input name="check_in" type="date" placeholder="入住日期 *" required style="padding:0.5rem;border:1px solid var(--color-border);border-radius:6px;font-size:0.85rem;background:var(--color-white);color:var(--color-text)">
+                        <input name="check_out" type="date" placeholder="退房日期 *" required style="padding:0.5rem;border:1px solid var(--color-border);border-radius:6px;font-size:0.85rem;background:var(--color-white);color:var(--color-text)">
+                        <input name="total_amount" type="number" placeholder="订单金额" style="padding:0.5rem;border:1px solid var(--color-border);border-radius:6px;font-size:0.85rem;background:var(--color-white);color:var(--color-text)">
+                        <input name="platform_order_id" placeholder="平台订单号" style="padding:0.5rem;border:1px solid var(--color-border);border-radius:6px;font-size:0.85rem;background:var(--color-white);color:var(--color-text)">
+                        <button type="submit" style="background:var(--color-primary);color:#fff;border:none;padding:0.6rem;border-radius:6px;cursor:pointer;font-size:0.9rem;font-weight:600">✅ 录入订单</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+async function load() {
+    const resp = await fetch('/api/orders/dashboard');
+    const d = await resp.json();
+    renderStats(d);
+    renderCalendar(d.calendar);
+    renderOrders();
+}
+
+function renderStats(d) {
+    document.getElementById('statsRow').innerHTML = `
+        <div style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:1rem;text-align:center">
+            <div style="font-size:2rem;font-weight:700;color:var(--color-primary)">${d.today_arrivals}</div><div style="font-size:0.8rem;color:var(--color-text-light)">今日到店</div></div>
+        <div style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:1rem;text-align:center">
+            <div style="font-size:2rem;font-weight:700;color:var(--color-danger)">${d.today_departures}</div><div style="font-size:0.8rem;color:var(--color-text-light)">今日离店</div></div>
+        <div style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:1rem;text-align:center">
+            <div style="font-size:2rem;font-weight:700;color:var(--color-accent)">${d.currently_in}</div><div style="font-size:0.8rem;color:var(--color-text-light)">当前在住</div></div>
+        <div style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:1rem;text-align:center">
+            <div style="font-size:2rem;font-weight:700;color:var(--color-success)">¥${d.month_revenue.toLocaleString()}</div><div style="font-size:0.8rem;color:var(--color-text-light)">本月收入(${d.month_orders}单)</div></div>
+    `;
+}
+
+function renderCalendar(days) {
+    document.getElementById('calendar').innerHTML = days.map(d => `
+        <div style="flex:1;min-width:55px;background:var(--color-white);border:1px solid var(--color-border);border-radius:6px;padding:0.4rem;text-align:center;font-size:0.72rem;${d.date===days[0].date?'border-color:var(--color-primary);border-width:2px':''}">
+            <div style="color:var(--color-text-lighter)">${d.weekday}</div>
+            <div style="font-weight:700;font-size:0.85rem">${d.date.slice(5)}</div>
+            <div style="font-size:0.68rem;color:var(--color-accent);font-weight:600">${d.staying}间</div>
+            <div style="height:3px;background:var(--color-bg-dark);border-radius:2px;margin-top:2px"><div style="height:100%;border-radius:2px;background:${d.occupancy>80?'var(--color-danger)':d.occupancy>50?'var(--color-warning)':'var(--color-success)'};width:${d.occupancy}%"></div></div>
+            ${d.arrivals>0?`<div style="color:var(--color-primary);font-size:0.65rem">+${d.arrivals}</div>`:''}
+        </div>
+    `).join('');
+}
+
+async function renderOrders() {
+    const resp = await fetch('/api/orders?limit=30');
+    const orders = await resp.json();
+    const statusColors = {confirmed:'var(--color-warning)',checked_in:'var(--color-success)',checked_out:'var(--color-text-lighter)',cancelled:'var(--color-danger)'};
+    document.getElementById('orderList').innerHTML = orders.length===0
+        ? '<div style="text-align:center;padding:2rem;color:var(--color-text-lighter)">暂无订单，使用右侧表单录入～</div>'
+        : orders.map(o => `
+        <div style="background:var(--color-white);border:1px solid var(--color-border);border-left:4px solid ${statusColors[o.status]||'var(--color-border)'};border-radius:var(--radius-sm);padding:0.7rem 0.8rem;display:flex;align-items:center;gap:0.6rem;font-size:0.82rem">
+            <span style="font-size:1.2rem">${o.platform_icon}</span>
+            <div style="flex:1">
+                <strong>${o.guest_name}</strong>
+                <span style="color:var(--color-text-light);margin-left:0.4rem">${o.room_type||'未指定'}</span>
+                <div style="font-size:0.72rem;color:var(--color-text-lighter)">${o.check_in}→${o.check_out} · ${o.nights}晚 · ${o.total_amount?('¥'+o.total_amount):''}</div>
+            </div>
+            <span style="font-size:0.72rem;padding:0.15rem 0.5rem;border-radius:10px;background:${statusColors[o.status]}20;color:${statusColors[o.status]};font-weight:600">${o.status_label}</span>
+            ${o.status==='confirmed'?`<button onclick="updateStatus(${o.id},'checked_in')" style="background:var(--color-success);color:white;border:none;padding:0.2rem 0.5rem;border-radius:4px;cursor:pointer;font-size:0.7rem">入住</button>`:''}
+            ${o.status==='checked_in'?`<button onclick="updateStatus(${o.id},'checked_out')" style="background:var(--color-text-lighter);color:white;border:none;padding:0.2rem 0.5rem;border-radius:4px;cursor:pointer;font-size:0.7rem">退房</button>`:''}
+        </div>
+    `).join('');
+}
+
+async function updateStatus(id, status) {
+    await fetch(`/api/orders/${id}/status`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
+    load();
+}
+
+async function addOrder(e) {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const data = Object.fromEntries(fd.entries());
+    data.nights = Math.max(1, Math.round((new Date(data.check_out)-new Date(data.check_in))/86400000));
+    data.guest_count = 1;
+    const resp = await fetch('/api/orders', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const r = await resp.json();
+    if (r.success) { e.target.reset(); load(); alert('订单录入成功！'); }
+    else { alert(r.message || '录入失败'); }
+}
+
+load();
+</script>
+{% endblock %}

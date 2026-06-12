@@ -5,8 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>房型展示 - 云上·归墅民宿</title>
+<script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
 :root{--color-primary:#3d5347;--color-primary-light:#5b7b6f;--color-primary-dark:#2a3d33;--color-accent:#8b7355;--color-bg:#faf8f5;--color-bg-light:#f3f0eb;--color-text:#333330;--color-text-light:#6b6b66;--color-text-lighter:#999990;--color-white:#fff;--color-border:#e0dcd5;--color-shadow:rgba(0,0,0,0.06);--color-shadow-hover:rgba(0,0,0,0.10);--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 1px 3px var(--color-shadow);--shadow-md:0 4px 12px var(--color-shadow);--shadow-lg:0 8px 24px var(--color-shadow-hover);--transition:0.25s cubic-bezier(0.4,0,0.2,1);--max-width:720px}
+[data-theme="dark"]{--color-primary:#6b9b7e;--color-primary-light:#557a64;--color-primary-dark:#3d5c48;--color-accent:#b89060;--color-bg:#1a1e1c;--color-bg-light:#212623;--color-text:#dcd8cf;--color-text-light:#a0a098;--color-text-lighter:#6e6e66;--color-white:#252927;--color-border:#3a3e3b;--color-shadow:rgba(0,0,0,0.30);--color-shadow-hover:rgba(0,0,0,0.50)}
+[data-theme="dark"] .header{background:rgba(37,41,39,0.92)}
+[data-theme="dark"] .footer{background:#141815;color:rgba(220,216,207,0.6)}
+[data-theme="dark"] .footer-copy{color:rgba(220,216,207,0.3)}
+.notice-warning{background:#fef9e7;color:#6b5510}
+.notice-warning h4{color:#8b6d20}.notice-warning p{color:#6b5510}
+[data-theme="dark"] .notice-warning{background:#2a2615!important;border-left-color:#b08030!important;color:#a08840}
+[data-theme="dark"] .notice-warning h4{color:#c8a040!important}
+[data-theme="dark"] .notice-warning p{color:#a08840!important}
+[data-theme="dark"] .room-card-badge{background:rgba(255,255,255,0.15)}
+[data-theme="dark"] .discount-tag{background:#3a2a1a}
+/* room gradients */
+.rg1{background:linear-gradient(135deg,#8b7355,#b8a088)}[data-theme="dark"] .rg1{background:linear-gradient(135deg,#5a4830,#705840)}
+.rg2{background:linear-gradient(135deg,#5b7b6f,#88a898)}[data-theme="dark"] .rg2{background:linear-gradient(135deg,#2a3d30,#3d5545)}
+.rg3{background:linear-gradient(135deg,#6b8f71,#8aaa8e)}[data-theme="dark"] .rg3{background:linear-gradient(135deg,#2a3d2e,#3d5540)}
+.rg4{background:linear-gradient(135deg,#6b8aaa,#9ab8cc)}[data-theme="dark"] .rg4{background:linear-gradient(135deg,#2a3d4a,#3d5560)}
+.rg5{background:linear-gradient(135deg,#4a6b8a,#7a9bb8)}[data-theme="dark"] .rg5{background:linear-gradient(135deg,#1a2a3a,#2d4450)}
+.rg6{background:linear-gradient(135deg,#5b7b6f,#7a9a8e)}[data-theme="dark"] .rg6{background:linear-gradient(135deg,#2a3d30,#3d5545)}
+.rg7{background:linear-gradient(135deg,#7a5a3a,#a08060)}[data-theme="dark"] .rg7{background:linear-gradient(135deg,#3d2a1a,#554030)}
+.rg8{background:linear-gradient(135deg,#c9954a,#dab880)}[data-theme="dark"] .rg8{background:linear-gradient(135deg,#6d4a1a,#8a6830)}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px;-webkit-font-smoothing:antialiased}
 body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
@@ -77,6 +98,11 @@ a{color:var(--color-primary);text-decoration:none;transition:color var(--transit
 .footer{background:var(--color-primary-dark);color:rgba(255,255,255,0.7);padding:1.5rem 1rem;text-align:center;margin-top:auto}
 .footer p{font-size:0.8rem;margin-bottom:0.2rem;line-height:1.8}
 .footer-copy{color:rgba(255,255,255,0.4);font-size:0.72rem!important;margin-top:0.4rem}
+.room-remaining{display:inline-flex;align-items:center;gap:0.25rem;font-size:0.78rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:20px}
+.room-remaining.low{background:#fce4ec;color:#c62828}
+.room-remaining.ok{background:#e8f5e9;color:#2e7d32}
+[data-theme="dark"] .room-remaining.low{background:#2e1518;color:#e85550}
+[data-theme="dark"] .room-remaining.ok{background:#1a2e1a;color:#6bbf6e}
 @media(min-width:768px){.rooms-list{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}}
 </style>
 </head>
@@ -88,15 +114,16 @@ a{color:var(--color-primary);text-decoration:none;transition:color var(--transit
         <nav class="nav-links">
             <a href="rooms.html">房型</a><a href="menu.html">点餐</a><a href="travel.html">攻略</a><a href="services.html">服务</a>
         </nav>
+        <button id="themeToggle" style="background:none;border:none;cursor:pointer;padding:0.35rem;border-radius:6px;font-size:1.1rem;line-height:1" title="切换深色/浅色模式">🌙</button>
     </div>
 </header>
 
 <section class="page-header"><div class="container"><h1>🛏️ 房型展示</h1><p>8种精品房型 · U型三层小楼 · 11间客房 · 山景/云海/竹林</p></div></section>
 
 <section class="section-padding"><div class="container">
-    <div class="route-tips" style="margin-bottom:1.5rem;background:#fef9e7;border-radius:var(--radius-md);padding:1rem 1.2rem;border-left:4px solid #c9954a">
-        <h4 style="color:#8b6d20;margin-bottom:0.3rem">📋 预订须知</h4>
-        <p style="font-size:0.85rem;color:#6b5510;line-height:1.6">🍳 民宿<strong>不提供早餐</strong>，一楼「三山二水咖啡」供应咖啡简餐<br>🛏️ 所有房型<strong>不可加床</strong>，不提供婴儿床<br>🐾 <strong>宠物友好</strong>：可免费携带猫狗入住（需提前联系）<br>🅿️ 免费私家停车场  |  ⏰ 入住14:00后 · 退房12:00前  |  免押金</p>
+    <div class="route-tips notice-warning" style="margin-bottom:1.5rem;background:#fef9e7;border-radius:var(--radius-md);padding:1rem 1.2rem;border-left:4px solid #c9954a">
+        <h4 style="margin-bottom:0.3rem">📋 预订须知</h4>
+        <p style="font-size:0.85rem;line-height:1.6">🍳 民宿<strong>不提供早餐</strong>，一楼「三山二水咖啡」供应咖啡简餐<br>🛏️ 所有房型<strong>不可加床</strong>，不提供婴儿床<br>🐾 <strong>宠物友好</strong>：可免费携带猫狗入住（需提前联系）<br>🅿️ 免费私家停车场  |  ⏰ 入住14:00后 · 退房12:00前  |  免押金</p>
     </div>
     <div class="rooms-list" id="roomsList"></div>
 </div></section>
@@ -108,7 +135,7 @@ a{color:var(--color-primary);text-decoration:none;transition:color var(--transit
 </div>
 
 <footer class="footer">
-    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 87条评价</p><p class="footer-copy">© 2026 云上·归墅民宿 · 2016年开业 · 庐山大林沟路27号</p></div>
+    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 85条评价</p><p class="footer-copy">© 2026 云上·归墅民宿 · 2016年开业 · 庐山大林沟路27号</p></div>
 </footer>
 
 <script>
@@ -118,42 +145,42 @@ const rooms = [
      description:"紧凑温馨的单人空间，1.5米双人床，独立卫浴。小而精致，独行旅客的实惠之选。",
      capacity:1,bed_type:"1.5m双人床",area:"15m²",view_type:"山景",
      amenities:["观景窗","地暖","智能马桶","茶具套装","高速WiFi","迷你吧"],
-     gradient:"linear-gradient(135deg, #8b7355, #b8a088)"},
+     gradient:"linear-gradient(135deg, #8b7355, #b8a088)",total_count:1},
     {id:2,name:"特惠标准间",room_type:"双床房",price:388,original_price:488,
      description:"两张1.2米单人床，紧凑实用。适合闺蜜出游或预算有限的结伴旅客。",
      capacity:2,bed_type:"2×1.2m单人床",area:"15m²",view_type:"山景",
      amenities:["观景窗","地暖","书桌","茶具套装","高速WiFi"],
-     gradient:"linear-gradient(135deg, #5b7b6f, #88a898)"},
+     gradient:"linear-gradient(135deg, #5b7b6f, #88a898)",total_count:2},
     {id:3,name:"知还标准间",room_type:"双床房",price:488,original_price:588,
      description:"「云无心以出岫，鸟倦飞而知还」——以民宿命名出处的诗句命名。20m²宽敞双床房，两张1.2米单人床。",
      capacity:2,bed_type:"2×1.2m单人床",area:"20m²",view_type:"山景",
      amenities:["观景窗","地暖","书桌","茶具套装","高速WiFi","迷你吧"],
-     gradient:"linear-gradient(135deg, #6b8f71, #8aaa8e)"},
+     gradient:"linear-gradient(135deg, #6b8f71, #8aaa8e)",total_count:2},
     {id:4,name:"山野大床房",room_type:"大床房",price:588,original_price:688,
      description:"1.8米大床房，推窗见山。简约自然的原木风格，是情侣和独行旅客的热门之选。",
      capacity:2,bed_type:"1.8m大床",area:"20m²",view_type:"山景",
      amenities:["观景窗","地暖","智能马桶","鹅绒床品","茶具套装","高速WiFi"],
-     gradient:"linear-gradient(135deg, #6b8aaa, #9ab8cc)"},
+     gradient:"linear-gradient(135deg, #6b8aaa, #9ab8cc)",total_count:1},
     {id:5,name:"清舍·露台大床房",room_type:"大床房",price:788,original_price:888,
      description:"自带独立露台，坐看云起云落。35m²宽敞空间，1.8米大床，是民宿最受欢迎的房型之一。",
      capacity:2,bed_type:"1.8m大床",area:"35m²",view_type:"山景/露台",
      amenities:["独立露台","观景阳台","地暖","智能马桶","鹅绒床品","茶具套装","高速WiFi","迷你吧"],
-     gradient:"linear-gradient(135deg, #4a6b8a, #7a9bb8)"},
+     gradient:"linear-gradient(135deg, #4a6b8a, #7a9bb8)",total_count:2},
     {id:6,name:"山景·精致大床房",room_type:"大床房",price:688,original_price:788,
      description:"30m²精致山景房，1.8米大床配全景窗。精心布置的简约现代风格，推窗即漫山青翠。",
      capacity:2,bed_type:"1.8m大床",area:"30m²",view_type:"山景",
      amenities:["全景窗","地暖","智能马桶","鹅绒床品","茶具套装","高速WiFi","迷你吧"],
-     gradient:"linear-gradient(135deg, #5b7b6f, #7a9a8e)"},
+     gradient:"linear-gradient(135deg, #5b7b6f, #7a9a8e)",total_count:1},
     {id:7,name:"室雅茶香套房",room_type:"套房",price:988,original_price:1188,
      description:"30m²套房格局，1.8米大床+1.5米双人床。独立茶室区域，配高端茶具，品庐山云雾茶，闻茶香入眠。",
      capacity:4,bed_type:"1.8m大床 + 1.5m双人床",area:"30m²",view_type:"山景",
      amenities:["独立茶室","观景阳台","地暖","智能马桶","浴缸","高端茶具","高速WiFi","迷你吧"],
-     gradient:"linear-gradient(135deg, #7a5a3a, #a08060)"},
+     gradient:"linear-gradient(135deg, #7a5a3a, #a08060)",total_count:1},
     {id:8,name:"田园家庭房",room_type:"家庭房",price:788,original_price:888,
      description:"1.8米大床+1.2米单人床，20m²温馨家庭空间。适合三口之家出行，简约舒适的田园风格。",
      capacity:3,bed_type:"1.8m大床 + 1.2m单人床",area:"20m²",view_type:"山景",
      amenities:["观景窗","地暖","书桌","茶具套装","高速WiFi","迷你吧"],
-     gradient:"linear-gradient(135deg, #c9954a, #dab880)"}
+     gradient:"linear-gradient(135deg, #c9954a, #dab880)",total_count:1}
 ];
 
 // 渲染房间列表
@@ -165,7 +192,7 @@ rooms.forEach(r => {
     card.onclick = () => showDetail(r);
     card.innerHTML = `
         <div class="room-card-image">
-            <div class="img-placeholder" style="background:${r.gradient}">${viewIcons[r.view_type]||'🏡'}</div>
+            <div class="img-placeholder rg${r.id}">${viewIcons[r.view_type]||'🏡'}</div>
             <div class="room-card-badge">${viewIcons[r.view_type]||''} ${r.view_type}</div>
         </div>
         <div class="room-card-body">
@@ -175,6 +202,7 @@ rooms.forEach(r => {
             <div class="room-card-meta"><span>👤 ${r.capacity}人</span><span>🛏️ ${r.bed_type}</span><span>📐 ${r.area}</span></div>
             <div class="room-card-footer">
                 <span class="room-price">¥${r.price}<small>/晚</small></span>
+                ${r.total_count && r.total_count <= 2 ? `<span class="room-remaining low">${r.total_count === 1 ? '🔥 仅剩1间' : '仅剩'+r.total_count+'间'}</span>` : r.total_count ? '<span class="room-remaining ok">热订中</span>' : ''}
                 ${r.original_price>r.price?`<span class="room-original-price">¥${r.original_price}</span>`:''}
                 <span class="btn btn-primary" style="font-size:0.8rem;padding:0.3rem 0.8rem">查看详情</span>
             </div>
@@ -187,8 +215,8 @@ function showDetail(r) {
     const icon = viewIcons[r.view_type]||'🏡';
     document.getElementById('modalContent').innerHTML = `
         <div class="modal-header"><h2>${r.name}</h2><span class="badge">${r.room_type}</span><button class="btn-close" onclick="closeModal()">✕</button></div>
-        <div style="height:200px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:4rem;color:white;background:${r.gradient}">${icon}</div>
-        <div class="modal-price">¥${r.price}<span class="per">/晚</span>${r.original_price>r.price?`<span class="orig">¥${r.original_price}</span><span style="font-size:0.75rem;background:#fff0e6;color:#c9954a;padding:0.15rem 0.5rem;border-radius:10px;margin-left:0.3rem">省¥${r.original_price-r.price}</span>`:''}</div>
+        <div class="rg${r.id}" style="height:200px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:4rem;color:white">${icon}</div>
+        <div class="modal-price">¥${r.price}<span class="per">/晚</span>${r.original_price>r.price?`<span class="orig">¥${r.original_price}</span><span class="discount-tag" style="font-size:0.75rem;background:#fff0e6;color:#c9954a;padding:0.15rem 0.5rem;border-radius:10px;margin-left:0.3rem">省¥${r.original_price-r.price}</span>`:''}</div>
         <div class="modal-info-grid">
             <div class="modal-info-item"><span class="label">👤 可住人数</span><br><span class="value">${r.capacity}人</span></div>
             <div class="modal-info-item"><span class="label">🛏️ 床型</span><br><span class="value">${r.bed_type}</span></div>
@@ -205,6 +233,10 @@ function showDetail(r) {
     document.getElementById('roomModal').classList.add('show');
 }
 function closeModal(){document.getElementById('roomModal').classList.remove('show')}
+</script>
+<script>
+(function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'})();
+document.getElementById('themeToggle').onclick=function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);this.textContent=n==='dark'?'☀️':'🌙'};
 </script>
 </body>
 </html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>快捷服务 - 云上·归墅民宿 · 桌面版</title>
+<script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+:root{--color-primary:#3d5347;--color-primary-light:#5b7b6f;--color-primary-dark:#2a3d33;--color-accent:#8b7355;--color-bg:#faf8f5;--color-bg-light:#f3f0eb;--color-text:#333330;--color-text-light:#6b6b66;--color-text-lighter:#999990;--color-white:#fff;--color-border:#e0dcd5;--color-shadow:rgba(0,0,0,0.06);--color-shadow-hover:rgba(0,0,0,0.10);--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 1px 3px var(--color-shadow);--shadow-md:0 4px 12px var(--color-shadow);--transition:0.25s cubic-bezier(0.4,0,0.2,1);--max-width:1200px}
+[data-theme="dark"]{--color-primary:#6b9b7e;--color-primary-light:#557a64;--color-primary-dark:#3d5c48;--color-accent:#b89060;--color-bg:#1a1e1c;--color-bg-light:#212623;--color-text:#dcd8cf;--color-text-light:#a0a098;--color-text-lighter:#6e6e66;--color-white:#252927;--color-border:#3a3e3b;--color-shadow:rgba(0,0,0,0.30);--color-shadow-hover:rgba(0,0,0,0.50)}
+[data-theme="dark"] .header{background:rgba(37,41,39,0.92)}
+[data-theme="dark"] .footer{background:#141815;color:rgba(220,216,207,0.6)}
+[data-theme="dark"] .footer-copy{color:rgba(220,216,207,0.3)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:var(--color-text)}
+h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05rem}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 1rem}
+a{color:var(--color-primary);text-decoration:none}
+.header{background:rgba(255,255,255,0.92);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none}
+.logo-icon{font-size:1.4rem}
+.logo-text{font-family:var(--font-serif);font-size:1.15rem;font-weight:700;color:var(--color-primary-dark);letter-spacing:0.05em}
+.nav-links{display:flex;gap:0.2rem}
+.nav-links a{padding:0.35rem 0.7rem;border-radius:var(--radius-sm);font-size:0.9rem;color:var(--color-text-light);transition:all var(--transition)}
+.nav-links a:hover{color:var(--color-primary);background:var(--color-bg-light)}
+.page-header{background:linear-gradient(135deg,var(--color-primary-dark),var(--color-primary));color:var(--color-white);padding:2.5rem 1rem;text-align:center}
+.page-header h1{color:var(--color-white);margin-bottom:0.3rem}
+.page-header p{color:rgba(255,255,255,0.8);font-size:0.95rem}
+.section-padding{padding:2rem 0}
+.service-group{margin-bottom:1.5rem}
+.service-group-title{margin-bottom:0.8rem;color:var(--color-primary-dark);padding-bottom:0.3rem;border-bottom:2px solid var(--color-primary-light)}
+.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem}
+.section-padding{padding:3rem 0}
+.header-inner{padding:0.8rem 2rem}
+body{font-size:17px}
+@media(max-width:768px){.service-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.service-grid{grid-template-columns:1fr 1fr}}
+.service-card{background:var(--color-white);border:1.5px solid var(--color-border);border-radius:var(--radius-md);padding:1rem;text-align:center;cursor:pointer;transition:all var(--transition);display:flex;flex-direction:column;align-items:center;gap:0.3rem}
+.service-card:hover{border-color:var(--color-primary-light);box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.service-icon{font-size:1.8rem}
+.service-name{font-size:0.9rem;color:var(--color-text)}
+.service-desc{font-size:0.75rem;color:var(--color-text-light);line-height:1.4}
+.service-time{font-size:0.7rem;color:var(--color-text-lighter)}
+.emergency-contact{text-align:center;margin-top:2rem;padding:1.5rem;background:var(--color-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
+.emergency-contact h3{margin-bottom:0.4rem}
+.emergency-contact p{font-size:0.85rem;color:var(--color-text-light);margin-bottom:0.8rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:0.55rem 1.2rem;border-radius:var(--radius-sm);font-size:0.9rem;font-weight:500;cursor:pointer;border:none;transition:all var(--transition);font-family:var(--font-sans);gap:0.3rem}
+.btn-primary{background:var(--color-primary);color:white}
+.btn-primary:hover{background:var(--color-primary-dark);color:white}
+.btn-large{padding:0.7rem 1.6rem;font-size:1rem}
+/* Modal */
+.modal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal.show{display:flex}
+.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(2px)}
+.modal-content{position:relative;background:var(--color-white);border-radius:var(--radius-lg);padding:2rem 1.5rem;text-align:center;max-width:320px;width:100%;box-shadow:0 8px 24px var(--color-shadow-hover)}
+.modal-icon{font-size:3rem;margin-bottom:0.8rem}
+.footer{background:var(--color-primary-dark);color:rgba(255,255,255,0.7);padding:1.5rem 1rem;text-align:center;margin-top:auto}
+.footer p{font-size:0.8rem;margin-bottom:0.2rem;line-height:1.8}
+.footer-copy{color:rgba(255,255,255,0.4);font-size:0.72rem!important;margin-top:0.4rem}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <a href="index.html" class="logo"><span class="logo-icon">🏔️</span><span class="logo-text">云上·归墅</span></a>
+        <nav class="nav-links">
+            <a href="rooms.html">房型</a><a href="menu.html">点餐</a><a href="travel.html">攻略</a><a href="services.html">服务</a>
+        </nav>
+        <button id="themeToggle" style="background:none;border:none;cursor:pointer;padding:0.35rem;border-radius:6px;font-size:1.1rem;line-height:1" title="切换深色/浅色模式">🌙</button>
+    </div>
+</header>
+
+<section class="page-header"><div class="container"><h1>🛎️ 快捷服务</h1><p>一键呼叫，即刻响应</p></div></section>
+
+<section class="section-padding"><div class="container"><div id="servicesContainer"></div>
+    <div class="emergency-contact">
+        <h3>📞 紧急联系</h3>
+        <p>如需紧急帮助，请直接拨打前台电话</p>
+        <a href="tel:16607927666" class="btn btn-primary btn-large">☎️ 拨打前台</a>
+    </div>
+</div></section>
+
+<!-- 确认弹窗 -->
+<div class="modal" id="svcModal">
+    <div class="modal-overlay" onclick="closeModal()"></div>
+    <div class="modal-content">
+        <div class="modal-icon">✅</div>
+        <h3 id="svcTitle">服务请求已收到</h3>
+        <p id="svcMsg" style="font-size:0.9rem;color:var(--color-text-light);margin:0.5rem 0 1rem;line-height:1.6;white-space:pre-line"></p>
+        <button class="btn btn-primary btn-large" onclick="closeModal()">知道了</button>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 85条  |  2016年开业</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
+</footer>
+
+<script>
+const services = [
+    {cat:"🧹 客房服务",catKey:"housekeeping", items:[
+        {name:"续住办理",desc:"延长入住时间，无需换房",icon:"🔑",time:"即刻办理"},
+        {name:"房间打扫",desc:"全面清洁房间，更换床品毛巾",icon:"🧹",time:"约30分钟"},
+        {name:"补充用品",desc:"补充洗漱用品、茶包、矿泉水等",icon:"🧴",time:"约10分钟"},
+        {name:"送餐到房",desc:"将餐点送至您的房间",icon:"🍽️",time:"约30分钟"},
+        {name:"衣物送洗",desc:"洗衣、烘干、熨烫服务",icon:"👔",time:"次日取"}
+    ]},
+    {cat:"🔧 设施维修",catKey:"maintenance", items:[
+        {name:"设施报修",desc:"房间设施故障报修处理",icon:"🔧",time:"尽快处理"},
+        {name:"空调调节",desc:"空调温度调节或故障处理",icon:"❄️",time:"约15分钟"},
+        {name:"热水问题",desc:"热水器故障或水温调节",icon:"🔥",time:"尽快处理"}
+    ]},
+    {cat:"🏨 前台服务",catKey:"frontdesk", items:[
+        {name:"叫醒服务",desc:"设定叫醒时间，准时电话提醒",icon:"⏰",time:"准时执行"},
+        {name:"行李寄存",desc:"退房后免费寄存行李",icon:"🧳",time:"即刻办理"},
+        {name:"免费路线规划",desc:"老板根据您的偏好定制游玩路线，不收费用",icon:"🗺️",time:"即刻咨询"},
+        {name:"叫车服务",desc:"预约出租车或包车游览庐山",icon:"🚕",time:"约15分钟到达"},
+        {name:"旅游咨询",desc:"庐山景点介绍、门票预订、天气查询",icon:"🏞️",time:"即刻咨询"},
+        {name:"搭伙用餐",desc:"可与老板搭伙用餐，品尝家常庐山味道",icon:"🍲",time:"需提前联系"},
+        {name:"退房办理",desc:"快速退房，账单结算",icon:"🏃",time:"约5分钟"}
+    ]}
+];
+
+// 渲染服务
+const container = document.getElementById('servicesContainer');
+services.forEach(group => {
+    const div = document.createElement('div');
+    div.className = 'service-group';
+    div.innerHTML = `<h3 class="service-group-title">${group.cat}</h3>
+        <div class="service-grid">
+            ${group.items.map(s=>`
+                <div class="service-card" onclick="requestService('${s.name}','${s.desc}','${s.time}','${s.icon}')">
+                    <span class="service-icon">${s.icon}</span>
+                    <h4 class="service-name">${s.name}</h4>
+                    <p class="service-desc">${s.desc}</p>
+                    <span class="service-time">⏱️ ${s.time}</span>
+                </div>`).join('')}
+        </div>`;
+    container.appendChild(div);
+});
+
+function requestService(name,desc,time,icon){
+    document.getElementById('svcTitle').textContent = icon + ' ' + name;
+    document.getElementById('svcMsg').textContent = `📝 ${desc}\n⏱️ 预计处理时间：${time}\n\n✅ 已通知工作人员，请稍候～\n\n如有紧急需求，请拨打前台电话 ☎️`;
+    document.getElementById('svcModal').classList.add('show');
+}
+function closeModal(){document.getElementById('svcModal').classList.remove('show')}
+</script>
+<script>
+(function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'})();
+document.getElementById('themeToggle').onclick=function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);this.textContent=n==='dark'?'☀️':'🌙'};
+</script>
+</body>
+</html>

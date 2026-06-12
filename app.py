@@ -378,6 +378,90 @@ def api_booking_platforms():
 
 
 # ══════════════════════════════════════════════════════════
+#  积分体系 API
+# ══════════════════════════════════════════════════════════
+@app.route("/points")
+def points_page():
+    """积分中心页面"""
+    return render_template("points.html")
+
+@app.route("/api/points/<openid>")
+def api_get_points(openid: str):
+    """获取用户积分概览"""
+    from services.points import get_guest, get_logs, get_redeem_items, get_earn_rules
+    guest = get_guest(openid)
+    return jsonify({
+        "guest": guest,
+        "logs": get_logs(openid, 10) if guest else [],
+        "redeem_items": get_redeem_items(),
+        "earn_rules": get_earn_rules(),
+    })
+
+@app.route("/api/points/earn", methods=["POST"])
+def api_earn_points():
+    """获取积分（签到/评价/分享等）"""
+    from services.points import earn_points
+    data = request.get_json()
+    if not data or "openid" not in data or "action" not in data:
+        return jsonify({"success": False, "message": "缺少openid或action"}), 400
+    result = earn_points(data["openid"], data["action"], data.get("amount"), data.get("description", ""))
+    return jsonify(result)
+
+@app.route("/api/points/redeem", methods=["POST"])
+def api_redeem():
+    """兑换商品"""
+    from services.points import redeem
+    data = request.get_json()
+    if not data or "openid" not in data or "item" not in data:
+        return jsonify({"success": False, "message": "缺少openid或item"}), 400
+    result = redeem(data["openid"], data["item"], data.get("description", ""))
+    return jsonify(result)
+
+
+# ══════════════════════════════════════════════════════════
+#  多平台订单聚合
+# ══════════════════════════════════════════════════════════
+@app.route("/orders")
+def orders_dashboard():
+    """订单聚合看板页面"""
+    return render_template("orders.html")
+
+@app.route("/api/orders/dashboard")
+def api_orders_dashboard():
+    """获取订单看板统计数据"""
+    from services.orders import get_dashboard_stats, get_room_calendar, get_platforms
+    stats = get_dashboard_stats()
+    stats["calendar"] = get_room_calendar(14)
+    stats["platform_list"] = get_platforms()
+    return jsonify(stats)
+
+@app.route("/api/orders", methods=["GET", "POST"])
+def api_orders():
+    """查询或新增订单"""
+    from services.orders import get_orders, add_order
+    if request.method == "POST":
+        data = request.get_json()
+        if not data:
+            return jsonify({"success": False, "message": "数据为空"}), 400
+        result = add_order(data)
+        return jsonify(result)
+    else:
+        platform = request.args.get("platform")
+        status = request.args.get("status")
+        date_from = request.args.get("date_from")
+        date_to = request.args.get("date_to")
+        return jsonify(get_orders(date_from, date_to, platform, status))
+
+@app.route("/api/orders/<int:order_id>/status", methods=["POST"])
+def api_update_order_status(order_id: int):
+    """更新订单状态"""
+    from services.orders import update_order_status
+    data = request.get_json() or {}
+    result = update_order_status(order_id, data.get("status", ""), data.get("room_number", ""))
+    return jsonify(result)
+
+
+# ══════════════════════════════════════════════════════════
 #  周报生成（DOCX）
 # ══════════════════════════════════════════════════════════
 @app.route("/api/report/weekly", methods=["POST"])

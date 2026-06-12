@@ -33,3 +33,9 @@ Desktop.ini
 # 临时文件
 *.log
 *.tmp
+
+# Node
+node_modules/
+
+# OpenCLI
+.opencli/

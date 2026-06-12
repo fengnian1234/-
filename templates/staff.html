@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>员工通知看板 - 云上·归墅</title>
+<script>
+(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);})();
+</script>
 <style>
 :root{--primary:#2a3d33;--danger:#c4554a;--warning:#c9954a;--success:#5b8c5a;--bg:#f5f3ee;--card-bg:#fff;--border:#e0dcd5;--text:#333;--text-light:#888;--radius:10px;--shadow:0 2px 8px rgba(0,0,0,0.06)}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -54,6 +57,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .empty-icon{font-size:3rem;margin-bottom:0.5rem}
 /* Responsive */
 @media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.request-card{flex-wrap:wrap}.request-actions{width:100%;justify-content:flex-end}}
+/* 深色模式 */
+[data-theme="dark"]{--primary:#5a9a6e;--danger:#cc6050;--warning:#d0a050;--success:#5c9c5a;--bg:#1a1e1c;--card-bg:#252927;--border:#3a3e3b;--text:#dcd8cf;--text-light:#909088}
+[data-theme="dark"] .header{background:var(--primary);color:#dcd8cf}
+[data-theme="dark"] .btn-primary:hover{background:#2a4a30}
+[data-theme="dark"] .btn-warning:hover{background:#8a6020}
+[data-theme="dark"] .btn-success:hover{background:#3a6a38}
+[data-theme="dark"] .btn-outline:hover{background:var(--border)}
+[data-theme="dark"] .sound-toggle{background:rgba(220,216,207,0.15);border-color:rgba(220,216,207,0.2);color:#dcd8cf}
+[data-theme="dark"] body{background:var(--bg);color:var(--text)}
+[data-theme="dark"] .request-card{background:var(--card-bg)}
+[data-theme="dark"] .stat-card{background:var(--card-bg)}
 </style>
 </head>
 <body>
@@ -63,6 +77,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
     <div style="display:flex;align-items:center;gap:0.8rem">
         <span class="header-badge" id="pendingBadge" style="display:none">0 待处理</span>
         <button class="sound-toggle" onclick="toggleSound()" id="soundBtn">🔇 声音提醒：关</button>
+        <button onclick="toggleTheme()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:0.3rem 0.6rem;border-radius:6px;cursor:pointer;font-size:0.85rem" title="切换深色/浅色模式">🌙</button>
     </div>
 </header>
 
@@ -89,6 +104,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 const REFRESH_INTERVAL = 5000; // 5秒刷新
 let soundEnabled = false;
 let lastPendingCount = 0;
+
+// 主题切换
+function toggleTheme(){
+    var c=document.documentElement.getAttribute('data-theme');
+    var n=c==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',n);
+    localStorage.setItem('theme',n);
+}
 
 // 音效（使用AudioContext生成提示音）
 function playAlertSound() {

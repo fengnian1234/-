@@ -1,0 +1,218 @@
+"""
+多平台订单聚合服务 — 统一管理各OTA平台订单
+"""
+from datetime import datetime, timedelta
+from sqlalchemy import func
+from models import SessionLocal, AggregatedOrder
+
+
+PLATFORMS = {
+    "ctrip":     {"name": "携程",     "icon": "🏨", "color": "#2577e3", "fee_rate": 0.12},
+    "meituan":   {"name": "美团民宿", "icon": "🏠", "color": "#ffc300", "fee_rate": 0.10},
+    "fliggy":    {"name": "飞猪",     "icon": "✈️", "color": "#ff5a00", "fee_rate": 0.10},
+    "dianping":  {"name": "大众点评", "icon": "⭐", "color": "#ffc300", "fee_rate": 0.08},
+    "direct":    {"name": "直接预订", "icon": "📞", "color": "#5b8c5a", "fee_rate": 0.00},
+    "xiaohongshu":{"name":"小红书",   "icon": "📕", "color": "#ff2442", "fee_rate": 0.00},
+    "douyin":    {"name": "抖音",     "icon": "🎵", "color": "#010101", "fee_rate": 0.00},
+}
+
+
+def get_platforms() -> list:
+    """获取平台列表"""
+    return [{"key": k, **v} for k, v in PLATFORMS.items()]
+
+
+def add_order(data: dict) -> dict:
+    """添加新订单（手动录入或API推送）"""
+    db = SessionLocal()
+    try:
+        platform = data.get("platform", "direct")
+        fee_rate = PLATFORMS.get(platform, {}).get("fee_rate", 0)
+        total = float(data.get("total_amount", 0) or 0)
+        platform_fee = float(data.get("platform_fee", 0) or 0)
+        if not platform_fee and fee_rate > 0:
+            platform_fee = round(total * fee_rate, 2)
+
+        order = AggregatedOrder(
+            platform=platform,
+            platform_order_id=data.get("platform_order_id", ""),
+            guest_name=data["guest_name"],
+            guest_phone=data.get("guest_phone", ""),
+            room_type=data.get("room_type", ""),
+            check_in=data["check_in"],
+            check_out=data["check_out"],
+            nights=data.get("nights", 1),
+            total_amount=total,
+            platform_fee=platform_fee,
+            net_revenue=round(total - platform_fee, 2) if total else None,
+            guest_count=data.get("guest_count", 1),
+            status=data.get("status", "confirmed"),
+            remark=data.get("remark", ""),
+            source=data.get("source", "manual"),
+        )
+        db.add(order)
+        db.commit()
+        return {"success": True, "order": order.to_dict()}
+    finally:
+        db.close()
+
+
+def get_orders(date_from: str = None, date_to: str = None, platform: str = None, status: str = None, limit: int = 50) -> list:
+    """查询订单列表"""
+    db = SessionLocal()
+    try:
+        q = db.query(AggregatedOrder)
+        if date_from:
+            q = q.filter(AggregatedOrder.check_in >= date_from)
+        if date_to:
+            q = q.filter(AggregatedOrder.check_in <= date_to)
+        if platform:
+            q = q.filter(AggregatedOrder.platform == platform)
+        if status:
+            q = q.filter(AggregatedOrder.status == status)
+        orders = q.order_by(AggregatedOrder.check_in.desc()).limit(limit).all()
+        return [o.to_dict() for o in orders]
+    finally:
+        db.close()
+
+
+def update_order_status(order_id: int, status: str, room_number: str = "") -> dict:
+    """更新订单状态"""
+    db = SessionLocal()
+    try:
+        order = db.query(AggregatedOrder).filter(AggregatedOrder.id == order_id).first()
+        if not order:
+            return {"success": False, "message": "订单不存在"}
+        order.status = status
+        if room_number:
+            order.room_number = room_number
+        order.updated_at = datetime.utcnow()
+        db.commit()
+        return {"success": True, "order": order.to_dict()}
+    finally:
+        db.close()
+
+
+def get_dashboard_stats() -> dict:
+    """获取订单看板统计数据"""
+    db = SessionLocal()
+    try:
+        today = datetime.utcnow().strftime("%Y-%m-%d")
+
+        total = db.query(AggregatedOrder).filter(AggregatedOrder.status != "cancelled").count()
+
+        today_arrivals = db.query(AggregatedOrder).filter(
+            AggregatedOrder.check_in == today, AggregatedOrder.status != "cancelled"
+        ).count()
+
+        today_departures = db.query(AggregatedOrder).filter(
+            AggregatedOrder.check_out == today, AggregatedOrder.status == "checked_in"
+        ).count()
+
+        currently_in = db.query(AggregatedOrder).filter(
+            AggregatedOrder.status == "checked_in"
+        ).count()
+
+        # 各平台订单数
+        platform_stats = db.query(
+            AggregatedOrder.platform, func.count(AggregatedOrder.id), func.sum(AggregatedOrder.total_amount)
+        ).filter(AggregatedOrder.status != "cancelled").group_by(AggregatedOrder.platform).all()
+
+        platforms = []
+        total_revenue = 0
+        for p, cnt, amt in platform_stats:
+            platforms.append({"platform": p, "icon": PLATFORMS.get(p, {}).get("icon", "📋"), "count": cnt, "revenue": round(amt or 0, 2)})
+            total_revenue += (amt or 0)
+
+        # 本月统计
+        month_start = today[:7] + "-01"
+        month_orders = db.query(AggregatedOrder).filter(
+            AggregatedOrder.check_in >= month_start, AggregatedOrder.status != "cancelled"
+        ).count()
+        month_revenue = db.query(func.sum(AggregatedOrder.net_revenue)).filter(
+            AggregatedOrder.check_in >= month_start, AggregatedOrder.status != "cancelled"
+        ).scalar() or 0
+
+        # 未来7天到店
+        week_later = (datetime.utcnow() + timedelta(days=7)).strftime("%Y-%m-%d")
+        upcoming = db.query(AggregatedOrder).filter(
+            AggregatedOrder.check_in > today, AggregatedOrder.check_in <= week_later,
+            AggregatedOrder.status == "confirmed"
+        ).count()
+
+        return {
+            "today": today,
+            "total_orders": total,
+            "today_arrivals": today_arrivals,
+            "today_departures": today_departures,
+            "currently_in": currently_in,
+            "upcoming_week": upcoming,
+            "month_orders": month_orders,
+            "month_revenue": round(month_revenue, 2),
+            "platforms": platforms,
+            "total_revenue": round(total_revenue, 2),
+        }
+    finally:
+        db.close()
+
+
+def get_room_calendar(days: int = 14) -> list:
+    """获取未来N天的房态日历"""
+    db = SessionLocal()
+    try:
+        today = datetime.utcnow()
+        calendar = []
+        for i in range(days):
+            day = (today + timedelta(days=i)).strftime("%Y-%m-%d")
+            arrivals = db.query(AggregatedOrder).filter(
+                AggregatedOrder.check_in == day, AggregatedOrder.status.in_(["confirmed", "checked_in"])
+            ).count()
+            departures = db.query(AggregatedOrder).filter(
+                AggregatedOrder.check_out == day, AggregatedOrder.status == "checked_in"
+            ).count()
+            staying = db.query(AggregatedOrder).filter(
+                AggregatedOrder.check_in <= day, AggregatedOrder.check_out > day,
+                AggregatedOrder.status.in_(["confirmed", "checked_in"])
+            ).count()
+
+            weekday = ["日","一","二","三","四","五","六"][(today + timedelta(days=i)).weekday()]
+            occupancy = min(100, round(staying / 11 * 100))  # 11间房
+
+            calendar.append({
+                "date": day, "weekday": weekday,
+                "arrivals": arrivals, "departures": departures,
+                "staying": staying, "occupancy": occupancy,
+            })
+        return calendar
+    finally:
+        db.close()
+
+
+def add_sample_orders():
+    """添加示例订单数据（首次使用时调用）"""
+    db = SessionLocal()
+    try:
+        if db.query(AggregatedOrder).count() > 0:
+            return
+        today = datetime.utcnow().strftime("%Y-%m-%d")
+        tmr = (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d")
+        d3 = (datetime.utcnow() + timedelta(days=3)).strftime("%Y-%m-%d")
+        d5 = (datetime.utcnow() + timedelta(days=5)).strftime("%Y-%m-%d")
+
+        samples = [
+            AggregatedOrder(platform="ctrip", platform_order_id="CT202606001", guest_name="张伟", guest_phone="138****6789", room_type="山景·精致大床房", check_in=today, check_out=tmr, nights=1, total_amount=688, guest_count=2, status="checked_in", source="manual"),
+            AggregatedOrder(platform="meituan", platform_order_id="MT202606002", guest_name="李娜", guest_phone="139****8901", room_type="田园家庭房", check_in=today, check_out=tmr, nights=1, total_amount=788, guest_count=3, status="checked_in", source="manual"),
+            AggregatedOrder(platform="fliggy", platform_order_id="FZ202606003", guest_name="王磊", guest_phone="136****2345", room_type="清舍·露台大床房", check_in=today, check_out=tmr, nights=1, total_amount=788, guest_count=2, status="confirmed", source="manual"),
+            AggregatedOrder(platform="ctrip", platform_order_id="CT202606004", guest_name="赵雪", guest_phone="137****7890", room_type="室雅茶香套房", check_in=tmr, check_out=d3, nights=2, total_amount=1976, guest_count=4, status="confirmed", source="manual"),
+            AggregatedOrder(platform="direct", platform_order_id="", guest_name="陈明", guest_phone="135****4567", room_type="知还标准间", check_in=tmr, check_out=d3, nights=2, total_amount=976, guest_count=2, status="confirmed", source="manual"),
+            AggregatedOrder(platform="meituan", platform_order_id="MT202606005", guest_name="刘洋", guest_phone="133****0123", room_type="特惠标准间", check_in=d5, check_out=(datetime.utcnow()+timedelta(days=6)).strftime("%Y-%m-%d"), nights=1, total_amount=388, guest_count=2, status="confirmed", source="manual"),
+            AggregatedOrder(platform="xiaohongshu", platform_order_id="", guest_name="孙雨", guest_phone="131****8901", room_type="山野大床房", check_in=d5, check_out=(datetime.utcnow()+timedelta(days=7)).strftime("%Y-%m-%d"), nights=2, total_amount=1176, guest_count=2, status="confirmed", source="manual"),
+        ]
+        for s in samples:
+            fee_rate = PLATFORMS.get(s.platform, {}).get("fee_rate", 0)
+            s.platform_fee = round(s.total_amount * fee_rate, 2)
+            s.net_revenue = round(s.total_amount - s.platform_fee, 2)
+            db.add(s)
+        db.commit()
+    finally:
+        db.close()

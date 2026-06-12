@@ -3,7 +3,7 @@
 v2：菜单改为咖啡简餐，地址更新为大林沟路27号
 初始化数据库时自动填充
 """
-from models import SessionLocal, init_db, Room, MenuCategory, MenuItem, QuickService, TravelRoute, FoodRecommend, Booking
+from models import SessionLocal, init_db, Room, MenuCategory, MenuItem, QuickService, TravelRoute, FoodRecommend, Booking, AggregatedOrder
 
 
 def seed_all():
@@ -12,15 +12,17 @@ def seed_all():
     db = SessionLocal()
 
     try:
-        # 检查是否已初始化
+        # 检查是否已初始化（房间数据）
         if db.query(Room).count() > 0:
-            print("数据库已有数据，跳过初始化")
+            print("数据库已有房间数据，仅初始化新增模块")
+            seed_orders(db)
             return
 
         seed_rooms(db)
         seed_menu(db)
         seed_services(db)
         seed_travel_routes(db)
+        seed_orders(db)
         seed_food_recommends(db)
 
         db.commit()
@@ -45,7 +47,7 @@ def seed_rooms(db):
             capacity=1, bed_type="1.5m双人床", area="15m²",
             amenities=["观景窗", "地暖", "智能马桶", "茶具套装", "高速WiFi", "迷你吧"],
             images=["https://picsum.photos/seed/yunshang01/800/600"],
-            view_type="山景", is_available=True, sort_order=1,
+            view_type="山景", is_available=True, total_count=1, sort_order=1,
         ),
         Room(
             name="特惠标准间",
@@ -55,7 +57,7 @@ def seed_rooms(db):
             capacity=2, bed_type="2×1.2m单人床", area="15m²",
             amenities=["观景窗", "地暖", "书桌", "茶具套装", "高速WiFi"],
             images=["https://picsum.photos/seed/yunshang02/800/600"],
-            view_type="山景", is_available=True, sort_order=2,
+            view_type="山景", is_available=True, total_count=2, sort_order=2,
         ),
         Room(
             name="知还标准间",
@@ -65,7 +67,7 @@ def seed_rooms(db):
             capacity=2, bed_type="2×1.2m单人床", area="20m²",
             amenities=["观景窗", "地暖", "书桌", "茶具套装", "高速WiFi", "迷你吧"],
             images=["https://picsum.photos/seed/yunshang03/800/600"],
-            view_type="山景", is_available=True, sort_order=3,
+            view_type="山景", is_available=True, total_count=2, sort_order=3,
         ),
         Room(
             name="山野大床房",
@@ -75,7 +77,7 @@ def seed_rooms(db):
             capacity=2, bed_type="1.8m大床", area="20m²",
             amenities=["观景窗", "地暖", "智能马桶", "鹅绒床品", "茶具套装", "高速WiFi"],
             images=["https://picsum.photos/seed/yunshang04/800/600"],
-            view_type="山景", is_available=True, sort_order=4,
+            view_type="山景", is_available=True, total_count=1, sort_order=4,
         ),
         Room(
             name="清舍·露台大床房",
@@ -85,7 +87,7 @@ def seed_rooms(db):
             capacity=2, bed_type="1.8m大床", area="35m²",
             amenities=["独立露台", "观景阳台", "地暖", "智能马桶", "鹅绒床品", "茶具套装", "高速WiFi", "迷你吧"],
             images=["https://picsum.photos/seed/yunshang05/800/600"],
-            view_type="山景/露台", is_available=True, sort_order=5,
+            view_type="山景/露台", is_available=True, total_count=2, sort_order=5,
         ),
         Room(
             name="山景·精致大床房",
@@ -95,7 +97,7 @@ def seed_rooms(db):
             capacity=2, bed_type="1.8m大床", area="30m²",
             amenities=["全景窗", "地暖", "智能马桶", "鹅绒床品", "茶具套装", "高速WiFi", "迷你吧"],
             images=["https://picsum.photos/seed/yunshang06/800/600"],
-            view_type="山景", is_available=True, sort_order=6,
+            view_type="山景", is_available=True, total_count=1, sort_order=6,
         ),
         Room(
             name="室雅茶香套房",
@@ -105,7 +107,7 @@ def seed_rooms(db):
             capacity=4, bed_type="1.8m大床 + 1.5m双人床", area="30m²",
             amenities=["独立茶室", "观景阳台", "地暖", "智能马桶", "浴缸", "高端茶具", "高速WiFi", "迷你吧"],
             images=["https://picsum.photos/seed/yunshang07/800/600"],
-            view_type="山景", is_available=True, sort_order=7,
+            view_type="山景", is_available=True, total_count=1, sort_order=7,
         ),
         Room(
             name="田园家庭房",
@@ -115,7 +117,7 @@ def seed_rooms(db):
             capacity=3, bed_type="1.8m大床 + 1.2m单人床", area="20m²",
             amenities=["观景窗", "地暖", "书桌", "茶具套装", "高速WiFi", "迷你吧"],
             images=["https://picsum.photos/seed/yunshang08/800/600"],
-            view_type="山景", is_available=True, sort_order=8,
+            view_type="山景", is_available=True, total_count=1, sort_order=8,
         ),
     ]
     db.add_all(rooms)
@@ -349,6 +351,31 @@ def seed_food_recommends(db):
         ),
     ]
     db.add_all(foods)
+
+
+def seed_orders(db):
+    """示例订单数据"""
+    from datetime import datetime, timedelta
+    if db.query(AggregatedOrder).count() > 0:
+        return
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+    tmr = (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d")
+    d3 = (datetime.utcnow() + timedelta(days=3)).strftime("%Y-%m-%d")
+    d5 = (datetime.utcnow() + timedelta(days=5)).strftime("%Y-%m-%d")
+    PLATFORM_FEES = {"ctrip":0.12,"meituan":0.10,"fliggy":0.10,"dianping":0.08,"direct":0,"xiaohongshu":0,"douyin":0}
+    orders = [
+        ("ctrip","CT20260601","张伟","山景·精致大床房",today,tmr,1,688,2,"checked_in"),
+        ("meituan","MT20260602","李娜","田园家庭房",today,tmr,1,788,3,"checked_in"),
+        ("fliggy","FZ20260603","王磊","清舍·露台大床房",today,tmr,1,788,2,"confirmed"),
+        ("ctrip","CT20260604","赵雪","室雅茶香套房",tmr,d3,2,1976,4,"confirmed"),
+        ("direct","","陈明","知还标准间",tmr,d3,2,976,2,"confirmed"),
+        ("meituan","MT20260605","刘洋","特惠标准间",d5,(datetime.utcnow()+timedelta(days=6)).strftime("%Y-%m-%d"),1,388,2,"confirmed"),
+        ("xiaohongshu","","孙雨","山野大床房",d5,(datetime.utcnow()+timedelta(days=7)).strftime("%Y-%m-%d"),2,1176,2,"confirmed"),
+    ]
+    for plat, oid, name, room, ci, co, n, amt, gc, st in orders:
+        fee = round(amt * PLATFORM_FEES.get(plat, 0), 2)
+        db.add(AggregatedOrder(platform=plat,platform_order_id=oid,guest_name=name,room_type=room,check_in=ci,check_out=co,nights=n,total_amount=amt,platform_fee=fee,net_revenue=round(amt-fee,2),guest_count=gc,status=st,source="seed"))
+    db.commit()
 
 
 if __name__ == "__main__":

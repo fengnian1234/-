@@ -34,6 +34,7 @@ class Room(Base):
     images = Column(JSON, comment="房间图片URL列表")
     view_type = Column(String(100), comment="景观类型: 山景/云海/竹林")
     is_available = Column(Boolean, default=True, comment="是否可订")
+    total_count = Column(Integer, default=1, comment="该房型总间数")
     sort_order = Column(Integer, default=0, comment="排序")
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -52,6 +53,7 @@ class Room(Base):
             "images": self.images or [],
             "view_type": self.view_type,
             "is_available": self.is_available,
+            "total_count": self.total_count or 1,
         }
 
 
@@ -349,6 +351,138 @@ class MessageLog(Base):
 # ══════════════════════════════════════════════════════════
 engine = create_engine(DATABASE_URL, echo=DEBUG)
 SessionLocal = sessionmaker(bind=engine)
+
+
+def init_db():
+    """创建所有表"""
+# ══════════════════════════════════════════════════════════
+#  积分体系模型
+# ══════════════════════════════════════════════════════════
+class GuestPoints(Base):
+    __tablename__ = "guest_points"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    openid = Column(String(200), unique=True, nullable=False, index=True, comment="微信OpenID")
+    total_points = Column(Integer, default=0, comment="当前总积分")
+    total_earned = Column(Integer, default=0, comment="累计获取积分")
+    total_spent = Column(Integer, default=0, comment="累计消费积分")
+    membership = Column(String(20), default="silver", comment="会员等级: silver/gold/diamond")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "openid": self.openid,
+            "total_points": self.total_points,
+            "total_earned": self.total_earned,
+            "total_spent": self.total_spent,
+            "membership": self.membership,
+            "membership_name": {"silver": "银卡", "gold": "金卡", "diamond": "钻石卡"}.get(self.membership, "银卡"),
+            "discount": {"silver": 0.95, "gold": 0.92, "diamond": 0.90}.get(self.membership, 0.95),
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
+class PointLog(Base):
+    __tablename__ = "point_logs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    openid = Column(String(200), nullable=False, index=True, comment="微信OpenID")
+    points = Column(Integer, nullable=False, comment="积分变动(+入/-出)")
+    action = Column(String(50), nullable=False, comment="行为: earn_checkin/earn_booking/earn_review/earn_share/earn_birthday/redeem_coffee/redeem_upgrade/redeem_late/redeem_coupon")
+    description = Column(String(200), comment="积分变动说明")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "openid": self.openid,
+            "points": self.points,
+            "action": self.action,
+            "description": self.description,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+# ── 积分兑换商品定义 ──────────────────────────────────────
+REDEEM_ITEMS = {
+    "coffee":    {"name": "☕ 三山二水精品咖啡1杯", "points": 300, "type": "redeem_coffee"},
+    "upgrade":   {"name": "🏠 房型免费升级（视空房）", "points": 500, "type": "redeem_upgrade"},
+    "late":      {"name": "⏰ 延迟退房至14:00",       "points": 300, "type": "redeem_late"},
+    "coupon50":  {"name": "🎫 房费抵扣券 ¥50",       "points": 500, "type": "redeem_coupon"},
+}
+
+# ── 积分获取规则 ──────────────────────────────────────────
+EARN_RULES = {
+    "booking":    {"name": "入住消费",   "points": 1, "unit": "每消费¥1得1分"},
+    "checkin":    {"name": "每日签到",   "points": 1, "unit": "每天签到+1分"},
+    "review":     {"name": "写评价",     "points": 50, "unit": "携程/小红书评价+50分"},
+    "share":      {"name": "邀请好友",   "points": 20, "unit": "邀请关注公众号+20分"},
+    "birthday":   {"name": "生日礼",     "points": 100, "unit": "生日当月+100分"},
+    "xhs_note":   {"name": "小红书笔记", "points": 80, "unit": "带图发笔记+80分"},
+}
+
+# ── 会员等级 ──────────────────────────────────────────────
+MEMBERSHIP_TIERS = {
+    "silver":  {"name": "银卡", "min_points": 0,     "discount": 0.95},
+    "gold":    {"name": "金卡", "min_points": 3000,  "discount": 0.92, "perk": "免费延迟退房"},
+    "diamond": {"name": "钻石卡","min_points": 8000, "discount": 0.90, "perk": "免费升级+专属管家"},
+}
+
+
+# ══════════════════════════════════════════════════════════
+#  多平台订单聚合模型
+# ══════════════════════════════════════════════════════════
+class AggregatedOrder(Base):
+    __tablename__ = "aggregated_orders"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    platform = Column(String(30), nullable=False, comment="平台: ctrip/meituan/fliggy/dianping/direct/xiaohongshu/douyin")
+    platform_order_id = Column(String(100), comment="平台订单号")
+    guest_name = Column(String(50), nullable=False, comment="客人姓名")
+    guest_phone = Column(String(20), comment="客人电话")
+    room_type = Column(String(100), comment="房型")
+    room_number = Column(String(20), comment="房间号（入住后分配）")
+    check_in = Column(String(20), nullable=False, comment="入住日期")
+    check_out = Column(String(20), nullable=False, comment="退房日期")
+    nights = Column(Integer, default=1, comment="入住晚数")
+    total_amount = Column(Float, comment="订单金额")
+    platform_fee = Column(Float, default=0, comment="平台佣金")
+    net_revenue = Column(Float, comment="实际收入(金额-佣金)")
+    guest_count = Column(Integer, default=1, comment="入住人数")
+    status = Column(String(20), default="confirmed", comment="confirmed/checked_in/checked_out/cancelled")
+    remark = Column(String(500), comment="备注")
+    source = Column(String(20), default="manual", comment="录入方式: manual/api/import")
+    synced_at = Column(DateTime, comment="最后同步时间")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        platform_icons = {"ctrip":"🏨","meituan":"🏠","fliggy":"✈️","dianping":"⭐","direct":"📞","xiaohongshu":"📕","douyin":"🎵"}
+        return {
+            "id": self.id,
+            "platform": self.platform,
+            "platform_icon": platform_icons.get(self.platform, "📋"),
+            "platform_order_id": self.platform_order_id,
+            "guest_name": self.guest_name,
+            "guest_phone": self.guest_phone,
+            "room_type": self.room_type,
+            "room_number": self.room_number,
+            "check_in": self.check_in,
+            "check_out": self.check_out,
+            "nights": self.nights,
+            "total_amount": self.total_amount,
+            "platform_fee": self.platform_fee,
+            "net_revenue": self.net_revenue,
+            "guest_count": self.guest_count,
+            "status": self.status,
+            "status_label": {"confirmed":"已确认","checked_in":"已入住","checked_out":"已退房","cancelled":"已取消"}.get(self.status, self.status),
+            "remark": self.remark,
+            "source": self.source,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
 
 
 def init_db():

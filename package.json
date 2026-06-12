@@ -1,0 +1,24 @@
+{
+  "name": "cc",
+  "version": "1.0.0",
+  "description": "庐山之巅，大林沟路27号 — 精品民宿智能客服解决方案。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fengnian1234/-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/fengnian1234/-/issues"
+  },
+  "homepage": "https://github.com/fengnian1234/-#readme",
+  "dependencies": {
+    "playwright": "^1.60.0"
+  }
+}

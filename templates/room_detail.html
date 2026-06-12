@@ -31,6 +31,11 @@
         <div class="room-price-block">
             <span class="current-price">¥{{ room.price }}</span>
             <span class="per-night">/晚</span>
+            {% if room.total_count and room.total_count <= 2 %}
+            <span class="room-remaining low">🔥 仅剩{{ room.total_count }}间</span>
+            {% elif room.total_count %}
+            <span class="room-remaining ok">热订中</span>
+            {% endif %}
             {% if room.original_price and room.original_price > room.price %}
             <span class="original-price">¥{{ room.original_price }}</span>
             <span class="discount-tag">省¥{{ room.original_price - room.price }}</span>

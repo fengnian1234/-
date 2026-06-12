@@ -5,14 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>云上·归墅民宿 - 庐山</title>
+<script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
 :root {
     --color-primary: #3d5347; --color-primary-light: #5b7b6f; --color-primary-dark: #2a3d33;
     --color-accent: #8b7355; --color-accent-light: #a0896e;
-    --color-bg: #faf8f5; --color-bg-light: #f3f0eb; --color-bg-dark: #e8e4dc;
-    --color-text: #333330; --color-text-light: #6b6b66; --color-text-lighter: #999990;
-    --color-white: #ffffff; --color-border: #e0dcd5;
-    --color-shadow: rgba(0,0,0,0.06); --color-shadow-hover: rgba(0,0,0,0.10);
+    --color-bg: #f7f4ed; --color-bg-light: #f0ece4; --color-bg-dark: #e6e1d6;
+    --color-text: #2a2722; --color-text-light: #6e6a60; --color-text-lighter: #9e9a90;
+    --color-white: #fffefb; --color-border: #d8d3c8;
+    --color-shadow: rgba(0,0,0,0.04); --color-shadow-hover: rgba(0,0,0,0.07);
     --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-xl: 20px;
     --font-serif: "Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;
     --font-sans: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
@@ -20,6 +21,23 @@
     --shadow-lg: 0 8px 24px var(--color-shadow-hover); --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
     --max-width: 720px;
 }
+[data-theme="dark"] {
+    --color-primary: #6b9b7e; --color-primary-light: #557a64; --color-primary-dark: #3d5c48;
+    --color-accent: #b89060; --color-accent-light: #c8a478;
+    --color-bg: #1a1c1a; --color-bg-light: #202320; --color-bg-dark: #262926;
+    --color-text: #dad5ca; --color-text-light: #9a9588; --color-text-lighter: #6a6560;
+    --color-white: #232521; --color-border: #363830;
+    --color-shadow: rgba(0,0,0,0.35); --color-shadow-hover: rgba(0,0,0,0.55);
+}
+[data-theme="dark"] .header{background:rgba(37,41,39,0.92)}
+[data-theme="dark"] .hero{background:radial-gradient(ellipse 80% 60% at 60% 0%,rgba(30,42,35,0.9) 0%,transparent 70%),radial-gradient(ellipse 50% 70% at 20% 70%,rgba(40,55,45,0.6) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 90%,rgba(60,45,30,0.4) 0%,transparent 50%),radial-gradient(ellipse 70% 50% at 10% 20%,rgba(80,70,50,0.3) 0%,transparent 55%),linear-gradient(175deg,#141a16 0%,#1a241e 40%,#242e26 100%)}
+[data-theme="dark"] .hero::after{background:var(--color-bg)}
+[data-theme="dark"] .footer{background:#141815;color:rgba(220,216,207,0.6)}
+[data-theme="dark"] .footer-copy{color:rgba(220,216,207,0.3)}
+.notice-success{background:#e8f5e9}[data-theme="dark"] .notice-success{background:#1a2e1a;border-left-color:#4a9e4a!important;color:#6bbf6e}
+.room-preview-g1{background:linear-gradient(135deg,#8b7355,#a0896e)}[data-theme="dark"] .room-preview-g1{background:linear-gradient(135deg,#5a4830,#705840)}
+.room-preview-g2{background:linear-gradient(135deg,#5b7b6f,#7a9a8e)}[data-theme="dark"] .room-preview-g2{background:linear-gradient(135deg,#2a3d30,#3d5545)}
+.room-preview-g3{background:linear-gradient(135deg,#6b8f71,#8aaa8e)}[data-theme="dark"] .room-preview-g3{background:linear-gradient(135deg,#2a3d2e,#3d5540)}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px;-webkit-font-smoothing:antialiased}
 body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
@@ -39,12 +57,35 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
 .nav-links a{padding:0.35rem 0.7rem;border-radius:var(--radius-sm);font-size:0.9rem;color:var(--color-text-light);transition:all var(--transition)}
 .nav-links a:hover{color:var(--color-primary);background:var(--color-bg-light)}
 /* Hero */
-.hero{height:50vh;min-height:300px;max-height:450px;background:linear-gradient(170deg,#3d5347 0%,#5b7b6f 30%,#8b9d83 60%,#c4b99a 100%);display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(255,255,255,0.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(255,255,255,0.05) 0%,transparent 50%)}
-.hero-overlay{position:relative;z-index:1;padding:2rem}
-.hero-title{font-family:var(--font-serif);font-size:2.4rem;font-weight:700;color:var(--color-white);letter-spacing:0.12em;margin-bottom:0.6rem;text-shadow:0 2px 8px rgba(0,0,0,0.15)}
-.hero-subtitle{font-size:1.1rem;color:rgba(255,255,255,0.9);letter-spacing:0.06em;margin-bottom:0.4rem}
-.hero-desc{font-size:0.9rem;color:rgba(255,255,255,0.7)}
+.hero{height:60vh;min-height:340px;max-height:500px;background:radial-gradient(ellipse 80% 60% at 60% 0%,rgba(61,83,71,0.9) 0%,transparent 70%),radial-gradient(ellipse 50% 70% at 20% 70%,rgba(91,123,111,0.6) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 90%,rgba(139,115,85,0.4) 0%,transparent 50%),radial-gradient(ellipse 70% 50% at 10% 20%,rgba(196,185,154,0.3) 0%,transparent 55%),linear-gradient(175deg,#2a3d33 0%,#3d5347 40%,#5b6b60 100%);display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 10%,rgba(255,255,255,0.05) 0%,transparent 50%),radial-gradient(circle at 30% 60%,rgba(255,255,255,0.03) 0%,transparent 40%);z-index:1}
+.hero::after{content:'';position:absolute;bottom:-2px;left:-5%;right:-5%;height:26%;background:var(--color-bg);clip-path:polygon(0% 100%,0% 60%,8% 45%,16% 55%,22% 35%,30% 50%,38% 25%,45% 42%,52% 20%,58% 38%,66% 28%,74% 44%,82% 22%,88% 40%,95% 30%,100% 48%,100% 100%);z-index:2}
+.hero-overlay{position:relative;z-index:3;padding:2rem;animation:heroFadeIn 1s ease-out}
+@keyframes heroFadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.review-carousel{position:relative;overflow:hidden}
+.review-slides{display:flex;transition:transform 0.5s ease}
+.review-slide{min-width:100%;display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;padding:0 2px}
+.review-card{background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:1rem;font-size:0.82rem;line-height:1.7}
+.review-stars{color:var(--color-accent);margin-bottom:0.4rem;font-size:0.9rem}
+.review-text{margin-bottom:0.4rem;color:var(--color-text)}
+.review-author{color:var(--color-text-lighter);font-size:0.72rem}
+.carousel-nav{display:flex;align-items:center;justify-content:center;gap:0.8rem;margin-top:1rem}
+.carousel-arrow{background:var(--color-bg-light);border:1px solid var(--color-border);border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center;transition:all var(--transition);color:var(--color-text-light)}
+.carousel-arrow:hover{background:var(--color-primary);color:white;border-color:var(--color-primary)}
+.carousel-dots{display:flex;gap:0.4rem}
+.carousel-dot{width:8px;height:8px;border-radius:50%;background:var(--color-border);border:none;cursor:pointer;padding:0;transition:all var(--transition)}
+.carousel-dot.active{background:var(--color-primary);width:20px;border-radius:4px}
+.room-remaining{display:inline-flex;align-items:center;gap:0.25rem;font-size:0.78rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:20px}
+.room-remaining.low{background:#fce4ec;color:#c62828}
+.room-remaining.ok{background:#e8f5e9;color:#2e7d32}
+[data-theme="dark"] .room-remaining.low{background:#2e1518;color:#e85550}
+[data-theme="dark"] .room-remaining.ok{background:#1a2e1a;color:#6bbf6e}
+.hero-title{font-family:var(--font-serif);font-size:2.6rem;font-weight:700;color:#fffefb;letter-spacing:0.18em;margin-bottom:0.7rem;text-shadow:0 1px 4px rgba(0,0,0,0.2),0 4px 16px rgba(0,0,0,0.1)}
+.hero-subtitle{font-size:1.1rem;color:rgba(255,255,255,0.85);letter-spacing:0.1em;margin-bottom:0.5rem;font-family:var(--font-serif)}
+.hero-desc{font-size:0.88rem;color:rgba(255,255,255,0.65);letter-spacing:0.04em}
+[data-theme="dark"] .hero-title{color:#f0ece0;text-shadow:0 1px 4px rgba(0,0,0,0.4),0 4px 20px rgba(0,0,0,0.2)}
+[data-theme="dark"] .hero-subtitle{color:rgba(240,236,224,0.85)}
+[data-theme="dark"] .hero-desc{color:rgba(240,236,224,0.65)}
 /* Quick Entry */
 .quick-entry{padding:1.5rem 0;margin-top:-1rem;position:relative;z-index:2}
 .entry-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem}
@@ -101,7 +142,7 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
     .room-preview-card:last-child{display:none}
     .intro-grid{grid-template-columns:1fr}
     .hero-title{font-size:1.8rem}
-    .review-grid{grid-template-columns:1fr!important}\n\t    .hero{height:40vh;min-height:250px}
+    .review-slide{grid-template-columns:1fr!important}\n\t    .hero{height:40vh;min-height:250px}
 }
 </style>
 </head>
@@ -113,6 +154,7 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
         <nav class="nav-links">
             <a href="rooms.html">房型</a><a href="menu.html">点餐</a><a href="travel.html">攻略</a><a href="services.html">服务</a>
         </nav>
+        <button id="themeToggle" style="background:none;border:none;cursor:pointer;padding:0.35rem;border-radius:6px;font-size:1.1rem;line-height:1" aria-label="切换深色/浅色模式" title="切换深色/浅色模式">🌙</button>
     </div>
 </header>
 
@@ -133,13 +175,14 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
             <a href="menu.html" class="entry-card"><span class="entry-icon">☕</span><span class="entry-title">咖啡简餐</span><span class="entry-desc">在线点餐</span></a>
             <a href="travel.html" class="entry-card"><span class="entry-icon">🗺️</span><span class="entry-title">游玩攻略</span><span class="entry-desc">路线&美食</span></a>
             <a href="services.html" class="entry-card"><span class="entry-icon">🛎️</span><span class="entry-title">快捷服务</span><span class="entry-desc">一键呼叫</span></a>
+            <a href="#" class="entry-card" onclick="alert('⭐ 积分中心：请通过微信公众号访问～\n\n入住消费得积分 · 每日签到 · 写评价赚积分\n兑换：咖啡/房型升级/延迟退房/房费抵扣')"><span class="entry-icon">⭐</span><span class="entry-title">积分中心</span><span class="entry-desc">签到兑换好礼</span></a>
         </div>
     </div>
 </section>
 
 <!-- 索道通知 -->
 <section class="section-padding" style="padding-bottom:0"><div class="container">
-    <div style="background:#e8f5e9;border-radius:var(--radius-md);padding:1rem 1.2rem;border-left:4px solid #2e7d32;font-size:0.85rem;line-height:1.6">
+    <div class="notice-card notice-success" style="border-radius:var(--radius-md);padding:1rem 1.2rem;border-left:4px solid #2e7d32;font-size:0.85rem;line-height:1.6">
         <strong>🚡 庐山索道已恢复运营</strong> — 2026年度检修（5.11-6.9）已结束，<strong>6月10日7:30起恢复正常</strong>。索道上站步行5分钟即达民宿～ 🏔️
     </div>
 </div></section>
@@ -151,7 +194,7 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
         <div class="intro-grid">
             <div class="intro-item"><span class="intro-icon">🏔️</span><h3>山居小院</h3><p>海拔千米的U型三层小楼，11间客房。推窗即漫山云海，前院品茶听风铃，后院停车便捷。🐾 宠物友好，可免费携带猫狗入住（需提前联系）。</p></div>
             <div class="intro-item"><span class="intro-icon">☕</span><h3>一楼咖啡馆</h3><p>「三山二水咖啡」自营精品咖啡馆，自种庐山云雾茶，自酿美酒。还有一个卖奇奇怪怪东西的杂货铺，住客都说咖啡品质出众。</p></div>
-            <div class="intro-item"><span class="intro-icon">⭐</span><h3>携程口碑</h3><p>官方评分 4.7/5.0 · 87条评价 · Trip.com 9.4/10<br>卫生4.8 设施4.6 环境4.7 服务4.7<br>「咖啡品质出众」「暖气超给力」「老板热情像家人」</p></div>
+            <div class="intro-item"><span class="intro-icon">⭐</span><h3>携程口碑</h3><p>官方评分 4.7/5.0 · 85条评价 · Trip.com 9.4/10<br>卫生4.7 设施4.4 环境4.7 服务4.7<br>「咖啡品质出众」「环境安静治愈」「老板热情像家人」</p></div>
             <div class="intro-item"><span class="intro-icon">📍</span><h3>绝佳位置</h3><p>庐山山上·大林沟路27号。索道上站步行5分钟，牯岭商业街步行10分钟，近如琴湖、锦绣谷，出游便利。</p></div>
         </div>
     </div>
@@ -166,9 +209,9 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
         <h2 class="section-title">精选房型</h2>
         <p class="section-desc">每间房都有独特的风景</p>
         <div class="rooms-preview">
-            <div class="room-preview-card"><div class="room-preview-img" style="background:linear-gradient(135deg,#8b7355,#a0896e)">🏔️</div><h4>清舍·露台大床房</h4><p class="price">¥788/晚</p></div>
-            <div class="room-preview-card"><div class="room-preview-img" style="background:linear-gradient(135deg,#5b7b6f,#7a9a8e)">☁️</div><h4>山景·精致大床房</h4><p class="price">¥688/晚</p></div>
-            <div class="room-preview-card"><div class="room-preview-img" style="background:linear-gradient(135deg,#6b8f71,#8aaa8e)">🍵</div><h4>室雅茶香套房</h4><p class="price">¥988/晚</p></div>
+            <div class="room-preview-card"><div class="room-preview-img room-preview-g1">🏔️</div><h4>清舍·露台大床房</h4><p class="price">¥788/晚</p></div>
+            <div class="room-preview-card"><div class="room-preview-img room-preview-g2">☁️</div><h4>山景·精致大床房</h4><p class="price">¥688/晚</p></div>
+            <div class="room-preview-card"><div class="room-preview-img room-preview-g3">🍵</div><h4>室雅茶香套房</h4><p class="price">¥988/晚</p></div>
         </div>
         <div class="section-action"><a href="rooms.html" class="btn btn-primary">查看全部房型 →</a></div>
     </div>
@@ -193,26 +236,20 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
     <div class="container">
         <h2 class="section-title">住客好评</h2>
         <p class="section-desc">2026年最新携程住客真实评价</p>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem">
-            <div style="background:var(--color-white);border-radius:var(--radius-md);padding:1rem;box-shadow:var(--shadow-sm);font-size:0.82rem;line-height:1.7">
-                <div style="color:var(--color-accent);margin-bottom:0.4rem">⭐⭐⭐⭐⭐</div>
-                <p style="margin-bottom:0.4rem">"带着小孩订的田园家庭房，体验感拉满。推窗就是满眼青山绿意，老板很热情，像住在朋友家一样自在～"</p>
-                <div style="color:var(--color-text-lighter);font-size:0.72rem">小敏 · 2026年4月 · 田园家庭房</div>
+        <div class="review-carousel" id="reviewCarousel">
+            <div class="review-slides" id="reviewSlides">
+                <div class="review-slide"><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"麦姐超热情，提前一天加微信发了攻略和解答了问题。到索道站来接了我们，本来担心找不到路，结果一路顺畅～"</p><div class="review-author">吃喝玩乐 · 2026年3月</div></div><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"民宿主理人麦姐品味太好了，每个角落都是精心布置，从小院风铃到房间茶具，处处透着中式美学的用心。"</p><div class="review-author">十二分甜美式 · 2026年4月</div></div><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"推窗就是漫山云海，风铃轻响，咖啡品质出众。自种的茶清香回甘，还有自酿美酒，房间舒适整洁。"</p><div class="review-author">小敏 · 2026年4月 · 田园家庭房</div></div><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"带着小孩订的田园家庭房，体验感拉满。推窗就是满眼青山绿意，像住在朋友家一样自在～"</p><div class="review-author">M47122****** · 2026年2月</div></div></div>
+                <div class="review-slide"><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"藏在庐山牯岭镇云雾中，环境安静治愈。咖啡品质出众，暖气超给力，冬天来庐山也能暖暖的～"</p><div class="review-author">阿葱 · 2026年1月</div></div><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"麦姐帮忙规划了免费路线，还搭伙吃了晚饭，尝到了地道的庐山家常味道。像回到了山里的家一样温暖。"</p><div class="review-author">Maxine✨ · 2025年8月</div></div><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"交通非常便利，索道上站步行5分钟即达。一楼是治愈感拉满的咖啡馆，老板免费路线规划，超贴心！"</p><div class="review-author">大文文 · 2022年7月</div></div><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"民宿主理人自种的庐山云雾茶清香回甘，自酿美酒也很有特色。坐在院子里喝茶听风铃，惬意极了～"</p><div class="review-author">渺渺兮君 · 2022年2月</div></div></div>
+                <div class="review-slide"><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"离索道超近！房间超级暖和，空调➕暖气片感觉像夏天！楼下咖啡店很有个性，还有小猫咪晒太阳！🐱"</p><div class="review-author">小敏猪 · 2026年4月</div></div><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"设施方便，房价实惠，环境很好住得很满意！前台服务也很好，有问题都会及时回应。"</p><div class="review-author">龖馫 · 2025年8月</div></div><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"麦姐的咖啡馆太治愈了，猫咪在院子里晒太阳超可爱。三山二水咖啡的冷萃是庐山最好喝的！🐱☕"</p><div class="review-author">杨杨杨 · 2025年12月</div></div><div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"环境安静又治愈，服务也很贴心，来庐山玩住这里很合适。早上被鸟鸣叫醒，逃离城市喧嚣～"</p><div class="review-author">粥粥 · 2026年4月</div></div></div>
             </div>
-            <div style="background:var(--color-white);border-radius:var(--radius-md);padding:1rem;box-shadow:var(--shadow-sm);font-size:0.82rem;line-height:1.7">
-                <div style="color:var(--color-accent);margin-bottom:0.4rem">⭐⭐⭐⭐⭐</div>
-                <p style="margin-bottom:0.4rem">"藏在庐山牯岭镇云雾中，环境安静治愈，推窗便是漫山云海。咖啡品质出众，自种的茶清香回甘，还有自酿美酒～"</p>
-                <div style="color:var(--color-text-lighter);font-size:0.72rem">十二分甜美式 · 2026年4月</div>
-            </div>
-            <div style="background:var(--color-white);border-radius:var(--radius-md);padding:1rem;box-shadow:var(--shadow-sm);font-size:0.82rem;line-height:1.7">
-                <div style="color:var(--color-accent);margin-bottom:0.4rem">⭐⭐⭐⭐⭐</div>
-                <p style="margin-bottom:0.4rem">"交通非常便利，索道上站旁步行5分钟即达。一楼是治愈感拉满的咖啡馆，老板免费路线规划、可搭伙用餐，像回到山里的家。"</p>
-                <div style="color:var(--color-text-lighter);font-size:0.72rem">吃喝玩乐 · 2026年3月</div>
-            </div>
-            <div style="background:var(--color-white);border-radius:var(--radius-md);padding:1rem;box-shadow:var(--shadow-sm);font-size:0.82rem;line-height:1.7">
-                <div style="color:var(--color-accent);margin-bottom:0.4rem">⭐⭐⭐⭐⭐</div>
-                <p style="margin-bottom:0.4rem">"离索道超近！房间超级暖和，空调➕暖气片感觉像夏天！老板很热情会帮忙搬行李，楼下咖啡店很有个性，还有小猫咪晒太阳！🐱"</p>
-                <div style="color:var(--color-text-lighter);font-size:0.72rem">M47122****** · 2026年2月</div>
+            <div class="carousel-nav">
+                <button class="carousel-arrow" onclick="moveSlide(-1)" aria-label="上一页">◂</button>
+                <div class="carousel-dots" id="carouselDots">
+                    <button class="carousel-dot active" onclick="goSlide(0)"></button>
+                    <button class="carousel-dot" onclick="goSlide(1)"></button>
+                    <button class="carousel-dot" onclick="goSlide(2)"></button>
+                </div>
+                <button class="carousel-arrow" onclick="moveSlide(1)" aria-label="下一页">▸</button>
             </div>
         </div>
     </div>
@@ -237,5 +274,12 @@ h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05r
     <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · 庐山之巅的静谧之所</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
 </footer>
 
+<script>
+(function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'})();
+document.getElementById('themeToggle').onclick=function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);this.textContent=n==='dark'?'☀️':'🌙'};
+let currentSlide=0,totalSlides=3,autoTimer=setInterval(function(){moveSlide(1)},4000);
+function goSlide(n){currentSlide=n;document.getElementById('reviewSlides').style.transform='translateX(-'+n*100+'%)';document.querySelectorAll('.carousel-dot').forEach(function(d,i){d.classList.toggle('active',i===n)});clearInterval(autoTimer);autoTimer=setInterval(function(){moveSlide(1)},4000)}
+function moveSlide(dir){currentSlide=(currentSlide+dir+totalSlides)%totalSlides;goSlide(currentSlide)}
+</script>
 </body>
 </html>

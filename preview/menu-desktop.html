@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>咖啡简餐 - 云上·归墅 · 桌面版</title>
+<script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+:root{--color-primary:#3d5347;--color-primary-light:#5b7b6f;--color-primary-dark:#2a3d33;--color-accent:#8b7355;--color-bg:#faf8f5;--color-bg-light:#f3f0eb;--color-text:#333330;--color-text-light:#6b6b66;--color-text-lighter:#999990;--color-white:#fff;--color-border:#e0dcd5;--color-shadow:rgba(0,0,0,0.06);--color-shadow-hover:rgba(0,0,0,0.10);--color-warning:#c9954a;--color-danger:#c4554a;--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 1px 3px var(--color-shadow);--shadow-md:0 4px 12px var(--color-shadow);--transition:0.25s cubic-bezier(0.4,0,0.2,1);--max-width:1200px}
+[data-theme="dark"]{--color-primary:#6b9b7e;--color-primary-light:#557a64;--color-primary-dark:#3d5c48;--color-accent:#b89060;--color-bg:#1a1e1c;--color-bg-light:#212623;--color-text:#dcd8cf;--color-text-light:#a0a098;--color-text-lighter:#6e6e66;--color-white:#252927;--color-border:#3a3e3b;--color-shadow:rgba(0,0,0,0.30);--color-shadow-hover:rgba(0,0,0,0.50);--color-warning:#d0a050;--color-danger:#cc6050}
+[data-theme="dark"] .header{background:rgba(37,41,39,0.92)}
+[data-theme="dark"] .footer{background:#141815;color:rgba(220,216,207,0.6)}
+[data-theme="dark"] .footer-copy{color:rgba(220,216,207,0.3)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:var(--color-text)}
+h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05rem}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 1rem}
+a{color:var(--color-primary);text-decoration:none}
+/* Header */
+.header{background:rgba(255,255,255,0.92);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none}
+.logo-icon{font-size:1.4rem}
+.logo-text{font-family:var(--font-serif);font-size:1.15rem;font-weight:700;color:var(--color-primary-dark);letter-spacing:0.05em}
+.nav-links{display:flex;gap:0.2rem}
+.nav-links a{padding:0.35rem 0.7rem;border-radius:var(--radius-sm);font-size:0.9rem;color:var(--color-text-light);transition:all var(--transition)}
+.nav-links a:hover{color:var(--color-primary);background:var(--color-bg-light)}
+.page-header{background:linear-gradient(135deg,var(--color-primary-dark),var(--color-primary));color:var(--color-white);padding:2.5rem 1rem;text-align:center}
+.page-header h1{color:var(--color-white);margin-bottom:0.3rem}
+.page-header p{color:rgba(255,255,255,0.8);font-size:0.95rem}
+.menu-items{display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem}
+.section-padding{padding:3rem 0}
+.header-inner{padding:0.8rem 2rem}
+body{font-size:17px}
+@media(max-width:768px){.menu-items{grid-template-columns:1fr}}
+/* Menu */
+.menu-cat-title{margin-bottom:0.8rem;padding-bottom:0.4rem;border-bottom:2px solid var(--color-primary-light);color:var(--color-primary-dark)}
+.menu-container{display:flex;flex-direction:column;gap:1.5rem}
+.menu-items{display:flex;flex-direction:column;gap:0.5rem}
+.menu-item{display:flex;align-items:center;justify-content:space-between;padding:0.8rem 1rem;background:var(--color-white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);gap:0.8rem}
+.menu-item.recommended{border-left:3px solid var(--color-warning)}
+.menu-item-info{flex:1;min-width:0}
+.menu-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.2rem}
+.menu-item-header h4{font-size:0.95rem;display:flex;align-items:center;gap:0.3rem}
+.rec-badge{font-size:0.7rem;color:var(--color-warning);white-space:nowrap}
+.menu-item-price{font-weight:700;color:var(--color-accent);font-size:0.95rem;white-space:nowrap}
+.menu-item-desc{font-size:0.78rem;color:var(--color-text-lighter);line-height:1.4}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:0.55rem 1.2rem;border-radius:var(--radius-sm);font-size:0.9rem;font-weight:500;cursor:pointer;border:none;transition:all var(--transition);font-family:var(--font-sans);gap:0.3rem}
+.btn-order{background:var(--color-primary);color:white;white-space:nowrap;padding:0.3rem 0.8rem;font-size:0.8rem;border-radius:var(--radius-sm)}
+.btn-order:hover{background:var(--color-primary-dark);color:white}
+.btn-primary{background:var(--color-primary);color:white}
+.btn-primary:hover{background:var(--color-primary-dark);color:white}
+.btn-block{width:100%}
+/* Order Panel */
+.order-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max-width);background:var(--color-white);border-radius:var(--radius-lg) var(--radius-lg) 0 0;box-shadow:0 -4px 20px var(--color-shadow-hover);z-index:200;flex-direction:column;max-height:70vh;display:none}
+.order-panel.show{display:flex}
+.order-panel-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-bottom:1px solid var(--color-border)}
+.btn-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--color-text-light)}
+.order-panel-body{flex:1;overflow-y:auto;padding:0.8rem 1.2rem;min-height:80px}
+.empty-hint{text-align:center;color:var(--color-text-lighter);padding:1.5rem 0;font-size:0.9rem}
+.order-item{display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0;border-bottom:1px solid var(--color-border);font-size:0.9rem}
+.order-item-name{flex:1}.order-item-qty{color:var(--color-text-light)}.order-item-price{font-weight:600;color:var(--color-accent)}
+.btn-remove{background:none;border:none;color:var(--color-danger);font-size:0.8rem;cursor:pointer}
+.order-panel-footer{padding:0.8rem 1.2rem 1.2rem;border-top:1px solid var(--color-border)}
+.order-total{display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;margin-bottom:0.6rem}
+.total-price{color:var(--color-accent);font-size:1.3rem}
+.order-input{display:flex;gap:0.5rem;margin-bottom:0.6rem}
+.order-input input{flex:1;padding:0.5rem 0.8rem;border:1px solid var(--color-border);border-radius:var(--radius-sm);font-size:0.85rem;outline:none;font-family:var(--font-sans)}
+.order-input input:focus{border-color:var(--color-primary-light)}
+.order-notice{background:#fef9e7;border-radius:var(--radius-sm);padding:0.6rem 0.8rem;font-size:0.78rem;color:#8b6d20;margin-bottom:0.6rem;text-align:center;line-height:1.5}
+/* FAB */
+.fab{position:fixed;bottom:1.5rem;right:1rem;width:52px;height:52px;border-radius:50%;background:var(--color-primary);color:white;border:none;box-shadow:var(--shadow-md);cursor:pointer;z-index:150;display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all var(--transition)}
+.fab:hover{transform:scale(1.05)}
+.fab-count{position:absolute;top:-4px;right:-4px;background:var(--color-danger);color:white;width:20px;height:20px;border-radius:50%;font-size:0.7rem;display:none;align-items:center;justify-content:center}
+.footer{background:var(--color-primary-dark);color:rgba(255,255,255,0.7);padding:1.5rem 1rem;text-align:center;margin-top:auto}
+.footer p{font-size:0.8rem;margin-bottom:0.2rem;line-height:1.8}
+.footer-copy{color:rgba(255,255,255,0.4);font-size:0.72rem!important;margin-top:0.4rem}
+@media(max-width:400px){.menu-item-header{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <a href="index.html" class="logo"><span class="logo-icon">🏔️</span><span class="logo-text">云上·归墅</span></a>
+        <nav class="nav-links">
+            <a href="rooms.html">房型</a><a href="menu.html">点餐</a><a href="travel.html">攻略</a><a href="services.html">服务</a>
+        </nav>
+        <button id="themeToggle" style="background:none;border:none;cursor:pointer;padding:0.35rem;border-radius:6px;font-size:1.1rem;line-height:1" title="切换深色/浅色模式">🌙</button>
+    </div>
+</header>
+
+<section class="page-header"><div class="container"><h1>☕ 咖啡简餐</h1><p>「三山二水咖啡」· 精品咖啡与简餐轻食 · 自种庐山云雾茶 · 自酿美酒 · 本民宿不提供正餐</p></div></section>
+
+<section class="section-padding"><div class="container"><div class="menu-container" id="menuContainer"></div>
+    <p style="text-align:center;color:var(--color-text-lighter);font-size:0.85rem;margin-top:1rem;line-height:1.8">
+        🍜 需要正餐？请查看「<a href="travel.html">游玩攻略</a>」中的周边美食推荐<br>
+        💡 支持微信支付，下单后送至房间
+    </p>
+</div></section>
+
+<!-- 点餐浮窗 -->
+<div class="order-panel" id="orderPanel">
+    <div class="order-panel-header"><h3>🛒 已选菜品</h3><button class="btn-close" onclick="togglePanel()">✕</button></div>
+    <div class="order-panel-body" id="orderItems"><p class="empty-hint">还没有选择菜品～</p></div>
+    <div class="order-panel-footer">
+        <div class="order-total"><span>合计</span><span class="total-price" id="totalPrice">¥0</span></div>
+        <div class="order-input"><input type="text" id="roomNo" placeholder="房间号（选填）"><input type="text" id="remark" placeholder="备注（选填）"></div>
+        <div class="order-notice">☕ 仅提供咖啡茶饮与简餐轻食，不提供正餐<br>💳 支持微信支付，确认后送餐到房</div>
+        <button class="btn btn-primary btn-block" onclick="submitOrder()">确认下单</button>
+    </div>
+</div>
+
+<button class="fab" onclick="togglePanel()"><span class="fab-icon">🛒</span><span class="fab-count" id="cartCount">0</span></button>
+
+<footer class="footer">
+    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · 庐山之巅的静谧之所</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
+</footer>
+
+<script>
+// 菜单数据（咖啡简餐 - 来自 seed_data.py v2）
+const menu = [
+    {cat:"☕ 精品咖啡", items:[
+        {id:1,name:"庐山云雾冷萃",price:38,desc:"庐山云雾茶与冷萃咖啡融合，清凉回甘",rec:true},
+        {id:2,name:"手冲单品",price:42,desc:"精选单品豆手冲慢萃，风味纯净",rec:true},
+        {id:3,name:"意式浓缩",price:22,desc:"经典意式浓缩，浓烈醇厚"},
+        {id:4,name:"拿铁",price:28,desc:"浓缩与蒸汽牛奶的经典搭配"},
+        {id:5,name:"卡布奇诺",price:28,desc:"浓缩、牛奶与奶泡的完美比例"},
+        {id:6,name:"桂花拿铁",price:32,desc:"拿铁加入秋季手采桂花，花香四溢",rec:true}
+    ]},
+    {cat:"🍵 茶饮", items:[
+        {id:7,name:"庐山云雾茶（壶）",price:68,desc:"明前特级云雾茶，山泉冲泡",rec:true},
+        {id:8,name:"桂花红茶",price:38,desc:"祁门红茶配庐山金桂，温润香甜"},
+        {id:9,name:"茉莉花茶",price:28,desc:"茉莉花与绿茶窨制，花香茶韵"},
+        {id:10,name:"陈皮普洱",price:35,desc:"新会陈皮配云南普洱，理气健脾"},
+        {id:11,name:"蜂蜜柚子茶",price:25,desc:"自制蜂蜜柚子酱，酸甜可口"}
+    ]},
+    {cat:"🥐 简餐轻食", items:[
+        {id:12,name:"牛角包三明治",price:38,desc:"现烤牛角包夹火腿芝士，配沙拉",rec:true},
+        {id:13,name:"茶香沙拉",price:35,desc:"庐山云雾茶油醋汁拌时蔬"},
+        {id:14,name:"意式肉酱面",price:42,desc:"意式番茄肉酱面，配帕玛森芝士"},
+        {id:15,name:"酸奶水果碗",price:28,desc:"手工酸奶配时令鲜果和坚果麦片"},
+        {id:16,name:"芝士焗红薯",price:25,desc:"红薯与马苏里拉芝士焗烤"}
+    ]},
+    {cat:"🍰 甜点", items:[
+        {id:17,name:"手工桂花糕",price:28,desc:"手采桂花古法蒸制，软糯香甜",rec:true},
+        {id:18,name:"提拉米苏",price:35,desc:"经典意式提拉米苏，咖啡与奶酪"},
+        {id:19,name:"庐山茶冻",price:22,desc:"云雾茶汤冷凝，清凉消暑"},
+        {id:20,name:"桂花酒酿圆子",price:22,desc:"甜酒酿配手搓圆子，桂花香"}
+    ]},
+    {cat:"🥤 饮品", items:[
+        {id:21,name:"鲜榨山果汁",price:28,desc:"时令庐山野果鲜榨，维C满满"},
+        {id:22,name:"山泉柠檬水",price:18,desc:"庐山泉水配鲜柠檬，清新解渴"},
+        {id:23,name:"手工酸奶",price:22,desc:"自制发酵酸奶，浓稠醇厚"},
+        {id:24,name:"气泡水",price:15,desc:"冰镇气泡水，夏日清凉之选"}
+    ]}
+];
+
+// 渲染菜单
+const container = document.getElementById('menuContainer');
+menu.forEach(cat => {
+    const div = document.createElement('div');
+    div.className = 'menu-category';
+    div.innerHTML = `<h2 class="menu-cat-title">${cat.cat}</h2>
+        <div class="menu-items">${cat.items.map(item => `
+            <div class="menu-item${item.rec?' recommended':''}">
+                <div class="menu-item-info">
+                    <div class="menu-item-header">
+                        <h4>${item.name}${item.rec?' <span class="rec-badge">⭐推荐</span>':''}</h4>
+                        <span class="menu-item-price">¥${item.price}</span>
+                    </div>
+                    ${item.desc?`<p class="menu-item-desc">${item.desc}</p>`:''}
+                </div>
+                <button class="btn btn-order" onclick="addToCart(${item.id},'${item.name}',${item.price})">+ 点单</button>
+            </div>`).join('')}</div>`;
+    container.appendChild(div);
+});
+
+// 购物车
+let cart = [];
+function addToCart(id,name,price){
+    const ex = cart.find(i=>i.id===id);
+    if(ex) ex.qty++; else cart.push({id,name,price,qty:1});
+    updateCart();
+    const fab = document.querySelector('.fab');
+    fab.style.transform = 'scale(1.1)';
+    setTimeout(()=>fab.style.transform='',200);
+}
+function removeFromCart(id){cart=cart.filter(i=>i.id!==id);updateCart()}
+function updateCart(){
+    const container = document.getElementById('orderItems');
+    const countEl = document.getElementById('cartCount');
+    const totalEl = document.getElementById('totalPrice');
+    if(cart.length===0){
+        container.innerHTML='<p class="empty-hint">还没有选择菜品～</p>';
+        countEl.style.display='none';
+        totalEl.textContent='¥0';
+    }else{
+        container.innerHTML = cart.map(item=>`
+            <div class="order-item">
+                <span class="order-item-name">${item.name}</span>
+                <span class="order-item-qty">×${item.qty}</span>
+                <span class="order-item-price">¥${item.price*item.qty}</span>
+                <button class="btn-remove" onclick="removeFromCart(${item.id})">删除</button>
+            </div>`).join('');
+        const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+        totalEl.textContent = '¥'+total;
+        const cnt = cart.reduce((s,i)=>s+i.qty,0);
+        countEl.style.display='flex';countEl.textContent=cnt;
+    }
+}
+function togglePanel(){
+    const panel = document.getElementById('orderPanel');
+    panel.classList.toggle('show');
+}
+function submitOrder(){
+    if(cart.length===0){alert('请先选择菜品～');return}
+    const items = cart.map(i=>`${i.name}×${i.qty}`).join('、');
+    const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+    const room = document.getElementById('roomNo').value||'未填';
+    const rmk = document.getElementById('remark').value||'无';
+    alert(`✅ 下单成功！\n\n📦 ${items}\n💰 合计：¥${total}\n🚪 房间号：${room}\n📝 备注：${rmk}\n\n☕ 仅咖啡简餐，支持微信支付\n我们会尽快为您准备并送至房间～`);
+    cart=[];updateCart();togglePanel();
+}
+</script>
+<script>
+(function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'})();
+document.getElementById('themeToggle').onclick=function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);this.textContent=n==='dark'?'☀️':'🌙'};
+</script>
+</body>
+</html>

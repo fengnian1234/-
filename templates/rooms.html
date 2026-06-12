@@ -11,7 +11,7 @@
 
 <section class="section-padding">
     <div class="container">
-        <div class="notice-card" style="background:#fef9e7;border-radius:10px;padding:1rem 1.2rem;border-left:4px solid #c9954a;margin-bottom:1.5rem;font-size:0.85rem;line-height:1.6">
+        <div class="notice-card notice-card--warning" style="margin-bottom:1.5rem">
             <strong>📋 预订须知</strong><br>
             🍳 民宿<strong>不提供早餐</strong>，一楼「三山二水咖啡」供应咖啡简餐<br>
             🛏️ 所有房型<strong>不可加床</strong>，不提供婴儿床<br>
@@ -56,6 +56,13 @@
                     </div>
                     <div class="room-card-footer">
                         <span class="room-price">¥{{ room.price }}<small>/晚</small></span>
+                        {% if room.total_count and room.total_count == 1 %}
+                        <span class="room-remaining low">🔥 仅剩1间</span>
+                        {% elif room.total_count and room.total_count <= 2 %}
+                        <span class="room-remaining low">仅剩{{ room.total_count }}间</span>
+                        {% elif room.total_count %}
+                        <span class="room-remaining ok">热订中</span>
+                        {% endif %}
                         {% if room.original_price and room.original_price > room.price %}
                         <span class="room-original-price">¥{{ room.original_price }}</span>
                         {% endif %}

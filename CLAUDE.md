@@ -1,39 +1,134 @@
-# 云上·归墅 — Claude Code 项目指引
+# CLAUDE.md
 
-## 信息获取规则
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**数据优先级链**（从高到低）：
+## 启动命令
+
+```bash
+# 启动开发服务器
+PYTHONUTF8=1 C:/Users/admin/python-embed/python.exe d:/cc/run.py
+
+# 单行快速启动（跳过启动横幅）
+PYTHONUTF8=1 C:/Users/admin/python-embed/python.exe -c "from app import app,init_app;init_app();app.run(host='0.0.0.0',port=5000,debug=True)"
+
+# 安装依赖
+C:/Users/admin/python-embed/python.exe -m pip install <package>
+
+# 停止所有 Python 进程
+taskkill //F //IM python.exe
+```
+
+Python 是嵌入式发行版，路径固定为 `C:/Users/admin/python-embed/python.exe`，**必须**设置 `PYTHONUTF8=1` 环境变量。
+
+## 架构概览
 
 ```
-本地数据 (local_data/)  >  WebSearch  >  其他渠道
-     最高优先级              次优先        最低
+微信公众号用户消息
+       │
+       ▼
+  POST /wechat  ─── wechat.py ─── 关键词路由表 ─── services/*.py ─── SQLite (models.py)
+       │                    │
+       ▼                    ▼
+  微信XML回复          Jinja2 模板渲染 (templates/*.html)
+                      + 独立预览页面 (preview/*.html)
 ```
 
-1. **`local_data/` 目录** — 最高优先级。民宿官方提供的图片、价目表、介绍文案等信息文件，其数据压倒一切其他来源。
-   - `local_data/images/` — 房型照片、环境图、菜单图等
-   - `local_data/documents/` — 房源清单、价目表、官方介绍等
-2. **WebSearch** — 次优先级。当 `local_data/` 中没有对应信息时，使用 Claude Code 内置的 `WebSearch` 工具获取，优先于 AnySearch 等第三方渠道。
-3. **其他来源** — 最低优先级。AnySearch API、本地缓存、旧数据等仅供补充参考。
+### 三层架构
 
-- 不同层级数据冲突时，按优先级链采信
-- 需要验证事实或获取最新数据时，先查 `local_data/`，再查 WebSearch
+| 层 | 文件 | 职责 |
+|----|------|------|
+| **路由/控制器** | `app.py` (28条路由) | Flask 路由定义、请求分发、H5页面渲染 |
+| **微信消息处理** | `wechat.py` (~500行) | 关键词正则匹配 → 服务调用 → 文本回复拼装 |
+| **业务服务** | `services/*.py` (10个模块) | 数据库查询、格式化输出、AI对话、订单管理、监控、周报 |
 
-## 项目概述
+### 服务层 (services/)
 
-微信公众号客服系统 + H5 预览页面，服务「云上·归墅民宿」（庐山山上·大林沟路27号）。
+- `rooms.py` — 房型查询、文本/图文格式化
+- `booking.py` — 预订确认、AI解锁判断、好评推送、退房倒计时
+- `menu.py` — 菜单分类查询、下单、微信支付参数生成
+- `travel.py` — 路线/美食/位置查询与格式化
+- `quick.py` — 14项快捷服务、服务请求创建
+- `ai.py` — Anthropic Claude AI 对话（预订后才解锁）
+- `notify.py` — 员工通知、看板数据统计
+- `monitor.py` — AnySearch 多平台口碑搜索、评分解析
+- `report.py` — python-docx 周报生成（封面+数据表+评价+趋势）
 
-## 关键设计原则
+### 双输出模式
 
-**顾客导向展示**：面向客人的页面（`preview/*.html`）只展示对客人有益的功能和信息。内部运营操作（自动好评推送、员工看板提醒等）不要在顾客页面上展示。
+项目有两套并行的页面渲染体系，**修改功能时需要同步更新**：
 
-## 技术栈
+1. **Flask Jinja2 模板** (`templates/`) — 服务端渲染，通过 `/rooms` 等路由访问，继承 `base.html`
+2. **纯 HTML 预览页** (`preview/`) — 独立文件，CSS/JS 内联，数据硬编码在 `<script>` 中，可直接双击打开
 
-- Python 3.12.8 嵌入式发行版：`C:\Users\admin\python-embed\python.exe`
-- 运行命令：`PYTHONUTF8=1 C:/Users/admin/python-embed/python.exe ...`
-- Flask + Jinja2 + SQLAlchemy + SQLite
-- 预览页面：`d:\cc\preview\` 下的纯 HTML（可直接在浏览器打开）
+预览页是模板的**自包含副本**，不共享 CSS/JS。对页面结构或样式的修改需要分别处理。
 
-## 外部服务
+### 数据库
 
-- AnySearch MCP API：`api.anysearch.com/mcp`（匿名免费 1000次/天）
-- Cron 周报：每周一 9:57 自动生成 DOCX 到 `reports/`
+SQLite (`yunshang_bnb.db`)，通过 SQLAlchemy ORM 访问。表：`rooms`、`bookings`、`menu_items`、`menu_categories`、`travel_routes`、`food_recommends`、`service_requests`、`monitor_mentions`。
+
+种子数据在 `seed_data.py`，应用启动时自动调用 `seed_all()` 填充。
+
+## 关键设计约定
+
+### 数据来源优先级
+
+```
+local_data/  >  WebSearch  >  其他来源
+```
+
+`local_data/images/` 和 `local_data/documents/` 中的官方文件权威最高。信息冲突时按此链采信。
+
+### 顾客导向原则
+
+面向客人的页面 (`preview/` 和 `templates/` 中除 `staff.html` 外的所有模板) **只展示对客人有益的功能**。员工看板、好评推送机制等内部运营功能不应出现在顾客页面。
+
+### 主题系统
+
+使用 `data-theme="dark"` 属性（挂载在 `<html>` 上）+ CSS 自定义属性覆盖实现深浅切换。所有颜色通过 `:root` 变量定义，暗色模式在 `[data-theme="dark"]` 选择器下覆盖。代码位置：
+- Flask 模板：`static/css/style.css` 的 `[data-theme="dark"]` 块
+- 预览页面：各自内联 `<style>` 中的 `[data-theme="dark"]` 块
+- 员工看板：`templates/staff.html` 内联样式中的独立暗色变量
+
+### 硬编码颜色
+
+避免在 HTML `style=""` 属性中使用硬编码颜色值。使用 CSS 类（如 `.notice-card--success`、`.notice-card--warning`、`.room-preview-gradient-sky`），确保暗色模式能正确覆盖。
+
+## 微信消息流
+
+```
+用户发消息 → POST /wechat → wechatpy.parse_message()
+  → handle_wechat_message(msg)
+    → build_keyword_routes() 正则匹配
+    → 匹配成功 → 调用对应 service 方法 → 拼接回复文本
+    → 未匹配 → 检查AI是否解锁 → AI chat() 或 引导提示
+  → TextReply(content=reply_text).render()
+  → 返回 XML
+```
+
+关键词路由在 `wechat.py:build_keyword_routes()` 定义，支持正则捕获组（如 `房间(\d+)` → 房间详情）。
+
+## 外部依赖
+
+- **AnySearch MCP** — `api.anysearch.com/mcp`，用于平台口碑监控（匿名免费 1000次/天）
+- **DeepSeek API** — AI 对话后端（通过 Anthropic 兼容接口 `https://api.deepseek.com/anthropic`）
+- **Cron 周报** — 每周一 9:57 自动生成 DOCX → `reports/`（通过 Claude Code 的 CronCreate 调度）
+- **MinerU** — 文档提取工具，用于从携程页面等提取结构化信息
+
+## 配置
+
+所有配置集中在 `config.py`，敏感信息通过 `.env` 文件注入（参考 `.env.example`）。微信 Token/AppID/Secret、AI API Key、支付商户号等均从环境变量读取。
+
+## 验证方法
+
+```bash
+# 检查各页面是否正常渲染
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/rooms
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/menu
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/travel
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/services
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/staff
+
+# 微信接入验证（需要先配置 Token）
+# GET /wechat?signature=...&echostr=...&timestamp=...&nonce=...
+```

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>云上·归墅 · 口碑简报 2026.06.12</title>
+<style>
+:root {
+    --ink: #2a3d33; --ink-light: #5b7b6f; --gold: #8b7355;
+    --paper: #f7f4ed; --paper-dark: #e6e1d6; --white: #fffefb;
+    --text: #2a2722; --text-light: #6e6a60; --border: #d8d3c8;
+    --font-serif: "Noto Serif SC","STSong","KaiTi",serif;
+    --font-sans: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    --radius: 12px; --shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] {
+    --ink: #5a9a6e; --ink-light: #3d5c48; --gold: #b89060;
+    --paper: #1a1c1a; --paper-dark: #262926; --white: #232521;
+    --text: #dad5ca; --text-light: #9a9588; --border: #363830;
+    --shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:var(--paper);color:var(--text);line-height:1.8;transition:background 0.3s,color 0.3s}
+
+/* Cover */
+.cover{background:linear-gradient(170deg,#2a3d33 0%,#3d5347 40%,#5b6b60 100%);color:#fff;padding:4rem 1.5rem 3rem;text-align:center;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 0%,rgba(255,255,255,0.06) 0%,transparent 60%),radial-gradient(circle at 30% 70%,rgba(255,255,255,0.03) 0%,transparent 40%)}
+.cover::after{content:'';position:absolute;bottom:-2px;left:-5%;right:-5%;height:20%;background:var(--paper);clip-path:polygon(0% 100%,0% 50%,10% 40%,20% 55%,30% 35%,40% 50%,50% 30%,60% 48%,70% 35%,80% 52%,90% 40%,100% 45%,100% 100%)}
+.cover-inner{position:relative;z-index:2;max-width:800px;margin:0 auto}
+.cover h1{font-family:var(--font-serif);font-size:2.8rem;letter-spacing:0.2em;margin-bottom:0.5rem}
+.cover .subtitle{font-family:var(--font-serif);font-size:1.2rem;opacity:0.8;letter-spacing:0.1em;margin-bottom:0.3rem}
+.cover .date{font-size:0.9rem;opacity:0.5;letter-spacing:0.05em}
+
+/* Main */
+.main{max-width:1000px;margin:0 auto;padding:0 1.5rem 3rem}
+.section{margin:2.5rem 0}
+.section-title{font-family:var(--font-serif);font-size:1.3rem;color:var(--ink);text-align:center;margin-bottom:0.3rem;letter-spacing:0.08em}
+.section-title::after{content:'';display:block;width:3rem;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0.5rem auto 0}
+.section-desc{text-align:center;color:var(--text-light);font-size:0.9rem;margin-bottom:1.5rem}
+
+/* Hero image */
+.hero-img{width:100%;border-radius:var(--radius);box-shadow:var(--shadow);margin:1rem 0}
+
+/* Score cards */
+.score-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0.8rem;margin:1.5rem 0}
+.score-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem 0.8rem;text-align:center}
+.score-value{font-family:var(--font-serif);font-size:2.4rem;font-weight:700;color:var(--ink)}
+.score-label{font-size:0.8rem;color:var(--text-light);margin-top:0.2rem}
+.score-card.total .score-value{color:var(--gold)}
+@media(max-width:600px){.score-grid{grid-template-columns:repeat(3,1fr)}.score-card.total{grid-column:span 3}}
+
+/* Reviews */
+.review-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;margin:1.5rem 0}
+.review-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;font-size:0.88rem;line-height:1.8}
+.review-stars{color:var(--gold);font-size:0.9rem;margin-bottom:0.4rem}
+.review-text{color:var(--text);margin-bottom:0.5rem;font-style:italic}
+.review-text::before{content:'"'}
+.review-text::after{content:'"'}
+.review-author{color:var(--text-light);font-size:0.78rem}
+@media(max-width:600px){.review-grid{grid-template-columns:1fr}}
+
+/* Image gallery */
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem;margin:1.5rem 0}
+.gallery img{width:100%;height:180px;object-fit:cover;border-radius:var(--radius);transition:transform 0.3s;cursor:pointer}
+.gallery img:hover{transform:scale(1.03)}
+@media(max-width:768px){.gallery{grid-template-columns:repeat(2,1fr)}.gallery img{height:140px}}
+
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.8rem;margin:1.5rem 0}
+.info-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;text-align:center}
+.info-icon{font-size:2rem;margin-bottom:0.3rem}
+.info-title{font-weight:600;font-size:0.95rem}
+.info-desc{color:var(--text-light);font-size:0.82rem;margin-top:0.2rem}
+@media(max-width:600px){.info-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* Competition table */
+.comp-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.88rem}
+.comp-table th{background:var(--ink);color:#fff;padding:0.7rem 1rem;text-align:left;font-weight:500}
+.comp-table td{padding:0.6rem 1rem;border-bottom:1px solid var(--border)}
+.comp-table tr:nth-child(even){background:var(--white)}
+.comp-table .us{background:var(--ink-light);color:#fff}
+.comp-table .us td{color:#fff;border-color:transparent}
+@media(max-width:600px){.comp-table{font-size:0.78rem}.comp-table th,.comp-table td{padding:0.5rem 0.6rem}}
+
+/* Tags */
+.tag{display:inline-block;padding:0.15rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:600}
+.tag-green{background:#e8f5e9;color:#2e7d32}
+.tag-yellow{background:#fef9e7;color:#8b6d20}
+.tag-red{background:#fce4ec;color:#c62828}
+[data-theme="dark"] .tag-green{background:#1a2e1a;color:#6bbf6e}
+[data-theme="dark"] .tag-yellow{background:#2a2615;color:#c8a040}
+[data-theme="dark"] .tag-red{background:#2e1518;color:#e85550}
+
+/* Footer */
+.footer{text-align:center;padding:2rem 1.5rem;color:var(--text-light);font-size:0.82rem;border-top:1px solid var(--border);margin-top:2rem}
+.footer p{margin:0.2rem 0}
+
+/* Theme toggle */
+.theme-btn{position:fixed;top:1rem;right:1rem;z-index:999;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:0.4rem 0.7rem;border-radius:20px;cursor:pointer;font-size:1rem;backdrop-filter:blur(4px)}
+</style>
+</head>
+<body>
+
+<button class="theme-btn" onclick="toggleTheme()" title="切换深色/浅色">🌙</button>
+
+<!-- Cover -->
+<section class="cover">
+    <div class="cover-inner">
+        <h1>云上·归墅</h1>
+        <p class="subtitle">云无心以出岫，鸟倦飞而知还</p>
+        <p class="date">多平台口碑简报 · 2026年6月12日</p>
+    </div>
+</section>
+
+<div class="main">
+
+    <!-- Hero Image -->
+    <img class="hero-img" src="ctrip_hotel_image.jpg" alt="云上·归墅民宿" loading="lazy">
+
+    <!-- 基本信息 -->
+    <div class="section">
+        <h2 class="section-title">民宿概况</h2>
+        <div class="info-grid">
+            <div class="info-card"><div class="info-icon">🏔️</div><div class="info-title">庐山山上</div><div class="info-desc">大林沟路27号 · 海拔千米</div></div>
+            <div class="info-card"><div class="info-icon">🏠</div><div class="info-title">2016年开业</div><div class="info-desc">11间客房 · 8种房型 · U型小楼</div></div>
+            <div class="info-card"><div class="info-icon">☕</div><div class="info-title">三山二水咖啡</div><div class="info-desc">自营精品咖啡馆 · 自种云雾茶</div></div>
+            <div class="info-card"><div class="info-icon">🚡</div><div class="info-title">索道步行5分钟</div><div class="info-desc">近牯岭街 · 如琴湖 · 锦绣谷</div></div>
+        </div>
+    </div>
+
+    <!-- 携程评分 -->
+    <div class="section">
+        <h2 class="section-title">携程口碑</h2>
+        <p class="section-desc">85条真实住客点评 · 2026年最新</p>
+        <div class="score-grid">
+            <div class="score-card total"><div class="score-value">4.7</div><div class="score-label">总评分</div></div>
+            <div class="score-card"><div class="score-value">4.7</div><div class="score-label">卫生</div></div>
+            <div class="score-card"><div class="score-value">4.4</div><div class="score-label">设施</div></div>
+            <div class="score-card"><div class="score-value">4.7</div><div class="score-label">环境</div></div>
+            <div class="score-card"><div class="score-value">4.7</div><div class="score-label">服务</div></div>
+        </div>
+    </div>
+
+    <!-- 民宿图集 -->
+    <div class="section">
+        <h2 class="section-title">民宿掠影</h2>
+        <p class="section-desc">携程官方相册精选</p>
+        <div class="gallery">
+            <img src="../local_data/images/0102j12000h0n6gb04936.jpg" loading="lazy" alt="民宿外景">
+            <img src="../local_data/images/0230912000s38zvv090CC.jpg" loading="lazy" alt="房间">
+            <img src="../local_data/images/0234d12000s38xead30C0.jpg" loading="lazy" alt="房间">
+            <img src="../local_data/images/1mc3112000r9eqm5oA44B.jpg" loading="lazy" alt="房间">
+            <img src="../local_data/images/1mc2212000r9en7y0CBB1.jpg" loading="lazy" alt="咖啡馆">
+            <img src="../local_data/images/1mc4r12000r9es2c41A4E.jpg" loading="lazy" alt="公共区域">
+            <img src="../local_data/images/1mc6q12000e6z7jt6B242.jpg" loading="lazy" alt="细节">
+            <img src="../local_data/images/1me5n12000qmlwpna7CB7.jpg" loading="lazy" alt="山景">
+        </div>
+    </div>
+
+    <!-- 住客精选评价 -->
+    <div class="section">
+        <h2 class="section-title">住客心声</h2>
+        <p class="section-desc">携程 & 小红书真实评价精选</p>
+        <div class="review-grid">
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p class="review-text">藏在庐山牯岭镇云雾中的云上归墅，环境安静治愈，推开窗便是漫山云海，风铃轻响氛围感十足。老板用心打理，咖啡品质出众，自种的茶清香回甘，还有自酿美酒～</p>
+                <div class="review-author">十二分甜美式 · 2026年4月 · 携程</div>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p class="review-text">和朋友来庐山选择的这家民宿，还有咖啡厅，主理人姐姐做的咖啡超级好喝，喝完看庐山的美景，不虚此行～环境很温馨，服务好👌🏻</p>
+                <div class="review-author">语喃呀 · 2026年4月 · 携程 <span class="tag tag-green">提及主理人</span></div>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p class="review-text">带着小孩订的田园家庭房，体验感拉满。推开窗就是满眼青山绿意，空气清新到爆表。老板很热情，像住在朋友家一样自在～楼下就是网红三山二水咖啡。</p>
+                <div class="review-author">小敏 · 2026年4月 · 携程</div>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p class="review-text">庐山免票啦🥳这家民宿安逸得续住几天！索道上站步行5分钟即达，一楼是治愈感拉满的咖啡馆，老板免费路线规划、可搭伙用餐，像回到山里的家。</p>
+                <div class="review-author">除了吃喝玩乐一无是处 · 2026年3月 · 携程</div>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p class="review-text">山野大床房位置超赞，推开窗就是山间云雾，氛围感直接拉满。房间收拾得干净整洁，一楼就是老板自己开的咖啡馆，环境安静又治愈。</p>
+                <div class="review-author">M785071**** · 2026年2月 · 携程</div>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p class="review-text">庐山的民宿——云上归墅，藏在山里的宝藏！房间舒适有温度，公区有阳光房、书架、壁炉，每一个摆件都独具匠心。麦姐自种的茶太好喝了～</p>
+                <div class="review-author">大文文 · 2022年7月 · 小红书 <span class="tag tag-green">提及麦姐</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 周边竞争 -->
+    <div class="section">
+        <h2 class="section-title">庐山市酒店排行</h2>
+        <p class="section-desc">携程实时排名 · 数据抓取于 2026-06-12</p>
+        <table class="comp-table">
+            <thead><tr><th>#</th><th>酒店</th><th>评分</th><th>评价数</th><th>位置</th></tr></thead>
+            <tbody>
+                <tr><td>1</td><td>庐山君竹雅庐民宿</td><td><span class="tag tag-green">4.8</span></td><td>195</td><td>东林大佛</td></tr>
+                <tr><td>2</td><td>庐山脂红酒店</td><td><span class="tag tag-green">4.8</span></td><td>2,039</td><td>牯岭街</td></tr>
+                <tr><td>3</td><td>全季酒店(如琴湖)</td><td><span class="tag tag-yellow">4.6</span></td><td>380</td><td>索道·牯岭街</td></tr>
+                <tr class="us"><td>—</td><td><strong>🏔️ 云上·归墅</strong></td><td><span class="tag tag-green">4.7</span></td><td>85</td><td>索道上站·大林沟路27号</td></tr>
+                <tr><td>4</td><td>维也纳国际(牯岭)</td><td><span class="tag tag-yellow">4.6</span></td><td>1,335</td><td>牯岭街心公园</td></tr>
+                <tr><td>5</td><td>庐山大厦国际饭店</td><td><span class="tag tag-green">4.8</span></td><td>3,503</td><td>山上·河西路</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 多平台热度 -->
+    <div class="section">
+        <h2 class="section-title">全平台热度</h2>
+        <p class="section-desc">携程 · 小红书 · 美团 · 抖音 · 大众点评 · 飞猪</p>
+        <div class="info-grid">
+            <div class="info-card"><div class="info-icon">🏨</div><div class="info-title">携程</div><div class="info-desc">85条评价 · 4.7分</div><span class="tag tag-green">主力平台</span></div>
+            <div class="info-card"><div class="info-icon">📕</div><div class="info-title">小红书</div><div class="info-desc">13篇笔记 · 含2026年最新</div><span class="tag tag-green">口碑发酵</span></div>
+            <div class="info-card"><div class="info-icon">⭐</div><div class="info-title">大众点评</div><div class="info-desc">收录 · 与美团数据打通</div><span class="tag tag-yellow">待运营</span></div>
+            <div class="info-card"><div class="info-icon">🎵</div><div class="info-title">抖音</div><div class="info-desc">有达人探店提及</div><span class="tag tag-yellow">待运营</span></div>
+        </div>
+    </div>
+
+    <!-- 今日房态 -->
+    <div class="section">
+        <h2 class="section-title">今日房态</h2>
+        <p class="section-desc">携程实时库存 · 2026年6月12日</p>
+        <table class="comp-table">
+            <thead><tr><th>房型</th><th>床型</th><th>面积</th><th>今晚价格</th><th>库存</th></tr></thead>
+            <tbody>
+                <tr><td>室雅茶香套房</td><td>1.8m大床 + 1.5m双人床</td><td>30m²</td><td><strong>¥988</strong></td><td><span class="tag tag-yellow">仅剩2间</span></td></tr>
+                <tr><td>清舍·露台大床房</td><td>1.8m大床</td><td>35m²</td><td><strong>¥788</strong></td><td><span class="tag tag-red">仅剩1间</span></td></tr>
+                <tr><td>山野大床房</td><td>1.8m大床</td><td>20m²</td><td><strong>¥588</strong></td><td><span class="tag tag-red">仅剩1间</span></td></tr>
+                <tr><td>特惠标准间</td><td>2×1.2m单人床</td><td>15m²</td><td><strong>¥388</strong></td><td><span class="tag tag-red">仅剩1间</span></td></tr>
+                <tr><td>特惠单人间</td><td>1.5m双人床</td><td>15m²</td><td><strong>¥388</strong></td><td><span class="tag tag-red">仅剩1间</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 关键发现 -->
+    <div class="section">
+        <h2 class="section-title">关键发现</h2>
+        <div class="review-grid">
+            <div class="review-card">
+                <div style="font-size:1.5rem;margin-bottom:0.3rem">☕</div>
+                <strong>咖啡是最强差异化</strong>
+                <p style="color:var(--text-light);margin-top:0.3rem;font-style:normal">几乎所有正面评价都提到咖啡品质，"三山二水咖啡"已成民宿标志性记忆点</p>
+            </div>
+            <div class="review-card">
+                <div style="font-size:1.5rem;margin-bottom:0.3rem">👩‍🍳</div>
+                <strong>"主理人"标签正在形成</strong>
+                <p style="color:var(--text-light);margin-top:0.3rem;font-style:normal">2026年4月最新评价首次提及"主理人姐姐"，与品牌叙事策略高度一致</p>
+            </div>
+            <div class="review-card">
+                <div style="font-size:1.5rem;margin-bottom:0.3rem">📝</div>
+                <strong>评价量有增长空间</strong>
+                <p style="color:var(--text-light);margin-top:0.3rem;font-style:normal">85条评价 vs 竞品2000+条，建议退房后积极引导住客写评价</p>
+            </div>
+            <div class="review-card">
+                <div style="font-size:1.5rem;margin-bottom:0.3rem">🚡</div>
+                <strong>交通便利是高频词</strong>
+                <p style="color:var(--text-light);margin-top:0.3rem;font-style:normal">"索道上站步行5分钟"被反复提及，是区别于山上其他民宿的核心优势</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer class="footer">
+    <p>🏔️ 云上·归墅民宿 · 庐山山上 · 大林沟路27号</p>
+    <p>📞 16607927666 · 携程 4.7分 · 85条评价 · 2016年开业</p>
+    <p style="margin-top:0.5rem;opacity:0.5">报告由 OpenCLI + AnySearch 自动生成 · 2026-06-12</p>
+</footer>
+
+<script>
+(function(){var t=localStorage.getItem('report-theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);document.querySelector('.theme-btn').textContent=t==='dark'?'☀️':'🌙'})();
+function toggleTheme(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('report-theme',n);document.querySelector('.theme-btn').textContent=n==='dark'?'☀️':'🌙'}
+</script>
+</body>
+</html>
