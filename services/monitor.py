@@ -10,6 +10,7 @@ from datetime import datetime
 import requests
 
 from models import SessionLocal, PlatformMention
+from services.logger import info, warning, debug
 from config import MONITOR_PLATFORMS, MONITOR_KEYWORDS, MONITOR_SEARCH_QUERY, BNB_NAME
 
 # AnySearch API 配置
@@ -163,7 +164,7 @@ def search_platform_mentions(query: str = "") -> dict:
     # 为每个平台执行独立搜索
     for platform in MONITOR_PLATFORMS:
         platform_query = f"{query} {platform}"
-        print(f"  🔍 正在搜索 {platform}...")
+        info(f"🔍 正在搜索 {platform}...")
 
         try:
             raw_text = _call_anysearch_api("search", {
@@ -177,9 +178,9 @@ def search_platform_mentions(query: str = "") -> dict:
             # 保存到数据库
             if mentions:
                 stored_count = store_mentions(platform, mentions)
-                print(f"    {platform}: 找到 {len(mentions)} 条，存入 {stored_count} 条新记录")
+                info(f"    {platform}: 找到 {len(mentions)} 条，存入 {stored_count} 条新记录")
             else:
-                print(f"    {platform}: 无有效结果")
+                info(f"    {platform}: 无有效结果")
 
             # 计算评分
             ratings = [m["rating"] for m in mentions if m["rating"]]
@@ -197,7 +198,7 @@ def search_platform_mentions(query: str = "") -> dict:
             time.sleep(0.5)
 
         except Exception as e:
-            print(f"    {platform}: 搜索失败 - {e}")
+            warning(f"    {platform}: 搜索失败 - {e}")
             results["platforms"][platform] = {
                 "query": platform_query,
                 "mentions_count": 0,

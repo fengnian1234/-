@@ -5,6 +5,7 @@
 from datetime import datetime
 from models import SessionLocal, QuickService
 from services.notify import create_service_request
+from services.logger import debug
 
 
 def get_all_services():
@@ -102,7 +103,7 @@ def handle_service_request(service_name: str, openid: str = "",
             urgency="normal",
         )
     except Exception:
-        pass  # 通知创建失败不影响主流程
+        debug("服务请求通知创建失败（不影响主流程）")
 
     icon = matched.get("icon", "✅")
     return (

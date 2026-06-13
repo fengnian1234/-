@@ -15,7 +15,7 @@ def seed_all():
     try:
         # 检查是否已初始化（房间数据）
         if db.query(Room).count() > 0:
-            print("数据库已初始化，补充新增模块数据...")
+            info("数据库已初始化，补充新增模块数据...")
             seed_orders(db)
             seed_bookings(db)
             seed_points(db)
@@ -37,7 +37,7 @@ def seed_all():
 
     except Exception as e:
         db.rollback()
-        print(f"❌ 初始化失败: {e}")
+        log_error(f"❌ 初始化失败: {e}")
         raise
     finally:
         db.close()

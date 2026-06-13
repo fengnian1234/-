@@ -454,7 +454,8 @@ def handle_wechat_message(msg):
                 db = SessionLocal()
                 log_entry = MessageLog(openid=openid, message_type="text", content=content, reply=str(reply)[:500])
                 db.add(log_entry); db.commit(); db.close()
-            except Exception: pass
+            except Exception:
+                debug("消息日志记录失败")
             if match:
                 log_keyword(openid, str(match.re.pattern), content)
             return reply

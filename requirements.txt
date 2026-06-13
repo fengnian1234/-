@@ -15,7 +15,13 @@ psycopg2-binary==2.9.10  # PostgreSQL（生产环境）
 # AI对话 (Anthropic Claude)
 anthropic==0.64.0
 
+# 周报生成
+python-docx==1.1.2
+
 # 工具
 python-dotenv==1.2.1
 requests==2.32.4
 pydantic==2.12.2
+
+# 测试
+pytest==8.4.2

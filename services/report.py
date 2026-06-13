@@ -9,6 +9,7 @@ from docx.shared import Pt, Cm, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn
+from services.logger import info, warning
 
 from models import SessionLocal, PlatformMention
 from services.monitor import (
@@ -29,7 +30,7 @@ def generate_weekly_report() -> dict:
     os.makedirs(REPORT_DIR, exist_ok=True)
 
     # 1. 收集最新平台数据
-    print("📡 正在收集6个平台最新数据...")
+    info("📡 正在收集6个平台最新数据...")
     search_results = search_platform_mentions()
 
     # 2. 获取汇总
@@ -45,7 +46,7 @@ def generate_weekly_report() -> dict:
     doc = _build_docx(summary, search_results, week_start, week_end)
     doc.save(filepath)
 
-    print(f"✅ 周报已生成: {filepath}")
+    info(f"✅ 周报已生成: {filepath}")
 
     return {
         "success": True,

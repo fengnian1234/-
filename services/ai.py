@@ -13,6 +13,7 @@ from config import (
     AI_REQUEST_INTERVAL, AI_MAX_MESSAGE_LENGTH,
     BNB_NAME, BNB_ADDRESS, BNB_PHONE,
 )
+from services.logger import debug, warning, log_ai
 from services.booking import is_ai_enabled, get_booking_by_openid
 from services.logger import info, warning, error as log_error, debug, log_ai
 
@@ -103,7 +104,7 @@ def _build_local_data() -> str:
                 )
             lines.append("")
     except Exception:
-        pass
+        debug("本地数据加载: 房型数据失败")
 
     # ── 菜单数据 ──
     try:
@@ -120,7 +121,7 @@ def _build_local_data() -> str:
                     )
             lines.append("")
     except Exception:
-        pass
+        debug("本地数据加载: 菜单数据失败")
 
     # ── 游玩路线 ──
     try:
@@ -135,7 +136,7 @@ def _build_local_data() -> str:
                 )
             lines.append("")
     except Exception:
-        pass
+        debug("本地数据加载: 游玩路线失败")
 
     # ── 美食推荐 ──
     try:
@@ -151,7 +152,7 @@ def _build_local_data() -> str:
                 )
             lines.append("")
     except Exception:
-        pass
+        debug("本地数据加载: 美食推荐失败")
 
     # ── 快捷服务 ──
     try:
@@ -166,7 +167,7 @@ def _build_local_data() -> str:
                 )
             lines.append("")
     except Exception:
-        pass
+        debug("本地数据加载: 快捷服务失败")
 
     # 本地文档引用
     try:
@@ -178,7 +179,8 @@ def _build_local_data() -> str:
             lines.append('')
             lines.append('[本地文档: 美食图片参考 — 回答相关问题时可引用]')
             lines.append(doc_content[:2000])
-    except Exception: pass
+    except Exception:
+        debug("本地数据加载: 文档引用失败")
 
     _local_data_cache = "\n".join(lines)
     return _local_data_cache
@@ -398,7 +400,8 @@ def _save_conversation(openid: str, role: str, content: str):
         db = SessionLocal()
         log = MessageLog(openid=openid, message_type=role, content=content[:500], reply=content[:500] if role == 'assistant' else '')
         db.add(log); db.commit(); db.close()
-    except Exception: pass
+    except Exception:
+        warning("对话持久化失败")
 
 def _load_conversation(openid: str, limit: int = 10):
     """从数据库加载最近对话历史"""
@@ -417,6 +420,7 @@ def _load_conversation(openid: str, limit: int = 10):
                 history.append({'role': 'assistant', 'content': log.reply})
         return history
     except Exception:
+        debug("对话历史加载失败")
         return []
 
 

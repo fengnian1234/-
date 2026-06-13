@@ -46,12 +46,12 @@ def server_error(e):
 # ── 应用初始化 ───────────────────────────────────────────
 def init_app():
     """初始化应用：创建数据库并填充种子数据"""
-    print(f"🌄 正在初始化{BNB_NAME}客服系统...")
+    info(f"🌄 正在初始化{BNB_NAME}客服系统...")
     try:
         seed_all()
     except Exception as e:
-        print(f"⚠️ 数据库初始化: {e}")
-    print(f"✅ {BNB_NAME} 客服系统已就绪")
+        warning(f"⚠️ 数据库初始化: {e}")
+    info(f"✅ {BNB_NAME} 客服系统已就绪")
 
 
 # ══════════════════════════════════════════════════════════
@@ -659,7 +659,7 @@ def api_simulate_chat():
                 "matched": str(match.re.pattern) if match else None,
             })
         except Exception:
-            pass  # 降级到 AI
+            debug("关键词匹配异常，降级到AI")
 
     # 2. AI 智能对话
     mode = get_conversation_mode(openid)
@@ -688,7 +688,7 @@ def api_simulate_chat():
             "matched": None,
         })
     except Exception:
-        pass
+        warning("AI对话异常，返回兜底回复")
 
     # 3. 兜底
     return jsonify({
@@ -871,10 +871,9 @@ def health():
 # ── 启动 ─────────────────────────────────────────────────
 if __name__ == "__main__":
     init_app()
-    print(f"\n🏔️  {BNB_NAME} 微信公众号客服系统 v2")
-    print(f"📍 本地访问: http://127.0.0.1:5000")
-    print(f"📍 微信接入: http://你的域名/wechat")
-    print(f"📍 员工看板: http://127.0.0.1:5000/staff")
-    print(f"📍 平台口碑: http://127.0.0.1:5000/api/monitor/report")
-    print()
+    info(f"🏔️  {BNB_NAME} 微信公众号客服系统 v2")
+    info(f"📍 本地访问: http://127.0.0.1:5000")
+    info(f"📍 微信接入: http://你的域名/wechat")
+    info(f"📍 员工看板: http://127.0.0.1:5000/staff")
+    info(f"📍 平台口碑: http://127.0.0.1:5000/api/monitor/report")
     app.run(host="0.0.0.0", port=5000, debug=DEBUG)
