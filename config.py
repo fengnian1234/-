@@ -11,8 +11,14 @@ load_dotenv(".env.local", override=True)
 
 # ── 基础配置 ─────────────────────────────────────────────
 BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:5000")
-DEBUG = os.getenv("DEBUG", "true").lower() == "true"
-SECRET_KEY = os.getenv("SECRET_KEY", "yunshang-guishu-secret-2026")
+DEBUG = os.getenv("DEBUG", "false").lower() == "true"  # 安全默认：生产关闭
+SECRET_KEY = os.getenv("SECRET_KEY", "")
+# 若未设置 SECRET_KEY，生成随机密钥（每次重启变化，仅开发可用）
+if not SECRET_KEY:
+    import secrets
+    SECRET_KEY = secrets.token_hex(32)
+    import sys
+    print("[安全] 未设置 SECRET_KEY，已生成临时随机密钥（重启后失效）", file=sys.stderr)
 
 # ── 微信配置 ─────────────────────────────────────────────
 WECHAT_TOKEN = os.getenv("WECHAT_TOKEN", "your_wechat_token_here")

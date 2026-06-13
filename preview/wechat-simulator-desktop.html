@@ -358,7 +358,7 @@ function addBubble(text,side,handler,mode,matched){
     const labels={keyword:'关键词路由',ai_travel_advisor:'AI·旅行顾问',ai_pre_arrival:'AI·待入住',ai_guest_butler:'AI·已入住',ai_post_stay:'AI·复购关怀',fallback:'兜底回复',error:'连接错误'};
     meta=`<div class="meta">${labels[handler]||handler}${matched?' · 匹配: '+matched:''}</div>`;
   }
-  div.innerHTML=text+meta;
+  div.textContent=text; if(meta){ const m=document.createElement("div"); m.className="meta"; m.textContent=meta.replace(/<[^>]*>/g,""); div.appendChild(m); }
   area.appendChild(div);
   area.scrollTop=area.scrollHeight;
 }
@@ -367,7 +367,7 @@ function addSysMsg(text){
   const area=document.getElementById('chatArea');
   const div=document.createElement('div');
   div.style.cssText='text-align:center;font-size:12px;color:var(--text3);padding:8px 16px;line-height:1.6;white-space:pre-wrap;';
-  div.innerText=text;
+  div.textContent=text;
   area.appendChild(div);
 }
 

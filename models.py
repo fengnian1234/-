@@ -84,12 +84,13 @@ class Booking(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_pii: bool = True):
+        """序列化预订。include_pii=False 时隐藏手机号/openid（客人端使用）"""
+        d = {
             "id": self.id,
-            "openid": self.openid,
+            "openid": self.openid if include_pii else "***",
             "guest_name": self.guest_name,
-            "phone": self.phone,
+            "phone": self.phone if include_pii else "***",
             "room_type": self.room_type,
             "platform": self.platform,
             "check_in_date": self.check_in_date,
@@ -236,10 +237,11 @@ class ServiceRequest(Base):
     acknowledged_at = Column(DateTime, comment="确认时间")
     completed_at = Column(DateTime, comment="完成时间")
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_pii: bool = True):
+        """序列化预订。include_pii=False 时隐藏手机号/openid（客人端使用）"""
+        d = {
             "id": self.id,
-            "openid": self.openid,
+            "openid": self.openid if include_pii else "***",
             "service_name": self.service_name,
             "room_number": self.room_number,
             "urgency": self.urgency,
@@ -418,10 +420,11 @@ class GuestPoints(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_pii: bool = True):
+        """序列化预订。include_pii=False 时隐藏手机号/openid（客人端使用）"""
+        d = {
             "id": self.id,
-            "openid": self.openid,
+            "openid": self.openid if include_pii else "***",
             "total_points": self.total_points,
             "total_earned": self.total_earned,
             "total_spent": self.total_spent,
@@ -444,10 +447,11 @@ class PointLog(Base):
     description = Column(String(200), comment="积分变动说明")
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_pii: bool = True):
+        """序列化预订。include_pii=False 时隐藏手机号/openid（客人端使用）"""
+        d = {
             "id": self.id,
-            "openid": self.openid,
+            "openid": self.openid if include_pii else "***",
             "points": self.points,
             "action": self.action,
             "description": self.description,

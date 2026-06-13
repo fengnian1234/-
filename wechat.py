@@ -20,13 +20,80 @@ from services.travel import (
     format_food_text, format_food_detail_text, format_location_text,
 )
 from services.quick import format_services_text, handle_service_request
-from services.ai import chat, chat_travel_advisor, chat_post_stay, reset_conversation, get_conversation_mode
+from services.ai import chat, chat_pre_arrival, chat_travel_advisor, chat_post_stay, reset_conversation, get_conversation_mode
 from services.booking import (
-    is_ai_enabled, format_booking_platforms_text,
+    is_ai_enabled, is_checked_in, format_booking_platforms_text,
     generate_review_message, get_review_reminders_due,
-    mark_review_sent,
+    mark_review_sent, bind_room_guest, get_room_guests,
 )
 from services.monitor import generate_monitor_report, get_platform_review_links
+from services.logger import info, warning, error as log_error, debug, log_keyword, log_booking
+
+
+def _get_openid(msg) -> str:
+    """从微信消息对象提取 openid"""
+    return str(getattr(msg, 'source', getattr(msg, 'from_user', 'unknown')))
+
+
+def _require_booking_reply() -> str:
+    """未预订用户尝试使用住店服务时的统一回复"""
+    return (
+        "🎐 这是入住后才能使用的服务哦～\n\n"
+        "您目前还没有确认的预订记录。\n\n"
+        "🏨 预订方式：携程/美团/飞猪/大众点评搜索「云上归墅」\n"
+        "💡 预订后回复「绑定预订」，联系前台确认即可解锁全部住店服务\n\n"
+        "不过在预订之前，您可以：\n"
+        "  · 直接问我任何庐山旅游问题\n"
+        "  · 回复「1」查看房型\n"
+        "  · 回复「3」查看游玩攻略\n"
+        "  · 回复「人工」联系前台咨询"
+    )
+
+
+def _require_check_in_reply(openid: str) -> str:
+    """已预订但未入住的用户尝试使用住店服务时的回复"""
+    from services.booking import get_booking_by_openid
+    booking = get_booking_by_openid(openid)
+    check_in = booking.get('check_in_date', '待确认') if booking else '待确认'
+    return (
+        f"🎐 这些服务需要您到店入住后才能使用哦～\n\n"
+        f"📅 您的入住日期：{check_in}\n"
+        f"🛎️ 期待您入住后再为您安排！\n\n"
+        f"在到店之前，您可以：\n"
+        f"  · 了解房型设施和房间详情\n"
+        f"  · 规划庐山游玩路线\n"
+        f"  · 查看周边美食推荐\n"
+        f"  · 告知到店偏好（交通方式、预计到达时间等）\n"
+        f"  · 回复「4」查看全部服务菜单提前了解\n\n"
+        f"💡 有任何问题随时问我～"
+    )
+
+
+def _guard_service(service_name: str):
+    """
+    包装服务请求处理：先检查是否已实际入住，未入住则拒绝。
+    """
+    def handler(msg, match):
+        openid = _get_openid(msg)
+        if not is_ai_enabled(openid):
+            return _require_booking_reply()
+        if not is_checked_in(openid):
+            return _require_check_in_reply(openid)
+        return handle_service_request(service_name, openid=openid)
+    return handler
+
+
+def _guard_service_capture(msg, match):
+    """
+    处理「服务+名称」类关键词（含捕获组）。
+    先检查是否已实际入住，未入住则拒绝。
+    """
+    openid = _get_openid(msg)
+    if not is_ai_enabled(openid):
+        return _require_booking_reply()
+    if not is_checked_in(openid):
+        return _require_check_in_reply(openid)
+    return handle_service_request(match.group(2), openid=openid)
 
 
 def is_human_service_time() -> bool:
@@ -59,6 +126,10 @@ def build_keyword_routes():
          lambda msg, m: format_booking_platforms_text()),
         (r"^(绑定预订|绑定订单|我的预订)$",
          lambda msg, m: handle_bind_booking(msg)),
+        (r"^绑定房间\s*(\S+)$",
+         lambda msg, m: handle_bind_room_code(msg, m.group(1))),
+        (r"^(房间码|共享码|分享房间)$",
+         lambda msg, m: handle_show_room_code(msg)),
         (r"^(携程|美团|飞猪|点评)$",
          lambda msg, m: format_booking_platforms_text()),
 
@@ -87,32 +158,25 @@ def build_keyword_routes():
         (r"^美食(.+)$",
          lambda msg, m: f"🍜 关于「{m.group(1)}」类美食，回复「周边美食」查看完整美食指南～\n\n💡 回复「美食+编号」如「美食7」查看饮品店详情～"),
 
-        # ── 快捷服务相关（要求2：通知员工）───────────────
+        # ── 快捷服务相关（要求2：通知员工，需预订后才能使用）─
         (r"^(服务|快捷|4)$",
          lambda msg, m: format_services_text()),
         (r"^(服务|我要)(.+)$",
-         lambda msg, m: handle_service_request(m.group(2),
-             openid=str(getattr(msg, 'source', getattr(msg, 'from_user', ''))))),
+         lambda msg, m: _guard_service_capture(msg, m)),
         (r"^(打扫|清洁|卫生)$",
-         lambda msg, m: handle_service_request("打扫",
-             openid=str(getattr(msg, 'source', getattr(msg, 'from_user', ''))))),
+         lambda msg, m: _guard_service("打扫")(msg, m)),
         (r"^(续住|续房|延住)$",
-         lambda msg, m: handle_service_request("续住",
-             openid=str(getattr(msg, 'source', getattr(msg, 'from_user', ''))))),
+         lambda msg, m: handle_extend_stay(msg)),
         (r"^(维修|修理|坏了)$",
-         lambda msg, m: handle_service_request("维修",
-             openid=str(getattr(msg, 'source', getattr(msg, 'from_user', ''))))),
+         lambda msg, m: _guard_service("维修")(msg, m)),
         (r"^(叫醒|叫早|morning.?call)$",
-         lambda msg, m: handle_service_request("叫醒",
-             openid=str(getattr(msg, 'source', getattr(msg, 'from_user', ''))))),
+         lambda msg, m: _guard_service("叫醒")(msg, m)),
         (r"^(退房|离店|退宿)$",
-         lambda msg, m: handle_service_request("退房",
-             openid=str(getattr(msg, 'source', getattr(msg, 'from_user', ''))))),
+         lambda msg, m: _guard_service("退房")(msg, m)),
         (r"^(加床|加被|婴儿床|儿童床)$",
-         lambda msg, m: "🛏️ 温馨提示：本民宿所有房型<strong>不可加床</strong>，不提供婴儿床。\n\n如需额外被褥枕头，可回复「补充用品」或「人工」联系前台～"),
+         lambda msg, m: "🛏️ 温馨提示：本民宿所有房型不可加床，不提供婴儿床。\n\n如需额外被褥枕头，可回复「补充用品」或「人工」联系前台～"),
         (r"^(送餐|送饭)$",
-         lambda msg, m: handle_service_request("送餐",
-             openid=str(getattr(msg, 'source', getattr(msg, 'from_user', ''))))),
+         lambda msg, m: _guard_service("送餐")(msg, m)),
         (r"^(wifi|WiFi|无线|网络)$",
          lambda msg, m: format_wifi_info()),
 
@@ -142,10 +206,20 @@ def handle_bind_booking(msg) -> str:
     openid = str(getattr(msg, 'source', getattr(msg, 'from_user', 'unknown')))
 
     if is_ai_enabled(openid):
-        return (
-            "✅ 您的专属AI管家已就绪～\n\n"
-            "有什么可以帮您的吗？可以直接向我提问哦！"
-        )
+        from services.booking import get_booking_by_openid
+        booking = get_booking_by_openid(openid)
+        room_code = booking.get("room_code", "") if booking else ""
+        lines = [
+            "✅ 您的专属AI管家已就绪～",
+            "",
+            "有什么可以帮您的吗？可以直接向我提问哦！",
+        ]
+        if room_code:
+            lines.append("")
+            lines.append(f"🔑 房间共享码：{room_code}")
+            lines.append(f"💡 同住人回复「绑定房间 {room_code}」即可共享管家全部功能～")
+            lines.append("   您可以回复「房间码」随时查看已绑定的同住人")
+        return "\n".join(lines)
 
     return (
         "🔗 *绑定预订*\n\n"
@@ -157,6 +231,60 @@ def handle_bind_booking(msg) -> str:
         "💡 回复「预订」查看各平台预订链接\n"
         "💡 回复「人工」联系前台确认绑定"
     )
+
+
+def handle_bind_room_code(msg, room_code: str) -> str:
+    """合住人通过房间码绑定AI管家"""
+    openid = _get_openid(msg)
+    result = bind_room_guest(room_code.upper(), openid)
+
+    if result["success"]:
+        return (
+            f"🔑 {result['message']}\n\n"
+            f"🏠 房型：{result['booking'].get('room_type', '未知')}\n"
+            f"📅 入住：{result['booking'].get('check_in_date', '')}\n"
+            f"🛎️ 现在可以使用全部管家服务啦～\n\n"
+            f"💡 回复「帮助」查看功能列表"
+        )
+    else:
+        return (
+            f"❌ {result['message']}\n\n"
+            f"💡 请确认：\n"
+            f"  · 房间码输入正确（6位字母数字）\n"
+            f"  · 预订仍然有效\n"
+            f"  · 码区分大小写？不区分，直接输入即可\n\n"
+            f"📞 如有疑问，联系前台：16607927666"
+        )
+
+
+def handle_show_room_code(msg) -> str:
+    """预订者查看自己的房间共享码"""
+    openid = _get_openid(msg)
+    from services.booking import get_booking_by_openid
+    booking = get_booking_by_openid(openid)
+    if not booking:
+        return "您还没有有效预订，无法生成房间共享码。\n\n💡 预订后回复「绑定预订」解锁 AI 管家～"
+
+    room_code = booking.get("room_code", "")
+    if not room_code:
+        return "您的预订暂未生成共享码，请联系前台获取。"
+
+    guests = get_room_guests(room_code)
+    lines = [
+        "🔑 您的房间共享码",
+        "",
+        f"房间码：{room_code}",
+        f"房型：{booking.get('room_type', '')}",
+        f"入住：{booking.get('check_in_date', '')}",
+        "",
+        f"👥 已绑定 {len(guests)} 人：",
+    ]
+    for g in guests:
+        lines.append(f"  · {g.get('guest_name', '未知')} ({g.get('relation', '同住')})")
+
+    lines.append("")
+    lines.append("💡 同住人回复「绑定房间 " + room_code + "」即可共享 AI 管家～")
+    return "\n".join(lines)
 
 
 def handle_order_flow(msg, m) -> str:
@@ -176,6 +304,55 @@ def handle_order_flow(msg, m) -> str:
 def _get_menu_url() -> str:
     from config import BASE_URL
     return f"{BASE_URL}/menu"
+
+
+def handle_extend_stay(msg) -> str:
+    """处理续住/延住请求——既创建员工通知，又实际延长预订日期"""
+    openid = _get_openid(msg)
+
+    # 1. 必须先有有效预订
+    if not is_ai_enabled(openid):
+        return _require_booking_reply()
+
+    # 2. 必须已实际入住
+    if not is_checked_in(openid):
+        return _require_check_in_reply(openid)
+
+    # 3. 尝试延长预订（默认+1天）
+    from services.booking import extend_booking, get_booking_by_openid
+    updated = extend_booking(openid, extra_days=1)
+    booking = get_booking_by_openid(openid, include_checked_out=True)
+
+    # 4. 创建员工通知
+    try:
+        from services.notify import create_service_request
+        create_service_request(
+            openid=openid,
+            service_name="续住",
+            room_number=booking.get('room_number', '') if booking else '',
+            urgency="high",
+        )
+    except Exception as e:
+        log_error("wechat.ai_fallback", str(e))
+
+    # 4. 拼装回复
+    if updated:
+        new_date = updated.get('check_out_date', '待确认')
+        return (
+            f"🏨 续住已确认！\n\n"
+            f"📅 退房日期已延长至：{new_date}\n"
+            f"🛎️ 续住期间所有管家服务照常使用～\n\n"
+            f"💡 如需续住多天，请直接告知或联系前台调整\n"
+            f"📞 前台电话：16607927666"
+        )
+    else:
+        return (
+            f"🏨 续住请求已收到！\n\n"
+            f"📅 已通知前台为您办理续住手续\n"
+            f"💡 默认为您延长1天，如需续住多天请告知前台\n\n"
+            f"📞 前台电话：16607927666\n\n"
+            f"当前管家服务不受影响，请放心～"
+        )
 
 
 def format_wifi_info() -> str:
@@ -263,23 +440,35 @@ def handle_wechat_message(msg):
     handler, match = match_keyword(content)
     if handler:
         try:
-            return handler(msg, match)
-        except Exception:
-            pass  # 关键词失败，降级
+            reply = handler(msg, match)
+            try:
+                from models import SessionLocal, MessageLog
+                db = SessionLocal()
+                log_entry = MessageLog(openid=openid, message_type="text", content=content, reply=str(reply)[:500])
+                db.add(log_entry); db.commit(); db.close()
+            except Exception: pass
+            if match:
+                log_keyword(openid, str(match.re.pattern), content)
+            return reply
+        except Exception as e:
+            log_error("wechat.keyword", str(e))
 
-    # 2. AI智能对话（v3 全链路：预订前旅行顾问 / 预订后专属管家 / 离店后复购关怀）
+    # 2. AI智能对话（v3.2 四层权限：旅行顾问 / 到店前 / 入住中 / 离店后）
     try:
         mode = get_conversation_mode(openid)
         if mode == 'travel_advisor':
             ai_reply = chat_travel_advisor(openid, content)
+        elif mode == 'pre_arrival':
+            ai_reply = chat_pre_arrival(openid, content)
         elif mode == 'post_stay':
             ai_reply = chat_post_stay(openid, content)
         else:
             ai_reply = chat(openid, content)
         return ai_reply
-    except Exception:
-        pass
+    except Exception as e:
+        log_error("wechat.ai_fallback", str(e))
 
+    warning("wechat.fallback", extra={"openid": openid, "content": content[:60]})
     # 3. 兜底回复
     return (
         "我收到了您的消息～ 💬\n\n"

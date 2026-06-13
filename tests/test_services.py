@@ -149,7 +149,9 @@ class TestBooking:
         # 入住后延住
         check_in_booking(booking.id, "302")
         result = extend_booking(test_openid, extra_days=2)
-        assert result is not None
+        # 注: check_in_booking 的 session 已关闭，extend_booking 开新 session
+        # 需要确认 booking 已持久化
+        assert result is not None, f"extend_booking 未找到预订 (openid={test_openid}, booking_id={booking.id})"
         assert result["check_out_date"] == "2026-06-20", f"应为06-20，实际{result['check_out_date']}"
 
 

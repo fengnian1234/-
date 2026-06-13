@@ -586,8 +586,10 @@ def api_generate_weekly_report():
     try:
         result = generate_weekly_report()
         return jsonify(result)
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+    except Exception:
+        from services.logger import error as log_error
+        log_error("api.staff.acknowledge", "操作失败", exc_info=True)
+        return jsonify({"success": False, "message": "操作失败，请稍后重试"}), 500
 
 
 # ══════════════════════════════════════════════════════════
