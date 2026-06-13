@@ -10,7 +10,7 @@ import threading
 import time as _time_module
 from config import (
     ANTHROPIC_API_KEY, ANTHROPIC_BASE_URL, AI_MODEL, AI_ENABLED, AI_REQUIRES_BOOKING,
-    AI_WINDOW_SECONDS, AI_WINDOW_MAX_CONCURRENT, AI_MAX_MESSAGE_LENGTH,
+    AI_REQUEST_INTERVAL, AI_MAX_MESSAGE_LENGTH,
     BNB_NAME, BNB_ADDRESS, BNB_PHONE,
 )
 from services.booking import is_ai_enabled, get_booking_by_openid
@@ -21,36 +21,21 @@ from services.logger import info, warning, error as log_error, debug, log_ai
 #  并发控制 + 输入校验
 # ══════════════════════════════════════════════════════════
 
-# ── 窗口并发控制：每 AI_WINDOW_SECONDS 秒内最多 AI_WINDOW_MAX_CONCURRENT 个并发 ──
-_window_lock = threading.Lock()
-_window_start = 0.0      # 当前窗口起始时间
-_window_count = 0        # 当前窗口内已启动的请求数
+# ── 请求间隔控制：每次 AI 请求至少间隔 AI_REQUEST_INTERVAL 秒 ──
+_interval_lock = threading.Lock()
+_last_request_time = 0.0
 
 
-def _try_enter_window() -> bool:
-    """
-    尝试进入并发窗口。当前窗口未满则计数+1返回True；窗口过期则重置并进入新窗口。
-    """
-    global _window_start, _window_count
-    with _window_lock:
+def _try_acquire_slot() -> tuple[bool, float]:
+    """尝试获取请求槽位。返回 (是否成功, 需等待秒数)"""
+    global _last_request_time
+    with _interval_lock:
         now = _time_module.time()
-        # 窗口过期 → 重置
-        if now - _window_start >= AI_WINDOW_SECONDS:
-            _window_start = now
-            _window_count = 0
-        # 窗口未满 → 进入
-        if _window_count < AI_WINDOW_MAX_CONCURRENT:
-            _window_count += 1
-            return True
-        # 窗口已满 → 拒绝
-        return False
-
-
-def _leave_window():
-    """请求完成时退出窗口（减计数）"""
-    global _window_count
-    with _window_lock:
-        _window_count = max(0, _window_count - 1)
+        elapsed = now - _last_request_time
+        if elapsed >= AI_REQUEST_INTERVAL:
+            _last_request_time = now
+            return True, 0
+        return False, round(AI_REQUEST_INTERVAL - elapsed, 1)
 
 
 # 简单去重：同一用户短时间内重复发相同消息则拦截
@@ -447,15 +432,13 @@ def _call_ai(system_template: str, user_openid: str, user_message: str) -> str:
     if len(user_message) > AI_MAX_MESSAGE_LENGTH:
         user_message = user_message[:AI_MAX_MESSAGE_LENGTH]
 
-    # ── 窗口并发控制 ──
-    if not _try_enter_window():
-        remaining = AI_WINDOW_SECONDS - (_time_module.time() - _window_start)
-        remaining = max(0, round(remaining, 1))
-        warning(f"[AI] 窗口已满 ({AI_WINDOW_MAX_CONCURRENT}/{AI_WINDOW_SECONDS}s) openid={user_openid[:12]}")
+    # ── 请求间隔控制 ──
+    ok, wait = _try_acquire_slot()
+    if not ok:
+        warning(f"[AI] 间隔限制 需等待{wait}s openid={user_openid[:12]}")
         return (
-            f"⏳ 当前咨询人数较多，请稍等 {remaining} 秒后再试～\n\n"
-            f"每 {AI_WINDOW_SECONDS} 秒内最多处理 {AI_WINDOW_MAX_CONCURRENT} 个请求。\n"
-            "您也可以：\n"
+            f"⏳ AI 管家正在回复上一条消息，请 {wait} 秒后再试～\n\n"
+            f"您也可以：\n"
             "  · 回复数字 1-5 使用快捷功能\n"
             "  · 回复「人工」转接人工客服"
         )
@@ -504,8 +487,6 @@ def _call_ai(system_template: str, user_openid: str, user_message: str) -> str:
     except Exception as e:
         log_error("ai.call", str(e), exc_info=True)
         return _fallback_reply()
-    finally:
-        _leave_window()
 
 
 # ══════════════════════════════════════════════════════════

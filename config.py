@@ -43,9 +43,8 @@ AI_MODEL = os.getenv("AI_MODEL", "deepseek-chat")
 AI_ENABLED = bool(ANTHROPIC_API_KEY)
 # 重要：AI仅在用户有确认预订后解锁（要求1）
 AI_REQUIRES_BOOKING = True
-# AI 并发窗口：每 N 秒内最多 M 个并发请求
-AI_WINDOW_SECONDS = int(os.getenv("AI_WINDOW_SECONDS", "3"))
-AI_WINDOW_MAX_CONCURRENT = int(os.getenv("AI_WINDOW_MAX_CONCURRENT", "5"))
+# AI 请求间隔：每 N 秒最多 1 次 AI 请求
+AI_REQUEST_INTERVAL = int(os.getenv("AI_REQUEST_INTERVAL", "3"))
 # 单条消息最大长度（超过截断，防止 token 浪费）
 AI_MAX_MESSAGE_LENGTH = int(os.getenv("AI_MAX_MESSAGE_LENGTH", "500"))
 
