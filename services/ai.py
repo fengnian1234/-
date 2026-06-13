@@ -1,7 +1,7 @@
 """
 AI智能对话服务 v3 — 全链路AI管家
 - 预订前：免费旅行顾问（所有人可用）
-- 预订后：专属AI管家（当前功能）
+- 预订后：专属AI管家（已预订客人独享）
 - 离店后：复购关怀 + 好评引导
 """
 import json
@@ -137,13 +137,14 @@ def _call_ai(system_prompt: str, user_openid: str, user_message: str) -> str:
         messages.append({"role": "user", "content": user_message})
 
         import anthropic
-        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY, timeout=15.0)
 
         response = client.messages.create(
             model=AI_MODEL,
             max_tokens=800,
             messages=messages,
             temperature=0.7,
+            timeout=15.0,
         )
 
         ai_reply = response.content[0].text

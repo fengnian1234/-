@@ -76,7 +76,7 @@ for i, (icon, title, desc, clr) in enumerate(phases):
     tb(s, x+0.3, 2.0, 2.6, 0.4, icon, 20, WHITE, True)
     tb(s, x+0.3, 2.5, 2.6, 0.5, title, 20, WHITE, True)
     tb(s, x+0.3, 3.2, 2.6, 2.2, desc, 13, RGBColor(0xE0,0xDC,0xD4))
-tb(s, 1.0, 6.3, 11, 0.5, '微信公众号内回复任意消息即可体验 · 预订后自动解锁完整AI管家功能', 12, LT, al=PP_ALIGN.CENTER)
+tb(s, 1.0, 6.3, 11, 0.5, '微信公众号内回复任意消息即可体验 · 预订前免费旅行顾问 · 预订后专属管家 · 离店后复购关怀', 12, LT, al=PP_ALIGN.CENTER)
 
 # ═══════════════ S4 — 首页全貌 (两张图上下排列) ═══════════════
 s = prs.slides.add_slide(prs.slide_layouts[6]); bg(s, PAPER)

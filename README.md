@@ -55,7 +55,7 @@ WECHAT_APP_ID=wx_your_app_id
 WECHAT_APP_SECRET=your_app_secret
 
 # AI 对话（DeepSeek API）
-ANTHROPIC_AUTH_TOKEN=sk-your-deepseek-key
+ANTHROPIC_API_KEY=sk-your-deepseek-key
 ANTHROPIC_BASE_URL=https://api.deepseek.com/anthropic
 
 # 微信支付（开通后获取）

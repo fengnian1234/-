@@ -10,7 +10,6 @@
 import re
 from datetime import datetime
 from config import (
-    WECHAT_TOKEN, WECHAT_APP_ID, WECHAT_APP_SECRET,
     WELCOME_MESSAGE, AUTO_REPLY_NIGHT, HUMAN_SERVICE_OPEN_HOURS,
     BNB_NAME, BNB_ADDRESS, BNB_PHONE,
 )
@@ -18,7 +17,7 @@ from services.rooms import format_rooms_text, format_room_detail_text, format_ro
 from services.menu import format_menu_text, format_recommended_text, format_order_status_text
 from services.travel import (
     format_routes_text, format_route_detail_text,
-    format_food_text, format_location_text,
+    format_food_text, format_food_detail_text, format_location_text,
 )
 from services.quick import format_services_text, handle_service_request
 from services.ai import chat, chat_travel_advisor, chat_post_stay, reset_conversation, get_conversation_mode
@@ -81,10 +80,12 @@ def build_keyword_routes():
          lambda msg, m: format_route_detail_text(int(m.group(1)))),
         (r"^(美食推荐|周边美食|好吃的|餐厅|正餐)$",
          lambda msg, m: format_food_text()),
+        (r"^美食(\d+)$",
+         lambda msg, m: format_food_detail_text(int(m.group(1)))),
         (r"^(地图|位置|导航|在哪|怎么走|地址)$",
          lambda msg, m: format_location_text()),
         (r"^美食(.+)$",
-         lambda msg, m: f"🍜 关于「{m.group(1)}」类美食，回复「周边美食」查看完整美食指南～"),
+         lambda msg, m: f"🍜 关于「{m.group(1)}」类美食，回复「周边美食」查看完整美食指南～\n\n💡 回复「美食+编号」如「美食7」查看饮品店详情～"),
 
         # ── 快捷服务相关（要求2：通知员工）───────────────
         (r"^(服务|快捷|4)$",
@@ -142,16 +143,17 @@ def handle_bind_booking(msg) -> str:
 
     if is_ai_enabled(openid):
         return (
-            "✅ 您的AI智能管家已处于解锁状态～\n\n"
+            "✅ 您的专属AI管家已就绪～\n\n"
             "有什么可以帮您的吗？可以直接向我提问哦！"
         )
 
     return (
         "🔗 *绑定预订*\n\n"
-        "请在以下平台预订后，联系前台确认预订即可解锁AI管家：\n\n"
+        "请在以下平台预订后，联系前台确认预订即可解锁专属AI管家：\n\n"
         "🏨 携程 | 🏠 美团 | ✈️ 飞猪 | ⭐ 大众点评\n"
         "  搜索「云上·归墅」\n\n"
-        "💡 前台确认预订后，AI管家自动解锁\n"
+        "💡 前台确认预订后，专属AI管家自动解锁\n"
+        "💡 现在就可以免费使用旅行顾问～直接问我庐山攻略\n"
         "💡 回复「预订」查看各平台预订链接\n"
         "💡 回复「人工」联系前台确认绑定"
     )
@@ -194,7 +196,7 @@ def format_greeting() -> str:
         "【3】游玩攻略  【4】快捷服务\n"
         "【5】在线咨询\n\n"
         "💡 预订请通过携程/美团/飞猪/大众点评\n"
-        "🎐 预订确认后即可解锁AI管家～"
+        "🎐 预订确认后解锁专属AI管家～预订前也能免费使用旅行顾问哦～"
     )
 
 

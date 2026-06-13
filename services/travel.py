@@ -46,6 +46,16 @@ def get_food_by_category(category: str):
         db.close()
 
 
+def get_food_by_id(food_id: int):
+    """获取单个美食详情"""
+    db = SessionLocal()
+    try:
+        food = db.query(FoodRecommend).filter(FoodRecommend.id == food_id).first()
+        return food.to_dict() if food else None
+    finally:
+        db.close()
+
+
 def generate_map_link(name: str, lat: float, lng: float,
                       scale: int = 16) -> str:
     """生成腾讯地图链接（微信内置浏览器兼容）"""
@@ -174,6 +184,36 @@ def format_food_text():
         lines.append("")
 
     lines.append("💡 回复「美食+类别」如「美食赣菜」筛选类别")
+    lines.append("💡 回复「美食+编号」如「美食1」查看详细图文攻略")
+    return "\n".join(lines)
+
+
+def format_food_detail_text(food_id: int):
+    """格式化单条美食详情（XHS风格微信文本）"""
+    food = get_food_by_id(food_id)
+    if not food:
+        return "该美食信息暂未收录，回复「美食」查看所有推荐～"
+
+    lines = [
+        f"🍜 *{food['name']}* 详细攻略\n",
+        f"🏷️ 类别：{food.get('category', '')}",
+        f"💰 {food.get('price_range', '')}",
+    ]
+
+    tags = food.get("tags", [])
+    if tags:
+        lines.append(f"{' '.join(tags)}")
+
+    if food.get("detail_content"):
+        lines.append(f"\n{food['detail_content']}")
+
+    lines.append(f"\n🥢 *必点*：{food.get('must_try', '')}")
+    lines.append(f"📍 {food.get('address', '')}")
+
+    if food.get("map_link"):
+        lines.append(f"🗺️ 导航：{food['map_link']}")
+
+    lines.append(f"\n💡 回复「美食」查看全部推荐")
     return "\n".join(lines)
 
 

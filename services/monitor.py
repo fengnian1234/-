@@ -4,7 +4,6 @@
 通过 AnySearch API 实时搜索各平台评价和提及
 """
 import json
-import hashlib
 import re
 import time
 from datetime import datetime
@@ -396,35 +395,5 @@ def agent_collect_platform_info() -> dict:
 
 def get_platform_review_links() -> dict:
     """获取所有平台评价链接汇总"""
-    return {
-        "携程": {
-            "name": "携程旅行",
-            "review_url": "https://hotels.ctrip.com/hotel/dianping/云上归墅",
-            "icon": "🏨",
-        },
-        "美团": {
-            "name": "美团民宿",
-            "review_url": "https://hotel.meituan.com/dianping/云上归墅",
-            "icon": "🏠",
-        },
-        "飞猪": {
-            "name": "飞猪旅行",
-            "review_url": "https://www.fliggy.com/review/云上归墅",
-            "icon": "✈️",
-        },
-        "大众点评": {
-            "name": "大众点评",
-            "review_url": "https://www.dianping.com/shop/云上归墅/review",
-            "icon": "⭐",
-        },
-        "小红书": {
-            "name": "小红书",
-            "review_url": "https://www.xiaohongshu.com/search_result?keyword=云上归墅",
-            "icon": "📕",
-        },
-        "抖音": {
-            "name": "抖音",
-            "review_url": "https://www.douyin.com/search/云上归墅",
-            "icon": "🎵",
-        },
-    }
+    from config import REVIEW_PLATFORMS
+    return REVIEW_PLATFORMS

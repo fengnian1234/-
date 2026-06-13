@@ -186,33 +186,3 @@ def get_room_calendar(days: int = 14) -> list:
         return calendar
     finally:
         db.close()
-
-
-def add_sample_orders():
-    """添加示例订单数据（首次使用时调用）"""
-    db = SessionLocal()
-    try:
-        if db.query(AggregatedOrder).count() > 0:
-            return
-        today = datetime.utcnow().strftime("%Y-%m-%d")
-        tmr = (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d")
-        d3 = (datetime.utcnow() + timedelta(days=3)).strftime("%Y-%m-%d")
-        d5 = (datetime.utcnow() + timedelta(days=5)).strftime("%Y-%m-%d")
-
-        samples = [
-            AggregatedOrder(platform="ctrip", platform_order_id="CT202606001", guest_name="张伟", guest_phone="138****6789", room_type="山景·精致大床房", check_in=today, check_out=tmr, nights=1, total_amount=688, guest_count=2, status="checked_in", source="manual"),
-            AggregatedOrder(platform="meituan", platform_order_id="MT202606002", guest_name="李娜", guest_phone="139****8901", room_type="田园家庭房", check_in=today, check_out=tmr, nights=1, total_amount=788, guest_count=3, status="checked_in", source="manual"),
-            AggregatedOrder(platform="fliggy", platform_order_id="FZ202606003", guest_name="王磊", guest_phone="136****2345", room_type="清舍·露台大床房", check_in=today, check_out=tmr, nights=1, total_amount=788, guest_count=2, status="confirmed", source="manual"),
-            AggregatedOrder(platform="ctrip", platform_order_id="CT202606004", guest_name="赵雪", guest_phone="137****7890", room_type="室雅茶香套房", check_in=tmr, check_out=d3, nights=2, total_amount=1976, guest_count=4, status="confirmed", source="manual"),
-            AggregatedOrder(platform="direct", platform_order_id="", guest_name="陈明", guest_phone="135****4567", room_type="知还标准间", check_in=tmr, check_out=d3, nights=2, total_amount=976, guest_count=2, status="confirmed", source="manual"),
-            AggregatedOrder(platform="meituan", platform_order_id="MT202606005", guest_name="刘洋", guest_phone="133****0123", room_type="特惠标准间", check_in=d5, check_out=(datetime.utcnow()+timedelta(days=6)).strftime("%Y-%m-%d"), nights=1, total_amount=388, guest_count=2, status="confirmed", source="manual"),
-            AggregatedOrder(platform="xiaohongshu", platform_order_id="", guest_name="孙雨", guest_phone="131****8901", room_type="山野大床房", check_in=d5, check_out=(datetime.utcnow()+timedelta(days=7)).strftime("%Y-%m-%d"), nights=2, total_amount=1176, guest_count=2, status="confirmed", source="manual"),
-        ]
-        for s in samples:
-            fee_rate = PLATFORMS.get(s.platform, {}).get("fee_rate", 0)
-            s.platform_fee = round(s.total_amount * fee_rate, 2)
-            s.net_revenue = round(s.total_amount - s.platform_fee, 2)
-            db.add(s)
-        db.commit()
-    finally:
-        db.close()

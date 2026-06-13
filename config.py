@@ -42,25 +42,25 @@ BNB_LONGITUDE = 115.9797
 BOOKING_PLATFORMS = {
     "携程": {
         "name": "携程旅行",
-        "url": "https://hotels.ctrip.com/hotel/search?keyword=云上归墅",
+        "url": "https://hotels.ctrip.com/hotel/search?keyword=%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
         "icon": "🏨",
         "color": "#2577e3",
     },
     "美团": {
         "name": "美团民宿",
-        "url": "https://hotel.meituan.com/search?keyword=云上归墅",
+        "url": "https://hotel.meituan.com/search?keyword=%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
         "icon": "🏠",
         "color": "#ffc300",
     },
     "飞猪": {
         "name": "飞猪旅行",
-        "url": "https://www.fliggy.com/search?keyword=云上归墅",
+        "url": "https://www.fliggy.com/search?keyword=%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
         "icon": "✈️",
         "color": "#ff5a00",
     },
     "大众点评": {
         "name": "大众点评",
-        "url": "https://www.dianping.com/search/keyword/云上归墅",
+        "url": "https://www.dianping.com/search/keyword/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
         "icon": "⭐",
         "color": "#ffc300",
     },
@@ -70,32 +70,32 @@ BOOKING_PLATFORMS = {
 REVIEW_PLATFORMS = {
     "携程": {
         "name": "携程旅行",
-        "review_url": "https://hotels.ctrip.com/hotel/dianping/云上归墅",
+        "review_url": "https://hotels.ctrip.com/hotel/dianping/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
         "icon": "🏨",
     },
     "美团": {
         "name": "美团",
-        "review_url": "https://hotel.meituan.com/dianping/云上归墅",
+        "review_url": "https://hotel.meituan.com/dianping/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
         "icon": "🏠",
     },
     "飞猪": {
         "name": "飞猪旅行",
-        "review_url": "https://www.fliggy.com/review/云上归墅",
+        "review_url": "https://www.fliggy.com/review/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
         "icon": "✈️",
     },
     "大众点评": {
         "name": "大众点评",
-        "review_url": "https://www.dianping.com/shop/云上归墅/review",
+        "review_url": "https://www.dianping.com/shop/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85/review",
         "icon": "⭐",
     },
     "小红书": {
         "name": "小红书",
-        "review_url": "https://www.xiaohongshu.com/search_result?keyword=云上归墅",
+        "review_url": "https://www.xiaohongshu.com/search_result?keyword=%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
         "icon": "📕",
     },
     "抖音": {
         "name": "抖音",
-        "review_url": "https://www.douyin.com/search/云上归墅",
+        "review_url": "https://www.douyin.com/search/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
         "icon": "🎵",
     },
 }
@@ -122,4 +122,4 @@ WELCOME_MESSAGE = """🏔️ 欢迎来到云上·归墅！
 【5】💬 在线咨询
 
 🏨 预订请通过携程/美团/飞猪/大众点评搜索「云上归墅」
-🎐 AI管家仅在您确认预订后解锁～"""
+🎐 预订前免费旅行顾问 · 预订后解锁专属AI管家～"""

@@ -4,14 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>咖啡简餐 - 云上·归墅</title>
+<title>咖啡简餐 - 云上·归墅民宿</title>
+<meta name="description" content="云上·归墅「三山二水咖啡」在线点单。咖啡茶饮、简餐、甜品、特调饮品。">
 <script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <style>
-:root{--color-primary:#3d5347;--color-primary-light:#5b7b6f;--color-primary-dark:#2a3d33;--color-accent:#8b7355;--color-bg:#faf8f5;--color-bg-light:#f3f0eb;--color-text:#333330;--color-text-light:#6b6b66;--color-text-lighter:#999990;--color-white:#fff;--color-border:#e0dcd5;--color-shadow:rgba(0,0,0,0.06);--color-shadow-hover:rgba(0,0,0,0.10);--color-warning:#c9954a;--color-danger:#c4554a;--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 1px 3px var(--color-shadow);--shadow-md:0 4px 12px var(--color-shadow);--transition:0.25s cubic-bezier(0.4,0,0.2,1);--max-width:720px}
-[data-theme="dark"]{--color-primary:#6b9b7e;--color-primary-light:#557a64;--color-primary-dark:#3d5c48;--color-accent:#b89060;--color-bg:#1a1e1c;--color-bg-light:#212623;--color-text:#dcd8cf;--color-text-light:#a0a098;--color-text-lighter:#6e6e66;--color-white:#252927;--color-border:#3a3e3b;--color-shadow:rgba(0,0,0,0.30);--color-shadow-hover:rgba(0,0,0,0.50);--color-warning:#d0a050;--color-danger:#cc6050}
-[data-theme="dark"] .header{background:rgba(37,41,39,0.92)}
-[data-theme="dark"] .footer{background:#141815;color:rgba(220,216,207,0.6)}
-[data-theme="dark"] .footer-copy{color:rgba(220,216,207,0.3)}
+:root{--color-primary:#4a7c59;--color-primary-light:#6b9b7e;--color-primary-dark:#3b5e47;--color-accent:#c8966a;--color-accent-light:#dbb88a;--color-sky:#8eb8c9;--color-mist:#d4e5d8;--color-bg:#f5f9f4;--color-bg-light:#edf4ea;--color-bg-dark:#dce8d8;--color-text:#2a3328;--color-text-light:#5a6558;--color-text-lighter:#8a9586;--color-white:#fffefb;--color-border:#d8e0d4;--color-shadow:rgba(74,100,58,0.06);--color-shadow-hover:rgba(74,100,58,0.12);--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 2px 8px var(--color-shadow);--shadow-md:0 6px 20px var(--color-shadow-hover);--shadow-lg:0 12px 32px var(--color-shadow-hover);--transition:0.3s cubic-bezier(0.4,0,0.2,1);--max-width:720px;--color-danger:#c4554a}
+[data-theme="dark"]{--color-primary:#6baf7e;--color-primary-light:#558a64;--color-primary-dark:#3d5c48;--color-accent:#c89b6a;--color-accent-light:#dab080;--color-sky:#6a95a8;--color-mist:#2a3a2e;--color-bg:#1a1f1b;--color-bg-light:#1f2620;--color-bg-dark:#252e26;--color-text:#d8dfd4;--color-text-light:#a0a898;--color-text-lighter:#6a7268;--color-white:#222722;--color-border:#2e382f;--color-shadow:rgba(0,0,0,0.35);--color-shadow-hover:rgba(0,0,0,0.50);--color-danger:#cc6050}
+[data-theme="dark"] .page-header{background:linear-gradient(170deg,#4a6868 0%,#3d5c48 40%,#2a3a28 100%)}
+[data-theme="dark"] .page-header::after{opacity:0.25}
+[data-theme="dark"] .header{background:rgba(26,31,27,0.94)}
+[data-theme="dark"] .footer{background:linear-gradient(180deg,#1a2418,#141a15);color:rgba(216,223,212,0.6)}
+[data-theme="dark"] .footer-copy{color:rgba(216,223,212,0.3)}
+[data-theme="dark"] .drink-modal-content{background:#252927}
+[data-theme="dark"] .option-chip{background:#1f2620;border-color:#2e382f;color:#a0a898}
+[data-theme="dark"] .option-chip.selected{background:#2a3d30;border-color:#4a7c59;color:#d8dfd4}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px;-webkit-font-smoothing:antialiased}
 body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
@@ -19,8 +25,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:
 h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05rem}
 .container{max-width:var(--max-width);margin:0 auto;padding:0 1rem}
 a{color:var(--color-primary);text-decoration:none}
-/* Header */
-.header{background:rgba(255,255,255,0.92);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.header{background:rgba(245,249,244,0.9);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
 .logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none}
 .logo-icon{font-size:1.4rem}
@@ -28,20 +33,21 @@ a{color:var(--color-primary);text-decoration:none}
 .nav-links{display:flex;gap:0.2rem}
 .nav-links a{padding:0.35rem 0.7rem;border-radius:var(--radius-sm);font-size:0.9rem;color:var(--color-text-light);transition:all var(--transition)}
 .nav-links a:hover{color:var(--color-primary);background:var(--color-bg-light)}
-.page-header{background:linear-gradient(135deg,var(--color-primary-dark),var(--color-primary));color:var(--color-white);padding:2.5rem 1rem;text-align:center}
-.page-header h1{color:var(--color-white);margin-bottom:0.3rem}
-.page-header p{color:rgba(255,255,255,0.8);font-size:0.95rem}
+.page-header{background:linear-gradient(170deg,#a8d0e0 0%,#8eb8c9 20%,#7aab8e 60%,#4a7c59 100%);color:#fff;padding:3rem 1rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+.page-header::before{content:'';position:absolute;top:-30px;left:-20%;right:-20%;height:80px;background:radial-gradient(ellipse at 30% 100%,rgba(255,255,255,0.25) 0%,transparent 60%),radial-gradient(ellipse at 70% 100%,rgba(255,255,255,0.2) 0%,transparent 55%);pointer-events:none}
+.page-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:24px;background:var(--color-bg);mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0,20 C150,38 350,2 500,18 C650,34 850,6 1000,22 C1100,32 1180,10 1200,14 L1200,40 L0,40 Z' fill='white'/%3E%3C/svg%3E");mask-size:100% 100%;mask-repeat:no-repeat;-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0,20 C150,38 350,2 500,18 C650,34 850,6 1000,22 C1100,32 1180,10 1200,14 L1200,40 L0,40 Z' fill='white'/%3E%3C/svg%3E");-webkit-mask-size:100% 100%;-webkit-mask-repeat:no-repeat}
+.page-header h1{color:#fff;margin-bottom:0.4rem;font-size:1.7rem;text-shadow:0 1px 4px rgba(0,0,0,0.1);position:relative;z-index:1}
+.page-header p{color:rgba(255,255,255,0.85);font-size:0.95rem;position:relative;z-index:1}
 .section-padding{padding:2rem 0}
-/* Menu */
 .menu-cat-title{margin-bottom:0.8rem;padding-bottom:0.4rem;border-bottom:2px solid var(--color-primary-light);color:var(--color-primary-dark)}
 .menu-container{display:flex;flex-direction:column;gap:1.5rem}
 .menu-items{display:flex;flex-direction:column;gap:0.5rem}
 .menu-item{display:flex;align-items:center;justify-content:space-between;padding:0.8rem 1rem;background:var(--color-white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);gap:0.8rem}
-.menu-item.recommended{border-left:3px solid var(--color-warning)}
+.menu-item.recommended{border-left:3px solid var(--color-accent)}
 .menu-item-info{flex:1;min-width:0}
 .menu-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.2rem}
 .menu-item-header h4{font-size:0.95rem;display:flex;align-items:center;gap:0.3rem}
-.rec-badge{font-size:0.7rem;color:var(--color-warning);white-space:nowrap}
+.rec-badge{font-size:0.7rem;color:var(--color-accent);white-space:nowrap}
 .menu-item-price{font-weight:700;color:var(--color-accent);font-size:0.95rem;white-space:nowrap}
 .menu-item-desc{font-size:0.78rem;color:var(--color-text-lighter);line-height:1.4}
 .btn{display:inline-flex;align-items:center;justify-content:center;padding:0.55rem 1.2rem;border-radius:var(--radius-sm);font-size:0.9rem;font-weight:500;cursor:pointer;border:none;transition:all var(--transition);font-family:var(--font-sans);gap:0.3rem}
@@ -49,7 +55,10 @@ a{color:var(--color-primary);text-decoration:none}
 .btn-order:hover{background:var(--color-primary-dark);color:white}
 .btn-primary{background:var(--color-primary);color:white}
 .btn-primary:hover{background:var(--color-primary-dark);color:white}
+.btn-outline{background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary)}
+.btn-outline:hover{background:var(--color-primary);color:white}
 .btn-block{width:100%}
+.btn-large{padding:0.7rem 1.6rem;font-size:1rem}
 /* Order Panel */
 .order-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max-width);background:var(--color-white);border-radius:var(--radius-lg) var(--radius-lg) 0 0;box-shadow:0 -4px 20px var(--color-shadow-hover);z-index:200;flex-direction:column;max-height:70vh;display:none}
 .order-panel.show{display:flex}
@@ -66,165 +75,325 @@ a{color:var(--color-primary);text-decoration:none}
 .order-input{display:flex;gap:0.5rem;margin-bottom:0.6rem}
 .order-input input{flex:1;padding:0.5rem 0.8rem;border:1px solid var(--color-border);border-radius:var(--radius-sm);font-size:0.85rem;outline:none;font-family:var(--font-sans)}
 .order-input input:focus{border-color:var(--color-primary-light)}
-.order-notice{background:#fef9e7;border-radius:var(--radius-sm);padding:0.6rem 0.8rem;font-size:0.78rem;color:#8b6d20;margin-bottom:0.6rem;text-align:center;line-height:1.5}
+.order-notice{background:#fafcf6;border-radius:var(--radius-sm);padding:0.6rem 0.8rem;font-size:0.78rem;color:#5a5a30;margin-bottom:0.6rem;text-align:center;line-height:1.5}
+[data-theme="dark"] .order-notice{background:#1e2318;color:#a0a860}
+/* Drink Customization Modal */
+.drink-modal{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:1rem}
+.drink-modal.show{display:flex}
+.drink-modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(3px)}
+.drink-modal-content{position:relative;background:var(--color-white);border-radius:var(--radius-lg);padding:1.5rem;max-width:380px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,0.18);max-height:85vh;overflow-y:auto}
+.drink-modal-content h3{font-size:1.1rem;margin-bottom:1rem;text-align:center;color:var(--color-primary-dark)}
+.option-group{margin-bottom:1rem}
+.option-group-label{font-size:0.8rem;color:var(--color-text-light);margin-bottom:0.4rem;font-weight:600}
+.option-chips{display:flex;flex-wrap:wrap;gap:0.4rem}
+.option-chip{padding:0.45rem 0.8rem;border-radius:20px;border:1.5px solid var(--color-border);background:var(--color-bg-light);font-size:0.82rem;cursor:pointer;transition:all 0.2s;color:var(--color-text);font-family:var(--font-sans);white-space:nowrap}
+.option-chip:hover{border-color:var(--color-primary-light)}
+.option-chip.selected{background:var(--color-primary);color:#fff;border-color:var(--color-primary);font-weight:600}
+.drink-modal-actions{display:flex;gap:0.6rem;margin-top:1.2rem}
+.drink-modal-actions button{flex:1}
 /* FAB */
 .fab{position:fixed;bottom:1.5rem;right:1rem;width:52px;height:52px;border-radius:50%;background:var(--color-primary);color:white;border:none;box-shadow:var(--shadow-md);cursor:pointer;z-index:150;display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all var(--transition)}
 .fab:hover{transform:scale(1.05)}
-.fab-count{position:absolute;top:-4px;right:-4px;background:var(--color-danger);color:white;width:20px;height:20px;border-radius:50%;font-size:0.7rem;display:none;align-items:center;justify-content:center}
-.footer{background:var(--color-primary-dark);color:rgba(255,255,255,0.7);padding:1.5rem 1rem;text-align:center;margin-top:auto}
+.fab-badge{position:absolute;top:-6px;right:-6px;background:var(--color-danger);color:#fff;min-width:22px;height:22px;border-radius:11px;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 5px;line-height:1;box-shadow:0 2px 6px rgba(196,85,74,0.4)}
+.fab-badge:empty,.fab-badge[data-count="0"]{display:none}
+.footer{background:linear-gradient(180deg,#3b5e47,#2a3d33);color:rgba(255,255,255,0.7);padding:2rem 1rem;text-align:center;margin-top:auto}
 .footer p{font-size:0.8rem;margin-bottom:0.2rem;line-height:1.8}
-.footer-copy{color:rgba(255,255,255,0.4);font-size:0.72rem!important;margin-top:0.4rem}
-@media(max-width:400px){.menu-item-header{flex-wrap:wrap}}
+.footer-copy{color:rgba(255,255,255,0.35);font-size:0.7rem!important;margin-top:0.6rem}
+.fade-up{opacity:0;transform:translateY(12px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
 
-<header class="header">
-    <div class="header-inner">
-        <a href="index.html" class="logo"><span class="logo-icon">🏔️</span><span class="logo-text">云上·归墅</span></a>
-        <nav class="nav-links">
-            <a href="rooms.html">房型</a><a href="menu.html">点餐</a><a href="travel.html">攻略</a><a href="services.html">服务</a>
-        </nav>
-        <button id="themeToggle" style="background:none;border:none;cursor:pointer;padding:0.35rem;border-radius:6px;font-size:1.1rem;line-height:1" title="切换深色/浅色模式">🌙</button>
-    </div>
-</header>
+<header class="header"><div class="header-inner">
+    <a href="index.html" class="logo"><span class="logo-icon">🏔️</span><span class="logo-text">云上·归墅</span></a>
+    <nav class="nav-links"><a href="rooms.html">房型</a><a href="menu.html">点餐</a><a href="travel.html">攻略</a><a href="services.html">服务</a></nav>
+    <button id="themeToggle" style="background:none;border:none;cursor:pointer;padding:0.35rem;border-radius:6px;font-size:1.1rem;line-height:1" title="切换深色/浅色模式">🌙</button>
+</div></header>
 
-<section class="page-header"><div class="container"><h1>☕ 咖啡简餐</h1><p>「三山二水咖啡」· 精品咖啡与简餐轻食 · 自种庐山云雾茶 · 自酿美酒 · 本民宿不提供正餐</p></div></section>
+<section class="page-header"><div class="container"><h1>☕ 咖啡简餐</h1><p>「三山二水咖啡」· 咖啡茶饮 · 简餐 · 甜品 · 特调饮品</p></div></section>
 
-<section class="section-padding"><div class="container"><div class="menu-container" id="menuContainer"></div>
+<section class="section-padding"><div class="container">
+    <div class="menu-container" id="menuContainer"></div>
     <p style="text-align:center;color:var(--color-text-lighter);font-size:0.85rem;margin-top:1rem;line-height:1.8">
         🍜 需要正餐？请查看「<a href="travel.html">游玩攻略</a>」中的周边美食推荐<br>
         💡 支持微信支付，下单后送至房间
     </p>
 </div></section>
 
-<!-- 点餐浮窗 -->
+<!-- Drink customization modal -->
+<div class="drink-modal" id="drinkModal">
+    <div class="drink-modal-overlay" onclick="closeDrinkModal()"></div>
+    <div class="drink-modal-content" id="drinkModalContent"></div>
+</div>
+
+<!-- Order panel -->
 <div class="order-panel" id="orderPanel">
     <div class="order-panel-header"><h3>🛒 已选菜品</h3><button class="btn-close" onclick="togglePanel()">✕</button></div>
     <div class="order-panel-body" id="orderItems"><p class="empty-hint">还没有选择菜品～</p></div>
     <div class="order-panel-footer">
         <div class="order-total"><span>合计</span><span class="total-price" id="totalPrice">¥0</span></div>
         <div class="order-input"><input type="text" id="roomNo" placeholder="房间号（选填）"><input type="text" id="remark" placeholder="备注（选填）"></div>
-        <div class="order-notice">☕ 仅提供咖啡茶饮与简餐轻食，不提供正餐<br>💳 支持微信支付，确认后送餐到房</div>
+        <div class="order-notice">☕ 三山二水咖啡 · 点单后送餐到房<br>💳 支持微信支付，确认后为您准备</div>
         <button class="btn btn-primary btn-block" onclick="submitOrder()">确认下单</button>
     </div>
 </div>
 
-<button class="fab" onclick="togglePanel()"><span class="fab-icon">🛒</span><span class="fab-count" id="cartCount">0</span></button>
+<button class="fab" onclick="togglePanel()">
+    <span class="fab-icon">🛒</span>
+    <span class="fab-badge" id="cartBadge" data-count="0"></span>
+</button>
 
-<footer class="footer">
-    <div class="footer-inner"><p>🏔️ 云上·归墅民宿 · 庐山之巅的静谧之所</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
-</footer>
+<footer class="footer"><div class="footer-inner">
+    <p>云无心以出岫，鸟倦飞而知还</p><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p>
+    <p>📍 庐山山上·庐山风景名胜区大林沟路27号</p>
+    <p>📞 16607927666  |  携程 4.7分 · 85条评价  |  2016年开业</p>
+    <p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p>
+</div></footer>
 
 <script>
-// 菜单数据（咖啡简餐 - 来自 seed_data.py v2）
+// ═══════════════════════════════════════
+// 菜单数据
+// drinks: true = 饮品（需选糖/冰）, tea: true = 庐山云雾茶（需选红/绿 + 杯/壶）
 const menu = [
-    {cat:"☕ 精品咖啡", items:[
-        {id:1,name:"庐山云雾冷萃",price:38,desc:"庐山云雾茶与冷萃咖啡融合，清凉回甘",rec:true},
-        {id:2,name:"手冲单品",price:42,desc:"精选单品豆手冲慢萃，风味纯净",rec:true},
-        {id:3,name:"意式浓缩",price:22,desc:"经典意式浓缩，浓烈醇厚"},
-        {id:4,name:"拿铁",price:28,desc:"浓缩与蒸汽牛奶的经典搭配"},
-        {id:5,name:"卡布奇诺",price:28,desc:"浓缩、牛奶与奶泡的完美比例"},
-        {id:6,name:"桂花拿铁",price:32,desc:"拿铁加入秋季手采桂花，花香四溢",rec:true}
+    {cat:"☕ 咖啡+茶饮", items:[
+        {id:1,name:"美式",price:26,desc:"经典美式咖啡，纯粹醇香",drink:true},
+        {id:2,name:"椰青美式",price:32,desc:"清甜椰青水配浓缩咖啡，清爽回甘",drink:true},
+        {id:3,name:"Dirty",price:38,desc:"热浓缩碰撞冰牛奶，层次分明",rec:true,drink:true},
+        {id:4,name:"拿铁",price:36,desc:"经典意式拿铁，奶香丝滑",drink:true},
+        {id:5,name:"燕麦拿铁",price:38,desc:"燕麦奶配浓缩咖啡，谷物醇香",drink:true},
+        {id:6,name:"生椰拿铁",price:36,desc:"生椰乳配浓缩咖啡，热带风味",drink:true},
+        {id:7,name:"奥利奥拿铁",price:38,desc:"奥利奥碎融入拿铁，甜蜜酥脆",drink:true},
+        {id:8,name:"摩卡",price:38,desc:"巧克力酱配浓缩咖啡，醇厚甜蜜",drink:true},
+        {id:9,name:"抹茶拿铁（无咖啡）",price:28,desc:"日式抹茶配牛乳，清新无咖啡因",drink:true},
+        {id:10,name:"椰子水",price:28,desc:"天然椰子水，清凉解渴",drink:true},
+        {id:11,name:"可可奶",price:20,desc:"浓郁可可配鲜牛奶，暖胃甜蜜",drink:true},
+        {id:12,name:"庐山云雾茶",price:38,desc:"明前高山云雾茶，红绿两色可选，杯/壶两档",rec:true,tea:true}
     ]},
-    {cat:"🍵 茶饮", items:[
-        {id:7,name:"庐山云雾茶（壶）",price:68,desc:"明前特级云雾茶，山泉冲泡",rec:true},
-        {id:8,name:"桂花红茶",price:38,desc:"祁门红茶配庐山金桂，温润香甜"},
-        {id:9,name:"茉莉花茶",price:28,desc:"茉莉花与绿茶窨制，花香茶韵"},
-        {id:10,name:"陈皮普洱",price:35,desc:"新会陈皮配云南普洱，理气健脾"},
-        {id:11,name:"蜂蜜柚子茶",price:25,desc:"自制蜂蜜柚子酱，酸甜可口"}
+    {cat:"🍝 简餐", items:[
+        {id:13,name:"意面",price:42,desc:"手工意面配番茄肉酱，42元/份"},
+        {id:14,name:"小吃拼盘",price:48,desc:"多款小食组合拼盘，聚会必备"},
+        {id:15,name:"奥尔良鸡肉披萨",price:88,desc:"奥尔良风味鸡肉披萨，现烤出炉",rec:true},
+        {id:16,name:"榴莲美式披萨",price:108,desc:"猫山王榴莲果肉配美式芝士披萨",rec:true}
     ]},
-    {cat:"🥐 简餐轻食", items:[
-        {id:12,name:"牛角包三明治",price:38,desc:"现烤牛角包夹火腿芝士，配沙拉",rec:true},
-        {id:13,name:"茶香沙拉",price:35,desc:"庐山云雾茶油醋汁拌时蔬"},
-        {id:14,name:"意式肉酱面",price:42,desc:"意式番茄肉酱面，配帕玛森芝士"},
-        {id:15,name:"酸奶水果碗",price:28,desc:"手工酸奶配时令鲜果和坚果麦片"},
-        {id:16,name:"芝士焗红薯",price:25,desc:"红薯与马苏里拉芝士焗烤"}
+    {cat:"🍰 甜品", items:[
+        {id:17,name:"提拉米苏",price:26,desc:"经典意式提拉米苏，层层浓郁",rec:true},
+        {id:18,name:"豆乳蛋糕",price:26,desc:"浓郁豆乳酱配松软蛋糕，清甜不腻"}
     ]},
-    {cat:"🍰 甜点", items:[
-        {id:17,name:"手工桂花糕",price:28,desc:"手采桂花古法蒸制，软糯香甜",rec:true},
-        {id:18,name:"提拉米苏",price:35,desc:"经典意式提拉米苏，咖啡与奶酪"},
-        {id:19,name:"庐山茶冻",price:22,desc:"云雾茶汤冷凝，清凉消暑"},
-        {id:20,name:"桂花酒酿圆子",price:22,desc:"甜酒酿配手搓圆子，桂花香"}
-    ]},
-    {cat:"🥤 饮品", items:[
-        {id:21,name:"鲜榨山果汁",price:28,desc:"时令庐山野果鲜榨，维C满满"},
-        {id:22,name:"山泉柠檬水",price:18,desc:"庐山泉水配鲜柠檬，清新解渴"},
-        {id:23,name:"手工酸奶",price:22,desc:"自制发酵酸奶，浓稠醇厚"},
-        {id:24,name:"气泡水",price:15,desc:"冰镇气泡水，夏日清凉之选"}
+    {cat:"🍹 特调饮品", items:[
+        {id:19,name:"没事的",price:32,desc:"主理人特调，喝一杯，什么事都没有",rec:true,drink:true}
     ]}
 ];
 
+// ═══════════════════════════════════════
 // 渲染菜单
 const container = document.getElementById('menuContainer');
 menu.forEach(cat => {
     const div = document.createElement('div');
     div.className = 'menu-category';
     div.innerHTML = `<h2 class="menu-cat-title">${cat.cat}</h2>
-        <div class="menu-items">${cat.items.map(item => `
-            <div class="menu-item${item.rec?' recommended':''}">
+        <div class="menu-items">${cat.items.map(item => {
+            const label = item.tea ? '¥38起' : '¥'+item.price;
+            return `<div class="menu-item${item.rec?' recommended':''}">
                 <div class="menu-item-info">
                     <div class="menu-item-header">
                         <h4>${item.name}${item.rec?' <span class="rec-badge">⭐推荐</span>':''}</h4>
-                        <span class="menu-item-price">¥${item.price}</span>
+                        <span class="menu-item-price">${label}</span>
                     </div>
                     ${item.desc?`<p class="menu-item-desc">${item.desc}</p>`:''}
                 </div>
-                <button class="btn btn-order" onclick="addToCart(${item.id},'${item.name}',${item.price})">+ 点单</button>
-            </div>`).join('')}</div>`;
+                <button class="btn btn-order" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}" data-tea="${item.tea||false}" data-drink="${item.drink||false}">+ 点单</button>
+            </div>`;
+        }).join('')}</div>`;
     container.appendChild(div);
 });
 
+// Delegate click events on 点单 buttons
+container.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-order');
+    if (!btn) return;
+    const id = parseInt(btn.dataset.id);
+    const name = btn.dataset.name;
+    const price = parseInt(btn.dataset.price);
+    const isTea = btn.dataset.tea === 'true';
+    const isDrink = btn.dataset.drink === 'true';
+
+    if (isTea) {
+        openTeaModal(id, name);
+    } else if (isDrink) {
+        openDrinkModal(id, name, price);
+    } else {
+        addToCart(id, name, price, '');
+    }
+});
+
+// ═══════════════════════════════════════
+// 庐山云雾茶弹窗: 红/绿 + 杯/壶
+let teaCallback = null;
+function openTeaModal(id, name) {
+    const content = document.getElementById('drinkModalContent');
+    content.innerHTML = `
+        <h3>🍵 ${name}</h3>
+        <div class="option-group">
+            <div class="option-group-label">茶叶类型</div>
+            <div class="option-chips" data-group="type">
+                <button class="option-chip selected" data-val="红茶">红茶</button>
+                <button class="option-chip" data-val="绿茶">绿茶</button>
+            </div>
+        </div>
+        <div class="option-group">
+            <div class="option-group-label">规格</div>
+            <div class="option-chips" data-group="size">
+                <button class="option-chip selected" data-val="杯" data-price="38">杯 ¥38</button>
+                <button class="option-chip" data-val="壶" data-price="98">壶 ¥98</button>
+            </div>
+        </div>
+        <div class="drink-modal-actions">
+            <button class="btn btn-outline" onclick="closeDrinkModal()">取消</button>
+            <button class="btn btn-primary" id="confirmTeaBtn">加入购物车</button>
+        </div>`;
+    document.getElementById('drinkModal').classList.add('show');
+
+    // Chip selection logic
+    content.querySelectorAll('.option-chips').forEach(group => {
+        group.addEventListener('click', function(e) {
+            const chip = e.target.closest('.option-chip');
+            if (!chip) return;
+            group.querySelectorAll('.option-chip').forEach(c => c.classList.remove('selected'));
+            chip.classList.add('selected');
+        });
+    });
+
+    document.getElementById('confirmTeaBtn').onclick = function() {
+        const type = content.querySelector('[data-group="type"] .option-chip.selected').dataset.val;
+        const sizeChip = content.querySelector('[data-group="size"] .option-chip.selected');
+        const size = sizeChip.dataset.val;
+        const teaPrice = parseInt(sizeChip.dataset.price);
+        const fullName = `${name}（${type}·${size}）`;
+        addToCart(id, fullName, teaPrice, ` ${type}·${size}`);
+        closeDrinkModal();
+    };
+}
+
+// ═══════════════════════════════════════
+// 普通饮品弹窗: 糖度 + 冰量
+function openDrinkModal(id, name, price) {
+    const isWater = name === '椰子水';
+    const iceLabel = isWater ? '冰量' : '冰量/温度';
+    const iceOpt3 = isWater ? '不额外加冰' : '温';
+    const content = document.getElementById('drinkModalContent');
+    content.innerHTML = `
+        <h3>🥤 ${name} <span style="font-weight:400;color:var(--color-accent);font-size:0.95rem">¥${price}</span></h3>
+        <div class="option-group">
+            <div class="option-group-label">糖度</div>
+            <div class="option-chips" data-group="sugar">
+                <button class="option-chip" data-val="全糖">全糖</button>
+                <button class="option-chip selected" data-val="半糖">半糖</button>
+                <button class="option-chip" data-val="不额外加糖">不额外加糖</button>
+            </div>
+        </div>
+        <div class="option-group">
+            <div class="option-group-label">${iceLabel}</div>
+            <div class="option-chips" data-group="ice">
+                <button class="option-chip selected" data-val="正常冰">正常冰</button>
+                <button class="option-chip" data-val="少冰">少冰</button>
+                <button class="option-chip" data-val="${iceOpt3}">${iceOpt3}</button>
+            </div>
+        </div>
+        <div class="drink-modal-actions">
+            <button class="btn btn-outline" onclick="closeDrinkModal()">取消</button>
+            <button class="btn btn-primary" id="confirmDrinkBtn">加入购物车</button>
+        </div>`;
+    document.getElementById('drinkModal').classList.add('show');
+
+    content.querySelectorAll('.option-chips').forEach(group => {
+        group.addEventListener('click', function(e) {
+            const chip = e.target.closest('.option-chip');
+            if (!chip) return;
+            group.querySelectorAll('.option-chip').forEach(c => c.classList.remove('selected'));
+            chip.classList.add('selected');
+        });
+    });
+
+    document.getElementById('confirmDrinkBtn').onclick = function() {
+        const sugar = content.querySelector('[data-group="sugar"] .option-chip.selected').dataset.val;
+        const ice = content.querySelector('[data-group="ice"] .option-chip.selected').dataset.val;
+        const opts = ` ${sugar}·${ice}`;
+        addToCart(id, name, price, opts);
+        closeDrinkModal();
+    };
+}
+
+function closeDrinkModal() {
+    document.getElementById('drinkModal').classList.remove('show');
+    teaCallback = null;
+}
+
+// ═══════════════════════════════════════
 // 购物车
 let cart = [];
-function addToCart(id,name,price){
-    const ex = cart.find(i=>i.id===id);
-    if(ex) ex.qty++; else cart.push({id,name,price,qty:1});
+let cartSeq = 0; // unique sequence for each cart entry
+
+function addToCart(id, name, price, opts) {
+    cartSeq++;
+    cart.push({ seq: cartSeq, id, name, price, qty: 1, opts });
     updateCart();
+    // Animate FAB
     const fab = document.querySelector('.fab');
-    fab.style.transform = 'scale(1.1)';
-    setTimeout(()=>fab.style.transform='',200);
+    fab.style.transform = 'scale(1.12)';
+    setTimeout(() => fab.style.transform = '', 200);
 }
-function removeFromCart(id){cart=cart.filter(i=>i.id!==id);updateCart()}
-function updateCart(){
-    const container = document.getElementById('orderItems');
-    const countEl = document.getElementById('cartCount');
+
+function removeFromCart(seq) {
+    cart = cart.filter(i => i.seq !== seq);
+    updateCart();
+}
+
+function updateCart() {
+    const orderItems = document.getElementById('orderItems');
+    const badge = document.getElementById('cartBadge');
     const totalEl = document.getElementById('totalPrice');
-    if(cart.length===0){
-        container.innerHTML='<p class="empty-hint">还没有选择菜品～</p>';
-        countEl.style.display='none';
-        totalEl.textContent='¥0';
-    }else{
-        container.innerHTML = cart.map(item=>`
+    const totalCnt = cart.reduce((s, i) => s + i.qty, 0);
+
+    // Badge
+    badge.setAttribute('data-count', totalCnt);
+    badge.textContent = totalCnt || '';
+
+    if (cart.length === 0) {
+        orderItems.innerHTML = '<p class="empty-hint">还没有选择菜品～</p>';
+        totalEl.textContent = '¥0';
+    } else {
+        orderItems.innerHTML = cart.map(item => `
             <div class="order-item">
-                <span class="order-item-name">${item.name}</span>
+                <span class="order-item-name">${item.name}<span style="color:var(--color-text-lighter);font-size:0.78rem">${item.opts}</span></span>
                 <span class="order-item-qty">×${item.qty}</span>
-                <span class="order-item-price">¥${item.price*item.qty}</span>
-                <button class="btn-remove" onclick="removeFromCart(${item.id})">删除</button>
+                <span class="order-item-price">¥${item.price * item.qty}</span>
+                <button class="btn-remove" onclick="removeFromCart(${item.seq})">删除</button>
             </div>`).join('');
-        const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-        totalEl.textContent = '¥'+total;
-        const cnt = cart.reduce((s,i)=>s+i.qty,0);
-        countEl.style.display='flex';countEl.textContent=cnt;
+        const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        totalEl.textContent = '¥' + total;
     }
 }
-function togglePanel(){
-    const panel = document.getElementById('orderPanel');
-    panel.classList.toggle('show');
+
+function togglePanel() {
+    document.getElementById('orderPanel').classList.toggle('show');
 }
-function submitOrder(){
-    if(cart.length===0){alert('请先选择菜品～');return}
-    const items = cart.map(i=>`${i.name}×${i.qty}`).join('、');
-    const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-    const room = document.getElementById('roomNo').value||'未填';
-    const rmk = document.getElementById('remark').value||'无';
-    alert(`✅ 下单成功！\n\n📦 ${items}\n💰 合计：¥${total}\n🚪 房间号：${room}\n📝 备注：${rmk}\n\n☕ 仅咖啡简餐，支持微信支付\n我们会尽快为您准备并送至房间～`);
-    cart=[];updateCart();togglePanel();
+
+function submitOrder() {
+    if (cart.length === 0) { alert('请先选择菜品～'); return; }
+    const items = cart.map(i => `${i.name}${i.opts}×${i.qty}`).join('、');
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const room = document.getElementById('roomNo').value || '未填';
+    const rmk = document.getElementById('remark').value || '无';
+    alert(`✅ 下单成功！\n\n📦 ${items}\n💰 合计：¥${total}\n🚪 房间号：${room}\n📝 备注：${rmk}\n\n☕ 三山二水咖啡\n我们会尽快为您准备并送至房间～`);
+    cart = []; updateCart(); togglePanel();
 }
 </script>
+
 <script>
 (function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'})();
 document.getElementById('themeToggle').onclick=function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);this.textContent=n==='dark'?'☀️':'🌙'};
 </script>
+<script>(function(){var o=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1});document.querySelectorAll('.section-padding,.page-header,.footer,.menu-container').forEach(function(e){e.classList.add('fade-up');o.observe(e)})})();</script>
 </body>
 </html>

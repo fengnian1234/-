@@ -77,11 +77,27 @@
 
 {% block extra_scripts %}
 <script>
+function getGuestId() {
+    let id = localStorage.getItem('guest_id');
+    if (!id) {
+        id = 'guest_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8);
+        localStorage.setItem('guest_id', id);
+    }
+    return id;
+}
+
 function requestService(name) {
-    document.getElementById('modal-title').textContent = name + ' - 已收到请求';
-    document.getElementById('modal-message').textContent =
-        '我们的工作人员会尽快为您处理～\n如有紧急需求，请拨打前台电话 ☎️';
+    var titleEl = document.getElementById('modal-title');
+    var msgEl = document.getElementById('modal-message');
+    titleEl.textContent = name + ' - 已收到请求';
+    msgEl.textContent = '我们的工作人员会尽快为您处理～\n如有紧急需求，请拨打前台电话 ☎️';
     document.getElementById('service-modal').style.display = 'flex';
+
+    fetch('/api/service/request', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({service_name: name, openid: getGuestId()})
+    }).catch(function(){});
 }
 
 function closeModal() {

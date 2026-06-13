@@ -64,7 +64,7 @@ Python 是嵌入式发行版，路径固定为 `C:/Users/admin/python-embed/pyth
 
 ### 数据库
 
-SQLite (`yunshang_bnb.db`)，通过 SQLAlchemy ORM 访问。表：`rooms`、`bookings`、`menu_items`、`menu_categories`、`travel_routes`、`food_recommends`、`service_requests`、`monitor_mentions`。
+SQLite (`yunshang_bnb.db`)，通过 SQLAlchemy ORM 访问。表：`rooms`、`bookings`、`menu_items`、`menu_categories`、`travel_routes`、`food_recommends`、`service_requests`、`platform_mentions`。
 
 种子数据在 `seed_data.py`，应用启动时自动调用 `seed_all()` 填充。
 
@@ -73,10 +73,32 @@ SQLite (`yunshang_bnb.db`)，通过 SQLAlchemy ORM 访问。表：`rooms`、`boo
 ### 数据来源优先级
 
 ```
-local_data/  >  WebSearch  >  其他来源
+local_data/  >  opencli  >  WebSearch  >  其他来源
 ```
 
 `local_data/images/` 和 `local_data/documents/` 中的官方文件权威最高。信息冲突时按此链采信。
+
+**在搜索小红书、携程、大众点评等中文平台时，优先使用 `opencli` 工具**（已安装全局 CLI）。opencli 提供原生站点适配器：
+
+| 平台 | 适配器 | 常用命令 |
+|------|--------|----------|
+| 小红书 | `xiaohongshu` | `search`, `note`, `download`, `feed` |
+| 携程 | `ctrip` | `search`（public）, `hotel-search`, `hotel-suggest` |
+| 大众点评 | `dianping` | `search`, `shop` |
+
+使用示例：
+```bash
+# 携程搜索（公开，无需 cookie）
+opencli ctrip search --keyword "庐山 美食"
+
+# 小红书搜索（需 cookie）
+opencli xiaohongshu search --keyword "庐山美食推荐"
+
+# 大众点评搜索（需 cookie）
+opencli dianping search --keyword "庐山" --city "九江"
+```
+
+注意：小红书和大众点评的写操作需要先配置浏览器 cookie（通过 `opencli browser init`）。
 
 ### 顾客导向原则
 

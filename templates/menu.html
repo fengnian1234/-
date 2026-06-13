@@ -5,7 +5,7 @@
 <section class="page-header">
     <div class="container">
         <h1>☕ 咖啡简餐</h1>
-        <p>「三山二水咖啡」· 精品咖啡与简餐轻食 · 自种庐山云雾茶 · 自酿美酒 · 本民宿不提供正餐</p>
+        <p>「三山二水咖啡」· 咖啡茶饮 · 简餐 · 甜品 · 特调饮品</p>
     </div>
 </section>
 
@@ -15,10 +15,12 @@
         <div class="menu-container">
             {% for cat in categories %}
             {% if cat['items'] and cat['items']|length > 0 %}
+            {% set is_drink_cat = (cat.name == '咖啡+茶饮' or cat.name == '特调饮品') %}
             <div class="menu-category" id="cat-{{ cat.id }}">
                 <h2 class="menu-cat-title">{{ cat.icon }} {{ cat.name }}</h2>
                 <div class="menu-items">
                     {% for item in cat['items'] %}
+                    {% set is_tea = ('云雾茶' in item.name) %}
                     <div class="menu-item {% if item.is_recommended %}recommended{% endif %}">
                         <div class="menu-item-info">
                             <div class="menu-item-header">
@@ -28,15 +30,13 @@
                                     <span class="rec-badge">⭐推荐</span>
                                     {% endif %}
                                 </h4>
-                                <span class="menu-item-price">¥{{ item.price }}</span>
+                                <span class="menu-item-price">{% if is_tea %}¥38起{% else %}¥{{ item.price }}{% endif %}</span>
                             </div>
                             {% if item.description %}
                             <p class="menu-item-desc">{{ item.description }}</p>
                             {% endif %}
                         </div>
-                        <button class="btn btn-sm btn-order" onclick="addToOrder({{ item.id }}, '{{ item.name }}', {{ item.price }})">
-                            + 点单
-                        </button>
+                        <button class="btn btn-sm btn-order" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}" data-tea="{% if is_tea %}true{% else %}false{% endif %}" data-drink="{% if is_drink_cat %}true{% else %}false{% endif %}">+ 点单</button>
                     </div>
                     {% endfor %}
                 </div>
@@ -52,6 +52,12 @@
         {% endif %}
     </div>
 </section>
+
+<!-- 饮品定制弹窗 -->
+<div class="drink-modal" id="drinkModal" style="display:none">
+    <div class="drink-modal-overlay" onclick="closeDrinkModal()"></div>
+    <div class="drink-modal-content" id="drinkModalContent"></div>
+</div>
 
 <!-- 点餐浮窗 -->
 <div id="order-panel" class="order-panel" style="display:none;">
@@ -71,6 +77,7 @@
             <input type="text" id="room-number" placeholder="房间号（选填）">
             <input type="text" id="order-remark" placeholder="备注（选填）">
         </div>
+        <div class="order-notice">☕ 三山二水咖啡 · 点单后送餐到房<br>💳 支持微信支付，确认后为您准备</div>
         <button class="btn btn-primary btn-block" onclick="submitOrder()">确认下单</button>
     </div>
 </div>
@@ -78,51 +85,140 @@
 <!-- 点餐按钮 -->
 <button class="fab" onclick="toggleOrderPanel()">
     <span class="fab-icon">🛒</span>
-    <span class="fab-count" id="cart-count" style="display:none;">0</span>
+    <span class="fab-badge" id="cart-badge" data-count="0"></span>
 </button>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
 let cart = [];
+let cartSeq = 0;
 
-function addToOrder(id, name, price) {
-    const existing = cart.find(item => item.id === id);
-    if (existing) {
-        existing.quantity += 1;
-    } else {
-        cart.push({ id, name, price, quantity: 1 });
-    }
+// Delegate click on all 点单 buttons
+document.querySelector('.menu-container').addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-order');
+    if (!btn) return;
+    const id = parseInt(btn.dataset.id);
+    const name = btn.dataset.name;
+    const price = parseInt(btn.dataset.price);
+    const isTea = btn.dataset.tea === 'true';
+    const isDrink = btn.dataset.drink === 'true';
+    if (isTea) openTeaModal(id, name);
+    else if (isDrink) openDrinkModal(id, name, price);
+    else addToOrder(id, name, price, '');
+});
+
+// 庐山云雾茶弹窗
+function openTeaModal(id, name) {
+    const content = document.getElementById('drinkModalContent');
+    content.innerHTML = `<h3 style="text-align:center;color:var(--color-primary-dark);margin-bottom:1rem">🍵 ${name}</h3>
+        <div class="option-group"><div class="option-group-label">茶叶类型</div>
+            <div class="option-chips" data-group="type">
+                <button class="option-chip selected" data-val="红茶">红茶</button>
+                <button class="option-chip" data-val="绿茶">绿茶</button>
+            </div></div>
+        <div class="option-group"><div class="option-group-label">规格</div>
+            <div class="option-chips" data-group="size">
+                <button class="option-chip selected" data-val="杯" data-price="38">杯 ¥38</button>
+                <button class="option-chip" data-val="壶" data-price="98">壶 ¥98</button>
+            </div></div>
+        <div class="drink-modal-actions">
+            <button class="btn btn-outline" onclick="closeDrinkModal()">取消</button>
+            <button class="btn btn-primary" id="confirmTeaBtn">加入购物车</button></div>`;
+    document.getElementById('drinkModal').style.display = 'flex';
+    content.querySelectorAll('.option-chips').forEach(group => {
+        group.addEventListener('click', function(e) {
+            const chip = e.target.closest('.option-chip');
+            if (!chip) return;
+            group.querySelectorAll('.option-chip').forEach(c => c.classList.remove('selected'));
+            chip.classList.add('selected');
+        });
+    });
+    document.getElementById('confirmTeaBtn').onclick = function() {
+        const type = content.querySelector('[data-group="type"] .option-chip.selected').dataset.val;
+        const sizeChip = content.querySelector('[data-group="size"] .option-chip.selected');
+        const fullName = name + '（' + type + '·' + sizeChip.dataset.val + '）';
+        addToOrder(id, fullName, parseInt(sizeChip.dataset.price), ' ' + type + '·' + sizeChip.dataset.val);
+        closeDrinkModal();
+    };
+}
+
+// 普通饮品弹窗
+function openDrinkModal(id, name, price) {
+    const isWater = name === '椰子水';
+    const iceLabel = isWater ? '冰量' : '冰量/温度';
+    const iceOpt3 = isWater ? '不额外加冰' : '温';
+    const content = document.getElementById('drinkModalContent');
+    content.innerHTML = `<h3 style="text-align:center;color:var(--color-primary-dark);margin-bottom:1rem">🥤 ${name} <span style="font-weight:400;color:var(--color-accent)">¥${price}</span></h3>
+        <div class="option-group"><div class="option-group-label">糖度</div>
+            <div class="option-chips" data-group="sugar">
+                <button class="option-chip" data-val="全糖">全糖</button>
+                <button class="option-chip selected" data-val="半糖">半糖</button>
+                <button class="option-chip" data-val="不额外加糖">不额外加糖</button>
+            </div></div>
+        <div class="option-group"><div class="option-group-label">${iceLabel}</div>
+            <div class="option-chips" data-group="ice">
+                <button class="option-chip selected" data-val="正常冰">正常冰</button>
+                <button class="option-chip" data-val="少冰">少冰</button>
+                <button class="option-chip" data-val="${iceOpt3}">${iceOpt3}</button>
+            </div></div>
+        <div class="drink-modal-actions">
+            <button class="btn btn-outline" onclick="closeDrinkModal()">取消</button>
+            <button class="btn btn-primary" id="confirmDrinkBtn">加入购物车</button></div>`;
+    document.getElementById('drinkModal').style.display = 'flex';
+    content.querySelectorAll('.option-chips').forEach(group => {
+        group.addEventListener('click', function(e) {
+            const chip = e.target.closest('.option-chip');
+            if (!chip) return;
+            group.querySelectorAll('.option-chip').forEach(c => c.classList.remove('selected'));
+            chip.classList.add('selected');
+        });
+    });
+    document.getElementById('confirmDrinkBtn').onclick = function() {
+        const sugar = content.querySelector('[data-group="sugar"] .option-chip.selected').dataset.val;
+        const ice = content.querySelector('[data-group="ice"] .option-chip.selected').dataset.val;
+        addToOrder(id, name, price, ' ' + sugar + '·' + ice);
+        closeDrinkModal();
+    };
+}
+
+function closeDrinkModal() {
+    document.getElementById('drinkModal').style.display = 'none';
+}
+
+function addToOrder(id, name, price, opts) {
+    cartSeq++;
+    cart.push({ seq: cartSeq, id, name, price, quantity: 1, opts });
     updateOrderPanel();
 }
 
-function removeFromOrder(id) {
-    cart = cart.filter(item => item.id !== id);
+function removeFromOrder(seq) {
+    cart = cart.filter(item => item.seq !== seq);
     updateOrderPanel();
 }
 
 function updateOrderPanel() {
     const container = document.getElementById('order-items');
-    const countEl = document.getElementById('cart-count');
+    const badge = document.getElementById('cart-badge');
     const totalEl = document.querySelector('.total-price');
+    const totalCnt = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+    badge.setAttribute('data-count', totalCnt);
+    badge.textContent = totalCnt || '';
 
     if (cart.length === 0) {
         container.innerHTML = '<p class="empty-hint">还没有选择菜品～</p>';
-        countEl.style.display = 'none';
         totalEl.textContent = '¥0';
     } else {
         container.innerHTML = cart.map(item => `
             <div class="order-item">
-                <span class="order-item-name">${item.name}</span>
+                <span class="order-item-name">${item.name}<span style="color:var(--color-text-lighter);font-size:0.78rem">${item.opts||''}</span></span>
                 <span class="order-item-qty">×${item.quantity}</span>
                 <span class="order-item-price">¥${item.price * item.quantity}</span>
-                <button class="btn-remove" onclick="removeFromOrder(${item.id})">删除</button>
+                <button class="btn-remove" onclick="removeFromOrder(${item.seq})">删除</button>
             </div>
         `).join('');
-        const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-        totalEl.textContent = '¥' + total;
-        countEl.style.display = 'flex';
-        countEl.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+        totalEl.textContent = '¥' + cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     }
 }
 
@@ -143,7 +239,7 @@ function submitOrder() {
         openid: 'web_user',
         items: cart.map(item => ({
             id: item.id,
-            name: item.name,
+            name: item.name + (item.opts||''),
             quantity: item.quantity,
             price: item.price
         })),
