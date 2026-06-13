@@ -3,6 +3,7 @@
 v2：菜单改为咖啡简餐，地址更新为大林沟路27号
 初始化数据库时自动填充
 """
+from services.logger import info, warning, error as log_error
 from models import SessionLocal, init_db, Room, MenuCategory, MenuItem, QuickService, TravelRoute, FoodRecommend, Booking, AggregatedOrder, GuestPoints, PointLog
 
 
@@ -19,7 +20,7 @@ def seed_all():
             seed_bookings(db)
             seed_points(db)
             db.commit()
-            print("✅ 新增模块数据补充完成！")
+            info(" 新增模块数据补充完成！")
             return
 
         seed_rooms(db)
@@ -32,7 +33,7 @@ def seed_all():
         seed_points(db)
 
         db.commit()
-        print("✅ 种子数据初始化完成！")
+        info(" 种子数据初始化完成！")
 
     except Exception as e:
         db.rollback()

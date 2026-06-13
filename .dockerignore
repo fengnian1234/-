@@ -1,0 +1,58 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python 缓存
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+.eggs
+
+# 虚拟环境
+venv
+.venv
+env
+python-embed
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# 测试/Debug
+*.db
+*.db-journal
+*.db-wal
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 临时文件
+*.tmp
+*.log
+*.pid
+
+# PPT/DOCX 源文件（已生成的报告）
+reports/*.pptx
+reports/*.docx
+
+# 环境配置（不要打包本地配置）
+.env
+.env.local
+.env.prod.local
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Node（如果有）
+node_modules
+
+# 截图
+截图/

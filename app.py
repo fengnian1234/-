@@ -7,6 +7,7 @@ import hashlib
 import time
 from datetime import datetime
 from flask import Flask, request, jsonify, render_template, abort
+from services.logger import info, warning, error as log_error, debug, log_ai, log_keyword, log_booking
 from config import (
     DEBUG, SECRET_KEY, WECHAT_TOKEN, WECHAT_APP_ID, WECHAT_APP_SECRET,
     BASE_URL, BNB_NAME,
@@ -183,6 +184,17 @@ def services_page():
 def map_page():
     return render_template("map.html")
 
+@app.route("/simulator")
+def simulator_page():
+    """微信公众号模拟器（项目未落成期间的测试工具）"""
+    return render_template("wechat-simulator.html")
+
+
+@app.route("/docs")
+def docs_page():
+    """API 文档"""
+    return render_template("docs.html")
+
 
 # ══════════════════════════════════════════════════════════
 #  员工通知看板（要求2：醒目有效的通知方式）
@@ -265,10 +277,13 @@ def api_confirm_booking():
         guest_name=data["guest_name"],
         check_in_date=data["check_in"],
         room_name=data.get("room_type", ""),
+        room_code=booking.room_code,
     )
     return jsonify({
         "success": True,
         "booking": booking.to_dict(),
+        "room_code": booking.room_code,
+        "room_code_tip": f"🔑 房间共享码：{booking.room_code}\n同住人回复「绑定房间 {booking.room_code}」即可共享AI管家全部功能",
         "pre_arrival_message": pre_arrival_msg,
     })
 
@@ -311,6 +326,37 @@ def api_check_ai_enabled():
         return jsonify({"error": "缺少openid"}), 400
     enabled = is_ai_enabled(data["openid"])
     return jsonify({"ai_enabled": enabled})
+
+
+@app.route("/api/booking/bind-room", methods=["POST"])
+def api_bind_room_guest():
+    """合住人通过房间码绑定"""
+    from services.booking import bind_room_guest
+    data = request.get_json()
+    if not data or "openid" not in data or "room_code" not in data:
+        return jsonify({"success": False, "message": "缺少 openid 或 room_code"}), 400
+    result = bind_room_guest(data["room_code"].upper(), data["openid"],
+                             data.get("guest_name", ""), data.get("relation", "同住"))
+    return jsonify(result)
+
+
+@app.route("/api/booking/room-code", methods=["POST"])
+def api_get_room_code():
+    """获取用户的房间共享码"""
+    from services.booking import get_booking_by_openid, get_room_guests
+    data = request.get_json()
+    if not data or "openid" not in data:
+        return jsonify({"success": False, "message": "缺少 openid"}), 400
+    booking = get_booking_by_openid(data["openid"])
+    if not booking:
+        return jsonify({"success": False, "message": "未找到有效预订"})
+    return jsonify({
+        "success": True,
+        "room_code": booking.get("room_code", ""),
+        "room_type": booking.get("room_type", ""),
+        "check_in_date": booking.get("check_in_date", ""),
+        "guests": get_room_guests(booking.get("room_code", "")),
+    })
 
 
 # ══════════════════════════════════════════════════════════
@@ -562,6 +608,254 @@ def api_create_service_request():
         notes=data.get("notes", ""),
     )
     return jsonify({"success": True, "request": req.to_dict()})
+
+
+# ══════════════════════════════════════════════════════════
+#  微信模拟器 API（项目未落成期间的测试工具）
+# ══════════════════════════════════════════════════════════
+class _MockWechatMessage:
+    """模拟微信消息对象，供模拟器使用"""
+    def __init__(self, content: str, openid: str):
+        self.content = content
+        self.text = content
+        self.source = openid
+        self.from_user = openid
+        self.type = 'text'
+
+@app.route("/api/simulate-chat", methods=["POST"])
+def api_simulate_chat():
+    """
+    模拟微信消息处理（用于本地测试）
+    接收 {"content": "...", "openid": "test_xxx"}
+    返回 {"reply": "...", "handler": "keyword|ai|fallback", "mode": "...", "matched": "..."}
+    """
+    from wechat import match_keyword
+    from services.ai import get_conversation_mode
+
+    data = request.get_json()
+    if not data or "content" not in data:
+        return jsonify({"error": "缺少content字段"}), 400
+
+    content = data["content"].strip()
+    openid = data.get("openid", "sim_test_user")
+
+    if not content:
+        return jsonify({"reply": "请输入消息内容", "handler": "empty", "mode": "travel_advisor", "matched": None})
+
+    # 构建模拟消息
+    msg = _MockWechatMessage(content, openid)
+
+    # 1. 尝试关键词匹配
+    handler, match = match_keyword(content)
+    if handler:
+        try:
+            reply = handler(msg, match)
+            return jsonify({
+                "reply": reply,
+                "handler": "keyword",
+                "mode": get_conversation_mode(openid),
+                "matched": str(match.re.pattern) if match else None,
+            })
+        except Exception:
+            pass  # 降级到 AI
+
+    # 2. AI 智能对话
+    mode = get_conversation_mode(openid)
+    try:
+        if mode == "travel_advisor":
+            from services.ai import chat_travel_advisor
+            reply = chat_travel_advisor(openid, content)
+            handler_type = "ai_travel_advisor"
+        elif mode == "pre_arrival":
+            from services.ai import chat_pre_arrival
+            reply = chat_pre_arrival(openid, content)
+            handler_type = "ai_pre_arrival"
+        elif mode == "post_stay":
+            from services.ai import chat_post_stay
+            reply = chat_post_stay(openid, content)
+            handler_type = "ai_post_stay"
+        else:
+            from services.ai import chat
+            reply = chat(openid, content)
+            handler_type = "ai_guest_butler"
+
+        return jsonify({
+            "reply": reply,
+            "handler": handler_type,
+            "mode": mode,
+            "matched": None,
+        })
+    except Exception:
+        pass
+
+    # 3. 兜底
+    return jsonify({
+        "reply": "我收到了您的消息～\n\n如需帮助，可以回复数字 1-5 使用快捷功能，或回复「人工」转接人工客服。",
+        "handler": "fallback",
+        "mode": mode,
+        "matched": None,
+    })
+
+
+@app.route("/api/simulate/reset", methods=["POST"])
+def api_simulate_reset():
+    """重置模拟用户对话历史"""
+    from services.ai import reset_conversation as ai_reset
+    data = request.get_json() or {}
+    openid = data.get("openid", "sim_test_user")
+    ai_reset(openid)
+    return jsonify({"success": True, "message": f"已重置 {openid} 的对话历史"})
+
+
+@app.route("/api/simulate/mode", methods=["POST"])
+def api_simulate_set_mode():
+    """
+    设置模拟用户的 AI 模式（通过模拟预订状态）
+    用于测试三种 AI 模式：travel_advisor | guest_butler | post_stay
+    """
+    from services.ai import get_conversation_mode, reset_conversation
+    from models import SessionLocal, Booking
+    from datetime import datetime, timedelta
+
+    data = request.get_json() or {}
+    openid = data.get("openid", "sim_test_user")
+    mode = data.get("mode", "travel_advisor")
+
+    if mode == "pre_arrival":
+        # 已预订但未入住：创建 confirmed 预订，入住日期设为未来
+        db = SessionLocal()
+        try:
+            # 清理所有旧记录，避免 is_checked_in 误判
+            db.query(Booking).filter(
+                Booking.openid == openid,
+                Booking.status.in_(["confirmed", "checked_in", "checked_out"])
+            ).update({"status": "cancelled"}, synchronize_session=False)
+            db.commit()
+            existing = db.query(Booking).filter(
+                Booking.openid == openid,
+                Booking.status == "confirmed"
+            ).first()
+            if not existing:
+                now = datetime.utcnow()
+                booking = Booking(
+                    openid=openid,
+                    guest_name="测试客人",
+                    phone="13800000000",
+                    platform="携程",
+                    check_in_date=str((now + timedelta(days=3)).date()),  # 3天后入住
+                    check_out_date=str((now + timedelta(days=5)).date()),
+                    room_type="山野大床房",
+                    status="confirmed",
+                    ai_enabled=True,
+                )
+                db.add(booking)
+                db.commit()
+                reset_conversation(openid)
+        finally:
+            db.close()
+
+    elif mode == "guest_butler":
+        # 已入住：创建 checked_in 预订
+        db = SessionLocal()
+        try:
+            # 清理所有旧记录，确保 is_checked_in 唯一判断
+            db.query(Booking).filter(
+                Booking.openid == openid,
+                Booking.status.in_(["confirmed", "checked_in", "checked_out"])
+            ).update({"status": "cancelled"}, synchronize_session=False)
+            db.commit()
+            existing = db.query(Booking).filter(
+                Booking.openid == openid,
+                Booking.status == "checked_in"
+            ).first()
+            if not existing:
+                now = datetime.utcnow()
+                booking = Booking(
+                    openid=openid,
+                    guest_name="测试客人",
+                    phone="13800000000",
+                    platform="携程",
+                    check_in_date=str(now.date()),
+                    check_out_date=str((now + timedelta(days=2)).date()),
+                    room_type="山野大床房",
+                    status="checked_in",
+                    ai_enabled=True,
+                )
+                db.add(booking)
+                db.commit()
+                reset_conversation(openid)
+        finally:
+            db.close()
+
+    elif mode == "post_stay":
+        db = SessionLocal()
+        try:
+            # 清理活跃预订（confirmed/checked_in），避免 is_ai_enabled 误判
+            db.query(Booking).filter(
+                Booking.openid == openid,
+                Booking.status.in_(["confirmed", "checked_in"])
+            ).update({"status": "checked_out", "checked_out_at": datetime.utcnow()}, synchronize_session=False)
+            db.commit()
+            existing = db.query(Booking).filter(
+                Booking.openid == openid,
+                Booking.status == "checked_out"
+            ).first()
+            if not existing:
+                now = datetime.utcnow()
+                booking = Booking(
+                    openid=openid,
+                    guest_name="测试客人",
+                    phone="13800000000",
+                    platform="携程",
+                    check_in_date=str((now - timedelta(days=3)).date()),
+                    check_out_date=str((now - timedelta(days=1)).date()),
+                    room_type="山野大床房",
+                    status="checked_out",
+                    ai_enabled=True,
+                    checked_out_at=now - timedelta(days=1),
+                )
+                db.add(booking)
+                db.commit()
+                reset_conversation(openid)
+        finally:
+            db.close()
+
+    elif mode == "travel_advisor":
+        db = SessionLocal()
+        try:
+            db.query(Booking).filter(
+                Booking.openid == openid,
+                Booking.status.in_(["confirmed", "checked_in", "checked_out"])
+            ).update({"status": "cancelled"}, synchronize_session=False)
+            db.commit()
+            db.commit()
+            reset_conversation(openid)
+        finally:
+            db.close()
+
+    current_mode = get_conversation_mode(openid)
+    return jsonify({
+        "success": True,
+        "mode": current_mode,
+        "message": f"当前 AI 模式: {current_mode}",
+    })
+
+
+@app.route("/api/simulate/keywords")
+def api_simulate_keywords():
+    """返回所有关键词路由列表（供模拟器展示可测试的关键词）"""
+    import re as _re
+    from wechat import KEYWORD_ROUTES
+    routes = []
+    for pattern, handler in KEYWORD_ROUTES:
+        p = pattern.strip("^$")
+        p = _re.sub(r'\([^)]*\)', '1', p)
+        p = _re.sub(r'\\d\+', '1', p)
+        routes.append({
+            "pattern": pattern,
+            "example": p,
+        })
+    return jsonify({"routes": routes})
 
 
 # ══════════════════════════════════════════════════════════

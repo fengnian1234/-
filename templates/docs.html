@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API 文档 · 云上归墅</title>
+<style>
+:root {
+  --bg: #f8f9fa; --card: #fff; --text: #2a3328; --text2: #5a6558; --text3: #8a9586;
+  --pri: #4a7c59; --acc: #c8966a; --border: #e0e4dc;
+  --method-get: #4a7c59; --method-post: #c8966a; --method-delete: #c44;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.6; padding:20px; }
+h1 { color:var(--pri); font-size:24px; margin-bottom:8px; }
+h2 { color:var(--pri); font-size:18px; margin:24px 0 12px; padding-bottom:4px; border-bottom:2px solid var(--pri); }
+h3 { font-size:15px; margin:16px 0 8px; }
+.endpoint { background:var(--card); border-radius:8px; padding:12px 16px; margin:8px 0; border-left:4px solid var(--border); }
+.endpoint:hover { border-left-color:var(--pri); }
+.method { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700; color:#fff; margin-right:6px; min-width:42px; text-align:center; }
+.method.get { background:var(--method-get); }
+.method.post { background:var(--method-post); }
+.path { font-family:monospace; font-size:14px; font-weight:600; }
+.desc { color:var(--text2); font-size:13px; margin-top:4px; }
+.container { max-width:900px; margin:0 auto; }
+.header { background:var(--card); border-radius:12px; padding:24px; margin-bottom:20px; }
+.tag { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; background:var(--border); color:var(--text2); margin-right:4px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+<h1>🏔️ 云上归墅 · API 文档</h1>
+<p style="color:var(--text2)">微信公众号 AI 客服系统 — 全部 28 条 API 端点</p>
+</div>
+
+<h2>📱 页面路由</h2>
+
+<div class="endpoint"><span class="method get">GET</span><span class="path">/</span><div class="desc">首页 — H5 客房展示</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/rooms</span><div class="desc">房型列表页</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/rooms/&lt;id&gt;</span><div class="desc">房间详情页</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/menu</span><div class="desc">咖啡简餐菜单页</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/travel</span><div class="desc">游玩攻略页</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/travel/&lt;id&gt;</span><div class="desc">路线详情页</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/travel/food/&lt;id&gt;</span><div class="desc">美食详情页</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/services</span><div class="desc">快捷服务页</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/map</span><div class="desc">位置导航页</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/points</span><div class="desc">积分中心 H5</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/orders</span><div class="desc">订单聚合看板</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/staff</span><div class="desc">员工通知看板</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/simulator</span><div class="desc">微信模拟器（测试用）</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/docs</span><div class="desc">API 文档（本页）</div></div>
+
+<h2>🔌 预订管理 API</h2>
+
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/booking/confirm</span><div class="desc">前台确认预订，解锁 AI 管家<br>参数: openid, guest_name, phone, platform, check_in, check_out, room_type</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/booking/&lt;id&gt;/checkin</span><div class="desc">办理入住<br>参数: room_number</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/booking/&lt;id&gt;/checkout</span><div class="desc">办理退房（触发好评推送倒计时）</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/booking/check-ai</span><div class="desc">检查 AI 是否解锁<br>参数: openid</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/api/booking/platforms</span><div class="desc">获取预订平台链接</div></div>
+
+<h2>⭐ 积分体系 API</h2>
+
+<div class="endpoint"><span class="method get">GET</span><span class="path">/api/points/&lt;openid&gt;</span><div class="desc">获取积分概览（积分/等级/兑换列表/规则）</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/points/earn</span><div class="desc">获取积分（签到/评价/分享等）<br>参数: openid, action</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/points/redeem</span><div class="desc">兑换商品<br>参数: openid, item</div></div>
+
+<h2>📊 订单聚合 API</h2>
+
+<div class="endpoint"><span class="method get">GET</span><span class="path">/api/orders</span><div class="desc">查询订单列表<br>参数: date_from, date_to, platform, status</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/orders</span><div class="desc">添加新订单<br>参数: platform, guest_name, check_in, check_out, nights, total_amount 等</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/orders/&lt;id&gt;/status</span><div class="desc">更新订单状态</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/api/orders/dashboard</span><div class="desc">订单看板统计</div></div>
+
+<h2>🛎️ 员工通知 API</h2>
+
+<div class="endpoint"><span class="method get">GET</span><span class="path">/api/staff/dashboard</span><div class="desc">获取看板数据（待处理/已完成/统计）</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/staff/acknowledge</span><div class="desc">员工确认请求<br>参数: request_id, handler</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/staff/complete</span><div class="desc">员工完成请求<br>参数: request_id, notes</div></div>
+
+<h2>🔍 口碑监控 API</h2>
+
+<div class="endpoint"><span class="method get">GET</span><span class="path">/api/monitor/summary</span><div class="desc">平台信息汇总</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/api/monitor/report</span><div class="desc">口碑文字报告</div></div>
+
+<h2>📝 好评推送 API</h2>
+
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/review/check-reminders</span><div class="desc">检查并推送好评提醒（定时任务调用）</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/api/review/platforms</span><div class="desc">获取各平台评价链接</div></div>
+
+<h2>🧪 模拟器 API</h2>
+
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/simulate-chat</span><span class="desc">模拟微信消息处理<br>参数: openid, content</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/simulate/mode</span><span class="desc">设置 AI 模式<br>参数: openid, mode (travel_advisor/pre_arrival/guest_butler/post_stay)</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/api/simulate/reset</span><span class="desc">重置对话历史<br>参数: openid</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/api/simulate/keywords</span><div class="desc">获取全部关键词路由</div></div>
+
+<h2>🏥 系统</h2>
+
+<div class="endpoint"><span class="method get">GET</span><span class="path">/health</span><div class="desc">健康检查</div></div>
+<div class="endpoint"><span class="method get">GET</span><span class="path">/wechat</span><div class="desc"><span class="tag">微信</span>微信服务器接入验证 (GET)</div></div>
+<div class="endpoint"><span class="method post">POST</span><span class="path">/wechat</span><div class="desc"><span class="tag">微信</span>微信消息接收 (POST)</div></div>
+
+
+<h2>🗄️ 数据库 Schema (10张表)</h2>
+
+<h3>rooms · 房型表</h3>
+<div class="endpoint" style="border-left-color:#4a7c59">
+<table style="width:100%;font-size:12px;border-collapse:collapse">
+<tr style="background:var(--border)"><td style="padding:4px 8px;font-weight:600">字段</td><td style="padding:4px 8px;font-weight:600">类型</td><td style="padding:4px 8px;font-weight:600">说明</td></tr>
+<tr><td>id</td><td>Integer PK</td><td>主键</td></tr>
+<tr><td>name</td><td>String(100)</td><td>房间名称</td></tr>
+<tr><td>price / original_price</td><td>Float</td><td>价格 / 原价</td></tr>
+<tr><td>capacity / bed_type / area</td><td>Integer / String</td><td>人数 / 床型 / 面积</td></tr>
+<tr><td>amenities / images</td><td>JSON</td><td>设施列表 / 图片URL列表</td></tr>
+<tr><td>view_type</td><td>String(100)</td><td>景观: 山景/云海/竹林</td></tr>
+</table></div>
+
+<h3>bookings · 预订表</h3>
+<div class="endpoint" style="border-left-color:#c8966a">
+<table style="width:100%;font-size:12px;border-collapse:collapse">
+<tr style="background:var(--border)"><td style="padding:4px 8px;font-weight:600">字段</td><td style="padding:4px 8px;font-weight:600">说明</td></tr>
+<tr><td>status</td><td>confirmed → checked_in → checked_out → completed</td></tr>
+<tr><td>ai_enabled</td><td>AI管家是否解锁（确认预订后开启）</td></tr>
+<tr><td>check_in_date / check_out_date</td><td>入住/退房日期</td></tr>
+<tr><td>checked_out_at</td><td>退房时间（触发30分钟好评推送倒计时）</td></tr>
+<tr><td>review_sent</td><td>是否已推送好评提醒</td></tr>
+</table></div>
+
+<h3>其余8张表概览</h3>
+<div class="endpoint">
+<table style="width:100%;font-size:12px;border-collapse:collapse">
+<tr style="background:var(--border)"><td style="padding:4px 8px;font-weight:600">表名</td><td style="padding:4px 8px;font-weight:600">用途</td></tr>
+<tr><td>menu_categories / menu_items</td><td>咖啡简餐菜单（分类+菜品）</td></tr>
+<tr><td>orders</td><td>点餐订单（微信支付）</td></tr>
+<tr><td>travel_routes</td><td>庐山游玩路线（景点/时长/难度）</td></tr>
+<tr><td>food_recommends</td><td>周边美食推荐（人均/必点/标签）</td></tr>
+<tr><td>quick_services</td><td>快捷服务定义（打扫/叫醒/维修等）</td></tr>
+<tr><td>service_requests</td><td>服务请求记录（员工通知）</td></tr>
+<tr><td>platform_mentions</td><td>多平台评价/口碑采集</td></tr>
+<tr><td>guest_points / point_logs</td><td>积分体系（会员等级/积分流水）</td></tr>
+<tr><td>aggregated_orders</td><td>多平台订单聚合（含佣金计算）</td></tr>
+<tr><td>message_logs</td><td>消息日志（AI对话持久化）</td></tr>
+</table></div>
+
+</div>
+</body>
+</html>

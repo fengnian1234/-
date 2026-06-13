@@ -4,8 +4,11 @@
 - 平台预订链接
 - 退房后自动好评推送
 """
+import secrets
+import string
 from datetime import datetime, timedelta
-from models import SessionLocal, Booking
+from models import SessionLocal, Booking, RoomGuest
+from services.logger import info, warning, error as log_error, log_booking
 from config import (
     BOOKING_PLATFORMS, REVIEW_PLATFORMS, REVIEW_REMINDER_DELAY_MINUTES,
     BNB_NAME, BNB_ADDRESS,
@@ -13,31 +16,174 @@ from config import (
 
 
 def get_booking_by_openid(openid: str, include_checked_out: bool = False):
-    """获取用户最近预订"""
+    """获取用户最近预订（预订者本人 或 合住人）"""
     db = SessionLocal()
     try:
-        statuses = ["confirmed", "checked_in"]
+        booking, role = _get_active_booking_for_openid(db, openid)
+        if booking:
+            result = booking.to_dict()
+            result["role"] = role
+            return result
+
         if include_checked_out:
-            statuses.append("checked_out")
+            # 查本人
+            booking = db.query(Booking).filter(
+                Booking.openid == openid,
+                Booking.status == "checked_out",
+            ).order_by(Booking.created_at.desc()).first()
+            # 查合住人关联的已退房记录
+            if not booking:
+                guest = db.query(RoomGuest).filter(
+                    RoomGuest.openid == openid,
+                ).first()
+                if guest:
+                    booking = db.query(Booking).filter(
+                        Booking.room_code == guest.room_code,
+                        Booking.status == "checked_out",
+                    ).order_by(Booking.created_at.desc()).first()
+            if booking:
+                result = booking.to_dict()
+                return result
+        return None
+    finally:
+        db.close()
+
+
+def _get_active_booking_for_openid(db, openid: str):
+    """
+    查找用户关联的有效预订（预订者本人 或 通过房间码绑定的合住人）
+    返回 (Booking, role) 或 (None, None)
+    """
+    # 1. 先查本人预订
+    booking = db.query(Booking).filter(
+        Booking.openid == openid,
+        Booking.ai_enabled == True,
+        Booking.status.in_(["confirmed", "checked_in"]),
+    ).first()
+    if booking:
+        return booking, "primary"
+
+    # 2. 查合住人关联
+    guest = db.query(RoomGuest).filter(
+        RoomGuest.openid == openid,
+        RoomGuest.is_active == True,
+    ).first()
+    if guest:
         booking = db.query(Booking).filter(
-            Booking.openid == openid,
-            Booking.status.in_(statuses),
-        ).order_by(Booking.created_at.desc()).first()
-        return booking.to_dict() if booking else None
+            Booking.room_code == guest.room_code,
+            Booking.ai_enabled == True,
+            Booking.status.in_(["confirmed", "checked_in"]),
+        ).first()
+        if booking:
+            return booking, "guest"
+
+    return None, None
+
+
+def is_checked_in(openid: str) -> bool:
+    """检查用户是否已实际入住（含合住人）"""
+    db = SessionLocal()
+    try:
+        booking, _ = _get_active_booking_for_openid(db, openid)
+        if booking and booking.status == "checked_in":
+            return True
+        return False
     finally:
         db.close()
 
 
 def is_ai_enabled(openid: str) -> bool:
-    """检查用户的AI对话是否已解锁"""
+    """检查用户的AI对话是否已解锁（预订者本人或合住人）"""
     db = SessionLocal()
     try:
+        booking, _ = _get_active_booking_for_openid(db, openid)
+        return booking is not None
+    finally:
+        db.close()
+
+
+def _generate_room_code() -> str:
+    """生成 6 位房间共享码（易记、不易碰撞）"""
+    chars = string.ascii_uppercase + string.digits
+    for _ in range(10):  # 最多重试10次
+        code = ''.join(secrets.choice(chars) for _ in range(6))
+        db = SessionLocal()
+        try:
+            exists = db.query(Booking).filter(Booking.room_code == code).first()
+            if not exists:
+                return code
+        finally:
+            db.close()
+    return ''.join(secrets.choice(chars) for _ in range(6))  # 兜底
+
+
+def bind_room_guest(room_code: str, openid: str, guest_name: str = "", relation: str = "同住") -> dict:
+    """
+    合住人通过房间码绑定，共享 AI 管家全部权限。
+    返回 {"success": True/False, "message": "...", "booking": {...}}
+    """
+    db = SessionLocal()
+    try:
+        # 1. 验证房间码有效性
         booking = db.query(Booking).filter(
-            Booking.openid == openid,
+            Booking.room_code == room_code,
             Booking.ai_enabled == True,
             Booking.status.in_(["confirmed", "checked_in"]),
         ).first()
-        return booking is not None
+
+        if not booking:
+            return {"success": False, "message": "房间码无效或预订已失效，请确认码是否正确"}
+
+        # 2. 检查是否已绑定（去重）
+        existing = db.query(RoomGuest).filter(
+            RoomGuest.room_code == room_code,
+            RoomGuest.openid == openid,
+        ).first()
+        if existing:
+            if existing.is_active:
+                return {
+                    "success": True,
+                    "message": f"已绑定过该房间，AI 管家已就绪～",
+                    "booking": booking.to_dict(),
+                    "room_code": room_code,
+                    "role": "guest",
+                }
+            else:
+                existing.is_active = True
+                db.commit()
+        else:
+            # 3. 创建绑定
+            guest = RoomGuest(
+                room_code=room_code,
+                openid=openid,
+                guest_name=guest_name or f"同住人{openid[:6]}",
+                relation=relation,
+            )
+            db.add(guest)
+            db.commit()
+            log_booking(openid, "bind_room", f"room_code={room_code} name={guest_name}")
+
+        return {
+            "success": True,
+            "message": f"绑定成功！欢迎加入 {booking.room_type or '云上归墅'}，AI 管家已就绪～",
+            "booking": booking.to_dict(),
+            "room_code": room_code,
+            "role": "guest",
+        }
+
+    finally:
+        db.close()
+
+
+def get_room_guests(room_code: str) -> list:
+    """获取某房间码下的所有合住人"""
+    db = SessionLocal()
+    try:
+        guests = db.query(RoomGuest).filter(
+            RoomGuest.room_code == room_code,
+            RoomGuest.is_active == True,
+        ).all()
+        return [g.to_dict() for g in guests]
     finally:
         db.close()
 
@@ -45,9 +191,10 @@ def is_ai_enabled(openid: str) -> bool:
 def confirm_booking(openid: str, guest_name: str, phone: str,
                     platform: str, check_in: str, check_out: str,
                     room_type: str = "") -> Booking:
-    """前台确认预订（解锁AI）"""
+    """前台确认预订（解锁AI + 生成房间共享码）"""
     db = SessionLocal()
     try:
+        room_code = _generate_room_code()
         booking = Booking(
             openid=openid,
             guest_name=guest_name,
@@ -56,6 +203,7 @@ def confirm_booking(openid: str, guest_name: str, phone: str,
             check_in_date=check_in,
             check_out_date=check_out,
             room_type=room_type,
+            room_code=room_code,
             status="confirmed",
             ai_enabled=True,
         )
@@ -77,7 +225,40 @@ def check_in_booking(booking_id: int, room_number: str = "") -> Booking:
             booking.room_number = room_number
             booking.ai_enabled = True
             db.commit()
+            # 预加载属性，避免返回后 session 关闭导致 DetachedInstanceError
+            _ = (booking.id, booking.status, booking.room_number, booking.guest_name, booking.room_type)
         return booking
+    finally:
+        db.close()
+
+
+def extend_booking(openid: str, extra_days: int = 1) -> dict:
+    """
+    续住：延长客人的退房日期。
+    返回更新后的预订信息，失败返回 None。
+    """
+    db = SessionLocal()
+    try:
+        booking = db.query(Booking).filter(
+            Booking.openid == openid,
+            Booking.status.in_(["confirmed", "checked_in"]),
+        ).order_by(Booking.created_at.desc()).first()
+
+        if not booking:
+            return None
+
+        # 解析现有退房日期，增加天数
+        from datetime import timedelta
+        try:
+            current_checkout = datetime.strptime(booking.check_out_date, "%Y-%m-%d")
+            new_checkout = current_checkout + timedelta(days=extra_days)
+            booking.check_out_date = new_checkout.strftime("%Y-%m-%d")
+        except (ValueError, TypeError):
+            # 日期格式异常时不更新
+            return None
+
+        db.commit()
+        return booking.to_dict()
     finally:
         db.close()
 
@@ -91,6 +272,8 @@ def check_out_booking(booking_id: int) -> Booking:
             booking.status = "checked_out"
             booking.checked_out_at = datetime.utcnow()
             db.commit()
+            # 预加载属性，避免返回后 session 关闭导致 DetachedInstanceError
+            _ = (booking.id, booking.status, booking.guest_name, booking.room_type, booking.checked_out_at)
         return booking
     finally:
         db.close()

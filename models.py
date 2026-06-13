@@ -8,7 +8,7 @@ from sqlalchemy import (
     Boolean, DateTime, ForeignKey, JSON
 )
 from sqlalchemy.orm import DeclarativeBase, relationship, sessionmaker
-from config import DATABASE_URL, DEBUG, REVIEW_REMINDER_DELAY_MINUTES
+from config import DATABASE_URL, DB_TYPE, DB_POOL_SIZE, DB_POOL_OVERFLOW, DEBUG, REVIEW_REMINDER_DELAY_MINUTES
 
 
 class Base(DeclarativeBase):
@@ -64,7 +64,7 @@ class Booking(Base):
     __tablename__ = "bookings"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    openid = Column(String(100), nullable=False, comment="微信用户openid")
+    openid = Column(String(100), nullable=False, comment="微信用户openid（预订者）")
     guest_name = Column(String(50), comment="客人姓名")
     phone = Column(String(20), comment="联系电话")
     room_type = Column(String(50), comment="预订房型")
@@ -72,6 +72,7 @@ class Booking(Base):
     check_in_date = Column(String(30), comment="入住日期")
     check_out_date = Column(String(30), comment="退房日期")
     room_number = Column(String(20), comment="分配的房号")
+    room_code = Column(String(12), unique=True, comment="房间共享码（同住人凭此码绑定AI）")
     status = Column(String(20), default="pending",
                     comment="状态: pending→confirmed→checked_in→checked_out→completed")
     ai_enabled = Column(Boolean, default=False, comment="AI对话是否解锁（确认预订后开启）")
@@ -96,6 +97,7 @@ class Booking(Base):
             "room_number": self.room_number,
             "status": self.status,
             "ai_enabled": self.ai_enabled,
+            "room_code": self.room_code,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M") if self.created_at else None,
         }
 
@@ -106,6 +108,33 @@ class Booking(Base):
         now = datetime.utcnow()
         trigger_time = self.checked_out_at + timedelta(minutes=REVIEW_REMINDER_DELAY_MINUTES)
         return now >= trigger_time
+
+
+# ══════════════════════════════════════════════════════════
+#  同住人模型（房间码共享机制）
+# ══════════════════════════════════════════════════════════
+class RoomGuest(Base):
+    """同住人 — 通过房间码绑定，共享 AI 管家全部权限"""
+    __tablename__ = "room_guests"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    room_code = Column(String(12), nullable=False, index=True, comment="房间共享码")
+    openid = Column(String(100), nullable=False, comment="合住人微信openid")
+    guest_name = Column(String(50), comment="合住人称呼")
+    relation = Column(String(30), default="同住", comment="关系: 家人/朋友/伴侣/同住")
+    is_active = Column(Boolean, default=True, comment="是否仍有效")
+    bound_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "room_code": self.room_code,
+            "openid": self.openid,
+            "guest_name": self.guest_name,
+            "relation": self.relation,
+            "bound_at": self.bound_at.strftime("%Y-%m-%d %H:%M") if self.bound_at else None,
+        }
 
 
 # ══════════════════════════════════════════════════════════
@@ -354,9 +383,20 @@ class MessageLog(Base):
 
 
 # ══════════════════════════════════════════════════════════
-#  数据库初始化
+#  数据库初始化（兼容 SQLite 和 PostgreSQL）
 # ══════════════════════════════════════════════════════════
-engine = create_engine(DATABASE_URL, echo=DEBUG)
+_engine_kwargs = {"echo": DEBUG}
+if DB_TYPE == "postgresql":
+    _engine_kwargs.update({
+        "pool_size": DB_POOL_SIZE,
+        "max_overflow": DB_POOL_OVERFLOW,
+        "pool_pre_ping": True,       # 连接前检测可用性
+        "pool_recycle": 3600,        # 每小时回收连接
+    })
+elif DB_TYPE == "sqlite":
+    _engine_kwargs["connect_args"] = {"check_same_thread": False}
+
+engine = create_engine(DATABASE_URL, **_engine_kwargs)
 SessionLocal = sessionmaker(bind=engine)
 
 

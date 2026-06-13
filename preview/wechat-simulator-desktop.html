@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>微信公众号模拟器 · 云上归墅 (桌面版)</title>
+<style>
+:root {
+  --bg: #f0f0f0; --panel-bg: #fafaf8; --card-bg: #fff;
+  --text: #2a3328; --text2: #5a6558; --text3: #8a9586;
+  --pri: #4a7c59; --pri-d: #3b5e47; --acc: #c8966a;
+  --bubble-me: #95ec69; --bubble-you: #fff;
+  --border: #e0e4dc; --shadow: 0 1px 3px rgba(0,0,0,.08);
+  --input-bg: #fff; --tag-bg: #eef4ec;
+  --navbar-bg: #2a2a2a; --navbar-text: #fff;
+}
+[data-theme="dark"] {
+  --bg: #1a1f1b; --panel-bg: #222825; --card-bg: #2a302c;
+  --text: #d8e0d4; --text2: #b0b8ac; --text3: #7a8578;
+  --bubble-me: #2a5a30; --bubble-you: #333a35;
+  --border: #3a423c; --shadow: 0 1px 4px rgba(0,0,0,.25);
+  --input-bg: #333a35; --tag-bg: #2a3a2e;
+  --navbar-bg: #111; --navbar-text: #d8e0d4;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); height:100vh; overflow:hidden; }
+button { cursor:pointer; border:none; outline:none; font-family:inherit; }
+input { font-family:inherit; outline:none; }
+
+.app { display:flex; height:100vh; max-width:1400px; margin:0 auto; gap:20px; padding:16px; }
+.phone-col { width:400px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; }
+.panel-col { flex:1; overflow-y:auto; min-width:0; background:var(--panel-bg); border-radius:16px; padding:20px; }
+
+.phone-frame { width:375px; flex:1; display:flex; flex-direction:column; background:var(--card-bg); border-radius:20px; box-shadow:var(--shadow),0 12px 40px rgba(0,0,0,.12); overflow:hidden; border:2px solid var(--border); }
+.wechat-nav { background:var(--navbar-bg); color:var(--navbar-text); padding:12px 14px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.wechat-nav .back { font-size:18px; opacity:.8; }
+.wechat-nav .title { font-size:15px; font-weight:600; }
+.wechat-nav .sub { font-size:11px; opacity:.65; }
+
+/* 聊天区 */
+.chat-area { flex:1; overflow-y:auto; padding:12px 14px; background:#e5e5e5; display:flex; flex-direction:column; gap:8px; }
+[data-theme="dark"] .chat-area { background:#1a1f1b; }
+.chat-area .time-tag { text-align:center; font-size:11px; color:var(--text3); margin:4px 0; }
+.chat-bubble { max-width:75%; padding:10px 13px; border-radius:4px; font-size:14px; line-height:1.6; word-break:break-word; white-space:pre-wrap; position:relative; }
+.chat-bubble.you { align-self:flex-start; background:var(--bubble-you); border-radius:4px 12px 12px 12px; }
+.chat-bubble.me { align-self:flex-end; background:var(--bubble-me); border-radius:12px 4px 12px 12px; }
+.chat-bubble .meta { font-size:10px; color:var(--text3); margin-top:4px; padding-top:4px; border-top:1px solid rgba(0,0,0,.08); }
+[data-theme="dark"] .chat-bubble .meta { border-top-color:rgba(255,255,255,.08); }
+
+.input-area { display:flex; gap:8px; padding:10px 12px; background:var(--card-bg); border-top:1px solid var(--border); flex-shrink:0; }
+.input-area input { flex:1; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px; background:var(--input-bg); color:var(--text); }
+.input-area button { padding:8px 14px; background:var(--pri); color:#fff; border-radius:6px; font-size:13px; font-weight:600; }
+.input-area button:hover { background:var(--pri-d); }
+
+/* 面板 */
+.panel-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.panel-header h1 { font-size:20px; color:var(--pri-d); }
+.theme-toggle { padding:6px 14px; border-radius:14px; font-size:12px; background:var(--card-bg); color:var(--text2); border:1px solid var(--border); }
+.panel-col h2 { font-size:16px; color:var(--pri-d); margin-bottom:10px; padding-bottom:6px; border-bottom:2px solid var(--pri); }
+.panel-col h3 { font-size:13px; color:var(--text2); margin:14px 0 6px; text-transform:uppercase; letter-spacing:.5px; }
+.panel-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+.mode-bar { display:flex; gap:6px; margin-bottom:12px; }
+.mode-btn { flex:1; padding:10px 8px; border-radius:8px; font-size:12px; background:var(--card-bg); color:var(--text2); border:1px solid var(--border); transition:all .15s; }
+.mode-btn.active { background:var(--pri); color:#fff; border-color:var(--pri); }
+.mode-btn:hover:not(.active) { border-color:var(--acc); color:var(--acc); }
+
+.info-card { background:var(--card-bg); border-radius:8px; padding:10px 14px; margin-bottom:8px; border-left:3px solid var(--pri); font-size:13px; }
+.info-card .label { font-size:10px; color:var(--text3); text-transform:uppercase; }
+.info-card .val { color:var(--text); font-weight:600; }
+.info-card .val.ai { color:var(--pri); }
+.info-card .val.kw { color:var(--acc); }
+
+.kw-grid { display:flex; flex-wrap:wrap; gap:6px; }
+.kw-tag { padding:5px 12px; background:var(--tag-bg); border-radius:14px; font-size:12px; color:var(--text2); cursor:pointer; border:1px solid transparent; transition:all .12s; }
+.kw-tag:hover { border-color:var(--acc); color:var(--acc); background:var(--card-bg); }
+.kw-tag:active { background:var(--acc); color:#fff; }
+
+.scene-card { background:var(--card-bg); border-radius:10px; padding:14px; margin-bottom:10px; border:1px solid var(--border); }
+.scene-card .scene-name { font-size:13px; font-weight:600; color:var(--pri-d); margin-bottom:4px; }
+.scene-card .scene-desc { font-size:11px; color:var(--text3); margin-bottom:10px; }
+.scene-card .scene-msgs { display:flex; flex-wrap:wrap; gap:5px; }
+.scene-msg { padding:4px 10px; background:var(--tag-bg); border-radius:10px; font-size:11px; color:var(--text2); cursor:pointer; border:1px solid transparent; transition:all .12s; }
+.scene-msg:hover { background:var(--acc); color:#fff; border-color:var(--acc); }
+
+.btn-row { display:flex; gap:8px; margin-top:10px; }
+.btn-sm { padding:6px 14px; border-radius:6px; font-size:12px; border:1px solid var(--border); background:var(--card-bg); color:var(--text2); transition:all .12s; }
+.btn-sm.warn { border-color:#c96; color:#c96; }
+.btn-sm.warn:hover { background:#c96; color:#fff; }
+.btn-sm.ok { background:var(--pri); color:#fff; border-color:var(--pri); }
+.btn-sm.ok:hover { background:var(--pri-d); }
+
+.metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:12px; }
+.metric { background:var(--card-bg); border-radius:10px; padding:14px; text-align:center; }
+.metric .num { font-size:26px; font-weight:700; color:var(--pri); }
+.metric .lbl { font-size:11px; color:var(--text3); margin-top:4px; }
+
+.toast { position:fixed; top:16px; left:50%; transform:translateX(-50%); padding:10px 24px; background:var(--pri-d); color:#fff; border-radius:20px; font-size:13px; z-index:999; opacity:0; transition:opacity .25s; pointer-events:none; }
+.toast.show { opacity:1; }
+
+/* 响应式 */
+@media(max-width:1200px){ .app{flex-direction:column;align-items:center;overflow-y:auto;} .phone-col{height:70vh;} .panel-col{width:100%;} .panel-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<div class="app">
+<!-- 手机框 -->
+<div class="phone-col">
+<div class="phone-frame">
+  <div class="wechat-nav">
+    <span class="back">&lt;</span>
+    <div>
+      <div class="title">云上归墅民宿</div>
+      <div class="sub" id="modeLabel">旅行顾问模式</div>
+    </div>
+  </div>
+  <div class="chat-area" id="chatArea">
+    <div class="time-tag" id="timeTag"></div>
+  </div>
+    <!-- 微信自定义菜单模拟 -->
+  <div class="wechat-menu-bar" style="display:flex;border-top:1px solid var(--border);background:var(--card-bg);flex-shrink:0;">
+    <button onclick="sendMsg('1')" style="flex:1;padding:8px 2px;font-size:11px;background:var(--card-bg);color:var(--text2);border:none;border-right:1px solid var(--border);">🏠<br>房型</button>
+    <button onclick="sendMsg('2')" style="flex:1;padding:8px 2px;font-size:11px;background:var(--card-bg);color:var(--text2);border:none;border-right:1px solid var(--border);">☕<br>菜单</button>
+    <button onclick="sendMsg('3')" style="flex:1;padding:8px 2px;font-size:11px;background:var(--card-bg);color:var(--text2);border:none;border-right:1px solid var(--border);">🗺️<br>攻略</button>
+    <button onclick="sendMsg('4')" style="flex:1;padding:8px 2px;font-size:11px;background:var(--card-bg);color:var(--text2);border:none;border-right:1px solid var(--border);">🛎️<br>服务</button>
+    <button onclick="sendMsg('5')" style="flex:1;padding:8px 2px;font-size:11px;background:var(--card-bg);color:var(--text2);border:none;">💬<br>客服</button>
+  </div>
+  <div class="input-area">
+    <input type="text" id="msgInput" placeholder="输入消息..." autofocus>
+    <button onclick="sendMsg()">发送</button>
+  </div>
+</div>
+<div style="display:flex;gap:6px;margin-top:8px;">
+  <button class="btn-sm ok" onclick="resetConv()">重置对话</button>
+  <button class="btn-sm" onclick="sendMsg('帮助')">帮助</button>
+  <button class="btn-sm" onclick="sendMsg('你好')">你好</button>
+  <div style="display:flex;gap:4px;margin-top:4px;">
+    <button class="btn-sm" onclick="sendEvent('subscribe')" title="模拟用户关注">➕关注</button>
+    <button class="btn-sm" onclick="sendEvent('unsubscribe')" title="模拟用户取消关注">➖取消</button>
+    <button class="btn-sm" onclick="sendEvent('SCAN')" title="模拟扫码">📷扫码</button>
+    <button class="btn-sm" onclick="sendEvent('CLICK','rooms')" title="菜单点击:房型">🏠房型</button>
+    <button class="btn-sm" onclick="sendEvent('CLICK','menu')" title="菜单点击:点餐">☕点餐</button>
+    <button class="btn-sm warn" onclick="runBatchTest()" title="一键运行全部测试">🧪批测</button>
+  </div>
+</div>
+</div>
+
+<!-- 测试面板 -->
+<div class="panel-col">
+<div class="panel-header">
+  <h1>AI 管家 · 测试与训练面板</h1>
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">深色模式</button>
+</div>
+
+<div class="panel-grid">
+<div>
+<h2>AI 模式控制</h2>
+<div class="mode-bar">
+  <button class="mode-btn active" onclick="setMode('travel_advisor',this)" id="btnTravel">旅行顾问<br><small>预订前</small></button>
+  <button class="mode-btn" onclick="setMode('pre_arrival',this)" id="btnPreArrival">待入住<br><small>已预订·未到店</small></button>
+          <button class="mode-btn" onclick="setMode('guest_butler',this)" id="btnButler">已入住<br><small>住店中</small></button>
+  <button class="mode-btn" onclick="setMode('post_stay',this)" id="btnPost">复购关怀<br><small>离店后</small></button>
+</div>
+
+<div class="info-card">
+  <div class="label">当前 AI 模式</div>
+  <div class="val ai" id="curMode">travel_advisor — 预订前·所有人可用</div>
+</div>
+<div class="info-card" id="lastMatchCard" style="display:none">
+  <div class="label">最近关键词匹配</div>
+  <div class="val kw" id="lastMatch">-</div>
+</div>
+
+<h3>测试统计</h3>
+<div class="metrics">
+  <div class="metric"><div class="num" id="cntTotal">0</div><div class="lbl">总消息</div></div>
+  <div class="metric"><div class="num" id="cntKeyword">0</div><div class="lbl">关键词命中</div></div>
+  <div class="metric"><div class="num" id="cntAI">0</div><div class="lbl">AI 应答</div></div>
+  <div class="metric"><div class="num" id="cntFallback">0</div><div class="lbl">兜底</div></div>
+</div>
+</div>
+
+<div>
+<h2 id="kwSectionTitle">快捷词 · 旅行顾问</h2>
+<div class="kw-grid" id="kwGrid">加载中...</div>
+</div>
+</div>
+
+<h3>场景化测试流程</h3>
+<div class="panel-grid">
+<div class="scene-card">
+  <div class="scene-name">场景A：潜在客人首次咨询</div>
+  <div class="scene-desc">模拟从未预订的用户关注公众号后的典型对话。当前模式需为「旅行顾问」。</div>
+  <div class="scene-msgs">
+    <span class="scene-msg" onclick="quickScene(['你好','庐山有什么好玩的？','你们民宿在什么位置？','房型有哪些？','怎么预订？'])">运行完整流程</span>
+    <span class="scene-msg" onclick="sendMsg('庐山有什么好玩的')">景点咨询</span>
+    <span class="scene-msg" onclick="sendMsg('你们民宿在什么位置')">位置咨询</span>
+    <span class="scene-msg" onclick="sendMsg('房型有哪些')">房型咨询</span>
+    <span class="scene-msg" onclick="sendMsg('怎么预订')">预订引导</span>
+  </div>
+</div>
+<div class="scene-card">
+  <div class="scene-name">场景B：已预订住客入住服务</div>
+  <div class="scene-desc">模拟预订后客人入住期间的典型对话。需先切换到「专属管家」模式。</div>
+  <div class="scene-msgs">
+    <span class="scene-msg" onclick="quickScene(['你好，我今晚到','周边有什么好吃的推荐吗？','帮我叫个打扫','明天早上7点叫醒我','庐山一日游怎么安排？'])">运行完整流程</span>
+    <span class="scene-msg" onclick="sendMsg('周边有什么好吃的推荐')">美食推荐</span>
+    <span class="scene-msg" onclick="sendMsg('帮我叫个打扫')">快捷服务</span>
+    <span class="scene-msg" onclick="sendMsg('庐山一日游怎么安排')">游玩咨询</span>
+    <span class="scene-msg" onclick="sendMsg('WiFi密码是多少')">WiFi查询</span>
+  </div>
+</div>
+<div class="scene-card">
+  <div class="scene-name">场景C：离店后复购关怀</div>
+  <div class="scene-desc">模拟退房后客人再次联系的对话。需先切换到「复购关怀」模式。</div>
+  <div class="scene-msgs">
+    <span class="scene-msg" onclick="sendMsg('上次住得很舒服，想再来')">再次入住意愿</span>
+    <span class="scene-msg" onclick="sendMsg('你们有什么老客优惠吗')">老客优惠</span>
+    <span class="scene-msg" onclick="sendMsg('我上次住的房间叫什么来着')">回忆上次</span>
+  </div>
+</div>
+<div class="scene-card">
+  <div class="scene-name">场景D：边界情况测试</div>
+  <div class="scene-desc">测试系统对异常输入的处理能力。</div>
+  <div class="scene-msgs">
+    <span class="scene-msg" onclick="sendMsg('')">空消息</span>
+    <span class="scene-msg" onclick="sendMsg('asdfghjkl')">乱码输入</span>
+    <span class="scene-msg" onclick="sendMsg('我要投诉')">投诉处理</span>
+    <span class="scene-msg" onclick="sendMsg('你们有早餐吗')">无早餐说明</span>
+    <span class="scene-msg" onclick="sendMsg('可以加床吗')">加床说明</span>
+  </div>
+</div>
+</div>
+
+<div class="btn-row">
+  <button class="btn-sm ok" onclick="resetConv()">重置对话历史</button>
+  <button class="btn-sm warn" onclick="runComprehensiveTest()">运行综合测试（全部关键词）</button>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api/simulate-chat';
+const OPENID = 'sim_test_user';
+let stats = {total:0,keyword:0,ai:0,fallback:0};
+let currentMode = 'travel_advisor';
+let isDark = false;
+
+(async function init(){
+  document.getElementById('timeTag').innerText = new Date().toLocaleString('zh-CN');
+  document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter') sendMsg();});
+  renderKeywordGrid("travel_advisor");
+  addSysMsg('欢迎使用云上归墅微信公众号模拟器（桌面版）！\n\n当前模式：旅行顾问（预订前）\n你可以直接在输入框发送消息，或点击右侧面板的测试按钮。\n\n试试发送「你好」或「1」开始体验吧～\n左侧为手机模拟框，右侧为测试训练面板。');
+})();
+
+// ── 三种模式的关键词分组 ──
+const MODE_KEYWORDS = {
+  pre_arrival: {
+    title: '待入住',
+    keywords: [
+      {label:'查看房型', msg:'1'},{label:'咖啡菜单', msg:'2'},{label:'游玩攻略', msg:'3'},
+      {label:'到店交通', msg:'怎么走'},{label:'周边美食', msg:'周边美食'},
+      {label:'WiFi密码', msg:'wifi'},{label:'宠物政策', msg:'可以带宠物吗'},
+      {label:'入住时间', msg:'几点可以入住'},{label:'房间设施', msg:'房间有地暖吗'},
+      {label:'定制路线', msg:'游玩'},{label:'咖啡点单', msg:'下单 拿铁'},
+    ,{label:'房间图片', msg:'房间图片'},{label:'推荐菜品', msg:'推荐'},{label:'查看服务', msg:'4'}]
+  },
+  travel_advisor: {
+    title: '旅行顾问',
+    keywords: [
+      {label:'查看房型', msg:'1'},{label:'咖啡菜单', msg:'2'},{label:'游玩攻略', msg:'3'},
+      {label:'预订方式', msg:'预订'},{label:'周边美食', msg:'周边美食'},{label:'民宿位置', msg:'位置'},
+      {label:'交通指南', msg:'怎么走'},{label:'宠物政策', msg:'可以带宠物吗'},
+      {label:'入住退房', msg:'入住时间和退房时间'},{label:'庐山景点', msg:'庐山有什么好玩的'},
+      {label:'房型详情', msg:'房间1'},{label:'平台评价', msg:'口碑'},
+    ]
+  },
+  guest_butler: {
+    title: '专属管家',
+    keywords: [
+      {label:'打扫卫生', msg:'打扫'},{label:'叫醒服务', msg:'叫醒'},{label:'送餐到房', msg:'送餐'},
+      {label:'维修报修', msg:'维修'},{label:'续住延住', msg:'续住'},{label:'WiFi密码', msg:'wifi'},
+      {label:'周边美食', msg:'周边美食'},{label:'定制路线', msg:'游玩'},{label:'点单咖啡', msg:'下单 拿铁'},
+      {label:'人工客服', msg:'人工'},{label:'加床加被', msg:'加床'},{label:'房间设施', msg:'房间有地暖吗'},
+    ,{label:'退房办理', msg:'退房'},{label:'我的订单', msg:'我的订单'},{label:'房间图片', msg:'房间图片'},{label:'推荐菜品', msg:'推荐'}]
+  },
+  post_stay: {
+    title: '复购关怀',
+    keywords: [
+      {label:'再次预订', msg:'预订'},{label:'老客优惠', msg:'有什么老客优惠吗'},
+      {label:'上次住过', msg:'我上次住的房间叫什么'},{label:'分享体验', msg:'想分享入住体验'},
+      {label:'季节风景', msg:'庐山现在什么季节'},{label:'新咖啡', msg:'听说出了新咖啡'},
+      {label:'庐山游记', msg:'游记'},{label:'联系前台', msg:'人工'},
+      {label:'反馈意见', msg:'上次入住有个小建议'},{label:'查看房型', msg:'1'},
+      {label:'周边美食', msg:'周边美食'},{label:'交通方式', msg:'怎么走'},
+    ,{label:'平台评价', msg:'平台评价'},{label:'推荐菜品', msg:'推荐'},{label:'房间图片', msg:'房间图片'}]
+  }
+};
+
+function renderKeywordGrid(mode){
+  const group = MODE_KEYWORDS[mode] || MODE_KEYWORDS.travel_advisor;
+  document.getElementById('kwSectionTitle').innerText = '快捷词 · ' + group.title;
+  const grid = document.getElementById('kwGrid');
+  grid.innerHTML = '';
+  group.keywords.forEach(k => {
+    const span = document.createElement('span');
+    span.className = 'kw-tag';
+    span.title = group.title + '：' + k.label;
+    span.textContent = k.label;
+    span.addEventListener('click', function(){ sendMsg(k.msg); });
+    grid.appendChild(span);
+  });
+}
+async function sendMsg(text){
+  const input=document.getElementById('msgInput');
+  const content=text || input.value.trim();
+  if(!content) return;
+  if(!text) input.value='';
+
+  addBubble(content,'me');
+  stats.total++;
+  updateStats();
+
+  try{
+    const r=await fetch(API,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({content,openid:OPENID})
+    });
+    const d=await r.json();
+    addBubble(d.reply,'you',d.handler,d.mode,d.matched);
+
+    if(d.handler==='keyword') stats.keyword++;
+    else if(d.handler.startsWith('ai_')) stats.ai++;
+    else stats.fallback++;
+    updateStats();
+
+    if(d.matched){
+      document.getElementById('lastMatchCard').style.display='';
+      document.getElementById('lastMatch').innerText=d.matched;
+    }
+
+    updateModeLabel(d.mode);
+  }catch(e){
+    addBubble('连接失败，请确认服务已启动 (http://127.0.0.1:5000)','you','error');
+    stats.fallback++; updateStats();
+  }
+}
+
+function addBubble(text,side,handler,mode,matched){
+  const area=document.getElementById('chatArea');
+  const div=document.createElement('div');
+  div.className='chat-bubble '+side;
+  let meta='';
+  if(side==='you' && handler){
+    const labels={keyword:'关键词路由',ai_travel_advisor:'AI·旅行顾问',ai_pre_arrival:'AI·待入住',ai_guest_butler:'AI·已入住',ai_post_stay:'AI·复购关怀',fallback:'兜底回复',error:'连接错误'};
+    meta=`<div class="meta">${labels[handler]||handler}${matched?' · 匹配: '+matched:''}</div>`;
+  }
+  div.innerHTML=text+meta;
+  area.appendChild(div);
+  area.scrollTop=area.scrollHeight;
+}
+
+function addSysMsg(text){
+  const area=document.getElementById('chatArea');
+  const div=document.createElement('div');
+  div.style.cssText='text-align:center;font-size:12px;color:var(--text3);padding:8px 16px;line-height:1.6;white-space:pre-wrap;';
+  div.innerText=text;
+  area.appendChild(div);
+}
+
+async function setMode(mode,btn){
+  try{
+    await fetch('/api/simulate/mode',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({openid:OPENID,mode})
+    });
+    currentMode=mode;
+    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    updateModeLabel(mode); renderKeywordGrid(mode);
+    document.getElementById('curMode').innerText=mode+' — '+({travel_advisor:'预订前·所有人可用',pre_arrival:'已预订·待入住',guest_butler:'已入住·专属管家',post_stay:'离店后·复购关怀'}[mode]);
+    addSysMsg('已切换到：'+({travel_advisor:'旅行顾问（预订前）',pre_arrival:'到店前管家（已预订·未入住）',guest_butler:'专属管家（已入住）',post_stay:'复购关怀（离店后）'}[mode]));
+    toast('AI 模式已切换');
+  }catch(e){ toast('切换失败，请确认服务已启动'); }
+}
+
+function updateModeLabel(mode){
+  const labels={travel_advisor:'旅行顾问模式',pre_arrival:'待入住模式',guest_butler:'已入住模式',post_stay:'复购关怀模式'};
+  document.getElementById('modeLabel').innerText=labels[mode]||mode;
+  if(mode!==currentMode){ renderKeywordGrid(mode);
+    currentMode=mode;
+    document.getElementById('curMode').innerText=mode+' — '+({travel_advisor:'预订前·所有人可用',pre_arrival:'已预订·待入住',guest_butler:'已入住·专属管家',post_stay:'离店后·复购关怀'}[mode]);
+    document.querySelectorAll('.mode-btn').forEach(b=>{
+      b.classList.remove('active');
+      if((mode==='travel_advisor'&&b.id==='btnTravel')||(mode==='pre_arrival'&&b.id==='btnPreArrival')||(mode==='guest_butler'&&b.id==='btnButler')||(mode==='post_stay'&&b.id==='btnPost')) b.classList.add('active');
+    });
+  }
+}
+
+async function resetConv(){
+  await fetch('/api/simulate/reset',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({openid:OPENID})
+  });
+  stats={total:0,keyword:0,ai:0,fallback:0};
+  updateStats();
+  document.getElementById('chatArea').innerHTML='<div class="time-tag">'+new Date().toLocaleString('zh-CN')+'</div>';
+  addSysMsg('对话已重置。当前模式：'+({travel_advisor:'旅行顾问',guest_butler:'专属管家',post_stay:'复购关怀'}[currentMode]));
+  document.getElementById('lastMatchCard').style.display='none';
+  toast('对话已重置');
+}
+
+async function quickScene(msgs){
+  for(const m of msgs){
+    await sendMsg(m);
+    await new Promise(r=>setTimeout(r,800));
+  }
+}
+
+function updateStats(){
+  document.getElementById('cntTotal').innerText=stats.total;
+  document.getElementById('cntKeyword').innerText=stats.keyword;
+  document.getElementById('cntAI').innerText=stats.ai;
+  document.getElementById('cntFallback').innerText=stats.fallback;
+}
+
+function toggleTheme(){
+  isDark=!isDark;
+  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
+  document.getElementById('themeBtn').innerText=isDark?'浅色模式':'深色模式';
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.innerText=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+// 综合测试：发送所有关键词
+async function runComprehensiveTest(){
+  const tags=document.querySelectorAll('.kw-tag');
+  const keywords=[];
+  tags.forEach(t=>keywords.push(t.innerText));
+  toast(`开始综合测试：${keywords.length} 个关键词`);
+  for(const kw of keywords){
+    await sendMsg(kw);
+    await new Promise(r=>setTimeout(r,600));
+  }
+  toast(`综合测试完成：${keywords.length} 个关键词已全部测试`);
+}
+
+async function sendEvent(eventType, eventKey){
+  // 模拟微信事件
+  const labels = {subscribe:'关注公众号', unsubscribe:'取消关注', SCAN:'扫码事件', CLICK:'菜单点击:'+(eventKey||'')};
+  addSysMsg('📡 模拟事件: ' + (labels[eventType]||eventType));
+  
+  // 通过 API 发送事件
+  try{
+    const r = await fetch('/api/simulate-chat', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({content: eventType==='subscribe'?'关注':eventType==='CLICK'?eventKey:'', openid:OPENID})
+    });
+    const d = await r.json();
+    addBubble(d.reply, 'you', d.handler, d.mode, d.matched);
+  }catch(e){
+    addBubble('事件发送失败: '+e.message, 'you', 'error');
+  }
+}
+
+async function runBatchTest(){
+  addSysMsg('🧪 开始批量测试...');
+  const allTests = [
+    // 旅行顾问模式
+    {mode:'travel_advisor', tests:['你好','1','2','3','预订','周边美食','位置','庐山有什么好玩的','房间图片','推荐','口碑']},
+    // 待入住模式
+    {mode:'pre_arrival', tests:['1','怎么走','wifi','房间有地暖吗','游玩','下单 拿铁']},
+    // 已入住模式
+    {mode:'guest_butler', tests:['打扫','叫醒','送餐','续住','wifi','游玩','周边美食','我的订单']},
+    // 离店模式
+    {mode:'post_stay', tests:['有什么老客优惠吗','庐山现在什么季节','我上次住的房间叫什么','预订']},
+  ];
+  
+  let passed = 0, failed = 0;
+  for(const group of allTests){
+    // 切换模式
+    await fetch('/api/simulate/mode', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({openid:OPENID, mode:group.mode})});
+    await fetch('/api/simulate/reset', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({openid:OPENID})});
+    
+    for(const msg of group.tests){
+      try{
+        const r = await fetch('/api/simulate-chat', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({content:msg, openid:OPENID})});
+        const d = await r.json();
+        if(d.reply && d.reply.length > 5) passed++;
+        else failed++;
+      }catch(e){ failed++; }
+      await new Promise(r=>setTimeout(r,150));
+    }
+  }
+  addSysMsg('✅ 批测完成: ' + passed + ' 通过, ' + failed + ' 失败 (' + (passed+failed) + ' 条总计)');
+  toast('批测: '+passed+'/'+(passed+failed)+' 通过');
+}
+</script>
+</body>
+</html>,{label:'房间图片', msg:'房间图片'},{label:'推荐菜品', msg:'推荐'},{label:'路线详情', msg:'路线1'}

@@ -6,6 +6,8 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+# 加载本地覆盖配置（不提交到仓库）
+load_dotenv(".env.local", override=True)
 
 # ── 基础配置 ─────────────────────────────────────────────
 BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:5000")
@@ -22,10 +24,16 @@ WECHAT_MCH_KEY = os.getenv("WECHAT_MCH_KEY", "")       # 微信支付API密钥
 
 # ── 数据库配置 ───────────────────────────────────────────
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///yunshang_bnb.db")
+# 自动检测数据库类型
+DB_TYPE = "postgresql" if DATABASE_URL.startswith("postgresql") else "sqlite"
+# PostgreSQL 连接池参数（SQLite 忽略）
+DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE", "10"))
+DB_POOL_OVERFLOW = int(os.getenv("DB_POOL_OVERFLOW", "20"))
 
-# ── AI 配置 (Anthropic Claude) ──────────────────────────
+# ── AI 配置 (DeepSeek / Anthropic Claude 兼容接口) ───────
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-AI_MODEL = os.getenv("AI_MODEL", "claude-sonnet-4-6")
+ANTHROPIC_BASE_URL = os.getenv("ANTHROPIC_BASE_URL", "")
+AI_MODEL = os.getenv("AI_MODEL", "deepseek-chat")
 AI_ENABLED = bool(ANTHROPIC_API_KEY)
 # 重要：AI仅在用户有确认预订后解锁（要求1）
 AI_REQUIRES_BOOKING = True

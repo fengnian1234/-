@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>订单管理 - 云上·归墅民宿</title>
+<meta name="description" content="云上·归墅订单管理。查看全部订单、统计收入与入住率，按平台筛选订单。">
+<script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+:root{--color-primary:#4a7c59;--color-primary-light:#6b9b7e;--color-primary-dark:#3b5e47;--color-accent:#c8966a;--color-accent-light:#dbb88a;--color-sky:#8eb8c9;--color-mist:#d4e5d8;--color-bg:#f5f9f4;--color-bg-light:#edf4ea;--color-bg-dark:#dce8d8;--color-text:#2a3328;--color-text-light:#5a6558;--color-text-lighter:#8a9586;--color-white:#fffefb;--color-border:#d8e0d4;--color-shadow:rgba(74,100,58,0.06);--color-shadow-hover:rgba(74,100,58,0.12);--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 2px 8px var(--color-shadow);--shadow-md:0 6px 20px var(--color-shadow-hover);--shadow-lg:0 12px 32px var(--color-shadow-hover);--transition:0.3s cubic-bezier(0.4,0,0.2,1);--max-width:720px}
+[data-theme="dark"]{--color-primary:#6baf7e;--color-primary-light:#558a64;--color-primary-dark:#3d5c48;--color-accent:#c89b6a;--color-accent-light:#dab080;--color-sky:#6a95a8;--color-mist:#2a3a2e;--color-bg:#1a1f1b;--color-bg-light:#1f2620;--color-bg-dark:#252e26;--color-text:#d8dfd4;--color-text-light:#a0a898;--color-text-lighter:#6a7268;--color-white:#222722;--color-border:#2e382f;--color-shadow:rgba(0,0,0,0.35);--color-shadow-hover:rgba(0,0,0,0.50)}[data-theme="dark"] .page-header{background:linear-gradient(170deg,#4a6868 0%,#3d5c48 40%,#2a3a28 100%)}[data-theme="dark"] .page-header::after{opacity:0.25}
+[data-theme="dark"] .header{background:rgba(26,31,27,0.94)}
+[data-theme="dark"] .footer{background:linear-gradient(180deg,#1a2418,#141a15);color:rgba(216,223,212,0.6)}
+[data-theme="dark"] .footer-copy{color:rgba(216,223,212,0.3)}
+[data-theme="dark"] .stat-card{background:#252927}
+[data-theme="dark"] .order-row{background:#252927}
+[data-theme="dark"] .filter-btn{background:#252927}
+[data-theme="dark"] .filter-btn.active{background:var(--color-primary);color:white}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:var(--color-text)}
+h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05rem}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 1rem}
+a{color:var(--color-primary);text-decoration:none}
+.header{background:rgba(245,249,244,0.9);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none}
+.logo-icon{font-size:1.4rem}
+.logo-text{font-family:var(--font-serif);font-size:1.15rem;font-weight:700;color:var(--color-primary-dark);letter-spacing:0.05em}
+.nav-links{display:flex;gap:0.2rem}
+.nav-links a{padding:0.35rem 0.7rem;border-radius:var(--radius-sm);font-size:0.9rem;color:var(--color-text-light);transition:all var(--transition)}
+.nav-links a:hover{color:var(--color-primary);background:var(--color-bg-light)}
+.page-header{background:linear-gradient(170deg,#a8d0e0 0%,#8eb8c9 20%,#7aab8e 60%,#4a7c59 100%);color:#fff;padding:3rem 1rem 2.5rem;text-align:center;position:relative;overflow:hidden}.page-header::before{content:;position:absolute;top:-30px;left:-20%;right:-20%;height:80px;background:radial-gradient(ellipse at 30% 100%,rgba(255,255,255,0.25) 0%,transparent 60%),radial-gradient(ellipse at 70% 100%,rgba(255,255,255,0.2) 0%,transparent 55%);pointer-events:none}.page-header::after{content:;position:absolute;bottom:-1px;left:0;right:0;height:24px;background:var(--color-bg);mask-image:url("data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40" preserveAspectRatio="none"%3E%3Cpath d="M0,20 C150,38 350,2 500,18 C650,34 850,6 1000,22 C1100,32 1180,10 1200,14 L1200,40 L0,40 Z" fill="white"/%3E%3C/svg%3E");mask-size:100% 100%;mask-repeat:no-repeat;-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40" preserveAspectRatio="none"%3E%3Cpath d="M0,20 C150,38 350,2 500,18 C650,34 850,6 1000,22 C1100,32 1180,10 1200,14 L1200,40 L0,40 Z" fill="white"/%3E%3C/svg%3E");-webkit-mask-size:100% 100%;-webkit-mask-repeat:no-repeat}.page-header h1{color:#fff;margin-bottom:0.4rem;font-size:1.7rem;text-shadow:0 1px 4px rgba(0,0,0,0.1);position:relative;z-index:1}.page-header p{color:rgba(255,255,255,0.85);font-size:0.95rem;position:relative;z-index:1}
+.page-header h1{color:var(--color-white);margin-bottom:0.3rem}
+.page-header p{color:rgba(255,255,255,0.8);font-size:0.95rem}
+.section-padding{padding:2rem 0}
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:1.5rem}
+.stat-card{background:var(--color-white);border-radius:var(--radius-md);padding:1rem 0.8rem;text-align:center;box-shadow:var(--shadow-sm)}
+.stat-num{font-size:1.5rem;font-weight:700;color:var(--color-primary);line-height:1.2}
+.stat-label{font-size:0.75rem;color:var(--color-text-light);margin-top:0.2rem}
+/* Filters */
+.filters{display:flex;gap:0.4rem;margin-bottom:1rem;flex-wrap:wrap}
+.filter-btn{padding:0.35rem 0.8rem;border-radius:var(--radius-sm);font-size:0.8rem;border:1.5px solid var(--color-border);background:var(--color-white);color:var(--color-text);cursor:pointer;transition:all var(--transition)}
+.filter-btn:hover{border-color:var(--color-primary);color:var(--color-primary)}
+.filter-btn.active{background:var(--color-primary);color:white;border-color:var(--color-primary)}
+/* Orders list */
+.orders-list{display:flex;flex-direction:column;gap:0.5rem}
+.order-row{background:var(--color-white);border-radius:var(--radius-md);padding:0.8rem 1rem;box-shadow:var(--shadow-sm)}
+.order-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem}
+.order-guest{font-weight:600;font-size:0.95rem}
+.order-platform{font-size:0.72rem;padding:0.1rem 0.4rem;border-radius:8px;font-weight:500}
+.platform-ctrip{background:#e3f2fd;color:#1565c0}
+.platform-meituan{background:#fce4ec;color:#c62828}
+.platform-fliggy{background:#fff3e0;color:#e65100}
+.platform-direct{background:#e8f5e9;color:#2e7d32}
+.platform-xiaohongshu{background:#fce4ec;color:#c62828}
+.platform-douyin{background:#e8eaf6;color:#283593}
+.order-row-detail{font-size:0.82rem;color:var(--color-text-light);line-height:1.5}
+.order-row-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:0.3rem}
+.order-amount{font-weight:600;color:var(--color-primary);font-size:0.9rem}
+.order-status{font-size:0.72rem;padding:0.1rem 0.5rem;border-radius:8px;font-weight:500}
+.status-checked_in{background:#e8f5e9;color:#2e7d32}
+.status-confirmed{background:#e3f2fd;color:#1565c0}
+.status-checked_out{background:#f3f0eb;color:#6b6b66}
+/* Nav link to staff */
+.nav-extra{text-align:center;margin-top:2rem}
+.footer{background:linear-gradient(180deg,#3b5e47,#2a3d33);color:rgba(255,255,255,0.7);padding:2rem 1rem;text-align:center;margin-top:auto}
+.footer p{font-size:0.8rem;margin-bottom:0.2rem;line-height:1.8}
+.footer-copy{color:rgba(255,255,255,0.4);font-size:0.72rem!important;margin-top:0.4rem}
+.fade-up{opacity:0;transform:translateY(12px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <a href="index.html" class="logo"><span class="logo-icon">🏔️</span><span class="logo-text">云上·归墅</span></a>
+        <nav class="nav-links">
+            <a href="rooms.html">房型</a><a href="menu.html">点餐</a><a href="travel.html">攻略</a><a href="services.html">服务</a>
+        </nav>
+        <button id="themeToggle" style="background:none;border:none;cursor:pointer;padding:0.35rem;border-radius:6px;font-size:1.1rem;line-height:1" title="切换深色/浅色模式">🌙</button>
+    </div>
+</header>
+
+<section class="page-header"><div class="container"><h1>📋 订单管理</h1><p>查看全部订单与经营数据</p></div></section>
+
+<section class="section-padding"><div class="container">
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-num">7</div>
+            <div class="stat-label">总订单数</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">¥6,180</div>
+            <div class="stat-label">总营收</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">71%</div>
+            <div class="stat-label">入住率</div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterOrders('all', this)">全部</button>
+        <button class="filter-btn" onclick="filterOrders('ctrip', this)">携程</button>
+        <button class="filter-btn" onclick="filterOrders('meituan', this)">美团</button>
+        <button class="filter-btn" onclick="filterOrders('fliggy', this)">飞猪</button>
+        <button class="filter-btn" onclick="filterOrders('direct', this)">直客</button>
+        <button class="filter-btn" onclick="filterOrders('xiaohongshu', this)">小红书</button>
+    </div>
+
+    <!-- Orders List -->
+    <div class="orders-list" id="ordersList"></div>
+</div></section>
+
+<footer class="footer">
+    <div class="footer-inner"><p>云无心以出岫，鸟倦飞而知还</p><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 85条评价  |  2016年开业</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
+</footer>
+
+<script>
+const orders = [
+    {id:1,platform:"ctrip",platformName:"携程",oid:"CT20260601",guest:"张伟",room:"山景·精致大床房",checkIn:"2026-06-12",checkOut:"2026-06-13",nights:1,amount:688,guestCount:2,status:"checked_in"},
+    {id:2,platform:"meituan",platformName:"美团",oid:"MT20260602",guest:"李娜",room:"田园家庭房",checkIn:"2026-06-12",checkOut:"2026-06-13",nights:1,amount:788,guestCount:3,status:"checked_in"},
+    {id:3,platform:"fliggy",platformName:"飞猪",oid:"FZ20260603",guest:"王磊",room:"清舍·露台大床房",checkIn:"2026-06-12",checkOut:"2026-06-13",nights:1,amount:788,guestCount:2,status:"confirmed"},
+    {id:4,platform:"ctrip",platformName:"携程",oid:"CT20260604",guest:"赵雪",room:"室雅茶香套房",checkIn:"2026-06-13",checkOut:"2026-06-15",nights:2,amount:1976,guestCount:4,status:"confirmed"},
+    {id:5,platform:"direct",platformName:"直客",oid:"",guest:"陈明",room:"知还标准间",checkIn:"2026-06-13",checkOut:"2026-06-15",nights:2,amount:976,guestCount:2,status:"confirmed"},
+    {id:6,platform:"meituan",platformName:"美团",oid:"MT20260605",guest:"刘洋",room:"特惠标准间",checkIn:"2026-06-17",checkOut:"2026-06-18",nights:1,amount:388,guestCount:2,status:"confirmed"},
+    {id:7,platform:"xiaohongshu",platformName:"小红书",oid:"",guest:"孙雨",room:"山野大床房",checkIn:"2026-06-17",checkOut:"2026-06-19",nights:2,amount:1176,guestCount:2,status:"confirmed"},
+];
+
+const platformNames = {ctrip:"携程",meituan:"美团",fliggy:"飞猪",direct:"直客",xiaohongshu:"小红书",douyin:"抖音"};
+const platformClass = {ctrip:"platform-ctrip",meituan:"platform-meituan",fliggy:"platform-fliggy",direct:"platform-direct",xiaohongshu:"platform-xiaohongshu"};
+const statusNames = {checked_in:"已入住",confirmed:"已确认",checked_out:"已退房"};
+const statusClass = {checked_in:"status-checked_in",confirmed:"status-confirmed",checked_out:"status-checked_out"};
+
+let currentFilter = 'all';
+
+function renderOrders(filter){
+    let filtered = filter==='all'?orders:orders.filter(o=>o.platform===filter);
+    document.getElementById('ordersList').innerHTML = filtered.map(o=>`
+        <div class="order-row" onclick="alert('订单详情：${o.guest} - ${o.room}\\n入住：${o.checkIn} 至 ${o.checkOut}\\n金额：¥${o.amount}\\n状态：${statusNames[o.status]}\\n来源：${platformNames[o.platform]}${o.oid?' ('+o.oid+')':''}')">
+            <div class="order-row-top">
+                <span class="order-guest">${o.guest}</span>
+                <span class="order-platform ${platformClass[o.platform]||''}">${platformNames[o.platform]||o.platformName}</span>
+            </div>
+            <div class="order-row-detail">🏨 ${o.room} · 🕐 ${o.checkIn} → ${o.checkOut} · 👥 ${o.guestCount}人 · 🌙 ${o.nights}晚</div>
+            <div class="order-row-bottom">
+                <span class="order-amount">¥${o.amount}</span>
+                <span class="order-status ${statusClass[o.status]||''}">${statusNames[o.status]}</span>
+            </div>
+        </div>`).join('');
+}
+
+function filterOrders(platform, btn){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = platform;
+    renderOrders(platform);
+}
+
+renderOrders('all');
+</script>
+<script>
+(function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'})();
+document.getElementById('themeToggle').onclick=function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);this.textContent=n==='dark'?'☀️':'🌙'};
+</script>
+<script>(function(){var o=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1});document.querySelectorAll('.section-padding,.page-header,.footer,.stats-grid,.orders-list').forEach(function(e){e.classList.add('fade-up');o.observe(e)})})();</script>
+</body>
+</html>

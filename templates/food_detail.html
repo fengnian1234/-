@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{{ food.name }} - 云上归墅{% endblock %}
+
+{% block content %}
+<section class="food-detail">
+    <div class="container">
+        <!-- Hero 图片区 -->
+        {% if food.images and food.images|length > 0 %}
+        <div class="food-detail-hero">
+            <img src="{{ food.images[0] }}" alt="{{ food.name }}" class="food-hero-img">
+        </div>
+        {% endif %}
+
+        <!-- 基本信息 -->
+        <div class="food-detail-header">
+            <h1>{{ food.name }}</h1>
+            <div class="food-detail-meta">
+                <span class="food-category-badge">{{ food.category }}</span>
+                <span class="food-price">{{ food.price_range }}</span>
+            </div>
+        </div>
+
+        <!-- 标签 -->
+        {% if food.tags and food.tags|length > 0 %}
+        <div class="food-detail-tags">
+            {% for tag in food.tags %}
+            <span class="food-tag">{{ tag }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- 一句话推荐 -->
+        <div class="food-detail-intro">
+            <p>{{ food.description }}</p>
+        </div>
+
+        <!-- XHS风格长文 -->
+        {% if food.detail_content %}
+        <div class="food-detail-body">
+            {% for para in food.detail_content.split('\n\n') %}
+                {% if para.strip() %}
+                <p>{{ para.strip() | replace('\n', '<br>') | safe }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- 必点清单 -->
+        {% if food.must_try %}
+        <div class="food-detail-musttry">
+            <h3>🥢 必点清单</h3>
+            <p>{{ food.must_try }}</p>
+        </div>
+        {% endif %}
+
+        <!-- 实用信息 -->
+        <div class="food-detail-info">
+            <div class="food-info-item">
+                <span class="food-info-icon">📍</span>
+                <span>{{ food.address }}</span>
+            </div>
+            {% if food.map_link %}
+            <div class="food-info-action">
+                <a href="{{ food.map_link }}" class="btn btn-primary" target="_blank">🗺️ 导航前往</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 返回 -->
+        <div class="food-detail-back">
+            <a href="/travel" class="btn btn-outline">← 返回攻略列表</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

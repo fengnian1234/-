@@ -10,6 +10,7 @@ wechatpy==2.1.10
 
 # 数据库
 sqlalchemy==2.0.41
+psycopg2-binary==2.9.10  # PostgreSQL（生产环境）
 
 # AI对话 (Anthropic Claude)
 anthropic==0.64.0

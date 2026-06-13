@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>员工看板 - 云上·归墅民宿</title>
+<meta name="description" content="云上·归墅员工看板。管理客房服务请求，确认完成状态。">
+<script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+:root{--color-primary:#4a7c59;--color-primary-light:#6b9b7e;--color-primary-dark:#3b5e47;--color-accent:#c8966a;--color-accent-light:#dbb88a;--color-sky:#8eb8c9;--color-mist:#d4e5d8;--color-bg:#f5f9f4;--color-bg-light:#edf4ea;--color-bg-dark:#dce8d8;--color-text:#2a3328;--color-text-light:#5a6558;--color-text-lighter:#8a9586;--color-white:#fffefb;--color-border:#d8e0d4;--color-shadow:rgba(74,100,58,0.06);--color-shadow-hover:rgba(74,100,58,0.12);--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--font-serif:"Noto Serif SC","STSong","SimSun","Songti SC","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 2px 8px var(--color-shadow);--shadow-md:0 6px 20px var(--color-shadow-hover);--shadow-lg:0 12px 32px var(--color-shadow-hover);--transition:0.3s cubic-bezier(0.4,0,0.2,1);--max-width:720px}
+[data-theme="dark"]{--color-primary:#6baf7e;--color-primary-light:#558a64;--color-primary-dark:#3d5c48;--color-accent:#c89b6a;--color-accent-light:#dab080;--color-sky:#6a95a8;--color-mist:#2a3a2e;--color-bg:#1a1f1b;--color-bg-light:#1f2620;--color-bg-dark:#252e26;--color-text:#d8dfd4;--color-text-light:#a0a898;--color-text-lighter:#6a7268;--color-white:#222722;--color-border:#2e382f;--color-shadow:rgba(0,0,0,0.35);--color-shadow-hover:rgba(0,0,0,0.50)}[data-theme="dark"] .page-header{background:linear-gradient(170deg,#4a6868 0%,#3d5c48 40%,#2a3a28 100%)}[data-theme="dark"] .page-header::after{opacity:0.25}
+[data-theme="dark"] .header{background:rgba(26,31,27,0.94)}
+[data-theme="dark"] .footer{background:linear-gradient(180deg,#1a2418,#141a15);color:rgba(216,223,212,0.6)}
+[data-theme="dark"] .footer-copy{color:rgba(216,223,212,0.3)}
+[data-theme="dark"] .stat-card{background:#252927}
+[data-theme="dark"] .request-card{background:#252927}
+[data-theme="dark"] .request-card.completed{background:#1a201b}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:var(--color-text)}
+h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}h4{font-size:1.05rem}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 1rem}
+a{color:var(--color-primary);text-decoration:none}
+.header{background:rgba(245,249,244,0.9);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none}
+.logo-icon{font-size:1.4rem}
+.logo-text{font-family:var(--font-serif);font-size:1.15rem;font-weight:700;color:var(--color-primary-dark);letter-spacing:0.05em}
+.page-header{background:linear-gradient(170deg,#a8d0e0 0%,#8eb8c9 20%,#7aab8e 60%,#4a7c59 100%);color:#fff;padding:3rem 1rem 2.5rem;text-align:center;position:relative;overflow:hidden}.page-header::before{content:;position:absolute;top:-30px;left:-20%;right:-20%;height:80px;background:radial-gradient(ellipse at 30% 100%,rgba(255,255,255,0.25) 0%,transparent 60%),radial-gradient(ellipse at 70% 100%,rgba(255,255,255,0.2) 0%,transparent 55%);pointer-events:none}.page-header::after{content:;position:absolute;bottom:-1px;left:0;right:0;height:24px;background:var(--color-bg);mask-image:url("data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40" preserveAspectRatio="none"%3E%3Cpath d="M0,20 C150,38 350,2 500,18 C650,34 850,6 1000,22 C1100,32 1180,10 1200,14 L1200,40 L0,40 Z" fill="white"/%3E%3C/svg%3E");mask-size:100% 100%;mask-repeat:no-repeat;-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40" preserveAspectRatio="none"%3E%3Cpath d="M0,20 C150,38 350,2 500,18 C650,34 850,6 1000,22 C1100,32 1180,10 1200,14 L1200,40 L0,40 Z" fill="white"/%3E%3C/svg%3E");-webkit-mask-size:100% 100%;-webkit-mask-repeat:no-repeat}.page-header h1{color:#fff;margin-bottom:0.4rem;font-size:1.7rem;text-shadow:0 1px 4px rgba(0,0,0,0.1);position:relative;z-index:1}.page-header p{color:rgba(255,255,255,0.85);font-size:0.95rem;position:relative;z-index:1}
+.page-header h1{color:var(--color-white);margin-bottom:0.3rem}
+.page-header p{color:rgba(255,255,255,0.8);font-size:0.95rem}
+.section-padding{padding:2rem 0}
+.bg-light{background:var(--color-bg-light)}
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:1.5rem}
+.stat-card{background:var(--color-white);border-radius:var(--radius-md);padding:1rem 0.8rem;text-align:center;box-shadow:var(--shadow-sm)}
+.stat-num{font-size:1.5rem;font-weight:700;line-height:1.2}
+.stat-label{font-size:0.75rem;color:var(--color-text-light);margin-top:0.2rem}
+.stat-card.pending .stat-num{color:var(--color-warning)}
+.stat-card.accepted .stat-num{color:var(--color-primary)}
+.stat-card.completed-stat .stat-num{color:var(--color-success)}
+/* Section title */
+.section-title{margin-bottom:0.8rem;color:var(--color-primary-dark)}
+/* Request cards */
+.request-list{display:flex;flex-direction:column;gap:0.6rem}
+.request-card{background:var(--color-white);border-radius:var(--radius-md);padding:1rem 1.2rem;box-shadow:var(--shadow-sm);border-left:4px solid var(--color-warning)}
+.request-card.completed{border-left-color:var(--color-success);opacity:0.75}
+.request-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem}
+.request-name{font-weight:600;font-size:0.95rem}
+.request-time{font-size:0.72rem;color:var(--color-text-lighter)}
+.request-desc{font-size:0.82rem;color:var(--color-text-light);margin-bottom:0.4rem}
+.request-room{font-size:0.75rem;color:var(--color-text-lighter)}
+.request-actions{display:flex;gap:0.4rem;margin-top:0.5rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:0.4rem 0.9rem;border-radius:var(--radius-sm);font-size:0.8rem;font-weight:500;cursor:pointer;border:none;transition:all var(--transition);font-family:var(--font-sans);gap:0.25rem}
+.btn-accept{background:var(--color-primary);color:white}
+.btn-accept:hover{background:var(--color-primary-dark);color:white}
+.btn-complete{background:var(--color-success);color:white}
+.btn-complete:hover{background:#4a7a49;color:white}
+.btn-outline{background:transparent;color:var(--color-text-light);border:1.5px solid var(--color-border)}
+.btn-outline:hover{border-color:var(--color-primary);color:var(--color-primary)}
+/* Back link */
+.back-link{display:inline-flex;align-items:center;gap:0.3rem;font-size:0.85rem;color:var(--color-text-light);margin-bottom:1rem}
+.back-link:hover{color:var(--color-primary)}
+.footer{background:linear-gradient(180deg,#3b5e47,#2a3d33);color:rgba(255,255,255,0.7);padding:2rem 1rem;text-align:center;margin-top:auto}
+.footer p{font-size:0.8rem;margin-bottom:0.2rem;line-height:1.8}
+.footer-copy{color:rgba(255,255,255,0.4);font-size:0.72rem!important;margin-top:0.4rem}
+.fade-up{opacity:0;transform:translateY(12px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <a href="index.html" class="logo"><span class="logo-icon">🏔️</span><span class="logo-text">云上·归墅</span></a>
+        <div style="display:flex;align-items:center;gap:0.5rem">
+            <span style="font-size:0.75rem;color:var(--color-text-lighter)">员工看板</span>
+            <button id="themeToggle" style="background:none;border:none;cursor:pointer;padding:0.35rem;border-radius:6px;font-size:1.1rem;line-height:1" title="切换深色/浅色模式">🌙</button>
+        </div>
+    </div>
+</header>
+
+<section class="page-header"><div class="container"><h1>🔔 员工看板</h1><p>服务请求处理与订单跟踪</p></div></section>
+
+<section class="section-padding"><div class="container">
+    <a href="orders.html" class="back-link">← 返回订单管理</a>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card pending">
+            <div class="stat-num" id="pendingCount">3</div>
+            <div class="stat-label">待处理</div>
+        </div>
+        <div class="stat-card accepted">
+            <div class="stat-num" id="acceptedCount">1</div>
+            <div class="stat-label">处理中</div>
+        </div>
+        <div class="stat-card completed-stat">
+            <div class="stat-num" id="completedCount">5</div>
+            <div class="stat-label">已完成</div>
+        </div>
+    </div>
+
+    <!-- Pending / In Progress Requests -->
+    <h3 class="section-title">⏳ 待处理请求</h3>
+    <div class="request-list" id="pendingList"></div>
+
+    <!-- Completed Requests -->
+    <h3 class="section-title" style="margin-top:1.5rem">✅ 已完成</h3>
+    <div class="request-list" id="completedList"></div>
+</div></section>
+
+<footer class="footer">
+    <div class="footer-inner"><p>云无心以出岫，鸟倦飞而知还</p><p>🏔️ 云上·归墅民宿 · U型三层山居小院</p><p>📍 庐山山上·庐山风景名胜区大林沟路27号</p><p>📞 16607927666  |  携程 4.7分 · 85条评价  |  2016年开业</p><p class="footer-copy">© 2026 云上·归墅民宿 YunShang GuiShu</p></div>
+</footer>
+
+<script>
+// Demo data
+let requests = [
+    {id:1, name:"房间打扫", desc:"全面清洁房间，更换床品毛巾", room:"301 · 张伟", time:"06-12 09:30", status:"pending"},
+    {id:2, name:"送餐到房", desc:"牛角包三明治 + 桂花拿铁", room:"202 · 王磊", time:"06-12 10:15", status:"pending"},
+    {id:3, name:"空调调节", desc:"房间温度偏低，需要调高", room:"301 · 张伟", time:"06-12 11:00", status:"pending"},
+    {id:4, name:"补充用品", desc:"补充茶包、矿泉水", room:"202 · 王磊", time:"06-12 09:45", status:"accepted"},
+    {id:5, name:"叫醒服务", desc:"明天 6:30 叫醒看日出", room:"301 · 张伟", time:"06-11 20:00", status:"completed"},
+    {id:6, name:"设施报修", desc:"马桶冲水不畅", room:"203 · 李娜", time:"06-11 16:30", status:"completed"},
+    {id:7, name:"叫车服务", desc:"预约出租车去庐山站", room:"301 · 张伟", time:"06-11 14:00", status:"completed"},
+    {id:8, name:"衣物送洗", desc:"两件衬衫 + 一条裤子", room:"202 · 王磊", time:"06-10 10:00", status:"completed"},
+    {id:9, name:"退房办理", desc:"快速退房，账单结算", room:"203 · 李娜", time:"06-10 11:30", status:"completed"},
+];
+
+const statusNames = {pending:"待处理",accepted:"处理中",completed:"已完成"};
+
+function renderAll(){
+    let pending = requests.filter(r=>r.status==='pending'||r.status==='accepted');
+    let completed = requests.filter(r=>r.status==='completed');
+
+    document.getElementById('pendingCount').textContent = requests.filter(r=>r.status==='pending').length;
+    document.getElementById('acceptedCount').textContent = requests.filter(r=>r.status==='accepted').length;
+    document.getElementById('completedCount').textContent = completed.length;
+
+    document.getElementById('pendingList').innerHTML = pending.map(r=>`
+        <div class="request-card${r.status==='completed'?' completed':''}">
+            <div class="request-header">
+                <span class="request-name">${r.name}</span>
+                <span class="request-time">${r.time} · ${statusNames[r.status]}</span>
+            </div>
+            <div class="request-desc">${r.desc}</div>
+            <div class="request-room">🏨 ${r.room}</div>
+            <div class="request-actions">
+                ${r.status==='pending'?`<button class="btn btn-accept" onclick="ackRequest(${r.id})">✅ 确认接单</button>`:''}
+                ${r.status==='accepted'?`<button class="btn btn-complete" onclick="completeRequest(${r.id})">✔️ 标记完成</button>`:''}
+            </div>
+        </div>`).join('');
+
+    document.getElementById('completedList').innerHTML = completed.map(r=>`
+        <div class="request-card completed">
+            <div class="request-header">
+                <span class="request-name">${r.name}</span>
+                <span class="request-time">${r.time} · 已完成</span>
+            </div>
+            <div class="request-desc">${r.desc}</div>
+            <div class="request-room">🏨 ${r.room}</div>
+        </div>`).join('');
+}
+
+function ackRequest(id){
+    const r = requests.find(r=>r.id===id);
+    if(r){
+        r.status = 'accepted';
+        renderAll();
+        alert(`已确认接单：${r.name}（演示）`);
+    }
+}
+
+function completeRequest(id){
+    const r = requests.find(r=>r.id===id);
+    if(r){
+        r.status = 'completed';
+        renderAll();
+        alert(`已完成：${r.name}（演示）`);
+    }
+}
+
+renderAll();
+</script>
+<script>
+(function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));document.getElementById('themeToggle').textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'})();
+document.getElementById('themeToggle').onclick=function(){var c=document.documentElement.getAttribute('data-theme');var n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);this.textContent=n==='dark'?'☀️':'🌙'};
+</script>
+<script>(function(){var o=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1});document.querySelectorAll('.section-padding,.page-header,.footer,.stats-grid,.request-list').forEach(function(e){e.classList.add('fade-up');o.observe(e)})})();</script>
+</body>
+</html>

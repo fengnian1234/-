@@ -39,3 +39,4 @@ node_modules/
 
 # OpenCLI
 .opencli/
+.env.local
