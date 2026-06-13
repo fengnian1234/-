@@ -124,7 +124,7 @@ d:/cc/
 │   ├── quick.py            # 快捷服务
 │   ├── booking.py          # 预订管理/AI解锁
 │   ├── ai.py               # AI 智能对话
-│   ├── monitor.py          # 平台口碑监控（AnySearch）
+│   ├── monitor.py          # 平台口碑监控（opencli + WebSearch）
 │   ├── report.py           # 周报生成（DOCX）
 │   └── notify.py           # 员工通知
 │

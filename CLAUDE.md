@@ -50,7 +50,7 @@ Python 是嵌入式发行版，路径固定为 `C:/Users/admin/python-embed/pyth
 - `quick.py` — 14项快捷服务、服务请求创建
 - `ai.py` — Anthropic Claude AI 对话（预订后才解锁）
 - `notify.py` — 员工通知、看板数据统计
-- `monitor.py` — AnySearch 多平台口碑搜索、评分解析
+- `monitor.py` — opencli 精准搜索 + WebSearch 通用兜底，评分解析
 - `report.py` — python-docx 周报生成（封面+数据表+评价+趋势）
 
 ### 双输出模式
@@ -131,7 +131,8 @@ opencli dianping search --keyword "庐山" --city "九江"
 
 ## 外部依赖
 
-- **AnySearch MCP** — `api.anysearch.com/mcp`，用于平台口碑监控（匿名免费 1000次/天）
+- **opencli** — 原生站点适配器（携程/大众点评/小红书/微博/知乎），用于平台口碑精准搜索
+- **WebSearch (Bing)** — 免费无限额通用搜索，用于 opencli 未覆盖的平台
 - **DeepSeek API** — AI 对话后端（通过 Anthropic 兼容接口 `https://api.deepseek.com/anthropic`）
 - **Cron 周报** — 每周一 9:57 自动生成 DOCX → `reports/`（通过 Claude Code 的 CronCreate 调度）
 - **MinerU** — 文档提取工具，用于从携程页面等提取结构化信息
