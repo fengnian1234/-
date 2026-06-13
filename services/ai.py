@@ -40,6 +40,8 @@ def _try_acquire_slot() -> tuple[bool, float]:
 
 # 简单去重：同一用户短时间内重复发相同消息则拦截
 _last_messages = {}  # {openid: (content, timestamp)}
+# 待续写：记录被截断的对话所使用的 system_template
+_pending_continuation = {}  # {openid: system_template}
 
 
 def _validate_and_sanitize(openid: str, content: str) -> str | None:
@@ -473,6 +475,13 @@ def _call_ai(system_template: str, user_openid: str, user_message: str) -> str:
         )
 
         ai_reply = response.content[0].text
+        # 检测截断：兼容 Anthropic(stop_reason) 和 DeepSeek/OpenAI(finish_reason)
+        stop = getattr(response, 'stop_reason', None) or getattr(response, 'finish_reason', '')
+        truncated = stop in ('max_tokens', 'length', 'stop')
+
+        # 记录截断状态（用于「继续生成」）
+        if truncated:
+            _pending_continuation[user_openid] = system_template
 
         history.append({"role": "user", "content": user_message})
         history.append({"role": "assistant", "content": ai_reply})
@@ -481,6 +490,9 @@ def _call_ai(system_template: str, user_openid: str, user_message: str) -> str:
 
         if len(history) > 20:
             _conversation_cache[user_openid] = history[-20:]
+
+        if truncated:
+            ai_reply += "\n\n📝 [回复较长，回复「继续」查看完整内容]"
 
         return ai_reply
 
@@ -611,10 +623,23 @@ def _fallback_reply() -> str:
     )
 
 
+def continue_reply(user_openid: str) -> str:
+    """
+    继续生成被截断的回复。
+    将上一条截断的 AI 回复作为上下文，请求 AI 从断点继续。
+    """
+    if user_openid not in _pending_continuation:
+        return "当前没有需要继续生成的内容～请直接提出新的问题吧"
+
+    system_template = _pending_continuation.pop(user_openid)
+    return _call_ai(system_template, user_openid, "请继续上文未完的内容，从断点处接着写，不要重复已写过的部分。")
+
+
 def reset_conversation(user_openid: str):
     """重置用户对话历史"""
     if user_openid in _conversation_cache:
         del _conversation_cache[user_openid]
+    _pending_continuation.pop(user_openid, None)
 
 
 def get_conversation_mode(user_openid: str) -> str:

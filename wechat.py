@@ -20,7 +20,7 @@ from services.travel import (
     format_food_text, format_food_detail_text, format_location_text,
 )
 from services.quick import format_services_text, handle_service_request
-from services.ai import chat, chat_pre_arrival, chat_travel_advisor, chat_post_stay, reset_conversation, get_conversation_mode
+from services.ai import chat, chat_pre_arrival, chat_travel_advisor, chat_post_stay, continue_reply, reset_conversation, get_conversation_mode
 from services.booking import (
     is_ai_enabled, is_checked_in, format_booking_platforms_text,
     generate_review_message, get_review_reminders_due,
@@ -195,6 +195,8 @@ def build_keyword_routes():
          lambda msg, m: format_greeting()),
         (r"^(谢谢|感谢|多谢|3Q|thanks)$",
          lambda msg, m: "不客气！祝您在庐山度过美好的时光～ 🌄✨\n有任何需要随时找我哦！"),
+        (r"^(继续|继续生成|续写)$",
+         lambda msg, m: handle_continue(msg)),
     ]
 
 
@@ -285,6 +287,12 @@ def handle_show_room_code(msg) -> str:
     lines.append("")
     lines.append("💡 同住人回复「绑定房间 " + room_code + "」即可共享 AI 管家～")
     return "\n".join(lines)
+
+
+def handle_continue(msg) -> str:
+    """处理「继续生成」请求"""
+    openid = _get_openid(msg)
+    return continue_reply(openid)
 
 
 def handle_order_flow(msg, m) -> str:
