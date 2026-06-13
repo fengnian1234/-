@@ -1,21 +1,28 @@
 """
 多平台信息收集子Agent（要求6）
 收集美团/大众点评/飞猪/携程/小红书/抖音上关于云上·归墅民宿的信息
-通过 AnySearch API 实时搜索各平台评价和提及
+v3.3: WebSearch 优先（无限额），AnySearch 降级备用
 """
 import json
 import re
 import time
 from datetime import datetime
+from urllib.parse import quote
 import requests
 
 from models import SessionLocal, PlatformMention
 from services.logger import info, warning, debug
 from config import MONITOR_PLATFORMS, MONITOR_KEYWORDS, MONITOR_SEARCH_QUERY, BNB_NAME
 
-# AnySearch API 配置
+# 搜索后端优先级：WebSearch > AnySearch
+SEARCH_BACKEND_ORDER = ["websearch", "anysearch"]
+
+# AnySearch API 配置（降级备用）
 ANYSEARCH_ENDPOINT = "https://api.anysearch.com/mcp"
 ANYSEARCH_API_KEY = ""  # 留空使用匿名访问（1000次/天免费额度）
+
+# WebSearch 配置（通过 Bing，国内可直接访问，免费无限额）
+WEBSEARCH_ENDPOINT = "https://www.bing.com/search"
 
 
 def _call_anysearch_api(tool_name: str, arguments: dict) -> str:
@@ -49,6 +56,96 @@ def _call_anysearch_api(tool_name: str, arguments: dict) -> str:
         return "[Error] API 请求超时"
     except Exception as e:
         return f"[Error] {str(e)}"
+
+
+def _search_via_websearch(query: str, max_results: int = 5) -> str:
+    """
+    通过 Bing 搜索（免费、无限额、无需 API Key，国内可直接访问）
+    返回 Markdown 格式的搜索结果文本，兼容现有 _parse_search_results 解析器
+    """
+    params = {"q": query, "setlang": "zh-Hans", "count": str(max_results)}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                       "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+    try:
+        resp = requests.get(WEBSEARCH_ENDPOINT, params=params, headers=headers, timeout=15)
+        resp.raise_for_status()
+        html = resp.text
+
+        results = []
+        results.append(f"## Search Results for: {query}")
+
+        # Bing 搜索结果结构: <li class="b_algo"> → <h2><a href="URL">TITLE</a></h2>
+        #                                        → <div class="b_attribution"><cite>URL</cite></div>
+        #                                        → <div class="b_caption"><p>SNIPPET</p></div>
+        algo_pattern = re.compile(
+            r'<li[^>]*class="b_algo"[^>]*>(.*?)</li>\s*(?=<li[^>]*class="b_algo"|\s*</ol>)',
+            re.DOTALL
+        )
+        algos = algo_pattern.findall(html)
+
+        for i, algo in enumerate(algos[:max_results]):
+            # 提取 h2 中的链接和标题
+            h2_match = re.search(
+                r'<h2[^>]*>.*?<a[^>]*href="(https?://[^"]+)"[^>]*>(.*?)</a>',
+                algo, re.DOTALL
+            )
+            if not h2_match:
+                continue
+
+            url = h2_match.group(1)
+            title = re.sub(r'<[^>]+>', '', h2_match.group(2)).strip()
+
+            # 提取 b_caption 中的摘要
+            caption_match = re.search(
+                r'<div[^>]*class="b_caption"[^>]*>(.*?)</div>',
+                algo, re.DOTALL
+            )
+            snippet = ""
+            if caption_match:
+                snippet = re.sub(r'<[^>]+>', '', caption_match.group(1)).strip()
+                # 清理多余的空白和实体
+                snippet = re.sub(r'&ensp;|&#0183;|·', ' ', snippet)
+                snippet = re.sub(r'\s+', ' ', snippet).strip()
+
+            results.append(f"### {i+1}. {title}")
+            results.append(f"**URL**: {url}")
+            if snippet:
+                results.append(f"{snippet[:300]}")
+            results.append("")
+
+        return "\n".join(results) if len(results) > 1 else ""
+
+    except requests.exceptions.ConnectionError:
+        return "[Error] 无法连接 WebSearch (Bing)"
+    except requests.exceptions.Timeout:
+        return "[Error] WebSearch 请求超时"
+    except Exception as e:
+        return f"[Error] WebSearch: {str(e)}"
+
+
+def _perform_search(query: str, max_results: int = 5) -> tuple:
+    """
+    按优先级尝试搜索后端：WebSearch → AnySearch
+    返回 (结果文本, 使用的后端名称)
+    """
+    for backend in SEARCH_BACKEND_ORDER:
+        if backend == "websearch":
+            result = _search_via_websearch(query, max_results)
+            if result and not result.startswith("[Error]"):
+                return result, "WebSearch"
+            debug(f"WebSearch 失败，降级到 AnySearch: {result[:80]}")
+
+        elif backend == "anysearch":
+            result = _call_anysearch_api("search", {
+                "query": query,
+                "max_results": max_results,
+            })
+            if result and not result.startswith("[Error]") and not result.startswith("[API Error]"):
+                return result, "AnySearch"
+
+    return "[Error] 所有搜索后端均不可用", "none"
 
 
 def _extract_rating(text: str) -> float:
@@ -158,8 +255,11 @@ def search_platform_mentions(query: str = "") -> dict:
         "query": query,
         "timestamp": datetime.utcnow().isoformat(),
         "bnb_name": BNB_NAME,
+        "search_backend": None,  # 将在第一次搜索时确定
         "platforms": {},
     }
+
+    backend_used = None
 
     # 为每个平台执行独立搜索
     for platform in MONITOR_PLATFORMS:
@@ -167,10 +267,10 @@ def search_platform_mentions(query: str = "") -> dict:
         info(f"🔍 正在搜索 {platform}...")
 
         try:
-            raw_text = _call_anysearch_api("search", {
-                "query": platform_query,
-                "max_results": 5,
-            })
+            raw_text, backend = _perform_search(platform_query, max_results=5)
+            if backend_used is None:
+                backend_used = backend
+                results["search_backend"] = backend
 
             # 解析搜索结果
             mentions = _parse_search_results(raw_text, platform)
@@ -178,9 +278,9 @@ def search_platform_mentions(query: str = "") -> dict:
             # 保存到数据库
             if mentions:
                 stored_count = store_mentions(platform, mentions)
-                info(f"    {platform}: 找到 {len(mentions)} 条，存入 {stored_count} 条新记录")
+                info(f"    {platform} [{backend}]: 找到 {len(mentions)} 条，存入 {stored_count} 条新记录")
             else:
-                info(f"    {platform}: 无有效结果")
+                info(f"    {platform} [{backend}]: 无有效结果")
 
             # 计算评分
             ratings = [m["rating"] for m in mentions if m["rating"]]
@@ -192,10 +292,11 @@ def search_platform_mentions(query: str = "") -> dict:
                 "avg_rating": round(sum(ratings) / len(ratings), 1) if ratings else None,
                 "top_mentions": mentions[:3],
                 "search_url": _get_search_url(platform, query),
+                "backend": backend,
             }
 
             # 避免请求过快
-            time.sleep(0.5)
+            time.sleep(1.0)
 
         except Exception as e:
             warning(f"    {platform}: 搜索失败 - {e}")
@@ -390,7 +491,7 @@ def agent_collect_platform_info() -> dict:
             "search_keywords": MONITOR_KEYWORDS,
         },
         "collection_timestamp": datetime.utcnow().isoformat(),
-        "powered_by": "AnySearch API",
+        "powered_by": f"WebSearch (优先) + AnySearch (备用)",
     }
 
 
