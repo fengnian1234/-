@@ -43,6 +43,10 @@ AI_MODEL = os.getenv("AI_MODEL", "deepseek-chat")
 AI_ENABLED = bool(ANTHROPIC_API_KEY)
 # 重要：AI仅在用户有确认预订后解锁（要求1）
 AI_REQUIRES_BOOKING = True
+# AI 全局最大并发数（防止超出 API 配额）
+AI_MAX_CONCURRENCY = int(os.getenv("AI_MAX_CONCURRENCY", "5"))
+# 单条消息最大长度（超过截断，防止 token 浪费）
+AI_MAX_MESSAGE_LENGTH = int(os.getenv("AI_MAX_MESSAGE_LENGTH", "500"))
 
 # ── 民宿信息（已修正为文档指定内容）──────────────────────
 BNB_NAME = "云上·归墅民宿"

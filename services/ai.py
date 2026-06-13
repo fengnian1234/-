@@ -6,12 +6,54 @@ AI智能对话服务 v3.1 — 全链路AI管家
 - v3.1: 注入本地数据 + 禁用Markdown星号 + 禁谐音梗
 """
 import json
+import threading
+import time as _time_module
 from config import (
     ANTHROPIC_API_KEY, ANTHROPIC_BASE_URL, AI_MODEL, AI_ENABLED, AI_REQUIRES_BOOKING,
+    AI_MAX_CONCURRENCY, AI_MAX_MESSAGE_LENGTH,
     BNB_NAME, BNB_ADDRESS, BNB_PHONE,
 )
 from services.booking import is_ai_enabled, get_booking_by_openid
 from services.logger import info, warning, error as log_error, debug, log_ai
+
+
+# ══════════════════════════════════════════════════════════
+#  并发控制 + 输入校验
+# ══════════════════════════════════════════════════════════
+
+# 全局并发信号量（限制同时进行的 AI API 调用数）
+_ai_semaphore = threading.Semaphore(AI_MAX_CONCURRENCY)
+
+# 简单去重：同一用户短时间内重复发相同消息则拦截
+_last_messages = {}  # {openid: (content, timestamp)}
+
+
+def _validate_and_sanitize(openid: str, content: str) -> str | None:
+    """
+    校验并清理用户输入。返回错误消息表示应拦截，返回 None 表示通过。
+    """
+    # 1. 空消息
+    if not content or not content.strip():
+        return "请输入您的问题，我会尽力帮您解答～"
+
+    # 2. 超长截断（content 是传入引用，外部也会用到截断后的值——这里只做长度检查）
+    if len(content) > AI_MAX_MESSAGE_LENGTH:
+        info(f"[AI] 消息过长 openid={openid[:12]} len={len(content)} > {AI_MAX_MESSAGE_LENGTH}")
+
+    # 3. 去除控制字符
+    import re
+    sanitized = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', content)
+
+    # 4. 连续重复消息拦截（30秒内完全相同）
+    now = _time_module.time()
+    if openid in _last_messages:
+        last_content, last_time = _last_messages[openid]
+        if sanitized.strip() == last_content.strip() and (now - last_time) < 30:
+            warning(f"[AI] 重复消息拦截 openid={openid[:12]}")
+            return "您刚发送了相同的问题，我已收到～请稍候或换个问题试试"
+
+    _last_messages[openid] = (sanitized.strip(), now)
+    return None  # 校验通过
 
 
 # ══════════════════════════════════════════════════════════
@@ -363,9 +405,30 @@ def _load_conversation(openid: str, limit: int = 10):
 
 
 def _call_ai(system_template: str, user_openid: str, user_message: str) -> str:
-    """通用的AI调用函数，自动注入本地数据"""
+    """通用的AI调用函数，自动注入本地数据 + 输入校验 + 并发控制"""
     if not AI_ENABLED:
         return _fallback_reply()
+
+    # ── 输入校验 ──
+    validation_error = _validate_and_sanitize(user_openid, user_message)
+    if validation_error:
+        return validation_error
+
+    # ── 消息截断 ──
+    if len(user_message) > AI_MAX_MESSAGE_LENGTH:
+        user_message = user_message[:AI_MAX_MESSAGE_LENGTH]
+
+    # ── 并发控制 ──
+    acquired = _ai_semaphore.acquire(timeout=15)  # 最多等15秒
+    if not acquired:
+        warning(f"[AI] 并发已满，拒绝请求 openid={user_openid[:12]}")
+        return (
+            "很抱歉，当前咨询人数较多，AI 管家正在全力回复中～ ⏳\n\n"
+            "请稍等片刻后再试，或：\n"
+            "  · 回复数字 1-5 使用快捷功能\n"
+            "  · 回复「人工」转接人工客服\n\n"
+            "给您带来不便敬请谅解～"
+        )
 
     try:
         # 注入本地数据
@@ -411,6 +474,8 @@ def _call_ai(system_template: str, user_openid: str, user_message: str) -> str:
     except Exception as e:
         log_error("ai.call", str(e), exc_info=True)
         return _fallback_reply()
+    finally:
+        _ai_semaphore.release()
 
 
 # ══════════════════════════════════════════════════════════
