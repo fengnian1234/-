@@ -1,0 +1,28 @@
+<!-- 民宿选择页 — 三民宿卡片 -->
+<view class="bnb-select-page">
+  <view class="bnb-select-header">
+    <text class="bnb-select-title">🏔️ 云上·印象集</text>
+    <text class="bnb-select-sub">庐山山居 · 三宿归一</text>
+  </view>
+
+  <view class="bnb-cards">
+    <view
+      wx:for="{{bnbs}}"
+      wx:key="bnb_id"
+      class="bnb-card {{item.selected ? 'bnb-card--selected' : ''}}"
+      style="--card-color: {{item.themeColor}}"
+      data-bnb-id="{{item.bnb_id}}"
+      bindtap="onSelect"
+    >
+      <view class="bnb-card-gradient" style="background: linear-gradient(135deg, {{item.themeColor}}, {{item.themeColor}}88)"></view>
+      <view class="bnb-card-content">
+        <text class="bnb-card-icon">{{item.bnb_id === 'guishu' ? '🏡' : (item.bnb_id === 'shanji' ? '🍵' : '🧘')}}</text>
+        <text class="bnb-card-name">{{item.shortName}}</text>
+        <text class="bnb-card-fullname">{{item.name}}</text>
+        <text class="bnb-card-desc">{{item.description}}</text>
+        <text class="bnb-card-address">📍 {{item.address}}</text>
+        <view wx:if="{{item.selected}}" class="bnb-card-badge">当前</view>
+      </view>
+    </view>
+  </view>
+</view>

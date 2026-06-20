@@ -62,6 +62,37 @@ Python 是嵌入式发行版，路径固定为 `C:/Users/admin/python-embed/pyth
 
 预览页是模板的**自包含副本**，不共享 CSS/JS。对页面结构或样式的修改需要分别处理。
 
+### 小程序模拟器与实体页面的同步
+
+`templates/miniapp-simulator.html` 是外壳，内部通过 iframe 加载真实的 Flask 模板页面（带 `?mp=1` 参数触发 mp-mode）。**模拟器的任何 UI/交互改动都可能需要同步修改被加载的实体页面**，必须按以下链路逐一检查：
+
+```
+miniapp-simulator.html  (外壳：Tab栏、抽屉、切换弹窗、postMessage监听)
+        │
+        ├── iframe → templates/index.html     (首页内容 + postMessage发送)
+        ├── iframe → templates/rooms.html     (房型列表 + mp-mode卡片)
+        ├── iframe → templates/room_detail.html (房型详情弹窗)
+        ├── iframe → templates/menu.html
+        ├── iframe → templates/travel.html
+        ├── iframe → templates/services.html
+        ├── iframe → templates/tea.html       (山纪专属)
+        ├── iframe → templates/healing.html   (东林外专属)
+        └── iframe → templates/miniapp-chat.html (AI管家)
+```
+
+**修改规范：**
+
+| 改动类型 | 需检查的文件 |
+|----------|-------------|
+| Tab 栏配置（名称/数量/图标） | `simulator` 的 `BNB_TABS` + `index.html` 的 `tabMap` postMessage 映射 |
+| 侧拉抽屉（我的）内容 | `simulator` 的抽屉 HTML + `base.html` 中 mp-mode 下隐藏的元素 |
+| mp-mode 样式（间距/字号/颜色） | `static/css/style-mp.css` — 所有实体模板共用此文件 |
+| 页面内导航/链接 | 所有模板中的 `<a href>` 必须使用 `{{ bnb_prefix }}` + `{{ mp }}` 保持模式 |
+| BnB 切换逻辑 | `simulator` 的 `switchBnb()` + `base.html` 的 BnB 下拉 + 所有模板的条件渲染 |
+| 新增功能入口（茶园/疗愈/积分） | `simulator` Tab 配置 + `index.html` 快捷卡片 + `base.html` 导航 + 对应功能模板 |
+
+**验证方法：** 修改模拟器后，必须用三种 BnB（归墅/山纪/东林外）分别打开模拟器，完整走一遍所有 Tab，确认 iframe 内容与外壳无断裂。
+
 ### 数据库
 
 SQLite (`yunshang_bnb.db`)，通过 SQLAlchemy ORM 访问。表：`rooms`、`bookings`、`menu_items`、`menu_categories`、`travel_routes`、`food_recommends`、`service_requests`、`platform_mentions`。

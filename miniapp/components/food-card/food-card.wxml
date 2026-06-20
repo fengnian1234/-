@@ -1,0 +1,24 @@
+<view class="food-card press-active" bindtap="onTap">
+  <image
+    wx:if="{{food.images && food.images.length}}"
+    src="{{food.images[0]}}"
+    mode="aspectFill"
+    lazy-load
+    class="food-card__img"
+  />
+  <view wx:else class="food-card__img food-card__img--placeholder">🍜</view>
+  <view class="food-card__body">
+    <view class="food-card__header">
+      <text class="food-card__name">{{food.name}}</text>
+      <view class="tag tag--accent" wx:if="{{food.category}}">{{food.category}}</view>
+    </view>
+    <view class="food-card__desc">{{truncatedDesc}}</view>
+    <view class="food-card__meta">
+      <text class="food-card__price" wx:if="{{food.price_range}}">{{food.price_range}}</text>
+      <text class="food-card__address" wx:if="{{food.address}}">📍 {{truncatedAddress}}</text>
+    </view>
+    <view class="food-card__must-try" wx:if="{{food.must_try}}">
+      🔥 必点：{{food.must_try}}
+    </view>
+  </view>
+</view>

@@ -1,0 +1,10 @@
+{
+  "usingComponents": {
+    "page-header": "/components/page-header/page-header",
+    "food-card": "/components/food-card/food-card",
+    "notice-bar": "/components/notice-bar/notice-bar",
+    "empty-state": "/components/empty-state/empty-state",
+    "loading-skeleton": "/components/loading-skeleton/loading-skeleton"
+  },
+  "navigationBarTitleText": "游玩攻略"
+}

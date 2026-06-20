@@ -10,21 +10,36 @@ from models import SessionLocal, MenuCategory, MenuItem, Order
 from config import WECHAT_APP_ID, WECHAT_MCH_ID, WECHAT_MCH_KEY
 
 
-def get_menu_categories():
+def _get_bnb_id(bnb_id=None):
+    if bnb_id:
+        return bnb_id
+    try:
+        from flask import g
+        return getattr(g, 'bnb_id', 'guishu')
+    except RuntimeError:
+        return 'guishu'
+
+
+def get_menu_categories(bnb_id=None):
     """获取所有菜单分类"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
-        categories = db.query(MenuCategory).order_by(MenuCategory.sort_order).all()
+        categories = db.query(MenuCategory).filter(
+            MenuCategory.bnb_id == bnb_id
+        ).order_by(MenuCategory.sort_order).all()
         return [c.to_dict() for c in categories]
     finally:
         db.close()
 
 
-def get_menu_items_by_category(category_id: int):
+def get_menu_items_by_category(category_id: int, bnb_id=None):
     """按分类获取菜品"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
         items = db.query(MenuItem).filter(
+            MenuItem.bnb_id == bnb_id,
             MenuItem.category_id == category_id,
             MenuItem.is_available == True
         ).order_by(MenuItem.sort_order).all()
@@ -33,11 +48,13 @@ def get_menu_items_by_category(category_id: int):
         db.close()
 
 
-def get_recommended_items():
+def get_recommended_items(bnb_id=None):
     """获取推荐菜品"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
         items = db.query(MenuItem).filter(
+            MenuItem.bnb_id == bnb_id,
             MenuItem.is_available == True,
             MenuItem.is_recommended == True
         ).order_by(MenuItem.sort_order).all()
@@ -47,14 +64,16 @@ def get_recommended_items():
 
 
 def create_order(openid: str, items_data: list, room_number: str = "",
-                 remark: str = "") -> Order:
+                 remark: str = "", bnb_id=None) -> Order:
     """创建订单
     items_data: [{"id": 1, "name": "庐山云雾茶", "quantity": 2, "price": 68}, ...]
     """
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
         total = sum(item["price"] * item["quantity"] for item in items_data)
         order = Order(
+            bnb_id=bnb_id,
             openid=openid,
             room_number=room_number,
             items=items_data,
@@ -70,11 +89,13 @@ def create_order(openid: str, items_data: list, room_number: str = "",
         db.close()
 
 
-def get_user_orders(openid: str, limit: int = 10):
+def get_user_orders(openid: str, limit: int = 10, bnb_id=None):
     """获取用户订单列表"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
         orders = db.query(Order).filter(
+            Order.bnb_id == bnb_id,
             Order.openid == openid
         ).order_by(Order.created_at.desc()).limit(limit).all()
         return [o.to_dict() for o in orders]
@@ -82,11 +103,12 @@ def get_user_orders(openid: str, limit: int = 10):
         db.close()
 
 
-def get_order_status(order_id: int):
+def get_order_status(order_id: int, bnb_id=None):
     """查询订单状态"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
-        order = db.query(Order).filter(Order.id == order_id).first()
+        order = db.query(Order).filter(Order.id == order_id, Order.bnb_id == bnb_id).first()
         return order.to_dict() if order else None
     finally:
         db.close()
@@ -102,9 +124,10 @@ STATUS_LABELS = {
 }
 
 
-def format_menu_text():
+def format_menu_text(bnb_id=None):
     """格式化为微信文本菜单（要求5：咖啡简餐）"""
-    categories = get_menu_categories()
+    bnb_id = _get_bnb_id(bnb_id)
+    categories = get_menu_categories(bnb_id=bnb_id)
     if not categories:
         return "暂无菜单信息，请咨询前台～"
 
@@ -112,7 +135,7 @@ def format_menu_text():
     lines.append("本民宿不提供正餐，以下为咖啡、茶饮与简餐～\n")
 
     # 先展示推荐
-    recommended = get_recommended_items()
+    recommended = get_recommended_items(bnb_id=bnb_id)
     if recommended:
         lines.append("⭐ *今日推荐*\n")
         for item in recommended:
@@ -144,9 +167,10 @@ def format_menu_text():
     return "\n".join(lines)
 
 
-def format_recommended_text():
+def format_recommended_text(bnb_id=None):
     """格式化推荐菜品"""
-    items = get_recommended_items()
+    bnb_id = _get_bnb_id(bnb_id)
+    items = get_recommended_items(bnb_id=bnb_id)
     if not items:
         return "暂无推荐菜品～"
 
@@ -162,9 +186,10 @@ def format_recommended_text():
     return "\n".join(lines)
 
 
-def format_order_status_text(openid: str):
+def format_order_status_text(openid: str, bnb_id=None):
     """格式化用户订单状态"""
-    orders = get_user_orders(openid)
+    bnb_id = _get_bnb_id(bnb_id)
+    orders = get_user_orders(openid, bnb_id=bnb_id)
     if not orders:
         return "您还没有订单记录～\n回复「点餐」开始咖啡简餐之旅吧！"
 

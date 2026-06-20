@@ -1,0 +1,62 @@
+<view class="cart-panel {{visible ? 'cart-panel--visible' : ''}}" wx:if="{{visible || _hasItems}}">
+  <!-- 遮罩 -->
+  <view class="cart-panel__mask" bindtap="onClose" wx:if="{{visible}}"></view>
+
+  <!-- 面板 -->
+  <view class="cart-panel__body {{visible ? 'cart-panel__body--visible' : ''}}">
+    <view class="cart-panel__header">
+      <text class="cart-panel__title">🛒 购物车 ({{totalCount}}件)</text>
+      <view class="cart-panel__clear" bindtap="onClear" wx:if="{{items.length}}">清空</view>
+    </view>
+
+    <!-- 商品列表 -->
+    <scroll-view scroll-y class="cart-panel__list" wx:if="{{items.length}}">
+      <view class="cart-panel__item" wx:for="{{items}}" wx:key="seq">
+        <view class="cart-panel__item-info">
+          <text class="cart-panel__item-name">{{item.name}}</text>
+          <text class="cart-panel__item-options" wx:if="{{item.options}}">{{item.options}}</text>
+          <text class="cart-panel__item-price price">¥{{item.price}}</text>
+        </view>
+        <view class="cart-panel__item-qty">
+          <view class="cart-panel__qty-btn" bindtap="onDecrease" data-seq="{{item.seq}}">−</view>
+          <text class="cart-panel__qty-num">{{item.quantity}}</text>
+          <view class="cart-panel__qty-btn cart-panel__qty-btn--plus" bindtap="onIncrease" data-seq="{{item.seq}}">+</view>
+        </view>
+        <view class="cart-panel__item-del" bindtap="onRemove" data-seq="{{item.seq}}">🗑</view>
+      </view>
+    </scroll-view>
+
+    <!-- 空状态 -->
+    <view class="cart-panel__empty" wx:else>
+      <text>🛒</text>
+      <text>购物车空空如也～</text>
+    </view>
+
+    <!-- 底部表单和下单 -->
+    <view class="cart-panel__footer" wx:if="{{items.length}}">
+      <view class="cart-panel__inputs">
+        <input
+          class="cart-panel__input"
+          placeholder="房间号（选填）"
+          value="{{roomNumber}}"
+          bindinput="onRoomInput"
+          maxlength="10"
+        />
+        <input
+          class="cart-panel__input"
+          placeholder="备注（选填）"
+          value="{{remark}}"
+          bindinput="onRemarkInput"
+          maxlength="50"
+        />
+      </view>
+      <view class="cart-panel__total">
+        <text>合计</text>
+        <text class="price price--large">¥{{totalPrice.toFixed(0)}}</text>
+      </view>
+      <view class="cart-panel__submit {{submitting ? 'cart-panel__submit--loading' : ''}}" bindtap="onSubmit">
+        {{submitting ? '提交中...' : '确认下单'}}
+      </view>
+    </view>
+  </view>
+</view>

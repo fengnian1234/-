@@ -1,0 +1,72 @@
+<view class="drink-modal" wx:if="{{visible}}">
+  <view class="drink-modal__mask" bindtap="onCancel"></view>
+  <view class="drink-modal__body">
+    <view class="drink-modal__title">{{item.name}}</view>
+
+    <!-- 茶：茶叶类型 + 热/冷 -->
+    <block wx:if="{{isTea}}">
+      <view class="drink-modal__section">
+        <text class="drink-modal__label">茶叶类型</text>
+        <view class="drink-modal__chips">
+          <view
+            wx:for="{{teaTypes}}"
+            wx:key="*this"
+            class="drink-modal__chip {{selectedTea === item ? 'drink-modal__chip--active' : ''}}"
+            data-value="{{item}}"
+            bindtap="onSelectTea"
+          >{{item}}</view>
+        </view>
+      </view>
+
+      <view class="drink-modal__section">
+        <text class="drink-modal__label">规格</text>
+        <view class="drink-modal__chips">
+          <view
+            wx:for="{{teaSizes}}"
+            wx:key="*this"
+            class="drink-modal__chip {{selectedSize === item ? 'drink-modal__chip--active' : ''}}"
+            data-value="{{item}}"
+            bindtap="onSelectSize"
+          >{{item}}</view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 咖啡等饮品：糖度 + 冷热 -->
+    <block wx:else>
+      <view class="drink-modal__section">
+        <text class="drink-modal__label">糖度</text>
+        <view class="drink-modal__chips">
+          <view
+            wx:for="{{sugarLevels}}"
+            wx:key="*this"
+            class="drink-modal__chip {{selectedSugar === item ? 'drink-modal__chip--active' : ''}}"
+            data-value="{{item}}"
+            bindtap="onSelectSugar"
+          >{{item}}</view>
+        </view>
+      </view>
+
+      <view class="drink-modal__section">
+        <text class="drink-modal__label">温度</text>
+        <view class="drink-modal__chips">
+          <view
+            wx:for="{{temperatures}}"
+            wx:key="*this"
+            class="drink-modal__chip {{selectedTemp === item ? 'drink-modal__chip--active' : ''}}"
+            data-value="{{item}}"
+            bindtap="onSelectTemp"
+          >{{item}}</view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 确认按钮 -->
+    <view class="drink-modal__actions">
+      <view class="drink-modal__cancel" bindtap="onCancel">取消</view>
+      <view class="drink-modal__confirm" bindtap="onConfirm">
+        确认加入 · ¥{{item.price}}
+      </view>
+    </view>
+  </view>
+</view>

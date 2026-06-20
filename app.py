@@ -6,17 +6,53 @@ import os
 import hashlib
 import time
 from datetime import datetime
-from flask import Flask, request, jsonify, render_template, abort
+from flask import Flask, request, jsonify, render_template, abort, g
 from services.logger import info, warning, error as log_error, debug, log_ai, log_keyword, log_booking
 from config import (
     DEBUG, SECRET_KEY, WECHAT_TOKEN, WECHAT_APP_ID, WECHAT_APP_SECRET,
-    BASE_URL, BNB_NAME,
+    WECHAT_MINI_APP_ID, WECHAT_MINI_APP_SECRET,
+    BASE_URL, BNB_NAME, BNB_CONFIGS,
 )
 from models import init_db, SessionLocal, Booking
 from seed_data import seed_all
+from bnb_context import get_current_bnb, get_current_bnb_id, get_bnb_id_from_path
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
+
+# ── CORS 支持 ──────────────────────────────────────────
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    return response
+
+@app.before_request
+def handle_preflight():
+    if request.method == "OPTIONS":
+        return app.make_default_options_response()
+
+# ── BnB 上下文注入 ──────────────────────────────────────
+@app.before_request
+def set_bnb_context():
+    """在每次请求前注入当前民宿标识到 Flask g 对象"""
+    g.bnb_id = get_bnb_id_from_path(request.path)
+    g.bnb_config = get_current_bnb()
+
+# ── 模板全局变量注入 ───────────────────────────────────
+@app.context_processor
+def inject_bnb():
+    """所有 Jinja2 模板自动获得 bnb / bnb_id / bnb_prefix / request_path 变量"""
+    bnb_id = get_current_bnb_id()
+    prefix_map = {"guishu": "/gs", "shanji": "/sj", "donglinwai": "/dlw"}
+    return {
+        "bnb": get_current_bnb(),
+        "bnb_id": bnb_id,
+        "bnb_prefix": prefix_map.get(bnb_id, ""),
+        "BNB_CONFIGS": BNB_CONFIGS,
+        "request_path": request.path,
+    }
 
 # ── 简易限流（内存，单进程） ──────────────────────────────
 _rate_limit_store = {}
@@ -55,24 +91,19 @@ def init_app():
 
 
 # ══════════════════════════════════════════════════════════
-#  微信服务器接入
+#  微信服务器接入（三民宿各一路径）
 # ══════════════════════════════════════════════════════════
-@app.route("/wechat", methods=["GET", "POST"])
-def wechat():
-    """微信公众号服务器接入点"""
-    if request.method == "GET":
-        return _verify_wechat()
-    return _handle_wechat_post()
 
-
-def _verify_wechat():
-    """微信服务器签名验证"""
+def _verify_wechat(bnb_id="guishu"):
+    """微信服务器签名验证（按民宿取对应 token）"""
     signature = request.args.get("signature", "")
     timestamp = request.args.get("timestamp", "")
     nonce = request.args.get("nonce", "")
     echostr = request.args.get("echostr", "")
 
-    tmp_list = sorted([WECHAT_TOKEN, timestamp, nonce])
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
+    token = cfg.get("wechat_token", WECHAT_TOKEN)
+    tmp_list = sorted([token, timestamp, nonce])
     tmp_str = "".join(tmp_list)
     tmp_str = hashlib.sha1(tmp_str.encode()).hexdigest()
 
@@ -82,8 +113,8 @@ def _verify_wechat():
         abort(403)
 
 
-def _handle_wechat_post():
-    """处理微信消息推送"""
+def _handle_wechat_post(bnb_id="guishu"):
+    """处理微信消息推送（注入 bnb_id 到消息处理）"""
     from wechatpy import parse_message
     from wechatpy.replies import TextReply
     from wechat import handle_wechat_message, handle_event
@@ -101,10 +132,10 @@ def _handle_wechat_post():
 
     try:
         if msg_type == 'text':
-            reply_text = handle_wechat_message(msg)
+            reply_text = handle_wechat_message(msg, bnb_id=bnb_id)
             reply = TextReply(content=reply_text, message=msg)
         elif msg_type == 'event':
-            reply_text = handle_event(msg)
+            reply_text = handle_event(msg, bnb_id=bnb_id)
             if not reply_text:
                 return "success"
             reply = TextReply(content=reply_text, message=msg)
@@ -131,69 +162,135 @@ def _handle_wechat_post():
         return "success"
 
 
+# 归墅（旧路径兼容）
+@app.route("/wechat", methods=["GET", "POST"])
+def wechat():
+    if request.method == "GET":
+        return _verify_wechat("guishu")
+    return _handle_wechat_post("guishu")
+
+# 三家民宿独立路径
+@app.route("/wechat/gs", methods=["GET", "POST"])
+def wechat_gs():
+    if request.method == "GET":
+        return _verify_wechat("guishu")
+    return _handle_wechat_post("guishu")
+
+@app.route("/wechat/sj", methods=["GET", "POST"])
+def wechat_sj():
+    if request.method == "GET":
+        return _verify_wechat("shanji")
+    return _handle_wechat_post("shanji")
+
+@app.route("/wechat/dlw", methods=["GET", "POST"])
+def wechat_dlw():
+    if request.method == "GET":
+        return _verify_wechat("donglinwai")
+    return _handle_wechat_post("donglinwai")
+
+
 # ══════════════════════════════════════════════════════════
-#  H5 页面路由
+#  H5 页面路由（支持 /path 和 /<bnb_prefix>/path 双模式）
 # ══════════════════════════════════════════════════════════
-@app.route("/")
-def index():
-    from services.rooms import get_featured_rooms
-    return render_template("index.html", featured_rooms=get_featured_rooms(4))
-
-@app.route("/rooms")
-def rooms_page():
-    from services.rooms import get_all_rooms
-    return render_template("rooms.html", rooms=get_all_rooms())
-
-@app.route("/rooms/<int:room_id>")
-def room_detail(room_id: int):
-    from services.rooms import get_room_by_id
-    room = get_room_by_id(room_id)
-    if not room: abort(404)
-    return render_template("room_detail.html", room=room)
-
-@app.route("/menu")
-def menu_page():
-    from services.menu import get_menu_categories
-    return render_template("menu.html", categories=get_menu_categories())
-
-@app.route("/travel")
-def travel_page():
-    from services.travel import get_all_routes, get_all_food_recommends
-    return render_template("travel.html", routes=get_all_routes(), foods=get_all_food_recommends())
-
-@app.route("/travel/<int:route_id>")
-def travel_detail(route_id: int):
-    from services.travel import get_route_by_id
-    route = get_route_by_id(route_id)
-    if not route: abort(404)
-    return render_template("travel_detail.html", route=route)
-
-@app.route("/travel/food/<int:food_id>")
-def food_detail(food_id: int):
-    from services.travel import get_food_by_id
-    food = get_food_by_id(food_id)
-    if not food: abort(404)
-    return render_template("food_detail.html", food=food)
-
-@app.route("/services")
-def services_page():
-    from services.quick import get_all_services
-    return render_template("services.html", services=get_all_services())
-
-@app.route("/map")
-def map_page():
-    return render_template("map.html")
-
-@app.route("/simulator")
-def simulator_page():
-    """微信公众号模拟器（项目未落成期间的测试工具）"""
-    return render_template("wechat-simulator.html")
-
 
 @app.route("/docs")
 def docs_page():
     """API 文档"""
     return render_template("docs.html")
+
+
+# ── 三民宿 BnB 前缀 H5 路由 ───────────────────────────────
+# 每个路由同时支持旧路径(默认归墅)和 BnB 前缀路径
+def _bnb_route(rule, **kwargs):
+    """注册同时支持 /path 和 /<bnb_prefix>/path 的路由"""
+    def decorator(f):
+        app.add_url_rule(rule, f.__name__ + "_default", f, **kwargs)
+        app.add_url_rule("/<bnb_prefix>" + rule, f.__name__ + "_prefixed", f, **kwargs)
+        return f
+    return decorator
+
+
+@_bnb_route("/")
+def bnb_index(bnb_prefix=None):
+    from services.rooms import get_featured_rooms
+    return render_template("index.html", featured_rooms=get_featured_rooms(4))
+
+@_bnb_route("/rooms")
+def bnb_rooms(bnb_prefix=None):
+    from services.rooms import get_all_rooms
+    return render_template("rooms.html", rooms=get_all_rooms())
+
+@_bnb_route("/rooms/<int:room_id>")
+def bnb_room_detail(room_id: int, bnb_prefix=None):
+    from services.rooms import get_room_by_id
+    room = get_room_by_id(room_id)
+    if not room: abort(404)
+    return render_template("room_detail.html", room=room)
+
+@_bnb_route("/menu")
+def bnb_menu(bnb_prefix=None):
+    from services.menu import get_menu_categories
+    return render_template("menu.html", categories=get_menu_categories())
+
+@_bnb_route("/travel")
+def bnb_travel(bnb_prefix=None):
+    from services.travel import get_all_routes, get_all_food_recommends
+    return render_template("travel.html", routes=get_all_routes(), foods=get_all_food_recommends())
+
+@_bnb_route("/travel/<int:route_id>")
+def bnb_travel_detail(route_id: int, bnb_prefix=None):
+    from services.travel import get_route_by_id
+    route = get_route_by_id(route_id)
+    if not route: abort(404)
+    return render_template("travel_detail.html", route=route)
+
+@_bnb_route("/travel/food/<int:food_id>")
+def bnb_food_detail(food_id: int, bnb_prefix=None):
+    from services.travel import get_food_by_id
+    food = get_food_by_id(food_id)
+    if not food: abort(404)
+    return render_template("food_detail.html", food=food)
+
+@_bnb_route("/services")
+def bnb_services(bnb_prefix=None):
+    from services.quick import get_all_services
+    return render_template("services.html", services=get_all_services())
+
+@_bnb_route("/map")
+def bnb_map(bnb_prefix=None):
+    return render_template("map.html")
+
+@_bnb_route("/points")
+def bnb_points(bnb_prefix=None):
+    return render_template("points.html")
+
+@_bnb_route("/orders")
+def bnb_orders(bnb_prefix=None):
+    return render_template("orders.html")
+
+@_bnb_route("/simulator")
+def bnb_simulator(bnb_prefix=None):
+    return render_template("wechat-simulator.html")
+
+@app.route("/miniapp")
+def miniapp_simulator():
+    """小程序模拟器 — 5 Tab + BnB 切换 + AI 管家"""
+    return render_template("miniapp-simulator.html")
+
+@app.route("/miniapp/chat")
+def miniapp_chat():
+    """小程序 AI 管家聊天页"""
+    return render_template("miniapp-chat.html")
+
+@_bnb_route("/tea")
+def bnb_tea(bnb_prefix=None):
+    """茶园板块（山纪专属）"""
+    return render_template("tea.html")
+
+@_bnb_route("/healing")
+def bnb_healing(bnb_prefix=None):
+    """疗愈板块（东林外专属）"""
+    return render_template("healing.html")
 
 
 # ══════════════════════════════════════════════════════════
@@ -413,6 +510,39 @@ def api_create_order():
         "order": order.to_dict(),
     })
 
+
+@app.route("/api/order/pay", methods=["POST"])
+def api_order_pay():
+    """模拟微信支付 — 确认订单付款"""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "数据为空"}), 400
+    order_id = data.get("order_id")
+    if not order_id:
+        return jsonify({"error": "缺少订单ID"}), 400
+    from models import SessionLocal, Order
+    db = SessionLocal()
+    try:
+        order = db.query(Order).filter(Order.id == order_id).first()
+        if not order:
+            return jsonify({"error": "订单不存在"}), 404
+        if order.pay_status == "paid":
+            return jsonify({"error": "已支付，无需重复支付"}), 400
+        order.pay_status = "paid"
+        order.status = "paid"
+        db.commit()
+        return jsonify({
+            "success": True,
+            "message": "支付成功",
+            "order": order.to_dict(),
+        })
+    except Exception as e:
+        db.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close()
+
+
 @app.route("/api/pay/create", methods=["POST"])
 def api_create_payment():
     """
@@ -479,11 +609,6 @@ def api_booking_platforms():
 # ══════════════════════════════════════════════════════════
 #  积分体系 API
 # ══════════════════════════════════════════════════════════
-@app.route("/points")
-def points_page():
-    """积分中心页面"""
-    return render_template("points.html")
-
 @app.route("/api/points/<openid>")
 def api_get_points(openid: str):
     """获取用户积分概览"""
@@ -533,11 +658,6 @@ def api_redeem():
 # ══════════════════════════════════════════════════════════
 #  多平台订单聚合
 # ══════════════════════════════════════════════════════════
-@app.route("/orders")
-def orders_dashboard():
-    """订单聚合看板页面"""
-    return render_template("orders.html")
-
 @app.route("/api/orders/dashboard")
 def api_orders_dashboard():
     """获取订单看板统计数据"""
@@ -861,11 +981,208 @@ def api_simulate_keywords():
 
 
 # ══════════════════════════════════════════════════════════
+#  茶园模块 API（云上·山纪）
+# ══════════════════════════════════════════════════════════
+@app.route("/api/tea/types")
+def api_tea_types():
+    from services.tea import get_tea_types
+    bnb_id = request.args.get("bnb_id", get_current_bnb_id())
+    return jsonify({"success": True, "types": get_tea_types(bnb_id=bnb_id)})
+
+@app.route("/api/tea/experiences")
+def api_tea_experiences():
+    from services.tea import get_tea_experiences
+    bnb_id = request.args.get("bnb_id", get_current_bnb_id())
+    return jsonify({"success": True, "experiences": get_tea_experiences(bnb_id=bnb_id)})
+
+@app.route("/api/tea/products")
+def api_tea_products():
+    from services.tea import get_tea_products
+    bnb_id = request.args.get("bnb_id", get_current_bnb_id())
+    return jsonify({"success": True, "products": get_tea_products(bnb_id=bnb_id)})
+
+# ══════════════════════════════════════════════════════════
+#  疗愈模块 API（云上·东林外）
+# ══════════════════════════════════════════════════════════
+@app.route("/api/healing/courses")
+def api_healing_courses():
+    from services.healing import get_healing_courses, get_healing_categories
+    bnb_id = request.args.get("bnb_id", get_current_bnb_id())
+    category = request.args.get("category")
+    return jsonify({
+        "success": True,
+        "categories": get_healing_categories(bnb_id=bnb_id),
+        "courses": get_healing_courses(bnb_id=bnb_id, category=category),
+    })
+
+
+@app.route("/api/healing/slots")
+def api_healing_slots():
+    """获取可预约时间槽"""
+    from services.healing import get_available_slots
+    bnb_id = request.args.get("bnb_id", get_current_bnb_id())
+    course_id = request.args.get("course_id", type=int)
+    tier_index = request.args.get("tier_index", type=int)
+    date_str = request.args.get("date", datetime.now().strftime("%Y-%m-%d"))
+    if not course_id or tier_index is None:
+        return jsonify({"success": False, "error": "缺少参数 course_id / tier_index"}), 400
+    result = get_available_slots(course_id, tier_index, date_str, bnb_id=bnb_id)
+    if "error" in result:
+        return jsonify({"success": False, "error": result["error"]}), 400
+    return jsonify({"success": True, **result})
+
+
+@app.route("/api/healing/pay", methods=["POST"])
+def api_healing_pay():
+    """模拟微信支付确认"""
+    from services.healing import confirm_payment
+    bnb_id = get_current_bnb_id()
+    data = request.get_json(silent=True) or {}
+    appointment_id = data.get("appointment_id")
+    if not appointment_id:
+        return jsonify({"success": False, "error": "缺少 appointment_id"}), 400
+    result = confirm_payment(appointment_id, bnb_id=bnb_id)
+    if "error" in result:
+        return jsonify({"success": False, "error": result["error"]}), 400
+    return jsonify(result)
+
+
+@app.route("/api/healing/book", methods=["POST"])
+def api_healing_book():
+    """创建疗愈预约"""
+    from services.healing import create_appointment
+    bnb_id = request.json.get("bnb_id", get_current_bnb_id()) if request.is_json else get_current_bnb_id()
+    data = request.get_json(silent=True) or {}
+    data["openid"] = request.args.get("openid") or data.get("openid")
+    result = create_appointment(data, bnb_id=bnb_id)
+    if "error" in result:
+        return jsonify({"success": False, "error": result["error"]}), 400
+    return jsonify(result)
+
+# ══════════════════════════════════════════════════════════
 #  健康检查
 # ══════════════════════════════════════════════════════════
 @app.route("/health")
 def health():
     return jsonify({"status": "ok", "name": BNB_NAME})
+
+
+# ══════════════════════════════════════════════════════════
+#  小程序 JSON API（与公众号 H5 页面并存，互不影响）
+# ══════════════════════════════════════════════════════════
+
+# ── 房型 API ─────────────────────────────────────────────
+@app.route("/api/rooms")
+def api_rooms():
+    """获取所有房型列表（JSON）"""
+    from services.rooms import get_all_rooms
+    return jsonify({"success": True, "rooms": get_all_rooms()})
+
+
+@app.route("/api/rooms/<int:room_id>")
+def api_room_detail(room_id: int):
+    """获取单个房型详情（JSON）"""
+    from services.rooms import get_room_by_id
+    room = get_room_by_id(room_id)
+    if not room:
+        return jsonify({"success": False, "message": "房型不存在"}), 404
+    return jsonify({"success": True, "room": room})
+
+
+# ── 菜单 API ─────────────────────────────────────────────
+@app.route("/api/menu")
+def api_menu():
+    """获取菜单（含分类和菜品，JSON）"""
+    from services.menu import get_menu_categories, get_recommended_items
+    return jsonify({
+        "success": True,
+        "categories": get_menu_categories(),
+        "recommended": get_recommended_items(),
+    })
+
+
+# ── 旅游 API ─────────────────────────────────────────────
+@app.route("/api/travel")
+def api_travel():
+    """获取旅游路线和美食推荐（JSON）"""
+    from services.travel import get_all_routes, get_all_food_recommends
+    return jsonify({
+        "success": True,
+        "routes": get_all_routes(),
+        "foods": get_all_food_recommends(),
+    })
+
+
+@app.route("/api/travel/<int:route_id>")
+def api_travel_detail(route_id: int):
+    """获取单条路线详情（JSON）"""
+    from services.travel import get_route_by_id
+    route = get_route_by_id(route_id)
+    if not route:
+        return jsonify({"success": False, "message": "路线不存在"}), 404
+    return jsonify({"success": True, "route": route})
+
+
+@app.route("/api/travel/food/<int:food_id>")
+def api_food_detail(food_id: int):
+    """获取单个美食详情（JSON）"""
+    from services.travel import get_food_by_id
+    food = get_food_by_id(food_id)
+    if not food:
+        return jsonify({"success": False, "message": "美食不存在"}), 404
+    return jsonify({"success": True, "food": food})
+
+
+# ── 快捷服务 API ─────────────────────────────────────────
+@app.route("/api/services")
+def api_services():
+    """获取所有快捷服务（JSON）"""
+    from services.quick import get_all_services
+    return jsonify({"success": True, "services": get_all_services()})
+
+
+# ── 小程序登录 ───────────────────────────────────────────
+@app.route("/api/auth/miniapp-login", methods=["POST"])
+def api_miniapp_login():
+    """
+    小程序登录：用 wx.login() 返回的 code 换取 openid 和 session_key
+    前端调用 wx.login() 获取 code → 后端调微信接口换取身份信息
+    """
+    import requests as http_requests
+
+    data = request.get_json()
+    if not data or "code" not in data:
+        return jsonify({"success": False, "message": "缺少 code"}), 400
+
+    code = data["code"]
+    try:
+        resp = http_requests.get(
+            "https://api.weixin.qq.com/sns/jscode2session",
+            params={
+                "appid": WECHAT_MINI_APP_ID,
+                "secret": WECHAT_MINI_APP_SECRET,
+                "js_code": code,
+                "grant_type": "authorization_code",
+            },
+            timeout=10,
+        )
+        result = resp.json()
+    except Exception as e:
+        return jsonify({"success": False, "message": f"微信接口调用失败: {e}"}), 502
+
+    if result.get("errcode", 0) != 0:
+        return jsonify({
+            "success": False,
+            "message": result.get("errmsg", "登录失败"),
+            "errcode": result.get("errcode"),
+        }), 400
+
+    return jsonify({
+        "success": True,
+        "openid": result.get("openid"),
+        "unionid": result.get("unionid"),
+        # 注意：session_key 不应返回给前端，由后端自行保管
+    })
 
 
 # ── 启动 ─────────────────────────────────────────────────

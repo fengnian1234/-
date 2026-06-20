@@ -1,0 +1,33 @@
+.service-group { margin-bottom: var(--space-lg); }
+.service-group__title { padding: var(--space-md); font-size: 30rpx; font-weight: 600; color: var(--color-primary-dark); font-family: var(--font-serif); }
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+  padding: 0 var(--space-md);
+}
+
+.emergency {
+  padding: var(--space-md);
+  margin: var(--space-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.emergency__title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+
+.emergency__phone {
+  font-size: 36rpx;
+  color: var(--color-primary);
+  font-weight: 700;
+  padding: var(--space-sm);
+}

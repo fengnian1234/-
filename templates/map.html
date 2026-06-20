@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}位置导航 - 云上归墅{% endblock %}
+{% block title %}位置导航 - {{ bnb.short_name }}{% endblock %}
 
 {% block content %}
 <section class="page-header">
     <div class="container">
         <h1>📍 位置导航</h1>
-        <p>找到通往云上归墅的路</p>
+        <p>找到通往{{ bnb.short_name }}的路</p>
     </div>
 </section>
 
@@ -14,16 +14,16 @@
         <!-- 民宿位置信息 -->
         <div class="location-card">
             <div class="location-icon">🏔️</div>
-            <h2>云上归墅</h2>
-            <p class="location-address">📍 庐山山上·庐山风景名胜区大林沟路27号</p>
-            <p class="location-phone">📞 16607927666</p>
+            <h2>{{ bnb.short_name }}</h2>
+            <p class="location-address">📍 {{ bnb.address }}</p>
+            <p class="location-phone">📞 {{ bnb.phone }}</p>
 
             <div class="location-actions">
-                <a href="https://uri.amap.com/marker?position=115.9797,29.5568&name=云上归墅"
+                <a href="https://uri.amap.com/marker?position={{ bnb.longitude }},{{ bnb.latitude }}&name={{ bnb.name|urlencode }}"
                    class="btn btn-primary btn-large" target="_blank">
                     🗺️ 高德地图导航
                 </a>
-                <a href="https://apis.map.qq.com/uri/v1/marker?marker=coord:29.5568,115.9797;title:云上归墅&referer=yunshangbnb"
+                <a href="https://apis.map.qq.com/uri/v1/marker?marker=coord:{{ bnb.latitude }},{{ bnb.longitude }};title:{{ bnb.name|urlencode }}&referer=yunshangbnb"
                    class="btn btn-outline btn-large" target="_blank">
                     📍 腾讯地图导航
                 </a>
@@ -36,7 +36,7 @@
 
             <div class="transport-item">
                 <h4>🚙 自驾</h4>
-                <p>导航至「云上归墅」（庐山山上·大林沟路27号），民宿有<strong>免费私家停车场</strong>。从九江市区出发约40分钟车程，山路弯多请慢行。</p>
+                <p>导航至「{{ bnb.short_name }}」（{{ bnb.address }}），民宿有<strong>免费私家停车场</strong>。从九江市区出发约40分钟车程，山路弯多请慢行。</p>
                 <p class="transport-note">⚠️ 每年<strong>7-8月暑期</strong>禁止私家车自驾上山，需换乘景区大巴、索道或打车。</p>
             </div>
 

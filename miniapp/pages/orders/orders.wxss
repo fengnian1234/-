@@ -1,0 +1,9 @@
+.page-header {
+  padding: var(--space-xl) var(--space-md);
+  background: linear-gradient(170deg, var(--color-sky) 0%, var(--color-primary-dark) 100%);
+  color: #fff;
+  font-family: var(--font-serif);
+  font-size: 36rpx;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+}

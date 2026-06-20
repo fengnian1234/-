@@ -1,0 +1,33 @@
+<!-- AI 管家聊天页 -->
+<view class="chat-page">
+  <!-- 快捷提示 -->
+  <scroll-view class="quick-hints" scroll-x>
+    <text class="hint-tag" data-msg="房型有哪些" bindtap="sendMsg">🛏️ 房型</text>
+    <text class="hint-tag" data-msg="周边美食推荐" bindtap="sendMsg">🍜 美食</text>
+    <text class="hint-tag" data-msg="庐山一日游" bindtap="sendMsg">🗺️ 一日游</text>
+    <text class="hint-tag" data-msg="怎么到民宿" bindtap="sendMsg">🚗 交通</text>
+    <text class="hint-tag" data-msg="WiFi密码" bindtap="sendMsg">📶 WiFi</text>
+    <text class="hint-tag" data-msg="打扫卫生" bindtap="sendMsg">🧹 打扫</text>
+  </scroll-view>
+
+  <!-- 聊天区域 -->
+  <scroll-view class="chat-area" scroll-y scroll-into-view="{{scrollToView}}" scroll-with-animation>
+    <block wx:for="{{messages}}" wx:key="index">
+      <view wx:if="{{item.role === 'sys'}}" class="chat-sys">{{item.text}}</view>
+      <view wx:else class="chat-bubble {{item.role}}" id="msg-{{index}}">
+        <text>{{item.text}}</text>
+        <view wx:if="{{item.meta}}" class="chat-meta">{{item.meta}}</view>
+      </view>
+    </block>
+    <view wx:if="{{isTyping}}" class="chat-typing">
+      <view class="dot"></view><view class="dot"></view><view class="dot"></view>
+    </view>
+  </scroll-view>
+
+  <!-- 输入区 -->
+  <view class="chat-input-bar">
+    <input class="chat-input" value="{{inputValue}}" placeholder="输入消息..." bindinput="onInput" bindconfirm="sendMsg" confirm-type="send"/>
+    <button class="chat-send-btn" bindtap="sendMsg">发送</button>
+    <button class="chat-reset-btn" bindtap="resetChat">重置</button>
+  </view>
+</view>

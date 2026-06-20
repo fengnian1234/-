@@ -1,0 +1,45 @@
+<view class="room-card press-active" bindtap="onTap">
+  <!-- 图片区 -->
+  <view class="room-card__image">
+    <image
+      wx:if="{{room.images && room.images.length}}"
+      src="{{room.images[0]}}"
+      mode="aspectFill"
+      lazy-load
+      class="room-card__img"
+    />
+    <view wx:else class="room-card__placeholder room-preview-gradient-{{gradientClass}}">
+      <text class="room-card__placeholder-icon">{{viewIcon}}</text>
+    </view>
+    <!-- 景观标签 -->
+    <view class="room-card__view-tag" wx:if="{{room.view_type}}">
+      {{viewIcon}} {{room.view_type}}
+    </view>
+  </view>
+
+  <!-- 信息区 -->
+  <view class="room-card__body">
+    <view class="room-card__header">
+      <text class="room-card__name">{{room.name}}</text>
+      <view class="tag tag--primary" wx:if="{{room.room_type}}">{{room.room_type}}</view>
+    </view>
+
+    <view class="room-card__desc">{{truncatedDesc}}</view>
+
+    <view class="room-card__meta">
+      <text wx:if="{{room.capacity}}">👤 {{room.capacity}}人</text>
+      <text wx:if="{{room.bed_type}}">🛏️ {{room.bed_type}}</text>
+      <text wx:if="{{room.area}}">📐 {{room.area}}</text>
+    </view>
+
+    <view class="room-card__footer">
+      <view class="room-card__price">
+        <text class="price price--large">{{priceText}}</text>
+        <text class="price--original" wx:if="{{room.original_price && room.original_price > room.price}}">
+          ¥{{room.original_price}}
+        </text>
+      </view>
+      <view class="room-card__stock" wx:if="{{stockText}}">{{stockText}}</view>
+    </view>
+  </view>
+</view>

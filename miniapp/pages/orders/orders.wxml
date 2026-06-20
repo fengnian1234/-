@@ -1,0 +1,7 @@
+<view class="page-header">📋 我的订单</view>
+
+<block wx:if="{{!loading && orders.length}}">
+  <order-item wx:for="{{orders}}" wx:key="id" order="{{item}}" />
+</block>
+<empty-state wx:elif="{{!loading && !orders.length}}" icon="📋" text="暂无订单" />
+<loading-skeleton wx:if="{{loading}}" visible="{{true}}" />

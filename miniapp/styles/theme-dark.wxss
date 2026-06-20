@@ -1,0 +1,23 @@
+/**
+ * 云上归墅 · 暗色主题补充样式
+ *
+ * 由于小程序 WXSS 不支持 [data-theme="dark"] 属性选择器，
+ * 暗色模式的颜色切换通过 utils/theme.js 动态设置 page.style 实现。
+ * 此文件作为备用——当某些样式无法通过变量覆盖时使用。
+ */
+
+/* 暗色模式下图片亮度降低 */
+.theme-dark-image {
+  filter: brightness(0.85);
+  transition: filter 0.4s ease;
+}
+
+/* 暗色模式下通知条边框 */
+.theme-dark-notice {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* 暗色模式按钮 hover 态 */
+.theme-dark .btn-primary {
+  box-shadow: 0 4rpx 16rpx rgba(107, 175, 126, 0.25);
+}

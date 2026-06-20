@@ -1,0 +1,5 @@
+<view class="skeleton" wx:if="{{visible}}">
+  <block wx:for="{{rows}}" wx:key="index">
+    <view class="skeleton__row" style="width: {{item.width}}rpx; height: {{item.height || 28}}rpx; border-radius: {{item.rounded ? 16 : 8}}rpx; {{index === 0 ? 'width: 60%;' : ''}}"></view>
+  </block>
+</view>

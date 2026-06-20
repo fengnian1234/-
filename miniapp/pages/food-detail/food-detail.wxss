@@ -1,0 +1,84 @@
+.detail-body { padding: var(--space-md); }
+
+.food-header {
+  margin-bottom: var(--space-md);
+}
+
+.food-name {
+  font-family: var(--font-serif);
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  display: block;
+  margin-bottom: var(--space-xs);
+}
+
+.food-tags {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.food-price { font-size: 26rpx; color: var(--color-accent); font-weight: 500; }
+
+.food-tag-list { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-bottom: var(--space-md); }
+.food-tag { font-size: 22rpx; color: var(--color-text-light); background: var(--color-bg-light); padding: 4rpx 16rpx; border-radius: 999rpx; }
+
+.food-intro {
+  padding: var(--space-md);
+  background: var(--color-bg-light);
+  border-left: 6rpx solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  font-size: 26rpx;
+  color: var(--color-text);
+  line-height: 1.8;
+  margin-bottom: var(--space-md);
+}
+
+.section-label {
+  font-family: var(--font-serif);
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+
+.food-content { margin-bottom: var(--space-md); }
+.food-content__para { display: block; font-size: 26rpx; color: var(--color-text-light); line-height: 1.85; margin-bottom: var(--space-sm); }
+
+.food-must-try {
+  padding: var(--space-md);
+  background: rgba(201, 149, 74, 0.08);
+  border: 1px solid rgba(201, 149, 74, 0.2);
+  border-radius: var(--radius-md);
+  font-size: 26rpx;
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+}
+
+.food-address {
+  padding: var(--space-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.food-address__text {
+  font-size: 24rpx;
+  color: var(--color-text-light);
+  margin-bottom: var(--space-sm);
+  display: block;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 28rpx;
+  margin-top: var(--space-sm);
+}

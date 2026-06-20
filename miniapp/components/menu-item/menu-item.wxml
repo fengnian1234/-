@@ -1,0 +1,15 @@
+<view class="menu-item press-active">
+  <view class="menu-item__info">
+    <view class="menu-item__head">
+      <text class="menu-item__name">{{item.name}}</text>
+      <view class="tag tag--accent" wx:if="{{item.is_recommended}}">⭐ 推荐</view>
+    </view>
+    <view class="menu-item__desc" wx:if="{{item.description}}">{{item.description}}</view>
+    <text class="menu-item__price price">¥{{item.price}}</text>
+  </view>
+  <view class="menu-item__action">
+    <view class="menu-item__btn" bindtap="onAdd">
+      <text>+ 点单</text>
+    </view>
+  </view>
+</view>

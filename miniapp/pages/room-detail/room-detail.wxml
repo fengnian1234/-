@@ -1,0 +1,74 @@
+<view wx:if="{{!loading && room}}">
+  <!-- 图片画廊 -->
+  <image-gallery images="{{room.images}}" />
+
+  <!-- 信息区 -->
+  <view class="detail-body">
+    <!-- 头部 -->
+    <view class="detail-header">
+      <text class="detail-name">{{room.name}}</text>
+      <view class="detail-tags">
+        <view class="tag tag--primary" wx:if="{{room.room_type}}">{{room.room_type}}</view>
+        <view class="tag tag--accent" wx:if="{{room.view_type}}">{{viewIcon}} {{room.view_type}}</view>
+      </view>
+    </view>
+
+    <!-- 价格 -->
+    <view class="detail-price">
+      <text class="price price--large">¥{{room.price}}</text>
+      <text class="detail-price__unit">/晚</text>
+      <text class="price--original" wx:if="{{room.original_price && room.original_price > room.price}}">
+        ¥{{room.original_price}}
+      </text>
+      <view class="tag tag--warning" wx:if="{{room.original_price && room.original_price > room.price}}">
+        省¥{{room.original_price - room.price}}
+      </view>
+      <view class="detail-stock" wx:if="{{room.total_count <= 3}}">
+        {{room.total_count <= 1 ? '仅剩1间' : '热订中'}}
+      </view>
+    </view>
+
+    <!-- 信息网格 -->
+    <view class="detail-grid">
+      <view class="detail-grid__item">
+        <text class="detail-grid__label">可住人数</text>
+        <text class="detail-grid__value">👤 {{room.capacity || '2'}}人</text>
+      </view>
+      <view class="detail-grid__item">
+        <text class="detail-grid__label">床型</text>
+        <text class="detail-grid__value">🛏️ {{room.bed_type || '大床'}}</text>
+      </view>
+      <view class="detail-grid__item">
+        <text class="detail-grid__label">面积</text>
+        <text class="detail-grid__value">📐 {{room.area || '详询'}}</text>
+      </view>
+      <view class="detail-grid__item">
+        <text class="detail-grid__label">景观</text>
+        <text class="detail-grid__value">🌅 {{room.view_type || '详询'}}</text>
+      </view>
+    </view>
+
+    <!-- 描述 -->
+    <view class="detail-section">
+      <text class="detail-section__title">房间描述</text>
+      <text class="detail-desc">{{room.description}}</text>
+    </view>
+
+    <!-- 设施 -->
+    <view class="detail-section" wx:if="{{room.amenities && room.amenities.length}}">
+      <text class="detail-section__title">房间设施</text>
+      <view class="amenities">
+        <text class="amenity-item" wx:for="{{room.amenities}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="detail-actions">
+      <view class="btn-primary" bindtap="onBookingTap">预订咨询</view>
+      <view class="btn-outline" bindtap="onCallPhone">📞 联系前台</view>
+    </view>
+  </view>
+</view>
+
+<loading-skeleton wx:if="{{loading}}" visible="{{true}}" />
+<empty-state wx:elif="{{!room}}" icon="🏡" text="房型不存在" />

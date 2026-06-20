@@ -8,11 +8,23 @@ from services.notify import create_service_request
 from services.logger import debug
 
 
-def get_all_services():
+def _get_bnb_id(bnb_id=None):
+    if bnb_id:
+        return bnb_id
+    try:
+        from flask import g
+        return getattr(g, 'bnb_id', 'guishu')
+    except RuntimeError:
+        return 'guishu'
+
+
+def get_all_services(bnb_id=None):
     """获取所有快捷服务"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
         services = db.query(QuickService).filter(
+            QuickService.bnb_id == bnb_id,
             QuickService.is_active == True
         ).order_by(QuickService.sort_order).all()
         return [s.to_dict() for s in services]
@@ -20,11 +32,13 @@ def get_all_services():
         db.close()
 
 
-def get_services_by_category(category: str):
+def get_services_by_category(category: str, bnb_id=None):
     """按分类获取服务"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
         services = db.query(QuickService).filter(
+            QuickService.bnb_id == bnb_id,
             QuickService.is_active == True,
             QuickService.category == category
         ).order_by(QuickService.sort_order).all()
@@ -33,9 +47,10 @@ def get_services_by_category(category: str):
         db.close()
 
 
-def format_services_text():
+def format_services_text(bnb_id=None):
     """格式化为微信服务菜单"""
-    services = get_all_services()
+    bnb_id = _get_bnb_id(bnb_id)
+    services = get_all_services(bnb_id=bnb_id)
     if not services:
         return "暂无快捷服务信息～"
 

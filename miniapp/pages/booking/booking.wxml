@@ -1,0 +1,33 @@
+<view class="page">
+  <view class="page-header">
+    <text class="page-header__title">预订民宿</text>
+    <text class="page-header__desc">在以下平台搜索「云上归墅」预订</text>
+  </view>
+
+  <view class="platform-list">
+    <view
+      class="platform-item press-active"
+      wx:for="{{platforms}}"
+      wx:key="key"
+      data-name="{{item.name}}"
+      bindtap="onPlatformTap"
+    >
+      <view class="platform-item__icon" style="background: {{item.color}};">{{item.icon}}</view>
+      <view class="platform-item__info">
+        <text class="platform-item__name">{{item.name}}</text>
+        <text class="platform-item__tip">点击复制民宿名称 → 前往APP搜索预订</text>
+      </view>
+      <text class="platform-item__arrow">→</text>
+    </view>
+  </view>
+
+  <view class="note">
+    <text>💡 预订成功后，请将订单截图发送至民宿微信</text>
+    <text>即可解锁 AI 管家全部功能</text>
+  </view>
+
+  <view class="contact">
+    <text>📞 如需帮助，请联系前台</text>
+    <view class="contact__phone press-active" bindtap="onCallPhone">{{BNB.phone}}</view>
+  </view>
+</view>

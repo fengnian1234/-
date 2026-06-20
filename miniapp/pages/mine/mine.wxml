@@ -1,0 +1,103 @@
+<view class="page" data-theme="{{theme}}">
+  <!-- 用户头部 -->
+  <view class="user-header">
+    <view class="user-header__bg"></view>
+    <view class="user-header__content">
+      <view class="user-header__avatar">🧑‍💼</view>
+      <view class="user-header__info" wx:if="{{guest}}">
+        <text class="user-header__name">{{guest.membership_name || '云上住客'}}</text>
+        <text class="user-header__level" wx:if="{{guest.discount && guest.discount < 10}}">
+          {{guest.discount > 0 ? '享' + (guest.discount * 10).toFixed(0) + '折优惠' : ''}}
+        </text>
+      </view>
+      <view class="user-header__info" wx:else>
+        <text class="user-header__name">云上住客</text>
+        <text class="user-header__level">登录解锁更多权益</text>
+      </view>
+    </view>
+    <view class="user-header__points" wx:if="{{guest}}">
+      <text class="user-header__points-num">{{guest.total_points || 0}}</text>
+      <text class="user-header__points-label">当前积分</text>
+    </view>
+  </view>
+
+  <!-- 积分概览卡片 -->
+  <view class="points-preview" wx:if="{{guest}}" bindtap="onNavPoints">
+    <view class="points-preview__left">
+      <text class="points-preview__icon">⭐</text>
+      <text>积分中心</text>
+    </view>
+    <view class="points-preview__right">
+      <text wx:if="{{membershipInfo}}">
+        {{membershipInfo.gold && guest.total_points < membershipInfo.gold ? '距升级还差' + (membershipInfo.gold - guest.total_points) + '积分' : ''}}
+        {{membershipInfo.diamond && guest.total_points < membershipInfo.diamond && guest.total_points >= (membershipInfo.gold || 0) ? '距钻石还差' + (membershipInfo.diamond - guest.total_points) + '积分' : ''}}
+      </text>
+      <text>→</text>
+    </view>
+  </view>
+
+  <!-- 功能入口 -->
+  <view class="nav-list">
+    <view class="nav-item press-active" bindtap="onNavServices">
+      <view class="nav-item__left">
+        <text class="nav-item__icon">🛎️</text>
+        <text>快捷服务</text>
+      </view>
+      <text class="nav-item__arrow">→</text>
+    </view>
+    <view class="nav-item press-active" bindtap="onNavPoints">
+      <view class="nav-item__left">
+        <text class="nav-item__icon">💎</text>
+        <text>积分中心</text>
+      </view>
+      <text class="nav-item__arrow">→</text>
+    </view>
+    <view class="nav-item press-active" bindtap="onNavOrders">
+      <view class="nav-item__left">
+        <text class="nav-item__icon">📋</text>
+        <text>我的订单</text>
+      </view>
+      <text class="nav-item__arrow">→</text>
+    </view>
+    <view class="nav-item press-active" bindtap="onNavBooking">
+      <view class="nav-item__left">
+        <text class="nav-item__icon">🏨</text>
+        <text>预订民宿</text>
+      </view>
+      <text class="nav-item__arrow">→</text>
+    </view>
+    <view class="nav-item press-active" bindtap="onCallPhone">
+      <view class="nav-item__left">
+        <text class="nav-item__icon">📞</text>
+        <text>联系前台</text>
+      </view>
+      <text class="nav-item__arrow">→</text>
+    </view>
+  </view>
+
+  <!-- 设置 -->
+  <view class="section-title">设置</view>
+  <view class="nav-list">
+    <view class="nav-item">
+      <view class="nav-item__left">
+        <text class="nav-item__icon">{{theme === 'dark' ? '🌙' : '☀️'}}</text>
+        <text>深浅色模式</text>
+      </view>
+      <theme-toggle />
+    </view>
+    <view class="nav-item press-active" bindtap="onAbout">
+      <view class="nav-item__left">
+        <text class="nav-item__icon">ℹ️</text>
+        <text>关于云上归墅</text>
+      </view>
+      <text class="nav-item__arrow">→</text>
+    </view>
+  </view>
+
+  <!-- 页脚 -->
+  <view class="footer">
+    <text>🏔️ {{currentBnb.shortName}} · 庐山之巅</text>
+    <text>{{currentBnb.address}}</text>
+    <text>© 2026 云上·印象集</text>
+  </view>
+</view>

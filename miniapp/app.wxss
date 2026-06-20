@@ -1,0 +1,25 @@
+/**
+ * 云上归墅 · 全局样式入口
+ * 加载顺序：变量 → 重置 → 排版 → 动画 → 暗色主题
+ */
+@import './styles/variables.wxss';
+@import './styles/reset.wxss';
+@import './styles/typography.wxss';
+@import './styles/animations.wxss';
+
+/* 全局页面背景 */
+page {
+  background-color: var(--color-bg);
+  font-family: var(--font-sans);
+  font-size: 28rpx;
+  color: var(--color-text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* 安全区适配 */
+page {
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}

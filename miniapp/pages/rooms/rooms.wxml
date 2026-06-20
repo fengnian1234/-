@@ -1,0 +1,18 @@
+<page-header title="房型展示" desc="山野之间，总有一间属于你" />
+
+<notice-bar
+  type="warning"
+  icon="📌"
+  title="预订须知"
+  items="{{['预订请通过携程/美团/飞猪/大众点评搜索「云上归墅」', '支付方式：平台在线支付或到店支付', '入住时间14:00后 · 退房时间12:00前', '订房成功后请截图发至民宿微信获取AI管家服务']}}"
+/>
+
+<block wx:if="{{!loading && rooms.length}}">
+  <room-card wx:for="{{rooms}}" wx:key="id" room="{{item}}" bind:tap="onRoomTap" />
+</block>
+<loading-skeleton wx:elif="{{loading}}" visible="{{true}}" rows="{{[{width:680},{width:600},{width:640},{width:500}]}}" />
+<empty-state wx:else icon="🏡" text="暂无房型信息" />
+
+<view class="booking-cta">
+  <view class="btn btn-primary btn-block" bindtap="onBookingTap">查看预订平台 →</view>
+</view>

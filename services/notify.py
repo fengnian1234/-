@@ -8,14 +8,26 @@ from datetime import datetime
 from models import SessionLocal, ServiceRequest
 
 
+def _get_bnb_id(bnb_id=None):
+    if bnb_id:
+        return bnb_id
+    try:
+        from flask import g
+        return getattr(g, 'bnb_id', 'guishu')
+    except RuntimeError:
+        return 'guishu'
+
+
 def create_service_request(openid: str, service_name: str,
                            room_number: str = "",
                            urgency: str = "normal",
-                           notes: str = "") -> ServiceRequest:
+                           notes: str = "", bnb_id=None) -> ServiceRequest:
     """创建服务请求并记录到通知队列"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
         req = ServiceRequest(
+            bnb_id=bnb_id,
             openid=openid,
             service_name=service_name,
             room_number=room_number,

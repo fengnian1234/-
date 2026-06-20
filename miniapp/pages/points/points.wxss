@@ -1,0 +1,123 @@
+.points-card {
+  margin: var(--space-md);
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+  border-radius: var(--radius-lg);
+  color: #fff;
+  text-align: center;
+}
+
+.points-card__balance {
+  margin-bottom: var(--space-sm);
+}
+
+.points-card__num {
+  font-size: 72rpx;
+  font-weight: 700;
+  display: block;
+}
+
+.points-card__label {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.points-card__member {
+  font-size: 26rpx;
+  opacity: 0.9;
+  margin-bottom: var(--space-md);
+}
+
+.points-card__checkin {
+  display: inline-block;
+  padding: 12rpx 40rpx;
+  background: rgba(255,255,255,0.2);
+  border-radius: 999rpx;
+  font-size: 26rpx;
+}
+
+/* 区块 */
+.section {
+  padding: var(--space-sm) var(--space-md) var(--space-md);
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+
+/* 获取规则 */
+.earn-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+
+.earn-item {
+  padding: var(--space-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.earn-item__name { font-size: 24rpx; color: var(--color-text); display: block; }
+.earn-item__pts { font-size: 28rpx; color: var(--color-accent); font-weight: 600; }
+
+/* 会员等级 */
+.member-bar {
+  height: 16rpx;
+  background: var(--color-bg-dark);
+  border-radius: 8rpx;
+  margin-bottom: var(--space-xs);
+  overflow: hidden;
+}
+
+.member-bar__progress {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: 8rpx;
+  transition: width 0.6s ease;
+}
+
+.member-bar__labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 20rpx;
+  color: var(--color-text-lighter);
+}
+
+/* 兑换 */
+.redeem-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+
+.redeem-item {
+  padding: var(--space-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.redeem-item--disabled { opacity: 0.4; }
+
+.redeem-item__name { font-size: 26rpx; color: var(--color-text); display: block; margin-bottom: 4rpx; }
+.redeem-item__pts { font-size: 24rpx; color: var(--color-accent); display: block; margin-bottom: var(--space-xs); }
+.redeem-item__action { font-size: 22rpx; color: var(--color-primary); font-weight: 500; }
+
+/* 记录 */
+.log-item {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 24rpx;
+  color: var(--color-text);
+}

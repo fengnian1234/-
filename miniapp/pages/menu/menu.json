@@ -1,0 +1,11 @@
+{
+  "usingComponents": {
+    "page-header": "/components/page-header/page-header",
+    "menu-item": "/components/menu-item/menu-item",
+    "cart-panel": "/components/cart-panel/cart-panel",
+    "drink-modal": "/components/drink-modal/drink-modal",
+    "empty-state": "/components/empty-state/empty-state",
+    "loading-skeleton": "/components/loading-skeleton/loading-skeleton"
+  },
+  "navigationBarTitleText": "咖啡简餐"
+}

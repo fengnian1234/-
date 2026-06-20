@@ -20,13 +20,17 @@ if not SECRET_KEY:
     import sys
     print("[安全] 未设置 SECRET_KEY，已生成临时随机密钥（重启后失效）", file=sys.stderr)
 
-# ── 微信配置 ─────────────────────────────────────────────
+# ── 微信配置（三民宿各一套）────────────────────────────
 WECHAT_TOKEN = os.getenv("WECHAT_TOKEN", "your_wechat_token_here")
 WECHAT_APP_ID = os.getenv("WECHAT_APP_ID", "")
 WECHAT_APP_SECRET = os.getenv("WECHAT_APP_SECRET", "")
 WECHAT_ENCODING_AES_KEY = os.getenv("WECHAT_ENCODING_AES_KEY", "")
 WECHAT_MCH_ID = os.getenv("WECHAT_MCH_ID", "")         # 微信支付商户号
 WECHAT_MCH_KEY = os.getenv("WECHAT_MCH_KEY", "")       # 微信支付API密钥
+
+# ── 微信小程序配置 ─────────────────────────────────────────
+WECHAT_MINI_APP_ID = os.getenv("WECHAT_MINI_APP_ID", "")
+WECHAT_MINI_APP_SECRET = os.getenv("WECHAT_MINI_APP_SECRET", "")
 
 # ── 数据库配置 ───────────────────────────────────────────
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///yunshang_bnb.db")
@@ -48,81 +52,102 @@ AI_REQUEST_INTERVAL = int(os.getenv("AI_REQUEST_INTERVAL", "3"))
 # 单条消息最大长度（超过截断，防止 token 浪费）
 AI_MAX_MESSAGE_LENGTH = int(os.getenv("AI_MAX_MESSAGE_LENGTH", "500"))
 
-# ── 民宿信息（已修正为文档指定内容）──────────────────────
-BNB_NAME = "云上·归墅民宿"
-BNB_SHORT_NAME = "云上归墅"
-BNB_ADDRESS = "庐山山上·庐山风景名胜区大林沟路27号"
-BNB_PHONE = "16607927666"
-BNB_LATITUDE = 29.5568
-BNB_LONGITUDE = 115.9797
-
-# ── 预订平台链接（要求3：跳转主流平台，不走微信支付订房）─
-BOOKING_PLATFORMS = {
-    "携程": {
-        "name": "携程旅行",
-        "url": "https://hotels.ctrip.com/hotel/search?keyword=%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
-        "icon": "🏨",
-        "color": "#2577e3",
+# ── 三民宿配置 ───────────────────────────────────────
+BNB_CONFIGS = {
+    "guishu": {
+        "name": "云上·归墅民宿",
+        "short_name": "云上归墅",
+        "address": "庐山山上·庐山风景名胜区大林沟路27号",
+        "phone": "16607927666",
+        "latitude": 29.5568,
+        "longitude": 115.9797,
+        "theme_color": "#4a7c59",
+        "description": "庐山之巅，大林沟路27号，云雾深处的静谧之所。U型三层山居小院，11间精品客房。",
+        "wechat_token": os.getenv("WECHAT_TOKEN_GS", ""),
+        "wechat_app_id": os.getenv("WECHAT_APP_ID_GS", ""),
+        "wechat_app_secret": os.getenv("WECHAT_APP_SECRET_GS", ""),
     },
-    "美团": {
-        "name": "美团民宿",
-        "url": "https://hotel.meituan.com/search?keyword=%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
-        "icon": "🏠",
-        "color": "#ffc300",
+    "shanji": {
+        "name": "云上·山纪民宿",
+        "short_name": "云上山纪",
+        "address": "庐山山上·庐山风景名胜区XX路XX号",
+        "phone": "待填写",
+        "latitude": 29.5600,
+        "longitude": 115.9850,
+        "theme_color": "#8B6914",
+        "description": "茶园环绕，品茗观山。庐山云雾茶香，伴你悠然山居时光。",
+        "wechat_token": os.getenv("WECHAT_TOKEN_SJ", ""),
+        "wechat_app_id": os.getenv("WECHAT_APP_ID_SJ", ""),
+        "wechat_app_secret": os.getenv("WECHAT_APP_SECRET_SJ", ""),
     },
-    "飞猪": {
-        "name": "飞猪旅行",
-        "url": "https://www.fliggy.com/search?keyword=%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
-        "icon": "✈️",
-        "color": "#ff5a00",
-    },
-    "大众点评": {
-        "name": "大众点评",
-        "url": "https://www.dianping.com/search/keyword/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
-        "icon": "⭐",
-        "color": "#ffc300",
+    "donglinwai": {
+        "name": "云上·东林外民宿",
+        "short_name": "云上东林外",
+        "address": "庐山山上·庐山风景名胜区XX路XX号",
+        "phone": "待填写",
+        "latitude": 29.5500,
+        "longitude": 115.9700,
+        "theme_color": "#7B8DAD",
+        "description": "东林寺旁，禅意疗愈之所。放下尘嚣，身心归一。",
+        "wechat_token": os.getenv("WECHAT_TOKEN_DLW", ""),
+        "wechat_app_id": os.getenv("WECHAT_APP_ID_DLW", ""),
+        "wechat_app_secret": os.getenv("WECHAT_APP_SECRET_DLW", ""),
     },
 }
 
-# ── 好评推送配置（要求4：退房30分钟后推送平台评价链接）──
-REVIEW_PLATFORMS = {
-    "携程": {
-        "name": "携程旅行",
-        "review_url": "https://hotels.ctrip.com/hotel/dianping/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
-        "icon": "🏨",
-    },
-    "美团": {
-        "name": "美团",
-        "review_url": "https://hotel.meituan.com/dianping/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
-        "icon": "🏠",
-    },
-    "飞猪": {
-        "name": "飞猪旅行",
-        "review_url": "https://www.fliggy.com/review/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
-        "icon": "✈️",
-    },
-    "大众点评": {
-        "name": "大众点评",
-        "review_url": "https://www.dianping.com/shop/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85/review",
-        "icon": "⭐",
-    },
-    "小红书": {
-        "name": "小红书",
-        "review_url": "https://www.xiaohongshu.com/search_result?keyword=%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
-        "icon": "📕",
-    },
-    "抖音": {
-        "name": "抖音",
-        "review_url": "https://www.douyin.com/search/%E4%BA%91%E4%B8%8A%E5%BD%92%E5%A2%85",
-        "icon": "🎵",
-    },
+# ── 向后兼容别名（旧代码引用 BNB_NAME 等）──────────────
+BNB_NAME = BNB_CONFIGS["guishu"]["name"]
+BNB_SHORT_NAME = BNB_CONFIGS["guishu"]["short_name"]
+BNB_ADDRESS = BNB_CONFIGS["guishu"]["address"]
+BNB_PHONE = BNB_CONFIGS["guishu"]["phone"]
+BNB_LATITUDE = BNB_CONFIGS["guishu"]["latitude"]
+BNB_LONGITUDE = BNB_CONFIGS["guishu"]["longitude"]
+
+# ── 预订平台链接（按民宿区分）────────────────────────
+def _make_booking_platforms(bnb_name: str) -> dict:
+    """按民宿名称生成预订平台搜索链接"""
+    from urllib.parse import quote
+    q = quote(bnb_name)
+    return {
+        "携程": {"name": "携程旅行", "url": f"https://hotels.ctrip.com/hotel/search?keyword={q}", "icon": "🏨", "color": "#2577e3"},
+        "美团": {"name": "美团民宿", "url": f"https://hotel.meituan.com/search?keyword={q}", "icon": "🏠", "color": "#ffc300"},
+        "飞猪": {"name": "飞猪旅行", "url": f"https://www.fliggy.com/search?keyword={q}", "icon": "✈️", "color": "#ff5a00"},
+        "大众点评": {"name": "大众点评", "url": f"https://www.dianping.com/search/keyword/{q}", "icon": "⭐", "color": "#ffc300"},
+    }
+
+BOOKING_PLATFORMS = _make_booking_platforms("云上归墅")
+BOOKING_PLATFORMS_BY_BNB = {
+    k: _make_booking_platforms(v["name"]) for k, v in BNB_CONFIGS.items()
+}
+
+def _make_review_platforms(bnb_name: str) -> dict:
+    """按民宿名生成好评推送平台链接"""
+    from urllib.parse import quote
+    q = quote(bnb_name)
+    return {
+        "携程": {"name": "携程旅行", "review_url": f"https://hotels.ctrip.com/hotel/dianping/{q}", "icon": "🏨"},
+        "美团": {"name": "美团", "review_url": f"https://hotel.meituan.com/dianping/{q}", "icon": "🏠"},
+        "飞猪": {"name": "飞猪旅行", "review_url": f"https://www.fliggy.com/review/{q}", "icon": "✈️"},
+        "大众点评": {"name": "大众点评", "review_url": f"https://www.dianping.com/shop/{q}/review", "icon": "⭐"},
+        "小红书": {"name": "小红书", "review_url": f"https://www.xiaohongshu.com/search_result?keyword={q}", "icon": "📕"},
+        "抖音": {"name": "抖音", "review_url": f"https://www.douyin.com/search/{q}", "icon": "🎵"},
+    }
+
+REVIEW_PLATFORMS = _make_review_platforms("云上归墅")
+REVIEW_PLATFORMS_BY_BNB = {
+    k: _make_review_platforms(v["name"]) for k, v in BNB_CONFIGS.items()
 }
 # 退房后自动推送好评提醒的延迟（分钟）
 REVIEW_REMINDER_DELAY_MINUTES = 30
 
-# ── 平台监控配置（要求6）─────────────────────────────────
+# ── 平台监控配置（按民宿区分）──────────────────────
 MONITOR_PLATFORMS = ["美团", "大众点评", "飞猪", "携程", "小红书", "抖音"]
-MONITOR_KEYWORDS = ["云上·归墅", "云上归墅", "庐山民宿", "庐山云上归墅"]
+MONITOR_KEYWORDS_BY_BNB = {
+    "guishu": ["云上·归墅", "云上归墅", "庐山民宿", "庐山云上归墅"],
+    "shanji": ["云上·山纪", "云上山纪", "庐山山纪", "庐山茶园民宿"],
+    "donglinwai": ["云上·东林外", "云上东林外", "庐山东林外", "庐山东林民宿"],
+}
+MONITOR_KEYWORDS = MONITOR_KEYWORDS_BY_BNB["guishu"]
 MONITOR_SEARCH_QUERY = "云上·归墅民宿 庐山 评价"
 
 # ── 客服配置 ─────────────────────────────────────────────

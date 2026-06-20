@@ -1,0 +1,145 @@
+.route-header {
+  padding: var(--space-xl) var(--space-md) var(--space-md);
+  background: linear-gradient(170deg, var(--color-sky) 0%, var(--color-primary-dark) 100%);
+  color: #fff;
+}
+
+.route-header__name {
+  font-family: var(--font-serif);
+  font-size: 40rpx;
+  font-weight: 600;
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+
+.route-header__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+/* 区块 */
+.section {
+  padding: var(--space-md);
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+
+.route-desc {
+  font-size: 28rpx;
+  color: var(--color-text);
+  line-height: 1.85;
+}
+
+/* 时间线 */
+.timeline {
+  position: relative;
+  padding-left: var(--space-lg);
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 28rpx;
+  top: 0;
+  bottom: 0;
+  width: 2rpx;
+  background: var(--color-border);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: var(--space-md);
+}
+
+.timeline-item__dot {
+  position: absolute;
+  left: calc(-1 * var(--space-lg) + 12rpx);
+  top: 4rpx;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.timeline-item__content {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.timeline-item__name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.timeline-item__desc {
+  font-size: 24rpx;
+  color: var(--color-text-light);
+  line-height: 1.6;
+}
+
+.timeline-item__img {
+  width: 100%;
+  height: 280rpx;
+  border-radius: var(--radius-sm);
+  margin-top: var(--space-sm);
+}
+
+/* 小贴士 */
+.tips-card {
+  padding: var(--space-md);
+  background: rgba(74, 124, 89, 0.06);
+  border: 1px solid rgba(74, 124, 89, 0.15);
+  border-left: 6rpx solid var(--color-primary);
+  border-radius: var(--radius-md);
+  font-size: 26rpx;
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+/* 操作按钮 */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.btn-primary, .btn-outline {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-outline {
+  border: 2rpx solid var(--color-primary);
+  color: var(--color-primary);
+}

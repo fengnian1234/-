@@ -1,0 +1,12 @@
+{
+  "usingComponents": {
+    "page-header": "/components/page-header/page-header",
+    "room-card": "/components/room-card/room-card",
+    "bnb-switcher": "/components/bnb-switcher/bnb-switcher",
+    "notice-bar": "/components/notice-bar/notice-bar",
+    "theme-toggle": "/components/theme-toggle/theme-toggle",
+    "empty-state": "/components/empty-state/empty-state",
+    "loading-skeleton": "/components/loading-skeleton/loading-skeleton"
+  },
+  "navigationBarTitleText": "云上·印象集"
+}

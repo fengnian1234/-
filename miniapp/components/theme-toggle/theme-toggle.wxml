@@ -1,0 +1,3 @@
+<view class="theme-toggle press-active" bindtap="onToggle">
+  <text class="theme-toggle__icon">{{isDark ? '☀️' : '🌙'}}</text>
+</view>

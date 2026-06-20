@@ -1,0 +1,68 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/rooms/rooms",
+    "pages/menu/menu",
+    "pages/travel/travel",
+    "pages/mine/mine",
+    "pages/room-detail/room-detail",
+    "pages/travel-detail/travel-detail",
+    "pages/food-detail/food-detail",
+    "pages/services/services",
+    "pages/points/points",
+    "pages/orders/orders",
+    "pages/booking/booking",
+    "pages/bnb-select/bnb-select",
+    "pages/chat/chat"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#4a7c59",
+    "navigationBarTitleText": "云上·印象集",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f9f4",
+    "backgroundTextStyle": "dark",
+    "enablePullDownRefresh": true
+  },
+  "tabBar": {
+    "color": "#8a9586",
+    "selectedColor": "#4a7c59",
+    "backgroundColor": "#fffefb",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tab/home.png",
+        "selectedIconPath": "images/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/rooms/rooms",
+        "text": "房型",
+        "iconPath": "images/tab/bed.png",
+        "selectedIconPath": "images/tab/bed-active.png"
+      },
+      {
+        "pagePath": "pages/menu/menu",
+        "text": "点餐",
+        "iconPath": "images/tab/coffee.png",
+        "selectedIconPath": "images/tab/coffee-active.png"
+      },
+      {
+        "pagePath": "pages/travel/travel",
+        "text": "攻略",
+        "iconPath": "images/tab/map.png",
+        "selectedIconPath": "images/tab/map-active.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "images/tab/user.png",
+        "selectedIconPath": "images/tab/user-active.png"
+      }
+    ]
+  },
+  "usingComponents": {},
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

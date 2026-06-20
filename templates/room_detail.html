@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}{{ room.name }} - 云上归墅{% endblock %}
+{% block title %}{{ room.name }} - {{ bnb.short_name }}{% endblock %}
+{% set mp = '?mp=1' if request.args.get('mp') == '1' else '' %}
 
 {% block content %}
 <section class="room-detail">
@@ -67,8 +68,8 @@
         {% endif %}
 
         <div class="room-actions">
-            <button class="btn btn-primary btn-large" onclick="alert('请拨打前台电话预订：16607927666\n或通过携程/美团/飞猪/大众点评搜索「云上归墅」在线预订～\n\n🗺️ 预订前免费旅行顾问 · 🛎️ 预订后解锁专属AI管家')">📞 预订咨询</button>
-            <a href="/rooms" class="btn btn-outline btn-large">← 返回房型列表</a>
+            <button class="btn btn-primary btn-large" onclick="alert('请拨打前台电话预订：{{ bnb.phone }}\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～\n\n🗺️ 预订前免费旅行顾问 · 🛎️ 预订后解锁专属AI管家')">📞 预订咨询</button>
+            <a href="{{ bnb_prefix }}/rooms{{ mp }}" class="btn btn-outline btn-large">← 返回房型列表</a>
         </div>
     </div>
 </section>
