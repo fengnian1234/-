@@ -1,0 +1,17 @@
+<!-- 民宿切换器 — 水平三民宿快速切换 -->
+<view class="bnb-switcher">
+  <view
+    wx:for="{{bnbs}}"
+    wx:key="bnb_id"
+    class="bnb-switch-item {{item.bnb_id === currentBnbId ? 'active' : ''}}"
+    style="--sw-color: {{item.themeColor}}"
+    data-bnb-id="{{item.bnb_id}}"
+    bindtap="onSwitch"
+  >
+    <view class="bnb-switch-dot" style="background: {{item.bnb_id === currentBnbId ? item.themeColor : '#ddd'}}"></view>
+    <text class="bnb-switch-name">{{item.shortName}}</text>
+  </view>
+  <view class="bnb-switch-more" bindtap="onGoSelect">
+    <text>⋯</text>
+  </view>
+</view>

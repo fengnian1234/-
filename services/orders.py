@@ -22,8 +22,19 @@ def get_platforms() -> list:
     return [{"key": k, **v} for k, v in PLATFORMS.items()]
 
 
+def _get_bnb_id(bnb_id=None):
+    if bnb_id:
+        return bnb_id
+    try:
+        from flask import g
+        return getattr(g, 'bnb_id', 'guishu')
+    except RuntimeError:
+        return 'guishu'
+
+
 def add_order(data: dict) -> dict:
     """添加新订单（手动录入或API推送）"""
+    bnb_id = _get_bnb_id(data.get("bnb_id"))
     db = SessionLocal()
     try:
         platform = data.get("platform", "direct")
@@ -34,6 +45,7 @@ def add_order(data: dict) -> dict:
             platform_fee = round(total * fee_rate, 2)
 
         order = AggregatedOrder(
+            bnb_id=bnb_id,
             platform=platform,
             platform_order_id=data.get("platform_order_id", ""),
             guest_name=data["guest_name"],
@@ -57,11 +69,12 @@ def add_order(data: dict) -> dict:
         db.close()
 
 
-def get_orders(date_from: str = None, date_to: str = None, platform: str = None, status: str = None, limit: int = 50) -> list:
+def get_orders(date_from: str = None, date_to: str = None, platform: str = None, status: str = None, limit: int = 50, bnb_id=None) -> list:
     """查询订单列表"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
-        q = db.query(AggregatedOrder)
+        q = db.query(AggregatedOrder).filter(AggregatedOrder.bnb_id == bnb_id)
         if date_from:
             q = q.filter(AggregatedOrder.check_in >= date_from)
         if date_to:
@@ -93,30 +106,32 @@ def update_order_status(order_id: int, status: str, room_number: str = "") -> di
         db.close()
 
 
-def get_dashboard_stats() -> dict:
+def get_dashboard_stats(bnb_id=None) -> dict:
     """获取订单看板统计数据"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
         today = datetime.utcnow().strftime("%Y-%m-%d")
+        base_filter = AggregatedOrder.bnb_id == bnb_id
 
-        total = db.query(AggregatedOrder).filter(AggregatedOrder.status != "cancelled").count()
+        total = db.query(AggregatedOrder).filter(base_filter, AggregatedOrder.status != "cancelled").count()
 
         today_arrivals = db.query(AggregatedOrder).filter(
-            AggregatedOrder.check_in == today, AggregatedOrder.status != "cancelled"
+            base_filter, AggregatedOrder.check_in == today, AggregatedOrder.status != "cancelled"
         ).count()
 
         today_departures = db.query(AggregatedOrder).filter(
-            AggregatedOrder.check_out == today, AggregatedOrder.status == "checked_in"
+            base_filter, AggregatedOrder.check_out == today, AggregatedOrder.status == "checked_in"
         ).count()
 
         currently_in = db.query(AggregatedOrder).filter(
-            AggregatedOrder.status == "checked_in"
+            base_filter, AggregatedOrder.status == "checked_in"
         ).count()
 
         # 各平台订单数
         platform_stats = db.query(
             AggregatedOrder.platform, func.count(AggregatedOrder.id), func.sum(AggregatedOrder.total_amount)
-        ).filter(AggregatedOrder.status != "cancelled").group_by(AggregatedOrder.platform).all()
+        ).filter(base_filter, AggregatedOrder.status != "cancelled").group_by(AggregatedOrder.platform).all()
 
         platforms = []
         total_revenue = 0
@@ -127,16 +142,16 @@ def get_dashboard_stats() -> dict:
         # 本月统计
         month_start = today[:7] + "-01"
         month_orders = db.query(AggregatedOrder).filter(
-            AggregatedOrder.check_in >= month_start, AggregatedOrder.status != "cancelled"
+            base_filter, AggregatedOrder.check_in >= month_start, AggregatedOrder.status != "cancelled"
         ).count()
         month_revenue = db.query(func.sum(AggregatedOrder.net_revenue)).filter(
-            AggregatedOrder.check_in >= month_start, AggregatedOrder.status != "cancelled"
+            base_filter, AggregatedOrder.check_in >= month_start, AggregatedOrder.status != "cancelled"
         ).scalar() or 0
 
         # 未来7天到店
         week_later = (datetime.utcnow() + timedelta(days=7)).strftime("%Y-%m-%d")
         upcoming = db.query(AggregatedOrder).filter(
-            AggregatedOrder.check_in > today, AggregatedOrder.check_in <= week_later,
+            base_filter, AggregatedOrder.check_in > today, AggregatedOrder.check_in <= week_later,
             AggregatedOrder.status == "confirmed"
         ).count()
 

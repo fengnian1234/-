@@ -1,0 +1,64 @@
+/* 路线列表 */
+.routes-list {
+  padding: 0 var(--space-md);
+}
+
+.route-card {
+  padding: var(--space-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-left: 6rpx solid var(--color-primary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-sm);
+}
+
+.route-card:active {
+  transform: translateY(-2rpx);
+  box-shadow: var(--shadow-md);
+}
+
+.route-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.route-card__name {
+  font-family: var(--font-serif);
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  flex: 1;
+  min-width: 0;
+}
+
+.route-card__meta {
+  font-size: 22rpx;
+  color: var(--color-text-light);
+  margin-bottom: var(--space-xs);
+}
+
+.route-card__desc {
+  font-size: 24rpx;
+  color: var(--color-text-light);
+  line-height: 1.6;
+  margin-bottom: var(--space-xs);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.route-card__spots {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.route-card__more {
+  font-size: 22rpx;
+  color: var(--color-text-lighter);
+  align-self: center;
+}

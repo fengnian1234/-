@@ -1,0 +1,101 @@
+.bnb-select-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding: 40rpx 32rpx;
+}
+
+.bnb-select-header {
+  text-align: center;
+  margin-bottom: 48rpx;
+}
+
+.bnb-select-title {
+  display: block;
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: 12rpx;
+}
+
+.bnb-select-sub {
+  font-size: 28rpx;
+  color: var(--color-text-light);
+}
+
+.bnb-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 28rpx;
+}
+
+.bnb-card {
+  position: relative;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.08);
+  transition: transform 0.2s;
+}
+
+.bnb-card:active {
+  transform: scale(0.97);
+}
+
+.bnb-card-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 160rpx;
+  opacity: 0.12;
+}
+
+.bnb-card-content {
+  position: relative;
+  padding: 36rpx 32rpx;
+}
+
+.bnb-card-icon {
+  font-size: 56rpx;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.bnb-card-name {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4rpx;
+}
+
+.bnb-card-fullname {
+  font-size: 28rpx;
+  color: var(--color-primary);
+  margin-bottom: 16rpx;
+}
+
+.bnb-card-desc {
+  font-size: 26rpx;
+  color: var(--color-text-light);
+  line-height: 1.6;
+  margin-bottom: 8rpx;
+}
+
+.bnb-card-address {
+  font-size: 24rpx;
+  color: var(--color-text-lighter);
+}
+
+.bnb-card-badge {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.bnb-card--selected {
+  border: 3rpx solid var(--color-primary);
+}

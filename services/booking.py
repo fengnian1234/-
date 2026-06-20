@@ -190,12 +190,19 @@ def get_room_guests(room_code: str) -> list:
 
 def confirm_booking(openid: str, guest_name: str, phone: str,
                     platform: str, check_in: str, check_out: str,
-                    room_type: str = "") -> Booking:
+                    room_type: str = "", bnb_id=None) -> Booking:
     """前台确认预订（解锁AI + 生成房间共享码）"""
+    if not bnb_id:
+        try:
+            from flask import g
+            bnb_id = getattr(g, 'bnb_id', 'guishu')
+        except RuntimeError:
+            bnb_id = 'guishu'
     db = SessionLocal()
     try:
         room_code = _generate_room_code()
         booking = Booking(
+            bnb_id=bnb_id,
             openid=openid,
             guest_name=guest_name,
             phone=phone,

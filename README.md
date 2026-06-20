@@ -108,7 +108,7 @@ python run.py
 
 ```
 d:/cc/
-├── app.py                  # Flask 主应用（28 条路由）
+├── app.py                  # Flask 主应用（83 条有效路由）
 ├── config.py               # 配置文件
 ├── models.py               # 数据库模型（SQLAlchemy + SQLite）
 ├── wechat.py               # 微信消息处理 + 关键词路由
@@ -117,41 +117,73 @@ d:/cc/
 ├── requirements.txt        # Python 依赖
 ├── CLAUDE.md               # Claude Code 项目指引
 │
-├── services/               # 业务服务层
+├── services/               # 业务服务层（14 个模块）
 │   ├── rooms.py            # 房间查询/展示
-│   ├── menu.py             # 点餐/订单管理
+│   ├── menu.py             # 咖啡简餐菜单
 │   ├── travel.py           # 旅游路线/美食推荐
 │   ├── quick.py            # 快捷服务
 │   ├── booking.py          # 预订管理/AI解锁
 │   ├── ai.py               # AI 智能对话
 │   ├── monitor.py          # 平台口碑监控（opencli + WebSearch）
 │   ├── report.py           # 周报生成（DOCX）
-│   └── notify.py           # 员工通知
+│   ├── notify.py           # 员工通知/看板
+│   ├── orders.py           # 订单管理
+│   ├── points.py           # 积分/会员
+│   ├── tea.py              # 山纪·茶园
+│   ├── healing.py          # 东林外·疗愈
+│   └── logger.py           # 统一日志
 │
-├── templates/              # Jinja2 模板（Flask 渲染）
+├── templates/              # Jinja2 模板（Flask 渲染，21 个）
 │   ├── base.html           # 基础布局
 │   ├── index.html          # 首页
 │   ├── rooms.html          # 房型列表
 │   ├── room_detail.html    # 房间详情
 │   ├── menu.html           # 咖啡简餐
+│   ├── orders.html         # 订单页
+│   ├── food_detail.html    # 美食详情
 │   ├── travel.html         # 游玩攻略
 │   ├── travel_detail.html  # 路线详情
 │   ├── services.html       # 快捷服务
 │   ├── map.html            # 位置导航
-│   └── staff.html          # 员工看板
+│   ├── points.html         # 积分中心
+│   ├── tea.html            # 山纪·茶园
+│   ├── healing.html        # 东林外·疗愈
+│   ├── docs.html           # 文档页
+│   ├── staff.html          # 员工看板
+│   ├── miniapp-simulator.html  # 小程序模拟器
+│   ├── miniapp-chat.html       # AI 管家聊天
+│   ├── wechat-simulator.html   # 微信公众号模拟器
+│   ├── 404.html            # 404 页面
+│   └── 500.html            # 500 页面
 │
-├── preview/                # 独立预览 HTML（纯前端）
-│   ├── index.html
-│   ├── rooms.html
-│   ├── menu.html
-│   ├── services.html
-│   └── travel.html
+├── preview/                # 独立预览 HTML（纯前端，含 desktop 变体）
+│   ├── index.html / -desktop.html
+│   ├── rooms.html / -desktop.html
+│   ├── room_detail.html / -desktop.html
+│   ├── menu.html / -desktop.html
+│   ├── orders.html / -desktop.html
+│   ├── food_detail.html / -desktop.html
+│   ├── travel.html / -desktop.html
+│   ├── travel_detail.html / -desktop.html
+│   ├── services.html / -desktop.html
+│   ├── map.html / -desktop.html
+│   ├── points.html / -desktop.html
+│   ├── staff.html
+│   └── wechat-simulator.html / -desktop.html
+│
+├── miniapp/                # 微信小程序项目（280 文件 / 14 页面）
+│   ├── pages/              # 14 个页面
+│   ├── components/         # 15 个组件
+│   ├── utils/              # 7 个工具模块
+│   └── styles/             # 5 个全局样式
 │
 ├── local_data/             # 本地数据（最高优先级）
-│   ├── images/             # 官方图片（携程 CDN）
-│   └── documents/          # 信息文件
+│   ├── images/             # 24 张官方图片（携程 CDN）
+│   └── documents/          # 携程页面提取、美食链接
 │
-└── static/css/style.css    # 全局样式表
+└── static/css/             # 全局样式
+    ├── style.css           # 主样式表（含暗色模式）
+    └── style-mp.css        # 小程序模式样式
 ```
 
 ---

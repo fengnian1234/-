@@ -1,0 +1,54 @@
+/**
+ * 云上归墅 · 基础重置
+ */
+
+/* 盒模型统一 */
+view, text, image, scroll-view, swiper, swiper-item,
+input, button, textarea, navigator, form, label,
+picker, picker-view, radio, radio-group, slider, switch {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 去除 button 默认样式 */
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button::after {
+  border: none;
+}
+
+/* 去除 input 默认样式 */
+input {
+  background: none;
+  border: none;
+  outline: none;
+}
+
+/* 图片默认 */
+image {
+  display: block;
+  width: 100%;
+}
+
+/* 链接重置 */
+navigator {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 滚动容器弹簧效果 */
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}

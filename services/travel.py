@@ -4,41 +4,62 @@
 from models import SessionLocal, TravelRoute, FoodRecommend
 
 
-def get_all_routes():
+def _get_bnb_id(bnb_id=None):
+    if bnb_id:
+        return bnb_id
+    try:
+        from flask import g
+        return getattr(g, 'bnb_id', 'guishu')
+    except RuntimeError:
+        return 'guishu'
+
+
+def get_all_routes(bnb_id=None):
     """获取所有游玩路线"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
-        routes = db.query(TravelRoute).order_by(TravelRoute.sort_order).all()
+        routes = db.query(TravelRoute).filter(
+            TravelRoute.bnb_id == bnb_id
+        ).order_by(TravelRoute.sort_order).all()
         return [r.to_dict() for r in routes]
     finally:
         db.close()
 
 
-def get_route_by_id(route_id: int):
+def get_route_by_id(route_id: int, bnb_id=None):
     """获取单条路线详情"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
-        route = db.query(TravelRoute).filter(TravelRoute.id == route_id).first()
+        route = db.query(TravelRoute).filter(
+            TravelRoute.id == route_id, TravelRoute.bnb_id == bnb_id
+        ).first()
         return route.to_dict() if route else None
     finally:
         db.close()
 
 
-def get_all_food_recommends():
+def get_all_food_recommends(bnb_id=None):
     """获取所有美食推荐"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
-        foods = db.query(FoodRecommend).order_by(FoodRecommend.sort_order).all()
+        foods = db.query(FoodRecommend).filter(
+            FoodRecommend.bnb_id == bnb_id
+        ).order_by(FoodRecommend.sort_order).all()
         return [f.to_dict() for f in foods]
     finally:
         db.close()
 
 
-def get_food_by_category(category: str):
+def get_food_by_category(category: str, bnb_id=None):
     """按类别获取美食推荐"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
         foods = db.query(FoodRecommend).filter(
+            FoodRecommend.bnb_id == bnb_id,
             FoodRecommend.category == category
         ).order_by(FoodRecommend.sort_order).all()
         return [f.to_dict() for f in foods]
@@ -46,11 +67,14 @@ def get_food_by_category(category: str):
         db.close()
 
 
-def get_food_by_id(food_id: int):
+def get_food_by_id(food_id: int, bnb_id=None):
     """获取单个美食详情"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
-        food = db.query(FoodRecommend).filter(FoodRecommend.id == food_id).first()
+        food = db.query(FoodRecommend).filter(
+            FoodRecommend.id == food_id, FoodRecommend.bnb_id == bnb_id
+        ).first()
         return food.to_dict() if food else None
     finally:
         db.close()
@@ -71,18 +95,20 @@ def generate_amap_link(name: str, lat: float, lng: float) -> str:
     return f"https://uri.amap.com/marker?position={lng},{lat}&name={name}"
 
 
-def format_routes_text():
+def format_routes_text(bnb_id=None):
     """格式化为游玩路线文本"""
-    routes = get_all_routes()
+    bnb_id = _get_bnb_id(bnb_id)
+    routes = get_all_routes(bnb_id=bnb_id)
     if not routes:
         return "暂无游玩路线信息，请咨询前台获取最新攻略～"
 
     lines = ["🗺️ *庐山游玩攻略*\n"]
 
     # 民宿位置
-    from config import BNB_ADDRESS, BNB_LATITUDE, BNB_LONGITUDE
-    lines.append(f"📍 *云上归墅* 位于 {BNB_ADDRESS}")
-    lines.append(f"  🗺️ 查看地图：{generate_amap_link('云上归墅', BNB_LATITUDE, BNB_LONGITUDE)}")
+    from config import BNB_CONFIGS
+    bnb_cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
+    lines.append(f"📍 *{bnb_cfg['short_name']}* 位于 {bnb_cfg['address']}")
+    lines.append(f"  🗺️ 查看地图：{generate_amap_link(bnb_cfg['name'], bnb_cfg['latitude'], bnb_cfg['longitude'])}")
     lines.append("")
 
     # 推荐路线
@@ -118,9 +144,10 @@ def format_route_summary(route: dict) -> str:
     )
 
 
-def format_route_detail_text(route_id: int):
+def format_route_detail_text(route_id: int, bnb_id=None):
     """格式化单条路线详情"""
-    route = get_route_by_id(route_id)
+    bnb_id = _get_bnb_id(bnb_id)
+    route = get_route_by_id(route_id, bnb_id=bnb_id)
     if not route:
         return "该路线信息暂未收录，回复「攻略」查看所有路线～"
 
@@ -155,9 +182,10 @@ def format_route_detail_text(route_id: int):
     return "\n".join(lines)
 
 
-def format_food_text():
+def format_food_text(bnb_id=None):
     """格式化美食推荐"""
-    foods = get_all_food_recommends()
+    bnb_id = _get_bnb_id(bnb_id)
+    foods = get_all_food_recommends(bnb_id=bnb_id)
     if not foods:
         return "暂无美食推荐信息～"
 
@@ -188,9 +216,10 @@ def format_food_text():
     return "\n".join(lines)
 
 
-def format_food_detail_text(food_id: int):
+def format_food_detail_text(food_id: int, bnb_id=None):
     """格式化单条美食详情（XHS风格微信文本）"""
-    food = get_food_by_id(food_id)
+    bnb_id = _get_bnb_id(bnb_id)
+    food = get_food_by_id(food_id, bnb_id=bnb_id)
     if not food:
         return "该美食信息暂未收录，回复「美食」查看所有推荐～"
 

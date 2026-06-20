@@ -20,6 +20,8 @@ def seed_all():
             seed_bookings(db)
             seed_points(db)
             db.commit()
+            seed_tea("shanji")
+            seed_healing("donglinwai")
             info(" 新增模块数据补充完成！")
             return
 
@@ -31,8 +33,11 @@ def seed_all():
         seed_food_recommends(db)
         seed_bookings(db)
         seed_points(db)
-
         db.commit()
+
+        seed_tea("shanji")
+        seed_healing("donglinwai")
+
         info(" 种子数据初始化完成！")
 
     except Exception as e:
@@ -634,6 +639,139 @@ def seed_points(db):
                  description="兑换50元优惠券 -150", created_at=now - timedelta(days=7)),
     ]
     db.add_all(logs)
+
+
+def seed_tea(bnb_id="shanji"):
+    """茶园模块种子数据（云上·山纪）"""
+    from models import SessionLocal, TeaType, TeaExperience, TeaProduct
+    db = SessionLocal()
+    try:
+        if db.query(TeaType).count() > 0:
+            return
+        # 茶叶品类
+        types = [
+            TeaType(bnb_id=bnb_id, name="庐山云雾茶", description="中国十大名茶之一，生长于庐山海拔800米以上的云雾带，芽叶肥壮、白毫显露、香高味醇",
+                    origin="庐山汉阳峰云雾带", brewing_method="85°C山泉水，玻璃杯上投法，3分钟",
+                    tasting_notes="清香持久，滋味鲜醇回甘，汤色清澈明亮", sort_order=1),
+            TeaType(bnb_id=bnb_id, name="庐山红茶", description="采用庐山本地茶青发酵制成，汤色红艳明亮，带有蜜糖甜香",
+                    origin="庐山牯岭镇茶园", brewing_method="90°C沸水，紫砂壶，冲泡30秒",
+                    tasting_notes="蜜糖甜香，滋味醇厚顺滑，回甘明显", sort_order=2),
+            TeaType(bnb_id=bnb_id, name="庐山白茶", description="轻发酵工艺，保留茶叶天然风味，清甜淡雅适合四季饮用",
+                    origin="庐山五老峰下", brewing_method="80°C水，玻璃杯，2分钟",
+                    tasting_notes="清甜淡雅，花香隐约，入口绵柔", sort_order=3),
+        ]
+        db.add_all(types)
+        db.flush()
+
+        # 茶园体验
+        exps = [
+            TeaExperience(bnb_id=bnb_id, name="晨雾采茶体验", description="清晨跟随茶农上山，在晨雾中亲手采摘嫩芽，感受茶山清晨的宁静",
+                          duration="2小时", price=128, capacity=10,
+                          includes=["采茶竹篓", "茶农指导", "鲜制云雾茶一杯"], sort_order=1),
+            TeaExperience(bnb_id=bnb_id, name="手工制茶工坊", description="在制茶师傅指导下，亲手完成杀青、揉捻、干燥等工序，制作属于自己的茶",
+                          duration="3小时", price=268, capacity=6,
+                          includes=["茶叶原料", "制茶工具", "自制茶叶50g带回家"], sort_order=2),
+            TeaExperience(bnb_id=bnb_id, name="茶道品鉴课", description="学习盖碗、紫砂壶冲泡技法，品鉴三款不同年份的庐山茶",
+                          duration="1.5小时", price=168, capacity=8,
+                          includes=["三款茶品", "茶点", "茶道器具使用"], sort_order=3),
+        ]
+        db.add_all(exps)
+
+        # 茶叶商品
+        prods = [
+            TeaProduct(bnb_id=bnb_id, name="庐山云雾茶·特级", tea_type_id=types[0].id,
+                       price=288, weight="100g", description="明前手工采摘，一芽一叶，鲜醇回甘", stock=20, sort_order=1),
+            TeaProduct(bnb_id=bnb_id, name="庐山云雾茶·一级", tea_type_id=types[0].id,
+                       price=168, weight="100g", description="谷雨前采摘，香气浓郁，口感醇厚", stock=50, sort_order=2),
+            TeaProduct(bnb_id=bnb_id, name="庐山红茶·蜜韵", tea_type_id=types[1].id,
+                       price=138, weight="100g", description="蜜糖甜香，暖胃养心，冬日首选", stock=30, sort_order=3),
+        ]
+        db.add_all(prods)
+        db.commit()
+        print("  ✅ 茶园模块种子数据填充完成")
+    finally:
+        db.close()
+
+
+def seed_healing(bnb_id="donglinwai"):
+    """疗愈模块种子数据（云上·东林外）—— 一对一个案服务"""
+    from models import SessionLocal, HealingCourse
+    db = SessionLocal()
+    try:
+        existing = db.query(HealingCourse).filter(HealingCourse.bnb_id == bnb_id).count()
+        if existing >= 8:
+            return
+        elif existing > 0:
+            # 清除旧数据后重新填充
+            db.query(HealingCourse).filter(HealingCourse.bnb_id == bnb_id).delete()
+            db.flush()
+
+        courses = [
+            # ═══ 音疗疗愈系列 ═══
+            HealingCourse(bnb_id=bnb_id, name="五音涤尘", category="音疗疗愈",
+                          description="以宫商角徵羽五音对应五脏，通过古法音疗振动涤荡内在尘垢。精选天然乐器（水晶钵、铜锣、雨棍等），层层递进释放深层压力，恢复身心和谐韵律。",
+                          price_tiers=[
+                              {"duration": "1小时", "price": 298},
+                              {"duration": "2小时", "price": 528},
+                              {"duration": "3小时", "price": 728},
+                          ], therapist="琼儿老师", sort_order=1),
+            HealingCourse(bnb_id=bnb_id, name="铜钵沐心", category="音疗疗愈",
+                          description="喜马拉雅铜钵置于身体七大脉轮之上，以槌击钵缘产生的泛音波动层层包裹全身。钵音如暖泉沐心，融化紧绷筋膜，引领进入深度冥想态。",
+                          price_tiers=[
+                              {"duration": "1小时", "price": 398},
+                              {"duration": "2小时", "price": 718},
+                              {"duration": "3小时", "price": 968},
+                          ], therapist="琼儿老师", sort_order=2),
+            HealingCourse(bnb_id=bnb_id, name="全息振动疗愈", category="音疗疗愈",
+                          description="融合颂钵、音叉、人声泛音三大振动体系，从细胞层面启动自愈力。以精密频率序列作用于神经系统，适合长期失眠、慢性疲劳及能量低落者。",
+                          price_tiers=[
+                              {"duration": "1小时", "price": 800},
+                              {"duration": "2小时", "price": 1480},
+                              {"duration": "3小时", "price": 1980},
+                          ], therapist="琼儿老师", sort_order=3),
+
+            # ═══ 芳香疗愈系列 ═══
+            HealingCourse(bnb_id=bnb_id, name="炁贯沐顶", category="芳香疗愈",
+                          description="以道家导引术结合头部经络穴位按摩，配合定制复方精油沿督脉推贯。清阳上升，浊气下沉，对头痛、失眠、用脑过度的客人尤有奇效。",
+                          price_tiers=[
+                              {"duration": "45分钟", "price": 298},
+                              {"duration": "90分钟", "price": 528},
+                              {"duration": "135分钟", "price": 728},
+                          ], therapist="琼儿老师", sort_order=4),
+            HealingCourse(bnb_id=bnb_id, name="气旋回春", category="芳香疗愈",
+                          description="以太极推揉手法沿经络走向疏导气机，配合回春配方精油渗透肌理。从丹田出发，螺旋式推展至四肢末梢，唤醒沉睡的生命活力。",
+                          price_tiers=[
+                              {"duration": "45分钟", "price": 298},
+                              {"duration": "90分钟", "price": 528},
+                              {"duration": "135分钟", "price": 728},
+                          ], therapist="琼儿老师", sort_order=5),
+            HealingCourse(bnb_id=bnb_id, name="轻脊引香", category="芳香疗愈",
+                          description="专注脊柱两侧膀胱经的芳香拨筋手法，逐节松解椎骨间的紧张与错位感。配合温灸与定制脊柱精油，改善体态、释放背部长期积压的疲劳。",
+                          price_tiers=[
+                              {"duration": "45分钟", "price": 368},
+                              {"duration": "90分钟", "price": 668},
+                              {"duration": "135分钟", "price": 888},
+                          ], therapist="琼儿老师", sort_order=6),
+            HealingCourse(bnb_id=bnb_id, name="芳香裹肤", category="芳香疗愈",
+                          description="东林外最具仪式感的奢华身体护理。以温热的草本泥膜包裹全身，配合精油引流按摩，深层排毒、紧致肌肤。裹肤后以玫瑰花瓣浴收尾，由内而外焕发柔光。",
+                          price_tiers=[
+                              {"duration": "1小时", "price": 2980},
+                              {"duration": "2小时", "price": 5280},
+                              {"duration": "3小时", "price": 7280},
+                          ], therapist="琼儿老师", sort_order=7),
+
+            # ═══ 情绪疗愈系列 ═══
+            HealingCourse(bnb_id=bnb_id, name="情绪疏压释放", category="情绪疗愈",
+                          description="融合EFT情绪释放敲击、引导式意象对话与呼吸疏导三大技术，在安全抱持的空间中探访情绪淤堵的源头。不评判、不说教，只让情绪自然流过、被看见、被释放。适合长期高压、情绪内耗、或正经历人生转折期的你。",
+                          price_tiers=[
+                              {"duration": "3小时", "price": 1680},
+                          ], therapist="琼儿老师", sort_order=8),
+        ]
+        db.add_all(courses)
+        db.commit()
+        print("  ✅ 疗愈模块种子数据填充完成（8项一对一个案服务）")
+    finally:
+        db.close()
 
 
 if __name__ == "__main__":

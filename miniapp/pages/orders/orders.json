@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "order-item": "/components/order-item/order-item",
+    "empty-state": "/components/empty-state/empty-state",
+    "loading-skeleton": "/components/loading-skeleton/loading-skeleton"
+  },
+  "navigationBarTitleText": "我的订单"
+}

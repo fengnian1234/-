@@ -1,0 +1,50 @@
+<view wx:if="{{!loading && food}}">
+  <image-gallery images="{{food.images}}" />
+
+  <view class="detail-body">
+    <!-- 头部 -->
+    <view class="food-header">
+      <text class="food-name">{{food.name}}</text>
+      <view class="food-tags">
+        <view class="tag tag--accent" wx:if="{{food.category}}">{{food.category}}</view>
+        <text class="food-price" wx:if="{{food.price_range}}">{{food.price_range}}</text>
+      </view>
+    </view>
+
+    <!-- 标签 -->
+    <view class="food-tag-list" wx:if="{{food.tags && food.tags.length}}">
+      <text class="food-tag" wx:for="{{food.tags}}" wx:key="*this">{{item}}</text>
+    </view>
+
+    <!-- 简介 -->
+    <view class="food-intro" wx:if="{{food.description}}">
+      <text>{{food.description}}</text>
+    </view>
+
+    <!-- 详细内容 -->
+    <view class="food-detail" wx:if="{{food.detail_content}}">
+      <text class="section-label">📝 详细推荐</text>
+      <view class="food-content">
+        <block wx:for="{{food.detail_content.split('\n\n')}}" wx:key="index">
+          <text class="food-content__para" wx:if="{{item.trim()}}">{{item}}</text>
+        </block>
+      </view>
+    </view>
+
+    <!-- 必点清单 -->
+    <view class="food-must-try" wx:if="{{food.must_try}}">
+      <text class="section-label">🔥 必点推荐</text>
+      <text>{{food.must_try}}</text>
+    </view>
+
+    <!-- 地址信息 -->
+    <view class="food-address" wx:if="{{food.address}}">
+      <text class="section-label">📍 地址信息</text>
+      <text class="food-address__text">{{food.address}}</text>
+      <view class="btn-primary" bindtap="onOpenLocation" wx:if="{{food.address}}">🗺️ 导航前往</view>
+    </view>
+  </view>
+</view>
+
+<loading-skeleton wx:if="{{loading}}" visible="{{true}}" />
+<empty-state wx:elif="{{!food}}" icon="🍜" text="美食不存在" />

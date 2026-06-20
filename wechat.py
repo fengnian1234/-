@@ -102,28 +102,28 @@ def is_human_service_time() -> bool:
     return HUMAN_SERVICE_OPEN_HOURS[0] <= hour < HUMAN_SERVICE_OPEN_HOURS[1]
 
 
-def format_welcome() -> str:
-    """格式化欢迎消息（区分已预订/未预订用户）"""
-    return WELCOME_MESSAGE
+def format_welcome(bnb_id="guishu") -> str:
+    """格式化欢迎消息（按民宿）"""
+    return _welcome_for_bnb(bnb_id)
 
 
 # ══════════════════════════════════════════════════════════
 #  关键词路由表（v2 - 按额外要求更新）
 # ══════════════════════════════════════════════════════════
-def build_keyword_routes():
+def build_keyword_routes(bnb_id="guishu"):
     """构建关键词路由（闭包，方便扩展）"""
     return [
         # ── 房间相关 ─────────────────────────────────────
         (r"^(房型|房间|客房|住宿|1)$",
-         lambda msg, m: format_rooms_text()),
+         lambda msg, m: format_rooms_text(bnb_id=bnb_id)),
         (r"^房间(\d+)$",
-         lambda msg, m: format_room_detail_text(int(m.group(1)))),
+         lambda msg, m: format_room_detail_text(int(m.group(1)), bnb_id=bnb_id)),
         (r"^(房间图片|房间照片|看图)$",
-         lambda msg, m: format_rooms_with_images()),
+         lambda msg, m: format_rooms_with_images(bnb_id=bnb_id)),
 
         # ── 预订相关（要求3：跳转主流平台）───────────────
         (r"^(预订|订房|预约|房价|价格)$",
-         lambda msg, m: format_booking_platforms_text()),
+         lambda msg, m: format_booking_platforms_text(bnb_id=bnb_id)),
         (r"^(绑定预订|绑定订单|我的预订)$",
          lambda msg, m: handle_bind_booking(msg)),
         (r"^绑定房间\s*(\S+)$",
@@ -131,36 +131,36 @@ def build_keyword_routes():
         (r"^(房间码|共享码|分享房间)$",
          lambda msg, m: handle_show_room_code(msg)),
         (r"^(携程|美团|飞猪|点评)$",
-         lambda msg, m: format_booking_platforms_text()),
+         lambda msg, m: format_booking_platforms_text(bnb_id=bnb_id)),
 
         # ── 菜单点餐相关（要求5：咖啡简餐+微信支付）─────
         (r"^(菜单|点餐|吃饭|用餐|咖啡|简餐|2)$",
-         lambda msg, m: format_menu_text()),
+         lambda msg, m: format_menu_text(bnb_id=bnb_id)),
         (r"^(推荐|招牌|特色)$",
-         lambda msg, m: format_recommended_text()),
+         lambda msg, m: format_recommended_text(bnb_id=bnb_id)),
         (r"^(下单|点单)(.+)$",
          lambda msg, m: handle_order_flow(msg, m)),
         (r"^(我的订单|订单|查单)$",
          lambda msg, m: format_order_status_text(
-             str(getattr(msg, 'source', getattr(msg, 'from_user', 'unknown'))))),
+             str(getattr(msg, 'source', getattr(msg, 'from_user', 'unknown'))), bnb_id=bnb_id)),
 
         # ── 旅游攻略相关 ─────────────────────────────────
         (r"^(攻略|游玩|路线|旅游|景点|3)$",
-         lambda msg, m: format_routes_text()),
+         lambda msg, m: format_routes_text(bnb_id=bnb_id)),
         (r"^路线(\d+)$",
-         lambda msg, m: format_route_detail_text(int(m.group(1)))),
+         lambda msg, m: format_route_detail_text(int(m.group(1)), bnb_id=bnb_id)),
         (r"^(美食推荐|周边美食|好吃的|餐厅|正餐)$",
-         lambda msg, m: format_food_text()),
+         lambda msg, m: format_food_text(bnb_id=bnb_id)),
         (r"^美食(\d+)$",
-         lambda msg, m: format_food_detail_text(int(m.group(1)))),
+         lambda msg, m: format_food_detail_text(int(m.group(1)), bnb_id=bnb_id)),
         (r"^(地图|位置|导航|在哪|怎么走|地址)$",
-         lambda msg, m: format_location_text()),
+         lambda msg, m: format_location_text(bnb_id=bnb_id)),
         (r"^美食(.+)$",
          lambda msg, m: f"🍜 关于「{m.group(1)}」类美食，回复「周边美食」查看完整美食指南～\n\n💡 回复「美食+编号」如「美食7」查看饮品店详情～"),
 
         # ── 快捷服务相关（要求2：通知员工，需预订后才能使用）─
         (r"^(服务|快捷|4)$",
-         lambda msg, m: format_services_text()),
+         lambda msg, m: format_services_text(bnb_id=bnb_id)),
         (r"^(服务|我要)(.+)$",
          lambda msg, m: _guard_service_capture(msg, m)),
         (r"^(打扫|清洁|卫生)$",
@@ -180,19 +180,31 @@ def build_keyword_routes():
         (r"^(wifi|WiFi|无线|网络)$",
          lambda msg, m: format_wifi_info()),
 
+        # ── 茶园相关（山纪专属）──────────────────────────
+        (r"^(茶|茶园|品茶|茶叶|制茶|茶道|茶文化)$",
+         lambda msg, m: _tea_or_fallback(bnb_id)),
+        (r"^(茶园体验|采茶|制茶体验)$",
+         lambda msg, m: _tea_or_fallback(bnb_id)),
+
+        # ── 疗愈相关（东林外专属）─────────────────────────
+        (r"^(疗愈|SPA|spa|禅修|冥想|瑜伽|按摩|身心)$",
+         lambda msg, m: _healing_or_fallback(bnb_id)),
+        (r"^(东林|禅意|禅堂)$",
+         lambda msg, m: _healing_or_fallback(bnb_id)),
+
         # ── 平台口碑相关（要求6）─────────────────────────
         (r"^(口碑|评价|评分|声誉)$",
-         lambda msg, m: generate_monitor_report()),
+         lambda msg, m: generate_monitor_report(bnb_id=bnb_id)),
         (r"^(平台评价|好评链接|评价链接)$",
-         lambda msg, m: format_review_links()),
+         lambda msg, m: format_review_links(bnb_id=bnb_id)),
 
         # ── 客服相关 ─────────────────────────────────────
         (r"^(人工|转人工|客服|人工客服|5)$",
          lambda msg, m: handle_human_service()),
         (r"^(帮助|help|功能|菜单|说明)$",
-         lambda msg, m: format_welcome()),
+         lambda msg, m: format_welcome(bnb_id=bnb_id)),
         (r"^(你好|hi|hello|嗨|在吗|您好)$",
-         lambda msg, m: format_greeting()),
+         lambda msg, m: format_greeting(bnb_id=bnb_id)),
         (r"^(谢谢|感谢|多谢|3Q|thanks)$",
          lambda msg, m: "不客气！祝您在庐山度过美好的时光～ 🌄✨\n有任何需要随时找我哦！"),
         (r"^(继续|继续生成|续写)$",
@@ -372,9 +384,11 @@ def format_wifi_info() -> str:
     )
 
 
-def format_greeting() -> str:
+def format_greeting(bnb_id="guishu") -> str:
+    from bnb_context import get_bnb_config
+    cfg = get_bnb_config(bnb_id)
     return (
-        "您好呀！👋 欢迎来到云上·归墅～\n\n"
+        f"您好呀！👋 欢迎来到{cfg['name']}～\n\n"
         "我是您的智能管家，有什么可以帮您的吗？\n"
         "您可以回复以下数字快速查询：\n"
         "【1】房型展示  【2】咖啡简餐\n"
@@ -413,23 +427,45 @@ def format_review_links() -> str:
 # ══════════════════════════════════════════════════════════
 #  消息匹配与路由
 # ══════════════════════════════════════════════════════════
-KEYWORD_ROUTES = build_keyword_routes()
+KEYWORD_ROUTES = build_keyword_routes()  # 默认归墅，向后兼容
+_ROUTES_CACHE = {}  # 按 bnb_id 缓存
 
 
-def match_keyword(content: str):
-    """匹配关键词路由"""
+def match_keyword(content: str, bnb_id="guishu"):
+    """匹配关键词路由（按民宿动态构建）"""
     content = content.strip()
-    for pattern, handler in KEYWORD_ROUTES:
+    if bnb_id not in _ROUTES_CACHE:
+        _ROUTES_CACHE[bnb_id] = build_keyword_routes(bnb_id)
+    routes = _ROUTES_CACHE[bnb_id]
+    for pattern, handler in routes:
         m = re.match(pattern, content, re.IGNORECASE)
         if m:
             return handler, m
     return None, None
 
 
+def _welcome_for_bnb(bnb_id="guishu"):
+    """按民宿生成欢迎消息"""
+    from bnb_context import get_bnb_config
+    cfg = get_bnb_config(bnb_id)
+    return (
+        f"🏔️ 欢迎来到{cfg['name']}！\n\n"
+        f"{cfg.get('description', '')}\n\n"
+        "回复以下数字或关键词探索：\n"
+        "【1】🛏️ 房型展示\n"
+        "【2】☕ 咖啡简餐\n"
+        "【3】🗺️ 游玩攻略\n"
+        "【4】🛎️ 快捷服务\n"
+        "【5】💬 在线咨询\n\n"
+        f"🏨 预订请通过携程/美团/飞猪/大众点评搜索「{cfg['short_name']}」\n"
+        "🎐 预订前免费旅行顾问 · 预订后解锁专属AI管家～"
+    )
+
+
 # ══════════════════════════════════════════════════════════
 #  微信消息主入口
 # ══════════════════════════════════════════════════════════
-def handle_wechat_message(msg):
+def handle_wechat_message(msg, bnb_id="guishu"):
     """
     处理微信消息的主入口
     路由优先级：关键词匹配 > AI对话（需预订） > 兜底
@@ -440,12 +476,13 @@ def handle_wechat_message(msg):
     elif hasattr(msg, 'text'):
         content = msg.text.strip()
     else:
-        return WELCOME_MESSAGE
+        from config import BNB_CONFIGS
+        return _welcome_for_bnb(bnb_id)
 
     openid = str(getattr(msg, 'source', getattr(msg, 'from_user', 'unknown')))
 
     # 1. 尝试关键词匹配
-    handler, match = match_keyword(content)
+    handler, match = match_keyword(content, bnb_id=bnb_id)
     if handler:
         try:
             reply = handler(msg, match)
@@ -493,42 +530,66 @@ def handle_wechat_message(msg):
 # ══════════════════════════════════════════════════════════
 #  事件处理（关注/菜单点击）
 # ══════════════════════════════════════════════════════════
-def handle_event(event_msg):
+def handle_event(event_msg, bnb_id="guishu"):
     """处理微信事件推送"""
     event_type = getattr(event_msg, 'event', '')
 
     if event_type == 'subscribe':
-        return WELCOME_MESSAGE
+        return _welcome_for_bnb(bnb_id)
     elif event_type == 'unsubscribe':
         return ""
     elif event_type == 'CLICK':
         event_key = getattr(event_msg, 'key', '')
-        return handle_menu_click(event_key)
+        return handle_menu_click(event_key, bnb_id=bnb_id)
     elif event_type == 'SCAN':
-        return WELCOME_MESSAGE
+        return _welcome_for_bnb(bnb_id)
 
     return ""
 
 
-def handle_menu_click(event_key: str) -> str:
+def handle_menu_click(event_key: str, bnb_id="guishu") -> str:
     """处理自定义菜单点击"""
     menu_handlers = {
-        'rooms': lambda: format_rooms_text(),
-        'menu': lambda: format_menu_text(),
-        'travel': lambda: format_routes_text(),
-        'service': lambda: format_services_text(),
-        'location': lambda: format_location_text(),
-        'booking': lambda: format_booking_platforms_text(),
+        'rooms': lambda: format_rooms_text(bnb_id=bnb_id),
+        'menu': lambda: format_menu_text(bnb_id=bnb_id),
+        'travel': lambda: format_routes_text(bnb_id=bnb_id),
+        'service': lambda: format_services_text(bnb_id=bnb_id),
+        'location': lambda: format_location_text(bnb_id=bnb_id),
+        'booking': lambda: format_booking_platforms_text(bnb_id=bnb_id),
         'contact': lambda: handle_human_service(),
-        'food': lambda: format_food_text(),
-        'reviews': lambda: generate_monitor_report(),
+        'food': lambda: format_food_text(bnb_id=bnb_id),
+        'reviews': lambda: generate_monitor_report(bnb_id=bnb_id),
     }
 
     handler = menu_handlers.get(event_key)
     if handler:
         return handler()
 
-    return WELCOME_MESSAGE
+    return _welcome_for_bnb(bnb_id)
+
+
+def _tea_or_fallback(bnb_id="guishu"):
+    """茶园相关关键词处理：山纪专属，其他民宿引导"""
+    if bnb_id == "shanji":
+        from services.tea import format_tea_text
+        return format_tea_text(bnb_id=bnb_id)
+    return (
+        "🍵 茶园体验是「云上·山纪」的特色服务哦～\n\n"
+        "山纪民宿坐拥庐山茶园，提供采茶、制茶、品茶等体验。\n"
+        "如需了解更多，请通过小程序切换到山纪民宿，或直接搜索「云上山纪」预订～"
+    )
+
+
+def _healing_or_fallback(bnb_id="guishu"):
+    """疗愈相关关键词处理：东林外专属，其他民宿引导"""
+    if bnb_id == "donglinwai":
+        from services.healing import format_healing_text
+        return format_healing_text(bnb_id=bnb_id)
+    return (
+        "🧘 疗愈体验是「云上·东林外」的特色服务哦～\n\n"
+        "东林外民宿紧邻东林寺，提供瑜伽、禅修、SPA等身心疗愈项目。\n"
+        "如需了解更多，请通过小程序切换到东林外民宿，或直接搜索「云上东林外」预订～"
+    )
 
 
 # ══════════════════════════════════════════════════════════

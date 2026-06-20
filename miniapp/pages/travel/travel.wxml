@@ -1,0 +1,41 @@
+<page-header title="游玩攻略" desc="庐山胜景 · 一网打尽" />
+
+<!-- 通知 -->
+<notice-bar type="info" icon="🚡" title="交通索道运营时间" items="{{['夏季 7:30-20:30 | 冬季 8:00-18:30', '单程约7分钟，往返票¥120/人']}}" />
+<notice-bar type="warning" icon="🚗" title="暑期自驾限行" items="{{['7-8月周末及节假日，庐山山上禁止外地车辆进入', '请将车停在山下索道站停车场']}}" />
+
+<block wx:if="{{!loading && (routes.length || foods.length)}}">
+
+  <!-- 推荐路线 -->
+  <view class="section-title">🏔️ 推荐路线</view>
+  <view class="routes-list">
+    <view
+      class="route-card press-active fade-up visible"
+      wx:for="{{routes}}"
+      wx:key="id"
+      data-route="{{item}}"
+      bindtap="onRouteTap"
+    >
+      <view class="route-card__header">
+        <text class="route-card__name">{{item.name}}</text>
+        <view class="tag tag--{{DIFFICULTY[item.difficulty].color || 'primary'}}">
+          {{DIFFICULTY[item.difficulty].label || item.difficulty}}
+        </view>
+        <view class="tag tag--accent" wx:if="{{item.is_recommended}}">精选</view>
+      </view>
+      <view class="route-card__meta" wx:if="{{item.duration}}">⏱ {{item.duration}}</view>
+      <view class="route-card__desc">{{item.description}}</view>
+      <view class="route-card__spots" wx:if="{{item.spots && item.spots.length}}">
+        <text class="tag tag--primary" wx:for="{{item.spots}}" wx:key="*this" wx:for-item="spot" wx:if="{{index < 3}}">{{spot}}</text>
+        <text class="route-card__more" wx:if="{{item.spots.length > 3}}">+{{item.spots.length - 3}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 周边美食 -->
+  <view class="section-title">🍜 周边美食</view>
+  <food-card wx:for="{{foods}}" wx:key="id" food="{{item}}" bind:tap="onFoodTap" />
+
+</block>
+<loading-skeleton wx:elif="{{loading}}" visible="{{true}}" />
+<empty-state wx:else icon="🗺️" text="暂无攻略信息" />

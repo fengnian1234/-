@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>云上·印象集 · 小程序模拟器</title>
+<style>
+:root {
+  --bg:#f0f0f0; --phone-bg:#fff; --text:#2a3328; --text2:#5a6558; --pri:#4a7c59;
+  --border:#e0e4dc; --tab-bg:#fffefb; --tab-active:#4a7c59;
+  --nav-bg:var(--pri); --nav-text:#fff; --nav-btn-bg:rgba(255,255,255,.2);
+  --popup-bg:#fff; --popup-hover:#f5f7f4; --popup-shadow:rgba(0,0,0,.18);
+  --drawer-bg:#fff; --drawer-overlay:rgba(0,0,0,.3);
+  --redeem-bg:#f8faf7; --redeem-active:#eef4ec;
+  --earn-border:#f0f0f0;
+  --panel-bg:transparent; --panel-text:var(--text2);
+  --info-bg:var(--phone-bg); --info-border:var(--border);
+  --preview-bg:transparent; --preview-hover-bg:transparent;
+  --card-bg:var(--phone-bg); --card-border:var(--border);
+}
+[data-theme="dark"] {
+  --bg:#1a1f1b; --phone-bg:#222825; --text:#d8e0d4; --text2:#b0b8ac;
+  --border:#3a423c; --tab-bg:#1a1f1b; --tab-active:#7bba8a;
+  --nav-bg:#2a3d30; --nav-text:#d8e0d4; --nav-btn-bg:rgba(255,255,255,.15);
+  --popup-bg:#2a302b; --popup-hover:#353c37; --popup-shadow:rgba(0,0,0,.5);
+  --drawer-bg:#222825; --drawer-overlay:rgba(0,0,0,.6);
+  --redeem-bg:#2a302b; --redeem-active:#353c37;
+  --earn-border:#3a423c;
+  --panel-bg:transparent; --panel-text:#b0b8ac;
+  --info-bg:#2a302b; --info-border:#3a423c;
+  --preview-bg:#2a302b; --preview-hover-bg:#353c37;
+  --card-bg:#2a302b; --card-border:#3a423c;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); height:100vh; overflow:hidden; }
+.app { display:flex; height:100vh; max-width:1100px; margin:0 auto; }
+.phone-col { width:400px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; padding:12px 0; position:relative; }
+.panel-col { flex:1; overflow-y:auto; padding:16px; min-width:0; color:var(--text); background:var(--panel-bg); }
+
+.phone-frame { width:375px; flex:1; display:flex; flex-direction:column; background:var(--phone-bg); border-radius:20px; box-shadow:0 8px 30px rgba(0,0,0,.1); overflow:hidden; border:2px solid var(--border); position:relative; }
+
+/* 导航栏 */
+.mp-nav { position:relative; background:var(--nav-bg); color:var(--nav-text); padding:8px 12px; display:flex; align-items:center; gap:8px; flex-shrink:0; min-height:42px; }
+.mp-nav .nav-left { display:flex; gap:6px; flex-shrink:0; }
+.mp-nav .nav-title { font-size:15px; font-weight:600; position:absolute; left:50%; transform:translateX(-50%); white-space:nowrap; }
+.mp-nav .nav-right { display:flex; gap:6px; flex-shrink:0; margin-left:auto; }
+
+/* 导航按钮统一样式 */
+.nav-icon-btn { width:28px; height:28px; border-radius:50%; background:var(--nav-btn-bg); display:flex; align-items:center; justify-content:center; font-size:14px; cursor:pointer; border:none; color:var(--nav-text); transition:background .15s; }
+.nav-icon-btn:active { background:rgba(255,255,255,.35); }
+.nav-icon-btn.theme-btn { font-size:13px; }
+
+/* BnB 弹出 */
+.bnb-popup { position:absolute; top:46px; right:8px; background:var(--popup-bg); border-radius:14px; box-shadow:0 8px 30px var(--popup-shadow); z-index:30; padding:6px; display:none; gap:4px; }
+.bnb-popup.show { display:flex; }
+.bnb-popup-card { display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 14px; border-radius:10px; cursor:pointer; min-width:58px; color:var(--text); }
+.bnb-popup-card:hover { background:var(--popup-hover); }
+.bnb-popup-icon { font-size:22px; }
+.bnb-popup-name { font-size:11px; color:var(--text); font-weight:500; }
+
+/* 侧拉抽屉 - 我的 */
+.drawer-overlay { position:absolute; inset:0; background:var(--drawer-overlay); z-index:25; display:none; }
+.drawer-overlay.show { display:block; }
+.drawer-panel { position:absolute; top:0; left:0; bottom:0; width:280px; background:var(--drawer-bg); z-index:26; transform:translateX(-100%); transition:transform .25s ease; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,.1); }
+.drawer-panel.show { transform:translateX(0); }
+.drawer-header { padding:24px 20px 16px; background:linear-gradient(135deg, #4a7c59, #6b9b7e); color:#fff; }
+.drawer-header .d-name { font-size:18px; font-weight:600; }
+.drawer-header .d-pts { font-size:32px; font-weight:700; margin:8px 0 2px; }
+.drawer-header .d-lvl { font-size:12px; opacity:.85; }
+.drawer-body { flex:1; overflow-y:auto; padding:16px 20px; background:var(--drawer-bg); color:var(--text); }
+.drawer-section { margin-bottom:20px; }
+.drawer-section h4 { font-size:12px; color:var(--text2); margin-bottom:8px; text-transform:uppercase; letter-spacing:.5px; }
+.redeem-item { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:10px; background:var(--redeem-bg); margin-bottom:8px; cursor:pointer; color:var(--text); }
+.redeem-item:active { background:var(--redeem-active); }
+.redeem-item .ri-icon { font-size:22px; }
+.redeem-item .ri-info { flex:1; }
+.redeem-item .ri-name { font-size:13px; font-weight:500; color:var(--text); }
+.redeem-item .ri-pts { font-size:11px; color:var(--pri); }
+.earn-item { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--earn-border); font-size:12px; color:var(--text); }
+
+/* iframe */
+.content-frame { flex:1; border:none; width:100%; }
+
+/* TabBar */
+.tab-bar { display:flex; border-top:1px solid var(--border); background:var(--tab-bg); flex-shrink:0; }
+.tab-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:5px 0 3px; cursor:pointer; color:var(--text2); font-size:10px; border:none; background:none; position:relative; transition:color .15s; }
+.tab-item .t-icon { font-size:18px; line-height:1; margin-bottom:1px; transition:transform .15s; }
+.tab-item .t-label { line-height:1; font-size:9px; }
+.tab-item.active { color:var(--tab-active); font-weight:600; }
+.tab-item.active .t-icon { transform:scale(1.08); }
+.tab-item.active::before { content:''; position:absolute; top:0; left:20%; right:20%; height:2.5px; background:var(--tab-active); border-radius:0 0 2px 2px; }
+
+/* 右侧面板 */
+.panel-col h2 { font-size:16px; margin-bottom:8px; color:var(--text); }
+.panel-col p { color:var(--panel-text); }
+.bnb-select-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:16px; }
+.bnb-select-card { padding:12px; border-radius:12px; border:2px solid var(--card-border); background:var(--card-bg); text-align:center; cursor:pointer; color:var(--text); }
+.bnb-select-card.active { border-color:var(--color,#4a7c59); background:color-mix(in srgb, var(--color,#4a7c59) 8%, transparent); }
+.bnb-select-card .card-icon { font-size:26px; }
+.bnb-select-card .card-name { font-size:12px; font-weight:600; margin-top:4px; color:var(--text); }
+.bnb-select-card .card-label { font-size:10px; color:var(--text2); }
+.info-box { background:var(--info-bg); border-radius:8px; padding:12px; margin-top:12px; border:1px solid var(--info-border); font-size:12px; color:var(--text); }
+.info-box strong { color:var(--pri); }
+.preview-link { display:block; padding:8px 12px; margin-top:6px; border-radius:6px; border:1px solid var(--border); background:var(--preview-bg); color:var(--text); text-decoration:none; font-size:12px; }
+.preview-link:hover { border-color:var(--pri); color:var(--pri); background:var(--preview-hover-bg); }
+</style>
+</head>
+<body>
+
+<div class="app">
+<div class="phone-col">
+<div class="phone-frame">
+  <!-- 导航栏: 左=我的, 中=标题, 右=主题+BnB切换 -->
+  <div class="mp-nav">
+    <div class="nav-left">
+      <button class="nav-icon-btn" id="mineBtn" onclick="toggleDrawer()" title="我的">👤</button>
+    </div>
+    <span class="nav-title" id="navTitle">云上·印象集</span>
+    <div class="nav-right">
+      <button class="nav-icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" title="切换深色/浅色模式">🌙</button>
+      <button class="nav-icon-btn" id="bnbBtn" onclick="toggleBnbMenu()" title="切换民宿">🏡</button>
+    </div>
+  </div>
+
+  <!-- BnB 弹出 -->
+  <div class="bnb-popup" id="bnbPopup">
+    <div class="bnb-popup-card" onclick="switchBnb('guishu')"><span class="bnb-popup-icon">🏡</span><span class="bnb-popup-name">归墅</span></div>
+    <div class="bnb-popup-card" onclick="switchBnb('shanji')"><span class="bnb-popup-icon">🍵</span><span class="bnb-popup-name">山纪</span></div>
+    <div class="bnb-popup-card" onclick="switchBnb('donglinwai')"><span class="bnb-popup-icon">🧘</span><span class="bnb-popup-name">东林外</span></div>
+  </div>
+
+  <!-- 侧拉抽屉 - 我的 -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+  <div class="drawer-panel" id="drawerPanel">
+    <div class="drawer-header">
+      <div class="d-name">👤 云上·印象集</div>
+      <div class="d-pts" id="drawerPts">--</div>
+      <div class="d-lvl" id="drawerLvl">加载中...</div>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-section">
+        <h4>⭐ 积分获取</h4>
+        <div class="earn-item"><span>🏨 入住消费</span><span>每¥1 = 1分</span></div>
+        <div class="earn-item"><span>✅ 每日签到</span><span>+1分/天</span></div>
+        <div class="earn-item"><span>✍️ 写评价</span><span>+80分</span></div>
+        <div class="earn-item"><span>📕 小红书笔记</span><span>+80分</span></div>
+        <div class="earn-item"><span>💬 朋友圈打卡</span><span>+30分</span></div>
+      </div>
+      <div class="drawer-section">
+        <h4>🎁 积分兑换</h4>
+        <div class="redeem-item" onclick="alert('请联系前台兑换☕精品咖啡')"><span class="ri-icon">☕</span><div class="ri-info"><div class="ri-name">精品咖啡1杯</div><div class="ri-pts">300 积分</div></div></div>
+        <div class="redeem-item" onclick="alert('请联系前台兑换🏠房型升级')"><span class="ri-icon">🏠</span><div class="ri-info"><div class="ri-name">房型免费升级</div><div class="ri-pts">500 积分</div></div></div>
+        <div class="redeem-item" onclick="alert('请联系前台兑换⏰延迟退房')"><span class="ri-icon">⏰</span><div class="ri-info"><div class="ri-name">延迟退房至14:00</div><div class="ri-pts">300 积分</div></div></div>
+        <div class="redeem-item" onclick="alert('请联系前台兑换🎫¥50抵扣券')"><span class="ri-icon">🎫</span><div class="ri-info"><div class="ri-name">房费抵扣券 ¥50</div><div class="ri-pts">500 积分</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 页面内容 -->
+  <iframe class="content-frame" id="contentFrame" src="/gs/?mp=1"></iframe>
+
+  <!-- TabBar - 动态渲染 -->
+  <div class="tab-bar" id="tabBar"></div>
+</div>
+</div>
+
+<!-- 右侧面板 -->
+<div class="panel-col">
+<h2>📱 云上·印象集</h2>
+<p style="font-size:12px;color:var(--text2);margin-bottom:16px">左上角=我的 · 右上角=切换民宿 · 底部Tab按民宿区分</p>
+
+<div class="bnb-select-grid">
+  <div class="bnb-select-card active" id="cardGuishu" style="--color:#4a7c59" onclick="switchBnb('guishu')"><div class="card-icon">🏡</div><div class="card-name">归墅</div><div class="card-label">5Tab</div></div>
+  <div class="bnb-select-card" id="cardShanji" style="--color:#8B6914" onclick="switchBnb('shanji')"><div class="card-icon">🍵</div><div class="card-name">山纪</div><div class="card-label">6Tab</div></div>
+  <div class="bnb-select-card" id="cardDonglinwai" style="--color:#7B8DAD" onclick="switchBnb('donglinwai')"><div class="card-icon">🧘</div><div class="card-name">东林外</div><div class="card-label">6Tab</div></div>
+</div>
+
+<div class="info-box">
+  <strong>当前民宿：</strong><span id="infoBnb">云上·归墅</span><br>
+  <strong>当前页面：</strong><span id="infoTab">首页</span><br>
+  <strong>Tab数量：</strong><span id="infoTabCount">5</span>
+</div>
+
+<a class="preview-link" href="/gs/" target="_blank">🏡 归墅独立页</a>
+<a class="preview-link" href="/sj/" target="_blank">🍵 山纪独立页</a>
+<a class="preview-link" href="/dlw/" target="_blank">🧘 东林外独立页</a>
+<a class="preview-link" href="/simulator" target="_blank">🤖 AI 对话模拟器</a>
+</div>
+</div>
+
+<script>
+const BNB_PREFIX = { guishu: '/gs', shanji: '/sj', donglinwai: '/dlw' };
+const BNB_NAMES = { guishu: '云上·归墅', shanji: '云上·山纪', donglinwai: '云上·东林外' };
+const BNB_ICONS = { guishu: '🏡', shanji: '🍵', donglinwai: '🧘' };
+const BNB_COLORS = { guishu: '#4a7c59', shanji: '#8B6914', donglinwai: '#7B8DAD' };
+
+// 每个民宿的Tab配置
+const BNB_TABS = {
+  guishu: [
+    { id:'index', icon:'🏠', label:'首页', path:'' },
+    { id:'rooms', icon:'🛏️', label:'房型', path:'/rooms' },
+    { id:'menu', icon:'☕', label:'点餐', path:'/menu' },
+    { id:'services', icon:'🛎️', label:'服务', path:'/services' },
+    { id:'chat', icon:'🤖', label:'管家', path:null },
+  ],
+  shanji: [
+    { id:'index', icon:'🏠', label:'首页', path:'' },
+    { id:'rooms', icon:'🛏️', label:'房型', path:'/rooms' },
+    { id:'tea', icon:'🍵', label:'茶园', path:'/tea' },
+    { id:'menu', icon:'☕', label:'点餐', path:'/menu' },
+    { id:'services', icon:'🛎️', label:'服务', path:'/services' },
+    { id:'chat', icon:'🤖', label:'管家', path:null },
+  ],
+  donglinwai: [
+    { id:'index', icon:'🏠', label:'首页', path:'' },
+    { id:'rooms', icon:'🛏️', label:'房型', path:'/rooms' },
+    { id:'healing', icon:'🧘', label:'疗愈', path:'/healing' },
+    { id:'menu', icon:'☕', label:'点餐', path:'/menu' },
+    { id:'services', icon:'🛎️', label:'服务', path:'/services' },
+    { id:'chat', icon:'🤖', label:'管家', path:null },
+  ],
+};
+
+let currentBnb = 'guishu';
+let currentTab = 'index';
+let currentTheme = 'light';
+
+// 初始化主题
+(function initTheme() {
+  var saved = localStorage.getItem('mp-sim-theme');
+  currentTheme = saved || (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+  applyTheme(currentTheme);
+})();
+
+function applyTheme(t) {
+  currentTheme = t;
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('mp-sim-theme', t);
+  // 同步 iframe 内容主题（无需刷新）
+  var iframe = document.getElementById('contentFrame');
+  if (iframe && iframe.contentWindow) {
+    iframe.contentWindow.postMessage({ type: 'setTheme', theme: t }, '*');
+  }
+}
+
+function toggleTheme() {
+  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+}
+
+function getUrl() {
+  if (currentTab === 'chat') return '/miniapp/chat';
+  const prefix = BNB_PREFIX[currentBnb];
+  const tabs = BNB_TABS[currentBnb];
+  const tab = tabs.find(t => t.id === currentTab);
+  const path = tab ? tab.path : '';
+  return prefix + '/' + path + '?mp=1';
+}
+
+function renderTabBar() {
+  const tabs = BNB_TABS[currentBnb];
+  const bar = document.getElementById('tabBar');
+  bar.innerHTML = tabs.map(t =>
+    `<button class="tab-item${t.id === currentTab ? ' active' : ''}" data-tab="${t.id}" onclick="switchTab('${t.id}')">
+      <span class="t-icon">${t.icon}</span><span class="t-label">${t.label}</span>
+    </button>`
+  ).join('');
+  document.getElementById('infoTabCount').textContent = tabs.length;
+}
+
+function toggleBnbMenu() {
+  if (currentTab === 'chat') return;
+  document.getElementById('bnbPopup').classList.toggle('show');
+}
+
+function switchBnb(bnbId) {
+  if (bnbId === currentBnb) { document.getElementById('bnbPopup').classList.remove('show'); return; }
+  currentBnb = bnbId;
+  document.getElementById('bnbPopup').classList.remove('show');
+  ['Guishu','Shanji','Donglinwai'].forEach(n => {
+    const el = document.getElementById('card'+n);
+    if (el) el.classList.toggle('active', n.toLowerCase() === bnbId);
+  });
+  document.getElementById('infoBnb').textContent = BNB_NAMES[bnbId];
+  currentTab = 'index'; // 切换民宿回到首页
+  updateNavBar();
+  renderTabBar();
+  document.getElementById('drawerPanel').classList.remove('show');
+  document.getElementById('drawerOverlay').classList.remove('show');
+  loadPage();
+}
+
+function updateNavBar() {
+  document.querySelector('.mp-nav').style.background = BNB_COLORS[currentBnb];
+  document.getElementById('bnbBtn').textContent = BNB_ICONS[currentBnb];
+  if (currentTab === 'index') {
+    document.getElementById('navTitle').textContent = '云上·印象集';
+  } else if (currentTab === 'chat') {
+    document.getElementById('navTitle').textContent = 'AI 管家';
+  } else {
+    document.getElementById('navTitle').textContent = BNB_NAMES[currentBnb];
+  }
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('bnbPopup').classList.remove('show');
+  document.getElementById('drawerPanel').classList.remove('show');
+  document.getElementById('drawerOverlay').classList.remove('show');
+
+  const tabNames = {};
+  BNB_TABS[currentBnb].forEach(t => { tabNames[t.id] = t.label; });
+  document.getElementById('infoTab').textContent = tabNames[tab] || tab;
+
+  if (tab === 'chat') {
+    document.getElementById('bnbBtn').style.display = 'none';
+    document.getElementById('mineBtn').style.display = 'none';
+    document.getElementById('themeBtn').style.display = 'none';
+    document.querySelector('.mp-nav').style.background = '#6b9b7e';
+  } else {
+    document.getElementById('bnbBtn').style.display = '';
+    document.getElementById('mineBtn').style.display = '';
+    document.getElementById('themeBtn').style.display = '';
+    updateNavBar();
+  }
+
+  renderTabBar();
+  loadPage();
+}
+
+function loadPage() {
+  var frame = document.getElementById('contentFrame');
+  frame.src = getUrl();
+  // iframe 加载后同步当前主题
+  frame.onload = function() {
+    if (frame.contentWindow) {
+      frame.contentWindow.postMessage({ type: 'setTheme', theme: currentTheme }, '*');
+    }
+  };
+}
+
+function toggleDrawer() {
+  const panel = document.getElementById('drawerPanel');
+  const overlay = document.getElementById('drawerOverlay');
+  const isOpen = panel.classList.contains('show');
+  if (isOpen) {
+    panel.classList.remove('show');
+    overlay.classList.remove('show');
+  } else {
+    panel.classList.add('show');
+    overlay.classList.add('show');
+    loadDrawerData();
+  }
+}
+
+async function loadDrawerData() {
+  try {
+    const res = await fetch('/api/points/web_user');
+    const data = await res.json();
+    document.getElementById('drawerPts').textContent = data.total_points || 0;
+    document.getElementById('drawerLvl').textContent = (data.membership_name || '银卡') + ' · 积分跨三家民宿通用';
+  } catch(e) {
+    document.getElementById('drawerPts').textContent = '580';
+    document.getElementById('drawerLvl').textContent = '银卡 · 积分跨三家民宿通用';
+  }
+}
+
+// Tab 联动：监听 iframe 导航
+window.addEventListener('message', function(e) {
+  if (!e.data || !e.data.tab) return;
+  const tab = e.data.tab;
+  const validTabs = BNB_TABS[currentBnb].map(t => t.id);
+  if (validTabs.includes(tab)) {
+    currentTab = tab;
+    renderTabBar();
+    updateNavBar();
+  }
+});
+
+// 点击外部关闭
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#bnbBtn') && !e.target.closest('#bnbPopup')) {
+    document.getElementById('bnbPopup').classList.remove('show');
+  }
+});
+
+// 初始化
+switchBnb('guishu');
+switchTab('index');
+</script>
+</body>
+</html>

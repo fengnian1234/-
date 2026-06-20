@@ -4,33 +4,50 @@
 from models import SessionLocal, Room
 
 
-def get_all_rooms():
+def _get_bnb_id(bnb_id=None):
+    """获取 bnb_id：优先参数 > Flask g > 默认 guishu"""
+    if bnb_id:
+        return bnb_id
+    try:
+        from flask import g
+        return getattr(g, 'bnb_id', 'guishu')
+    except RuntimeError:
+        return 'guishu'
+
+
+def get_all_rooms(bnb_id=None):
     """获取所有可订房间"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
-        rooms = db.query(Room).filter(Room.is_available == True)\
-                  .order_by(Room.sort_order).all()
+        rooms = db.query(Room).filter(
+            Room.bnb_id == bnb_id,
+            Room.is_available == True
+        ).order_by(Room.sort_order).all()
         return [r.to_dict() for r in rooms]
     finally:
         db.close()
 
 
-def get_room_by_id(room_id: int):
+def get_room_by_id(room_id: int, bnb_id=None):
     """获取单个房间详情"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
-        room = db.query(Room).filter(Room.id == room_id).first()
+        room = db.query(Room).filter(Room.id == room_id, Room.bnb_id == bnb_id).first()
         return room.to_dict() if room else None
     finally:
         db.close()
 
 
-def get_rooms_by_type(room_type: str):
+def get_rooms_by_type(room_type: str, bnb_id=None):
     """按房型筛选"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
         rooms = db.query(Room).filter(
             Room.is_available == True,
+            Room.bnb_id == bnb_id,
             Room.room_type == room_type
         ).order_by(Room.sort_order).all()
         return [r.to_dict() for r in rooms]
@@ -38,9 +55,10 @@ def get_rooms_by_type(room_type: str):
         db.close()
 
 
-def format_rooms_text():
+def format_rooms_text(bnb_id=None):
     """将房间列表格式化为微信文本回复"""
-    rooms = get_all_rooms()
+    bnb_id = _get_bnb_id(bnb_id)
+    rooms = get_all_rooms(bnb_id=bnb_id)
     if not rooms:
         return "暂无房间信息，请联系人工客服～"
 
@@ -61,9 +79,10 @@ def format_rooms_text():
     return "\n".join(lines)
 
 
-def format_room_detail_text(room_id: int):
+def format_room_detail_text(room_id: int, bnb_id=None):
     """格式化单个房间详情"""
-    room = get_room_by_id(room_id)
+    bnb_id = _get_bnb_id(bnb_id)
+    room = get_room_by_id(room_id, bnb_id=bnb_id)
     if not room:
         return "该房间信息暂未收录，请回复「房型」查看所有房间～"
 
@@ -84,11 +103,13 @@ def format_room_detail_text(room_id: int):
     return "\n".join(lines)
 
 
-def get_featured_rooms(limit: int = 4):
+def get_featured_rooms(limit: int = 4, bnb_id=None):
     """获取精选房型 — 按价格升序，优先有库存的可订房型"""
+    bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
         rooms = db.query(Room).filter(
+            Room.bnb_id == bnb_id,
             Room.is_available == True,
             Room.total_count > 0
         ).order_by(Room.price).limit(limit).all()
@@ -105,9 +126,10 @@ def get_image_url(room: dict) -> str:
     return "暂无图片"
 
 
-def format_rooms_with_images():
+def format_rooms_with_images(bnb_id=None):
     """生成带图片链接的房间展示文本"""
-    rooms = get_all_rooms()
+    bnb_id = _get_bnb_id(bnb_id)
+    rooms = get_all_rooms(bnb_id=bnb_id)
     if not rooms:
         return "暂无房间信息"
 

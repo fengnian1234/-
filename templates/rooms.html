@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}房型展示 - 云上归墅{% endblock %}
+{% block title %}房型展示 - {{ bnb.short_name }}{% endblock %}
+{% set mp = '?mp=1' if request.args.get('mp') == '1' else '' %}
 
 {% block content %}
 <section class="page-header">
@@ -21,7 +22,7 @@
         {% if rooms %}
         <div class="rooms-list">
             {% for room in rooms %}
-            <a href="/rooms/{{ room.id }}" class="room-card" onclick="showRoomModal({{ room.id }}); return false;">
+            <a href="{{ bnb_prefix }}/rooms/{{ room.id }}{{ mp }}" class="room-card" onclick="showRoomModal({{ room.id }}); return false;">
                 <div class="room-card-image">
                     {% if room.images and room.images|length > 0 %}
                         {% if room.images[0] is string %}
@@ -110,7 +111,7 @@ function showRoomModal(id) {
         +'<div class="room-info-grid"><div class="info-item"><span class="info-label">👤 可住</span><span class="info-value">'+r.capacity+'人</span></div><div class="info-item"><span class="info-label">🛏️ 床型</span><span class="info-value">'+r.bed_type+'</span></div><div class="info-item"><span class="info-label">📐 面积</span><span class="info-value">'+r.area+'</span></div><div class="info-item"><span class="info-label">🌅 景观</span><span class="info-value">'+r.view_type+'</span></div></div>'
         +'<div class="room-description"><h3>📝 房间介绍</h3><p>'+r.description+'</p></div>'
         +(amenitiesHtml?'<div class="room-amenities"><h3>✨ 房间设施</h3><div class="amenities-list">'+amenitiesHtml+'</div></div>':'')
-        +'<div class="room-actions"><button class="btn btn-primary btn-large" onclick="alert(\'请拨打前台电话预订：16607927666\\n或通过携程/美团/飞猪/大众点评搜索「云上归墅」在线预订～\')">📞 预订咨询</button><a href="/rooms" class="btn btn-outline btn-large">← 返回房型列表</a></div></div>';
+        +'<div class="room-actions"><button class="btn btn-primary btn-large" onclick="alert(\'请拨打前台电话预订：{{ bnb.phone }}\\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～\')">📞 预订咨询</button><a href="{{ bnb_prefix }}/rooms{{ mp }}" class="btn btn-outline btn-large">← 返回房型列表</a></div></div>';
     document.getElementById('roomModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
     _roomSlideIdx = 0; _roomSlideTotal = imgs.length;

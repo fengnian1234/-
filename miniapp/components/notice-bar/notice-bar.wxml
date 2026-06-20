@@ -1,0 +1,9 @@
+<view class="notice-bar notice-bar--{{type}}">
+  <view class="notice-bar__icon">{{icon}}</view>
+  <view class="notice-bar__content">
+    <view class="notice-bar__title" wx:if="{{title}}">{{title}}</view>
+    <view class="notice-bar__items" wx:if="{{items.length}}">
+      <view class="notice-bar__item" wx:for="{{items}}" wx:key="index">{{item}}</view>
+    </view>
+  </view>
+</view>

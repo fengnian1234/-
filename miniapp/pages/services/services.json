@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "page-header": "/components/page-header/page-header",
+    "service-card": "/components/service-card/service-card",
+    "empty-state": "/components/empty-state/empty-state",
+    "loading-skeleton": "/components/loading-skeleton/loading-skeleton"
+  },
+  "navigationBarTitleText": "快捷服务"
+}

@@ -1,0 +1,63 @@
+<view wx:if="{{!loading && guest}}">
+  <!-- 积分余额卡片 -->
+  <view class="points-card">
+    <view class="points-card__balance">
+      <text class="points-card__num">{{guest.total_points || 0}}</text>
+      <text class="points-card__label">当前积分</text>
+    </view>
+    <view class="points-card__member" wx:if="{{guest.membership_name}}">
+      <text>{{guest.membership_name}}</text>
+      <text wx:if="{{guest.discount < 10}}"> · 享{{(guest.discount * 10).toFixed(0)}}折</text>
+    </view>
+    <view class="points-card__checkin press-active" bindtap="onCheckIn">📅 每日签到 +10</view>
+  </view>
+
+  <!-- 获取规则 -->
+  <view class="section" wx:if="{{earnRules.length}}">
+    <text class="section-title">🎁 积分获取</text>
+    <view class="earn-grid">
+      <view class="earn-item" wx:for="{{earnRules}}" wx:key="*this">
+        <text class="earn-item__name">{{item.name}}</text>
+        <text class="earn-item__pts">+{{item.points}}{{item.unit ? '/' + item.unit : ''}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 会员等级 -->
+  <view class="section" wx:if="{{membershipInfo}}">
+    <text class="section-title">👑 会员等级</text>
+    <view class="member-bar">
+      <view class="member-bar__progress" style="width: {{guest.total_points >= membershipInfo.diamond ? 100 : guest.total_points >= membershipInfo.gold ? 66 : 33}}%"></view>
+    </view>
+    <view class="member-bar__labels">
+      <text>银卡</text>
+      <text wx:if="{{membershipInfo.gold}}">金卡({{membershipInfo.gold}})</text>
+      <text wx:if="{{membershipInfo.diamond}}">钻石({{membershipInfo.diamond}})</text>
+    </view>
+  </view>
+
+  <!-- 兑换商城 -->
+  <view class="section" wx:if="{{redeemItems.length}}">
+    <text class="section-title">🎁 兑换商城</text>
+    <view class="redeem-grid">
+      <view class="redeem-item press-active {{guest.total_points < item.points ? 'redeem-item--disabled' : ''}}"
+        wx:for="{{redeemItems}}" wx:key="key" data-item="{{item}}" bindtap="onRedeem">
+        <text class="redeem-item__name">{{item.name}}</text>
+        <text class="redeem-item__pts">{{item.points}} 积分</text>
+        <text class="redeem-item__action">{{guest.total_points >= item.points ? '立即兑换' : '积分不足'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 积分记录 -->
+  <view class="section" wx:if="{{logs.length}}">
+    <text class="section-title">📋 近期记录</text>
+    <view class="log-item" wx:for="{{logs}}" wx:key="index">
+      <text>{{item.description}}</text>
+      <text style="color: {{item.points > 0 ? '#5b8c5a' : '#c4554a'}};">{{item.points > 0 ? '+' : ''}}{{item.points}}</text>
+    </view>
+  </view>
+</view>
+
+<empty-state wx:elif="{{!loading && !guest}}" icon="💎" text="登录后查看积分" />
+<loading-skeleton wx:if="{{loading}}" visible="{{true}}" />

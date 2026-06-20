@@ -1,0 +1,47 @@
+<view wx:if="{{!loading && route}}">
+  <!-- 路线头部 -->
+  <view class="route-header">
+    <text class="route-header__name">{{route.name}}</text>
+    <view class="route-header__meta">
+      <view class="tag tag--{{DIFFICULTY[route.difficulty].color || 'primary'}}">
+        {{DIFFICULTY[route.difficulty].label || route.difficulty}}
+      </view>
+      <text wx:if="{{route.duration}}">⏱ {{route.duration}}</text>
+    </view>
+  </view>
+
+  <!-- 描述 -->
+  <view class="section">
+    <text class="route-desc">{{route.description}}</text>
+  </view>
+
+  <!-- 景点时间线 -->
+  <view class="section" wx:if="{{route.spots && route.spots.length}}">
+    <text class="section-title">📍 途经景点</text>
+    <view class="timeline">
+      <view class="timeline-item" wx:for="{{route.spots}}" wx:key="*this">
+        <view class="timeline-item__dot">{{index + 1}}</view>
+        <view class="timeline-item__content">
+          <text class="timeline-item__name">{{item.name || item}}</text>
+          <text class="timeline-item__desc" wx:if="{{item.description}}">{{item.description}}</text>
+          <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" class="timeline-item__img" lazy-load />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 小贴士 -->
+  <view class="section" wx:if="{{route.tips}}">
+    <text class="section-title">💡 小贴士</text>
+    <view class="tips-card">{{route.tips}}</view>
+  </view>
+
+  <!-- 操作 -->
+  <view class="section actions">
+    <view class="btn-primary" bindtap="onOpenMap" wx:if="{{route.map_link}}">🗺️ 查看导航路线</view>
+    <view class="btn-outline" bindtap="goBack">← 返回攻略列表</view>
+  </view>
+</view>
+
+<loading-skeleton wx:if="{{loading}}" visible="{{true}}" />
+<empty-state wx:elif="{{!route}}" icon="🗺️" text="路线不存在" />

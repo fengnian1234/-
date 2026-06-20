@@ -1,0 +1,133 @@
+.room-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: 0 var(--space-md) var(--space-md);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.room-card:active {
+  transform: translateY(-4rpx);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── 图片区 ─────────────────── */
+.room-card__image {
+  position: relative;
+  width: 100%;
+  height: 360rpx;
+  overflow: hidden;
+}
+
+.room-card__img {
+  width: 100%;
+  height: 100%;
+}
+
+.room-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.room-card__placeholder-icon {
+  font-size: 80rpx;
+  opacity: 0.5;
+}
+
+/* 景观占位渐变（与 Web 版一致） */
+.room-preview-gradient-sky {
+  background: linear-gradient(135deg, #8eb8c9 0%, #d4e5d8 100%);
+}
+
+.room-preview-gradient-forest {
+  background: linear-gradient(135deg, #4a7c59 0%, #8eb8c9 100%);
+}
+
+.room-preview-gradient-earth {
+  background: linear-gradient(135deg, #c8966a 0%, #dbb88a 100%);
+}
+
+.room-preview-gradient-mountain {
+  background: linear-gradient(135deg, #3b5e47 0%, #6b9b7e 100%);
+}
+
+/* 景观标签 */
+.room-card__view-tag {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  backdrop-filter: blur(8rpx);
+  -webkit-backdrop-filter: blur(8rpx);
+}
+
+/* ── 信息区 ─────────────────── */
+.room-card__body {
+  padding: var(--space-md);
+}
+
+.room-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-xs);
+}
+
+.room-card__name {
+  font-family: var(--font-serif);
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  flex: 1;
+  min-width: 0;
+}
+
+.room-card__desc {
+  font-size: 24rpx;
+  color: var(--color-text-light);
+  line-height: 1.5;
+  margin-bottom: var(--space-sm);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.room-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  font-size: 22rpx;
+  color: var(--color-text-light);
+  margin-bottom: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.room-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.room-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+}
+
+.room-card__stock {
+  font-size: 22rpx;
+  color: var(--color-danger);
+  background: rgba(196, 85, 74, 0.08);
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+}

@@ -22,6 +22,7 @@ class Room(Base):
     __tablename__ = "rooms"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
     name = Column(String(100), nullable=False, comment="房间名称")
     room_type = Column(String(50), nullable=False, comment="房型: 大床房/双床房/套房/亲子房")
     price = Column(Float, nullable=False, comment="价格(元/晚)")
@@ -64,6 +65,7 @@ class Booking(Base):
     __tablename__ = "bookings"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
     openid = Column(String(100), nullable=False, comment="微信用户openid（预订者）")
     guest_name = Column(String(50), comment="客人姓名")
     phone = Column(String(20), comment="联系电话")
@@ -145,6 +147,7 @@ class MenuCategory(Base):
     __tablename__ = "menu_categories"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
     name = Column(String(50), nullable=False, comment="分类名称")
     icon = Column(String(10), comment="图标emoji")
     sort_order = Column(Integer, default=0)
@@ -163,6 +166,7 @@ class MenuItem(Base):
     __tablename__ = "menu_items"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
     category_id = Column(Integer, ForeignKey("menu_categories.id"), nullable=False)
     name = Column(String(100), nullable=False, comment="菜品名称")
     price = Column(Float, nullable=False)
@@ -192,6 +196,7 @@ class Order(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
     openid = Column(String(100), nullable=False, comment="微信用户openid")
     room_number = Column(String(50), comment="房间号")
     items = Column(JSON, comment="订单项 [{menu_item_id, name, quantity, price}]")
@@ -225,6 +230,7 @@ class ServiceRequest(Base):
     __tablename__ = "service_requests"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
     openid = Column(String(100), nullable=False, comment="微信用户openid")
     service_name = Column(String(50), nullable=False, comment="服务名称")
     room_number = Column(String(50), comment="房号")
@@ -259,6 +265,7 @@ class QuickService(Base):
     __tablename__ = "quick_services"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
     name = Column(String(50), nullable=False, comment="服务名称")
     description = Column(Text, comment="服务描述")
     icon = Column(String(10), comment="图标emoji")
@@ -285,6 +292,7 @@ class TravelRoute(Base):
     __tablename__ = "travel_routes"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
     name = Column(String(100), nullable=False, comment="路线名称")
     description = Column(Text, comment="路线描述")
     duration = Column(String(50), comment="建议时长")
@@ -313,6 +321,7 @@ class FoodRecommend(Base):
     __tablename__ = "food_recommends"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
     name = Column(String(100), nullable=False)
     category = Column(String(50))
     description = Column(Text)
@@ -346,6 +355,7 @@ class PlatformMention(Base):
     __tablename__ = "platform_mentions"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
     platform = Column(String(30), nullable=False, comment="来源平台")
     mention_type = Column(String(20), comment="类型: review/note/post/rating")
     title = Column(String(300), comment="标题")
@@ -402,8 +412,6 @@ engine = create_engine(DATABASE_URL, **_engine_kwargs)
 SessionLocal = sessionmaker(bind=engine)
 
 
-def init_db():
-    """创建所有表"""
 # ══════════════════════════════════════════════════════════
 #  积分体系模型
 # ══════════════════════════════════════════════════════════
@@ -493,6 +501,7 @@ class AggregatedOrder(Base):
     __tablename__ = "aggregated_orders"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
     platform = Column(String(30), nullable=False, comment="平台: ctrip/meituan/fliggy/dianping/direct/xiaohongshu/douyin")
     platform_order_id = Column(String(100), comment="平台订单号")
     guest_name = Column(String(50), nullable=False, comment="客人姓名")
@@ -536,6 +545,280 @@ class AggregatedOrder(Base):
             "remark": self.remark,
             "source": self.source,
             "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+# ══════════════════════════════════════════════════════════
+#  民宿配置模型
+# ══════════════════════════════════════════════════════════
+class Bnb(Base):
+    __tablename__ = "bnbs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), unique=True, nullable=False, index=True, comment="标识: guishu/shanji/donglinwai")
+    name = Column(String(100), nullable=False, comment="民宿全称")
+    short_name = Column(String(50), comment="简称")
+    address = Column(String(300), comment="地址")
+    phone = Column(String(20), comment="联系电话")
+    latitude = Column(Float, comment="纬度")
+    longitude = Column(Float, comment="经度")
+    description = Column(Text, comment="民宿简介")
+    theme_color = Column(String(10), comment="主题色")
+    wechat_token = Column(String(100), comment="微信Token")
+    wechat_app_id = Column(String(50), comment="公众号AppID")
+    wechat_app_secret = Column(String(100), comment="公众号AppSecret")
+    is_active = Column(Boolean, default=True)
+    sort_order = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "bnb_id": self.bnb_id,
+            "name": self.name,
+            "short_name": self.short_name,
+            "address": self.address,
+            "phone": self.phone,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "description": self.description,
+            "theme_color": self.theme_color,
+            "is_active": self.is_active,
+        }
+
+
+# ══════════════════════════════════════════════════════════
+#  茶园模块（云上·山纪专属）
+# ══════════════════════════════════════════════════════════
+class TeaType(Base):
+    """茶叶品类"""
+    __tablename__ = "tea_types"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="shanji", index=True, comment="所属民宿")
+    name = Column(String(100), nullable=False, comment="茶叶名称")
+    description = Column(Text, comment="描述")
+    origin = Column(String(100), comment="产地")
+    brewing_method = Column(Text, comment="冲泡方法")
+    tasting_notes = Column(Text, comment="品鉴笔记")
+    image = Column(String(500), comment="图片URL")
+    images = Column(JSON, comment="多图")
+    sort_order = Column(Integer, default=0)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "bnbs_id": self.bnb_id,
+            "name": self.name,
+            "description": self.description,
+            "origin": self.origin,
+            "brewing_method": self.brewing_method,
+            "tasting_notes": self.tasting_notes,
+            "image": self.image,
+            "images": self.images or [],
+        }
+
+
+class TeaExperience(Base):
+    """茶园体验项目"""
+    __tablename__ = "tea_experiences"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="shanji", index=True, comment="所属民宿")
+    name = Column(String(100), nullable=False, comment="体验名称")
+    description = Column(Text, comment="描述")
+    duration = Column(String(50), comment="时长")
+    price = Column(Float, comment="价格")
+    capacity = Column(Integer, default=10, comment="容量")
+    includes = Column(JSON, comment="包含项目")
+    images = Column(JSON, comment="图片")
+    is_available = Column(Boolean, default=True)
+    sort_order = Column(Integer, default=0)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "bnb_id": self.bnb_id,
+            "name": self.name,
+            "description": self.description,
+            "duration": self.duration,
+            "price": self.price,
+            "capacity": self.capacity,
+            "includes": self.includes or [],
+            "images": self.images or [],
+            "is_available": self.is_available,
+        }
+
+
+class TeaProduct(Base):
+    """茶叶商城商品"""
+    __tablename__ = "tea_products"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="shanji", index=True, comment="所属民宿")
+    name = Column(String(100), nullable=False, comment="商品名称")
+    tea_type_id = Column(Integer, ForeignKey("tea_types.id"), comment="茶叶品类")
+    price = Column(Float, comment="价格")
+    weight = Column(String(30), comment="规格")
+    description = Column(Text, comment="描述")
+    stock = Column(Integer, default=0, comment="库存")
+    images = Column(JSON, comment="图片")
+    is_available = Column(Boolean, default=True)
+    sort_order = Column(Integer, default=0)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "bnb_id": self.bnb_id,
+            "name": self.name,
+            "tea_type_id": self.tea_type_id,
+            "price": self.price,
+            "weight": self.weight,
+            "description": self.description,
+            "stock": self.stock,
+            "images": self.images or [],
+            "is_available": self.is_available,
+        }
+
+
+# ══════════════════════════════════════════════════════════
+#  疗愈模块（云上·东林外专属）
+# ══════════════════════════════════════════════════════════
+class HealingCourse(Base):
+    """疗愈项目（一对一个案服务）"""
+    __tablename__ = "healing_courses"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="donglinwai", index=True, comment="所属民宿")
+    name = Column(String(100), nullable=False, comment="项目名称")
+    category = Column(String(30), nullable=False, comment="类别: 音疗疗愈/芳香疗愈/情绪疗愈")
+    description = Column(Text, comment="项目描述")
+    price_tiers = Column(JSON, comment="阶梯价格 [{duration, price, note}]")
+    therapist = Column(String(50), default="琼儿老师", comment="疗愈师")
+    images = Column(JSON, comment="图片列表")
+    is_available = Column(Boolean, default=True)
+    sort_order = Column(Integer, default=0)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "bnb_id": self.bnb_id,
+            "name": self.name,
+            "category": self.category,
+            "description": self.description,
+            "price_tiers": self.price_tiers or [],
+            "therapist": self.therapist or "琼儿老师",
+            "images": self.images or [],
+            "is_available": self.is_available,
+        }
+
+
+class HealingSpa(Base):
+    """SPA/身体疗愈"""
+    __tablename__ = "healing_spas"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="donglinwai", index=True, comment="所属民宿")
+    name = Column(String(100), nullable=False, comment="SPA名称")
+    category = Column(String(30), comment="类别: massage/aromatherapy/hotstone/facial")
+    description = Column(Text, comment="描述")
+    duration = Column(String(50), comment="时长")
+    price = Column(Float, comment="价格")
+    therapist = Column(String(50), comment="理疗师")
+    includes = Column(JSON, comment="包含项目")
+    images = Column(JSON, comment="图片")
+    is_available = Column(Boolean, default=True)
+    sort_order = Column(Integer, default=0)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "bnb_id": self.bnb_id,
+            "name": self.name,
+            "category": self.category,
+            "description": self.description,
+            "duration": self.duration,
+            "price": self.price,
+            "therapist": self.therapist,
+            "includes": self.includes or [],
+            "images": self.images or [],
+            "is_available": self.is_available,
+        }
+
+
+class MeditationSession(Base):
+    """禅修/冥想"""
+    __tablename__ = "meditation_sessions"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="donglinwai", index=True, comment="所属民宿")
+    name = Column(String(100), nullable=False, comment="禅修名称")
+    type = Column(String(30), comment="类型: sitting/walking/sound/mantra")
+    description = Column(Text, comment="描述")
+    duration = Column(String(50), comment="时长")
+    schedule = Column(String(100), comment="时间安排")
+    price = Column(Float, comment="价格")
+    guide = Column(String(50), comment="引导师")
+    location = Column(String(100), comment="地点")
+    images = Column(JSON, comment="图片")
+    is_available = Column(Boolean, default=True)
+    sort_order = Column(Integer, default=0)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "bnb_id": self.bnb_id,
+            "name": self.name,
+            "type": self.type,
+            "description": self.description,
+            "duration": self.duration,
+            "schedule": self.schedule,
+            "price": self.price,
+            "guide": self.guide,
+            "location": self.location,
+            "images": self.images or [],
+            "is_available": self.is_available,
+        }
+
+
+class HealingAppointment(Base):
+    """疗愈预约记录"""
+    __tablename__ = "healing_appointments"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="donglinwai", index=True, comment="所属民宿")
+    course_id = Column(Integer, nullable=False, comment="疗愈项目ID")
+    course_name = Column(String(100), comment="项目名称（冗余）")
+    tier_index = Column(Integer, nullable=False, comment="选择的价格档位索引")
+    tier_duration = Column(String(30), comment="档位时长（如 1小时）")
+    tier_price = Column(Float, comment="档位价格")
+    guest_name = Column(String(50), nullable=False, comment="客人姓名")
+    guest_phone = Column(String(20), nullable=False, comment="客人手机号")
+    guest_openid = Column(String(100), comment="微信openid（公众号来源）")
+    appointment_date = Column(String(20), nullable=False, comment="预约日期 YYYY-MM-DD")
+    appointment_time = Column(String(10), nullable=False, comment="开始时间 HH:MM")
+    duration_minutes = Column(Integer, nullable=False, comment="服务时长（分钟）")
+    status = Column(String(20), default="pending", comment="pending/paid/cancelled/completed")
+    pay_status = Column(String(20), default="unpaid", comment="unpaid/paid/refunded")
+    note = Column(String(200), comment="备注")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "bnb_id": self.bnb_id,
+            "course_id": self.course_id,
+            "course_name": self.course_name,
+            "tier_index": self.tier_index,
+            "tier_duration": self.tier_duration,
+            "tier_price": self.tier_price,
+            "guest_name": self.guest_name,
+            "guest_phone": self.guest_phone,
+            "appointment_date": self.appointment_date,
+            "appointment_time": self.appointment_time,
+            "duration_minutes": self.duration_minutes,
+            "status": self.status,
+            "note": self.note,
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M") if self.created_at else None,
         }
 
 

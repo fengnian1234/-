@@ -1,0 +1,47 @@
+.bnb-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+  padding: 16rpx 24rpx;
+  background: var(--color-card-bg);
+  border-bottom: 1rpx solid var(--color-border);
+}
+
+.bnb-switch-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 32rpx;
+  background: var(--color-bg);
+  transition: all 0.2s;
+}
+
+.bnb-switch-item.active {
+  background: var(--sw-color, var(--color-primary));
+}
+
+.bnb-switch-item.active .bnb-switch-name {
+  color: #fff;
+  font-weight: 600;
+}
+
+.bnb-switch-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.bnb-switch-name {
+  font-size: 26rpx;
+  color: var(--color-text-light);
+  transition: color 0.2s;
+}
+
+.bnb-switch-more {
+  padding: 12rpx 16rpx;
+  color: var(--color-text-lighter);
+  font-size: 32rpx;
+}

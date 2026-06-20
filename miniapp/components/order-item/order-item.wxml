@@ -1,0 +1,17 @@
+<view class="order-item">
+  <view class="order-item__header">
+    <text class="order-item__time">{{order.created_at}}</text>
+    <view class="tag tag--{{statusTag}}">{{order.status}}</view>
+  </view>
+  <view class="order-item__body" wx:if="{{order.items && order.items.length}}">
+    <view class="order-item__products">
+      <text wx:for="{{order.items}}" wx:key="id" wx:for-item="product">
+        {{product.name}} ×{{product.quantity}}
+      </text>
+    </view>
+    <text class="order-item__total price">¥{{order.total_price}}</text>
+  </view>
+  <view class="order-item__footer" wx:if="{{order.room_number}}">
+    <text>🏠 {{order.room_number}}</text>
+  </view>
+</view>

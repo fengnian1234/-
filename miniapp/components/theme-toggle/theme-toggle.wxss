@@ -1,0 +1,15 @@
+.theme-toggle {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-bg-light);
+  transition: background-color var(--transition);
+}
+
+.theme-toggle__icon {
+  font-size: 36rpx;
+  line-height: 1;
+}

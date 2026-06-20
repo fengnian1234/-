@@ -1,0 +1,444 @@
+/*
+ * 小程序端样式覆盖 — 与网页端同结构、不同视觉
+ * 通过 ?mp=1 参数激活，嵌入 miniapp-simulator iframe 时生效
+ * 设计：淡雅 · 清秀 · 留白 — 比网页端更轻盈
+ */
+
+/* ── 小程序端淡雅配色 ── */
+body.mp-mode {
+    --color-primary: #6b9b7e;
+    --color-primary-light: #8db89d;
+    --color-primary-dark: #527a60;
+    --color-accent: #c8a080;
+    --color-bg: #f8faf7;
+    --color-bg-light: #f2f6f0;
+    --color-text: #3a4038;
+    --color-text-light: #7a8078;
+    --color-text-lighter: #a0a89e;
+    --color-border: #e4e8e0;
+    --color-shadow: rgba(100,130,110,0.04);
+    --color-shadow-hover: rgba(100,130,110,0.08);
+    font-weight: 340;
+    letter-spacing: 0.015em;
+}
+
+/* ── 隐藏网页端专属元素 ── */
+body.mp-mode .header { display: none; }
+body.mp-mode .footer { display: none; }
+body.mp-mode .hero {
+    border-radius: 0 0 24px 24px;
+    max-height: 340px;
+    overflow: hidden;
+}
+body.mp-mode .hero::after {
+    /* 树冠剪影 — 结束位置下移，让四行文字完整显示在深色区 */
+    height: 22%;
+    bottom: -2px;
+    left: -5%;
+    right: -5%;
+}
+body.mp-mode .hero-overlay { padding: 2.5rem 1.2rem 2.5rem; }
+body.mp-mode .hero-title { font-size: 1.6rem; }
+body.mp-mode .hero-subtitle { font-size: 0.9rem; }
+body.mp-mode .hero-desc { font-size: 0.85rem; color: rgba(255,255,255,0.9); }
+body.mp-mode .hero-seasonal { font-size: 0.8rem; color: rgba(255,255,255,0.85); opacity: 1; }
+
+/* ── 更紧凑的间距 ── */
+body.mp-mode .section-padding { padding: 1.5rem 0.8rem; }
+body.mp-mode .container { padding: 0 12px; }
+body.mp-mode .section-title { font-size: 1.1rem; margin-bottom: 0.5rem; }
+body.mp-mode .section-desc { font-size: 0.8rem; }
+
+/* ── 圆角卡片风格（更像小程序） ── */
+body.mp-mode .entry-card,
+body.mp-mode .room-preview-card,
+body.mp-mode .intro-item,
+body.mp-mode .feature-item,
+body.mp-mode .review-card,
+body.mp-mode .faq-item,
+body.mp-mode .notice-card {
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+/* ── 快捷入口网格调整 ── */
+body.mp-mode .entry-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+body.mp-mode .entry-card {
+    padding: 14px 8px;
+}
+body.mp-mode .entry-icon { font-size: 1.6rem; }
+body.mp-mode .entry-title { font-size: 0.8rem; }
+body.mp-mode .entry-desc { font-size: 0.65rem; }
+
+/* ── 介绍网格 ── */
+body.mp-mode .intro-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+body.mp-mode .intro-item {
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+}
+body.mp-mode .intro-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-bottom: 0;
+}
+body.mp-mode .intro-item h3 { font-size: 0.9rem; margin-bottom: 2px; }
+body.mp-mode .intro-item p { font-size: 0.82rem; line-height: 1.55; color: #2a3028; }
+
+/* ── 房型卡片 ── */
+body.mp-mode .rooms-preview {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+body.mp-mode .room-preview-card h4 { font-size: 0.85rem; }
+body.mp-mode .room-preview-card .price { font-size: 0.8rem; }
+body.mp-mode .room-preview-img { height: 110px; }
+
+/* ── 功能列表 ── */
+body.mp-mode .feature-list { gap: 12px; }
+body.mp-mode .feature-item { padding: 16px; }
+body.mp-mode .feature-item h3 { font-size: 0.9rem; }
+body.mp-mode .feature-item p { font-size: 0.75rem; }
+
+/* ── 评价卡片 ── */
+body.mp-mode .review-card { padding: 16px; }
+body.mp-mode .review-text { font-size: 0.8rem; }
+
+/* ── FAQ ── */
+body.mp-mode .faq-q { font-size: 0.85rem; padding: 14px 12px; }
+body.mp-mode .faq-a { font-size: 0.78rem; padding: 12px; }
+
+/* ── 精选房型区域 ── */
+body.mp-mode .featured-rooms .section-action { margin-top: 0.8rem; }
+body.mp-mode .btn { font-size: 0.85rem; padding: 0.6rem 1.2rem; border-radius: 24px; }
+
+/* ── 茶园/疗愈板块 ── */
+body.mp-mode .tea-type-grid,
+body.mp-mode .tea-exp-grid,
+body.mp-mode .tea-prod-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+body.mp-mode .healing-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+body.mp-mode .healing-card {
+    padding: 18px 16px;
+}
+body.mp-mode .healing-card h3 {
+    font-size: 1.05rem;
+}
+body.mp-mode .healing-desc {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--color-text);
+}
+body.mp-mode .healing-tiers {
+    gap: 6px;
+}
+body.mp-mode .tier-item {
+    padding: 8px 6px;
+    min-width: 70px;
+}
+body.mp-mode .tier-duration {
+    font-size: 0.68rem;
+}
+body.mp-mode .tier-price {
+    font-size: 0.95rem;
+}
+body.mp-mode .booking-modal-content {
+    max-width: 100%;
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 88vh;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+body.mp-mode .modal-overlay { align-items: flex-end; }
+/* 饮品弹窗 mp 适配 */
+body.mp-mode .drink-modal-content {
+    max-width: 100%;
+    margin: 0 12px;
+    padding: 1.2rem;
+    border-radius: 16px;
+}
+body.mp-mode .drink-modal-actions button {
+    font-size: 0.85rem;
+    padding: 0.6rem 0;
+}
+body.mp-mode .option-chip {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.78rem;
+}
+/* 点餐浮窗 mp 适配 */
+body.mp-mode .order-panel {
+    max-width: 100%;
+    max-height: 65vh;
+    border-radius: 16px 16px 0 0;
+}
+body.mp-mode .order-item {
+    font-size: 0.82rem;
+    flex-wrap: wrap;
+}
+body.mp-mode .fab {
+    bottom: 1rem;
+    right: 0.8rem;
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+    z-index: 150;
+}
+body.mp-mode .booking-steps {
+    padding: 16px 12px;
+}
+body.mp-mode .booking-steps h2 { font-size: 1.05rem; margin-bottom: 10px; }
+body.mp-mode .booking-summary { padding: 10px 12px; margin-bottom: 12px; gap: 6px; }
+body.mp-mode .booking-section { margin-bottom: 12px; }
+body.mp-mode .booking-section h4 { font-size: 0.8rem; margin-bottom: 6px; }
+
+/* 日期横向滚动 */
+body.mp-mode .date-picker {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 6px;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+}
+body.mp-mode .date-chip {
+    flex: 0 0 auto;
+    min-width: 60px;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+}
+body.mp-mode .date-chip small { display: none; }
+
+/* 时间槽紧凑排列 */
+body.mp-mode .slot-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+}
+body.mp-mode .slot-chip {
+    padding: 7px 4px;
+    font-size: 0.72rem;
+}
+body.mp-mode .slot-chip span { display: block; }
+
+body.mp-mode .booking-info-row {
+    flex-direction: column;
+    gap: 6px;
+}
+body.mp-mode .booking-input {
+    font-size: 0.82rem;
+    padding: 10px 12px;
+    margin-bottom: 0;
+}
+
+/* 支付页 mp 适配 */
+body.mp-mode .pay-page { padding: 0; }
+body.mp-mode .pay-header { padding: 12px 16px; }
+body.mp-mode .pay-amount { padding: 16px 0 12px; }
+body.mp-mode .pay-amount strong { font-size: 1.8rem; }
+body.mp-mode .pay-info { margin: 0 12px 16px; }
+body.mp-mode .pay-row { padding: 8px 12px; font-size: 0.8rem; }
+body.mp-mode .pay-btn { margin: 0 12px 12px; width: calc(100% - 24px); }
+body.mp-mode .booking-hint { font-size: 0.68rem; }
+
+/* ── 卡片底色提亮 ── */
+body.mp-mode .entry-card,
+body.mp-mode .intro-item,
+body.mp-mode .feature-item,
+body.mp-mode .review-card {
+    background: #fff;
+}
+
+/* ── 标题更清秀 ── */
+body.mp-mode .section-title {
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--color-primary-dark);
+}
+body.mp-mode .hero-title {
+    font-weight: 500;
+    letter-spacing: 0.04em;
+}
+
+/* ── 按钮柔和化 ── */
+body.mp-mode .btn-primary {
+    background: var(--color-primary);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+/* ── 通知条 ── */
+body.mp-mode .notice-card {
+    background: #f8fcf9;
+    border-left-color: var(--color-primary-light);
+}
+
+/* ── 房型卡片：紧凑简洁 ── */
+body.mp-mode .rooms-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+body.mp-mode .room-card {
+    display: flex;
+    min-height: 100px;
+    max-height: 120px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+    background: #fff;
+}
+body.mp-mode .room-card-image {
+    min-width: 105px;
+    width: 105px;
+    max-width: 105px;
+    height: auto;
+    flex-shrink: 0;
+    position: relative;
+}
+body.mp-mode .room-card-image img {
+    width: 105px;
+    height: 100%;
+    object-fit: cover;
+}
+body.mp-mode .room-card-placeholder {
+    background: linear-gradient(135deg, #e8f0e8, #dce8dc);
+    width: 105px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+}
+body.mp-mode .room-card-body {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 8px 8px 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+body.mp-mode .room-card-header {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 3px;
+    min-width: 0;
+}
+body.mp-mode .room-card-header h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex-shrink: 1;
+    margin: 0;
+    line-height: 1.35;
+}
+body.mp-mode .room-card-desc {
+    display: none;  /* mp-mode 一级卡片不显示简介，简洁为主 */
+}
+body.mp-mode .room-card-meta {
+    display: flex;
+    font-size: 0.62rem;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+    color: var(--color-text-lighter);
+}
+body.mp-mode .room-card-footer {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+    align-items: baseline;
+    margin-top: auto;
+    padding-top: 3px;
+}
+body.mp-mode .room-price {
+    font-size: 0.9rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+body.mp-mode .room-price small {
+    font-size: 0.65rem;
+    font-weight: 400;
+}
+body.mp-mode .room-original-price {
+    font-size: 0.65rem;
+    color: var(--color-text-lighter);
+    text-decoration: line-through;
+    flex-shrink: 0;
+}
+body.mp-mode .room-type-tag {
+    font-size: 0.58rem;
+    padding: 1px 5px;
+    flex-shrink: 0;
+}
+body.mp-mode .room-remaining {
+    font-size: 0.58rem;
+    padding: 1px 5px;
+    flex-shrink: 0;
+}
+body.mp-mode .room-card .btn-sm {
+    display: none;  /* mp-mode 卡片整体可点击，隐藏冗余按钮 */
+}
+body.mp-mode .room-card-badge {
+    font-size: 0.6rem;
+    padding: 3px 8px;
+}
+
+/* ── 隐藏 web 端 page-header（小程序不需要） ── */
+body.mp-mode .page-header { display: none; }
+
+/* ── 暗色模式：覆盖 mp-mode 浅色变量 ── */
+[data-theme="dark"] body.mp-mode {
+    --color-primary: #7bba8a;
+    --color-primary-light: #5a8a6a;
+    --color-primary-dark: #8bc89a;
+    --color-accent: #d4b088;
+    --color-bg: #181e1a;
+    --color-bg-light: #1e2420;
+    --color-text: #d8dfd4;
+    --color-text-light: #a0a898;
+    --color-text-lighter: #788078;
+    --color-border: #2e362f;
+    --color-shadow: rgba(0,0,0,0.25);
+    --color-shadow-hover: rgba(0,0,0,0.4);
+}
+[data-theme="dark"] body.mp-mode .entry-card,
+[data-theme="dark"] body.mp-mode .intro-item,
+[data-theme="dark"] body.mp-mode .feature-item,
+[data-theme="dark"] body.mp-mode .review-card,
+[data-theme="dark"] body.mp-mode .room-card {
+    background: #1e2420;
+}
+[data-theme="dark"] body.mp-mode .notice-card {
+    background: #1a221c;
+    border-left-color: var(--color-primary);
+}
+[data-theme="dark"] body.mp-mode .redeem-item,
+[data-theme="dark"] body.mp-mode .room-card-placeholder {
+    background: #222a24;
+}
+/* 暗色模式下硬编码深色文字覆盖为浅色 */
+[data-theme="dark"] body.mp-mode .intro-item p { color: #c8d0c4; }
+[data-theme="dark"] body.mp-mode .room-price { color: #e8d0b0; }
+[data-theme="dark"] body.mp-mode .room-original-price { color: #808878; }
+[data-theme="dark"] body.mp-mode .room-remaining.ok { color: #9ab89a; }
+[data-theme="dark"] body.mp-mode .room-remaining.low { color: #d89080; }

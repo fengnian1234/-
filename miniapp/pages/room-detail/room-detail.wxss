@@ -1,0 +1,144 @@
+.detail-body {
+  padding: var(--space-md);
+}
+
+.detail-header {
+  margin-bottom: var(--space-md);
+}
+
+.detail-name {
+  font-family: var(--font-serif);
+  font-size: 40rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  display: block;
+  margin-bottom: var(--space-xs);
+}
+
+.detail-tags {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+/* 价格区 */
+.detail-price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  background: var(--color-bg-light);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.detail-price__unit {
+  font-size: 24rpx;
+  color: var(--color-text-light);
+}
+
+.detail-stock {
+  margin-left: auto;
+  color: var(--color-danger);
+  font-size: 22rpx;
+  background: rgba(196, 85, 74, 0.08);
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+}
+
+/* 信息网格 */
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.detail-grid__item {
+  padding: var(--space-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.detail-grid__label {
+  font-size: 22rpx;
+  color: var(--color-text-lighter);
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.detail-grid__value {
+  font-size: 26rpx;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+/* 区块 */
+.detail-section {
+  margin-bottom: var(--space-md);
+}
+
+.detail-section__title {
+  font-family: var(--font-serif);
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+  display: block;
+}
+
+.detail-desc {
+  font-size: 26rpx;
+  color: var(--color-text-light);
+  line-height: 1.85;
+}
+
+/* 设施 */
+.amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.amenity-item {
+  padding: 8rpx 20rpx;
+  background: var(--color-bg-light);
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  color: var(--color-text);
+}
+
+/* 操作按钮 */
+.detail-actions {
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-md) 0;
+}
+
+.btn-primary {
+  flex: 2;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.btn-outline {
+  flex: 1;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid var(--color-primary);
+  color: var(--color-primary);
+  border-radius: var(--radius-md);
+  font-size: 26rpx;
+}

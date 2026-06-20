@@ -1,0 +1,26 @@
+<page-header title="快捷服务" desc="一键呼叫，即刻响应" />
+
+<block wx:if="{{!loading && services.length}}">
+  <view class="service-group" wx:for="{{Object.keys(categories)}}" wx:key="*this" wx:for-item="catKey">
+    <view class="service-group__title">
+      <text>{{{'housekeeping':'🧹 客房服务','maintenance':'🔧 设施维修','frontdesk':'🏨 前台服务','other':'📦 其他服务'}[catKey] || '📦 其他服务'}}</text>
+    </view>
+    <view class="service-grid">
+      <service-card
+        wx:for="{{categories[catKey]}}"
+        wx:key="id"
+        wx:for-item="s"
+        service="{{s}}"
+        bind:tap="onServiceTap"
+      />
+    </view>
+  </view>
+
+  <!-- 紧急联系 -->
+  <view class="emergency">
+    <text class="emergency__title">📞 紧急联系</text>
+    <view class="emergency__phone press-active" bindtap="onCallPhone">{{BNB.phone}}</view>
+  </view>
+</block>
+<loading-skeleton wx:elif="{{loading}}" visible="{{true}}" />
+<empty-state wx:else icon="🛎️" text="暂无快捷服务" />

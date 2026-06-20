@@ -1,0 +1,54 @@
+<page-header title="咖啡简餐" desc="庐山云雾茶 · 精品咖啡 · 轻食简餐" />
+
+<!-- 推荐菜品 -->
+<view class="section-title" wx:if="{{recommended.length}}">🔥 主厨推荐</view>
+<scroll-view scroll-x class="recommended-scroll" wx:if="{{recommended.length}}">
+  <view class="recommended-inner">
+    <view class="recommended-item" wx:for="{{recommended}}" wx:key="id">
+      <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" class="recommended-item__img" lazy-load />
+      <view wx:else class="recommended-item__img recommended-item__img--placeholder">🍽️</view>
+      <text class="recommended-item__name">{{item.name}}</text>
+      <text class="recommended-item__price price">¥{{item.price}}</text>
+    </view>
+  </view>
+</scroll-view>
+
+<!-- 分类 + 菜品 -->
+<view class="section-title">📋 全部菜单</view>
+
+<block wx:if="{{!loading && categories.length}}">
+  <view class="menu-category" wx:for="{{categories}}" wx:key="id">
+    <view class="menu-category__title">
+      <text>{{category.icon || '🍽️'}} {{category.name}}</text>
+    </view>
+    <menu-item
+      wx:for="{{category.items}}"
+      wx:key="id"
+      wx:for-item="item"
+      item="{{item}}"
+      bind:add="onAddItem"
+    />
+  </view>
+</block>
+<loading-skeleton wx:elif="{{loading}}" visible="{{true}}" rows="{{[{width:680},{width:600},{width:640},{width:500}]}}" />
+<empty-state wx:else icon="🍽️" text="暂无菜单" />
+
+<!-- 购物车 FAB -->
+<view class="cart-fab {{cartCount > 0 ? 'cart-fab--active' : ''}}" bindtap="onOpenCart">
+  <text class="cart-fab__icon">🛒</text>
+  <view class="cart-fab__badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
+</view>
+
+<!-- 购物车面板 -->
+<cart-panel
+  visible="{{cartVisible}}"
+  bind:order-success="onOrderSuccess"
+/>
+
+<!-- 饮品定制弹窗 -->
+<drink-modal
+  visible="{{drinkModalVisible}}"
+  item="{{drinkTarget}}"
+  bind:confirm="onDrinkConfirm"
+  bind:cancel="onDrinkCancel"
+/>

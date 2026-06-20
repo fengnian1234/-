@@ -1,0 +1,38 @@
+<view class="gallery" wx:if="{{images.length}}">
+  <swiper
+    class="gallery__swiper"
+    current="{{current}}"
+    bindchange="onSwiperChange"
+    indicator-dots="{{false}}"
+    autoplay="{{false}}"
+    circular="{{true}}"
+  >
+    <swiper-item wx:for="{{images}}" wx:key="index">
+      <image src="{{item}}" mode="aspectFill" class="gallery__img" lazy-load="{{index > 0}}" />
+    </swiper-item>
+  </swiper>
+
+  <!-- 计数器 -->
+  <view class="gallery__counter" wx:if="{{images.length > 1}}">
+    {{current + 1}} / {{images.length}}
+  </view>
+
+  <!-- 左右箭头 -->
+  <view class="gallery__arrow gallery__arrow--left" bindtap="onPrev" wx:if="{{images.length > 1 && current > 0}}">
+    ‹
+  </view>
+  <view class="gallery__arrow gallery__arrow--right" bindtap="onNext" wx:if="{{images.length > 1 && current < images.length - 1}}">
+    ›
+  </view>
+
+  <!-- 底部圆点 -->
+  <view class="gallery__dots" wx:if="{{images.length > 1}}">
+    <view
+      wx:for="{{images}}"
+      wx:key="index"
+      class="gallery__dot {{current === index ? 'gallery__dot--active' : ''}}"
+      bindtap="onDotTap"
+      data-index="{{index}}"
+    ></view>
+  </view>
+</view>

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}{{ bnb.short_name }} · 茶园{% endblock %}
+
+{% block content %}
+<!-- 茶园 Hero -->
+<section class="hero" style="background: linear-gradient(135deg, #8B6914 0%, #6B4F12 50%, #4a3520 100%)">
+    <div class="hero-overlay">
+        <h1 class="hero-title">🍵 山纪茶园</h1>
+        <p class="hero-subtitle">庐山云雾茶香，伴你悠然山居</p>
+        <p class="hero-desc">自种茶园 · 采茶制茶体验 · 品茗茶道课 · 茶叶伴手礼</p>
+    </div>
+</section>
+
+<!-- 茶叶品类 -->
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title">🌱 茶叶品类</h2>
+        <p class="section-desc">庐山云雾带海拔800米以上，芽叶肥壮、白毫显露</p>
+        <div class="tea-type-grid" id="teaTypes">
+            <div class="tea-type-card skeleton-pulse"><div class="tea-type-img">🍃</div><h3>加载中...</h3><p></p></div>
+            <div class="tea-type-card skeleton-pulse"><div class="tea-type-img">🍂</div><h3>加载中...</h3><p></p></div>
+            <div class="tea-type-card skeleton-pulse"><div class="tea-type-img">🍵</div><h3>加载中...</h3><p></p></div>
+        </div>
+    </div>
+</section>
+
+<!-- 茶园体验 -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <h2 class="section-title">🧑‍🌾 茶园体验</h2>
+        <p class="section-desc">亲手采茶制茶，感受庐山茶文化的魅力</p>
+        <div class="tea-exp-grid" id="teaExps">
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+        </div>
+    </div>
+</section>
+
+<!-- 茶叶商城 -->
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title">🛍️ 茶叶伴手礼</h2>
+        <p class="section-desc">把庐山云雾茶带回家</p>
+        <div class="tea-prod-grid" id="teaProds">
+            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(async function(){
+  // 加载茶叶品类
+  try {
+    const types = await fetch('/api/tea/types?bnb_id=shanji').then(r=>r.json());
+    if(types.success) renderTeaTypes(types.types);
+  } catch(e){ console.error('茶叶加载失败:', e); }
+
+  // 加载茶园体验
+  try {
+    const exps = await fetch('/api/tea/experiences?bnb_id=shanji').then(r=>r.json());
+    if(exps.success) renderTeaExps(exps.experiences);
+  } catch(e){ console.error('体验加载失败:', e); }
+
+  // 加载茶叶商品
+  try {
+    const prods = await fetch('/api/tea/products?bnb_id=shanji').then(r=>r.json());
+    if(prods.success) renderTeaProds(prods.products);
+  } catch(e){ console.error('商品加载失败:', e); }
+})();
+
+function renderTeaTypes(types) {
+  const grid = document.getElementById('teaTypes');
+  grid.innerHTML = types.map(t => `
+    <div class="tea-type-card">
+      <div class="tea-type-img">🍃</div>
+      <h3>${t.name}</h3>
+      <p class="tea-origin">📍 ${t.origin||''}</p>
+      <p>${t.description||''}</p>
+      ${t.tasting_notes ? `<p class="tea-tasting">🍵 品鉴：${t.tasting_notes}</p>` : ''}
+      ${t.brewing_method ? `<p class="tea-brew">🫖 冲泡：${t.brewing_method}</p>` : ''}
+    </div>
+  `).join('');
+}
+
+function renderTeaExps(exps) {
+  const grid = document.getElementById('teaExps');
+  grid.innerHTML = exps.map(e => `
+    <div class="tea-exp-card">
+      <h3>${e.name}</h3>
+      <p class="price">¥${e.price} <span>/人</span></p>
+      <p>⏱️ ${e.duration||''}  |  👥 最多${e.capacity||10}人</p>
+      <p>${e.description||''}</p>
+      ${e.includes ? `<div class="tea-includes">${e.includes.map(i=>'<span class="tag">'+i+'</span>').join(' ')}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function renderTeaProds(prods) {
+  const grid = document.getElementById('teaProds');
+  grid.innerHTML = prods.map(p => `
+    <div class="tea-prod-card">
+      <h3>${p.name}</h3>
+      <p class="price">¥${p.price}</p>
+      <p class="tea-weight">${p.weight||''}</p>
+      <p>${p.description||''}</p>
+      ${p.stock > 0 ? '<span class="tag tag--success">有货</span>' : '<span class="tag tag--warning">暂时售罄</span>'}
+    </div>
+  `).join('');
+}
+</script>
+{% endblock %}

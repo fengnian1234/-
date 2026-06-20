@@ -1,0 +1,8 @@
+<view class="page-header">
+  <view class="page-header__glow"></view>
+  <view class="page-header__content">
+    <view class="page-header__title">{{title}}</view>
+    <view class="page-header__desc" wx:if="{{desc}}">{{desc}}</view>
+  </view>
+  <view class="page-header__wave"></view>
+</view>

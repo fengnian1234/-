@@ -1,0 +1,153 @@
+/**
+ * 云上归墅 · 设计令牌（CSS 变量）
+ * 与 Web 版 style.css 保持一致
+ */
+
+/* ── 浅色模式（默认） ──────────────────────────────── */
+page {
+  /* 主色系 · 竹青 */
+  --color-primary: #4a7c59;
+  --color-primary-light: #6b9b7e;
+  --color-primary-dark: #3b5e47;
+
+  /* 强调色 · 暖木 */
+  --color-accent: #c8966a;
+  --color-accent-light: #dbb88a;
+
+  /* 背景系 */
+  --color-bg: #f5f9f4;
+  --color-bg-light: #edf4ea;
+  --color-bg-dark: #dce8d8;
+
+  /* 文字系 */
+  --color-text: #2a3328;
+  --color-text-light: #5a6558;
+  --color-text-lighter: #8a9586;
+
+  /* 卡片和组件 */
+  --color-white: #fffefb;
+  --color-border: #d8e0d4;
+  --color-mist: #d4e5d8;
+  --color-sky: #8eb8c9;
+
+  /* 阴影 */
+  --color-shadow: rgba(74, 100, 58, 0.06);
+  --color-shadow-hover: rgba(74, 100, 58, 0.12);
+
+  /* 状态色 */
+  --color-success: #5b8c5a;
+  --color-warning: #c9954a;
+  --color-danger: #c4554a;
+
+  /* 圆角 */
+  --radius-sm: 16rpx;
+  --radius-md: 24rpx;
+  --radius-lg: 36rpx;
+
+  /* 间距 */
+  --space-xs: 8rpx;
+  --space-sm: 16rpx;
+  --space-md: 24rpx;
+  --space-lg: 32rpx;
+  --space-xl: 48rpx;
+
+  /* 字体 */
+  --font-serif: 'STSong', 'SimSun', 'Songti SC', 'KaiTi', serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+
+  /* 阴影预设 */
+  --shadow-sm: 0 4rpx 16rpx var(--color-shadow);
+  --shadow-md: 0 12rpx 40rpx var(--color-shadow-hover);
+  --shadow-lg: 0 24rpx 64rpx var(--color-shadow-hover);
+
+  /* 动效 */
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s ease;
+}
+
+/* ── 深色模式 ─────────────────────────────────────── */
+page[data-theme='dark'] {
+  --color-primary: #6baf7e;
+  --color-primary-light: #5a9a6e;
+  --color-primary-dark: #4a8a5e;
+
+  --color-accent: #d4a87a;
+  --color-accent-light: #c8986a;
+
+  --color-bg: #1a1f1b;
+  --color-bg-light: #1f2420;
+  --color-bg-dark: #252a26;
+
+  --color-text: #d8dfd4;
+  --color-text-light: #a8b0a4;
+  --color-text-lighter: #6a7266;
+
+  --color-white: #222722;
+  --color-border: #2a302a;
+  --color-mist: #2a3a2e;
+  --color-sky: #5a8a9a;
+
+  --color-shadow: rgba(0, 0, 0, 0.35);
+  --color-shadow-hover: rgba(0, 0, 0, 0.5);
+
+  --color-success: #5c9c5a;
+  --color-warning: #d0a050;
+  --color-danger: #cc6050;
+}
+
+/* ── 季节主题 · 秋季 ──────────────────────────────── */
+page[data-season='autumn'] {
+  --color-primary: #8b5e3c;
+  --color-primary-light: #a07a5a;
+  --color-primary-dark: #6b4a2e;
+
+  --color-accent: #c47a38;
+  --color-accent-light: #d49450;
+
+  --color-bg: #faf6ee;
+  --color-bg-light: #f5efe4;
+  --color-bg-dark: #e8dcc8;
+
+  --color-mist: #e8d4c0;
+  --color-sky: #c8a080;
+}
+
+page[data-theme='dark'][data-season='autumn'] {
+  --color-primary: #a0805a;
+  --color-bg: #1f1a18;
+  --color-bg-light: #24201a;
+  --color-bg-dark: #2a2418;
+  --color-text: #d8d0c0;
+  --color-white: #282218;
+  --color-border: #302820;
+  --color-mist: #3a3028;
+}
+
+/* ── 季节主题 · 冬季 ──────────────────────────────── */
+page[data-season='winter'] {
+  --color-primary: #5a7a8a;
+  --color-primary-light: #6a8a9a;
+  --color-primary-dark: #4a6a7a;
+
+  --color-accent: #b8684a;
+  --color-accent-light: #c8785a;
+
+  --color-bg: #f4f8fb;
+  --color-bg-light: #eef4f8;
+  --color-bg-dark: #d8e4ee;
+
+  --color-mist: #c0d8e8;
+  --color-sky: #8aacbe;
+}
+
+page[data-theme='dark'][data-season='winter'] {
+  --color-primary: #7a9aaa;
+  --color-bg: #181f24;
+  --color-bg-light: #1c2428;
+  --color-bg-dark: #202830;
+  --color-text: #c0d0d8;
+  --color-white: #202428;
+  --color-border: #283038;
+  --color-mist: #283840;
+}

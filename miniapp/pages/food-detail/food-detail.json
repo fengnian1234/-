@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "image-gallery": "/components/image-gallery/image-gallery",
+    "empty-state": "/components/empty-state/empty-state",
+    "loading-skeleton": "/components/loading-skeleton/loading-skeleton"
+  },
+  "navigationBarTitleText": "美食详情"
+}

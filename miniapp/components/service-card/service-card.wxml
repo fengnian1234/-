@@ -1,0 +1,6 @@
+<view class="service-card press-active" bindtap="onTap">
+  <view class="service-card__icon">{{service.icon}}</view>
+  <text class="service-card__name">{{service.name}}</text>
+  <text class="service-card__desc" wx:if="{{service.description}}">{{truncatedDesc}}</text>
+  <text class="service-card__time" wx:if="{{service.estimated_time}}">⏱ {{service.estimated_time}}</text>
+</view>

@@ -1,0 +1,191 @@
+<!-- 首页 -->
+<view class="page" data-theme="{{theme}}" data-season="{{season}}">
+
+  <!-- 民宿切换器 -->
+  <bnb-switcher bindchange="onBnbChanged" />
+
+  <!-- Hero 区域 -->
+  <view class="hero">
+    <view class="hero__bg"></view>
+    <view class="hero__content">
+      <view class="hero__tag">{{currentBnb.address}}</view>
+      <view class="hero__title">{{currentBnb.shortName}}</view>
+      <view class="hero__subtitle">{{currentBnb.description}}</view>
+      <view class="hero__poem">{{seasonPoem}}</view>
+    </view>
+    <view class="hero__wave"></view>
+  </view>
+
+  <!-- 快捷入口网格 -->
+  <view class="quick-nav">
+    <view class="quick-nav__item press-active" bindtap="onQuickNav" data-tab="rooms">
+      <view class="quick-nav__icon">🛏️</view>
+      <text class="quick-nav__label">房型展示</text>
+    </view>
+    <view class="quick-nav__item press-active" bindtap="onQuickNav" data-tab="menu">
+      <view class="quick-nav__icon">☕</view>
+      <text class="quick-nav__label">咖啡简餐</text>
+    </view>
+    <view class="quick-nav__item press-active" bindtap="onQuickNav" data-tab="travel">
+      <view class="quick-nav__icon">🗺️</view>
+      <text class="quick-nav__label">游玩攻略</text>
+    </view>
+    <view class="quick-nav__item press-active" bindtap="onQuickNav" data-tab="services">
+      <view class="quick-nav__icon">🛎️</view>
+      <text class="quick-nav__label">快捷服务</text>
+    </view>
+  </view>
+
+  <!-- 索道通知 -->
+  <notice-bar
+    type="info"
+    icon="🚡"
+    title="庐山交通索道运营时间"
+    items="{{['夏季（5-10月）: 7:30-20:30', '冬季（11-4月）: 8:00-18:30', '单程约7分钟，往返票¥120/人']}}"
+  />
+
+  <!-- 民宿介绍 4 宫格 -->
+  <view class="section-title">山居生活</view>
+  <view class="intro-grid">
+    <view class="intro-item fade-up visible">
+      <view class="intro-item__icon">🏡</view>
+      <text class="intro-item__title">山居小院</text>
+      <text class="intro-item__desc">庐山之巅，大林沟路27号，远离尘嚣的山间院落</text>
+    </view>
+    <view class="intro-item fade-up visible">
+      <view class="intro-item__icon">☕</view>
+      <text class="intro-item__title">山间咖啡馆</text>
+      <text class="intro-item__desc">庐山云雾茶+精品咖啡，云海为伴的下午茶时光</text>
+    </view>
+    <view class="intro-item fade-up visible">
+      <view class="intro-item__icon">⭐</view>
+      <text class="intro-item__title">携程高分</text>
+      <text class="intro-item__desc">携程4.9分·美团5.0分，住客口碑见证品质</text>
+    </view>
+    <view class="intro-item fade-up visible">
+      <view class="intro-item__icon">📍</view>
+      <text class="intro-item__title">绝佳位置</text>
+      <text class="intro-item__desc">步行可达花径、如琴湖，索道站5分钟车程</text>
+    </view>
+  </view>
+
+  <!-- 精选房型 -->
+  <view class="section-title">精选房型</view>
+  <view class="section-desc">山野之间，总有一间属于你</view>
+
+  <block wx:if="{{!loading && featuredRooms.length}}">
+    <scroll-view scroll-x class="rooms-preview-scroll" wx:if="{{featuredRooms.length > 2}}">
+      <view class="rooms-preview-inner">
+        <room-card
+          wx:for="{{featuredRooms}}"
+          wx:key="id"
+          room="{{item}}"
+          compact="{{true}}"
+          bind:tap="onRoomTap"
+        />
+      </view>
+    </scroll-view>
+    <view wx:else>
+      <room-card
+        wx:for="{{featuredRooms}}"
+        wx:key="id"
+        room="{{item}}"
+        bind:tap="onRoomTap"
+      />
+    </view>
+    <view class="view-all" bindtap="onQuickNav" data-tab="rooms">查看全部房型 →</view>
+  </block>
+  <loading-skeleton wx:elif="{{loading}}" visible="{{true}}" />
+  <empty-state wx:else icon="🏡" text="暂无房型信息" />
+
+  <!-- 智能客服功能介绍 -->
+  <view class="section-title">智能管家</view>
+  <view class="features">
+    <view class="feature-item fade-up visible">
+      <text class="feature-item__icon">🤖</text>
+      <view class="feature-item__text">
+        <text class="feature-item__title">AI旅行顾问</text>
+        <text class="feature-item__desc">预订前免费咨询庐山攻略，智能推荐最佳路线</text>
+      </view>
+    </view>
+    <view class="feature-item fade-up visible">
+      <text class="feature-item__icon">🔑</text>
+      <view class="feature-item__text">
+        <text class="feature-item__title">专属管家</text>
+        <text class="feature-item__desc">预订后解锁24h AI管家，房间码共享同住人</text>
+      </view>
+    </view>
+    <view class="feature-item fade-up visible">
+      <text class="feature-item__icon">📱</text>
+      <view class="feature-item__text">
+        <text class="feature-item__title">一键服务</text>
+        <text class="feature-item__desc">续住、打扫、叫醒、维修…动动手指即刻响应</text>
+      </view>
+    </view>
+    <view class="feature-item fade-up visible">
+      <text class="feature-item__icon">⭐</text>
+      <view class="feature-item__text">
+        <text class="feature-item__title">积分回馈</text>
+        <text class="feature-item__desc">签到、评价、分享都可赚积分，兑换精美礼品</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 住客评价轮播 -->
+  <view class="section-title">住客说</view>
+  <swiper
+    class="review-carousel"
+    current="{{currentSlide}}"
+    bindchange="onSwiperChange"
+    autoplay
+    interval="4000"
+    circular
+    indicator-dots
+    indicator-color="rgba(0,0,0,0.15)"
+    indicator-active-color="#4a7c59"
+  >
+    <swiper-item wx:for="{{reviews}}" wx:key="index">
+      <view class="review-grid">
+        <view class="review-card" wx:for="{{item}}" wx:key="name" wx:for-item="r">
+          <view class="review-card__stars">{"⭐".repeat(r.rating)}</view>
+          <text class="review-card__text">{{r.text}}</text>
+          <view class="review-card__author">
+            <text class="review-card__avatar">{{r.avatar}}</text>
+            <view>
+              <text class="review-card__name">{{r.name}}</text>
+              <text class="review-card__date">{{r.date}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <!-- 常见问题 -->
+  <view class="section-title">常见问题</view>
+  <view class="faq-list">
+    <view
+      class="faq-item press-active {{faqOpenIndex === index ? 'faq-item--open' : ''}}"
+      wx:for="{{FAQS}}"
+      wx:key="index"
+      data-index="{{index}}"
+      bindtap="onFaqToggle"
+    >
+      <view class="faq-item__q">
+        <text>❓ {{item.q}}</text>
+        <text class="faq-item__arrow">{{faqOpenIndex === index ? '▲' : '▼'}}</text>
+      </view>
+      <view class="faq-item__a" wx:if="{{faqOpenIndex === index}}">{{item.a}}</view>
+    </view>
+  </view>
+
+  <!-- 页脚 -->
+  <view class="footer">
+    <view class="footer__poem">🏔️ {{seasonPoem}}</view>
+    <view class="footer__info">
+      <text>{{BNB.address}}</text>
+      <text class="footer__phone" bindtap="onCallPhone">📞 {{BNB.phone}}</text>
+      <text>© 2025 云上·归墅</text>
+    </view>
+  </view>
+</view>
