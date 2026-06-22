@@ -174,7 +174,18 @@ opencli dianping search "庐山民宿" -f json --limit 5
 - **WebSearch (Bing)** — 免费无限额通用搜索，用于 opencli 未覆盖的平台
 - **DeepSeek API** — AI 对话后端（通过 Anthropic 兼容接口 `https://api.deepseek.com/anthropic`）
 - **Cron 周报** — 每周一 9:57 自动生成 DOCX → `reports/`（通过 Claude Code 的 CronCreate 调度）
+- **matplotlib** — 趋势分析图表生成（评分趋势/提及趋势/情感分布），`pip install matplotlib`
 - **MinerU** — 文档提取工具，用于从携程页面等提取结构化信息
+
+## 监控覆盖率
+
+| 平台 | 搜索 | Deep Dive | 图片采集 |
+|------|------|-----------|----------|
+| 携程 | opencli ctrip search | ✅ `_deep_dive_ctrip_detail` | 点评页 dimg*.c-ctrip.com |
+| 小红书 | opencli xiaohongshu search | ✅ `_deep_dive_xhs_notes` | opencli download → 本地 |
+| 微博 | opencli weibo search | ✅ `_deep_dive_weibo_posts` | browser extract sinaimg.cn |
+| 大众点评 | opencli dianping search | ✅ `_deep_dive_dianping_shop` (v3.6) | browser extract dpfile.com |
+| 美团/飞猪/抖音/知乎 | WebSearch 兜底 | — | — |
 
 ## 配置
 
