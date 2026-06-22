@@ -365,6 +365,8 @@ class PlatformMention(Base):
     url = Column(String(500), comment="原始链接")
     sentiment = Column(String(20), comment="情感: positive/neutral/negative")
     is_verified = Column(Boolean, default=False, comment="是否已验证")
+    image_urls = Column(JSON, comment="原始图片URL列表")
+    local_images = Column(JSON, comment="本地下载的图片路径列表")
     collected_at = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, comment="原始发布时间")
 
@@ -375,6 +377,8 @@ class PlatformMention(Base):
             "content": self.content, "rating": self.rating,
             "author": self.author, "url": self.url,
             "sentiment": self.sentiment,
+            "image_urls": self.image_urls,
+            "local_images": self.local_images,
             "collected_at": self.collected_at.strftime("%Y-%m-%d") if self.collected_at else None,
         }
 
@@ -822,6 +826,38 @@ class HealingAppointment(Base):
         }
 
 
+def run_migrations():
+    """自动迁移：为已有表添加缺失的列（SQLite ALTER TABLE ADD COLUMN）"""
+    from sqlalchemy import text, inspect
+    inspector = inspect(engine)
+
+    migrations = {
+        "platform_mentions": [
+            ("image_urls", "JSON", "原始图片URL列表"),
+            ("local_images", "JSON", "本地下载的图片路径列表"),
+        ],
+    }
+
+    with engine.connect() as conn:
+        for table, columns in migrations.items():
+            if not inspector.has_table(table):
+                continue
+            existing_cols = {c["name"] for c in inspector.get_columns(table)}
+            for col_name, col_type, col_comment in columns:
+                if col_name not in existing_cols:
+                    try:
+                        conn.execute(text(
+                            f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}"
+                        ))
+                        conn.commit()
+                        from services.logger import info as _info
+                        _info(f"✅ 迁移: {table}.{col_name} ({col_type}) 已添加")
+                    except Exception as e:
+                        from services.logger import warning as _warn
+                        _warn(f"迁移 {table}.{col_name} 跳过: {e}")
+
+
 def init_db():
-    """创建所有表"""
+    """创建所有表并执行迁移"""
     Base.metadata.create_all(engine)
+    run_migrations()

@@ -141,7 +141,7 @@ REVIEW_PLATFORMS_BY_BNB = {
 REVIEW_REMINDER_DELAY_MINUTES = 30
 
 # ── 平台监控配置（按民宿区分）──────────────────────
-MONITOR_PLATFORMS = ["美团", "大众点评", "飞猪", "携程", "小红书", "抖音"]
+MONITOR_PLATFORMS = ["大众点评", "携程", "小红书", "微博"]
 MONITOR_KEYWORDS_BY_BNB = {
     "guishu": ["云上·归墅", "云上归墅", "庐山民宿", "庐山云上归墅"],
     "shanji": ["云上·山纪", "云上山纪", "庐山山纪", "庐山茶园民宿"],

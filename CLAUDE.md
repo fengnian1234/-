@@ -116,25 +116,28 @@ local_data/  >  opencli  >  WebSearch  >  其他来源
 
 **在搜索小红书、携程、大众点评等中文平台时，优先使用 `opencli` 工具**（已安装全局 CLI）。opencli 提供原生站点适配器：
 
-| 平台 | 适配器 | 常用命令 |
-|------|--------|----------|
-| 小红书 | `xiaohongshu` | `search`, `note`, `download`, `feed` |
-| 携程 | `ctrip` | `search`（public）, `hotel-search`, `hotel-suggest` |
-| 大众点评 | `dianping` | `search`, `shop` |
+| 平台 | 适配器 | 常用命令 | 浏览器 |
+|------|--------|----------|:--:|
+| 携程 | `ctrip` | `search`, `hotel-search`, `hotel-suggest` | `search` 不需要 |
+| 小红书 | `xiaohongshu` | `search`, `note`, `download`, `feed` | 需要 |
+| 大众点评 | `dianping` | `search`, `shop` | 需要 |
 
 使用示例：
 ```bash
-# 携程搜索（公开，无需 cookie）
-opencli ctrip search --keyword "庐山 美食"
+# 携程搜索（公开，无需浏览器）
+opencli ctrip search "庐山 云上归墅" -f json --limit 5
 
-# 小红书搜索（需 cookie）
-opencli xiaohongshu search --keyword "庐山美食推荐"
+# 携程酒店搜索（需要 Chrome 扩展）
+opencli ctrip hotel-search "庐山" --checkin 2026-06-25 -f json
 
-# 大众点评搜索（需 cookie）
-opencli dianping search --keyword "庐山" --city "九江"
+# 小红书搜索（需要先 opencli browser init 配置 Chrome 扩展 + 登录）
+opencli xiaohongshu search "庐山美食" -f json --limit 5
+
+# 大众点评搜索（需要 Chrome 扩展）
+opencli dianping search "庐山民宿" -f json --limit 5
 ```
 
-注意：小红书和大众点评的写操作需要先配置浏览器 cookie（通过 `opencli browser init`）。
+注意：小红书、大众点评等需要登录态的写操作，必须先用 `opencli browser init` 安装 Chrome 扩展并登录对应网站。
 
 ### 顾客导向原则
 

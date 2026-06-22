@@ -412,7 +412,7 @@ def handle_human_service() -> str:
         return AUTO_REPLY_NIGHT
 
 
-def format_review_links() -> str:
+def format_review_links(bnb_id="guishu") -> str:
     """格式化各平台好评链接（要求4）"""
     lines = ["⭐ *各平台评价入口*\n"]
     platforms = get_platform_review_links()

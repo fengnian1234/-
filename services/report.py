@@ -1,14 +1,20 @@
 """
 周报生成服务 - 生成 DOCX 格式的口碑监控周报
-使用 python-docx 生成中式风格优雅排版
+使用 python-docx 生成紧凑优雅中式排版
+v3: 紧凑版 — 合并平台+图片区 + 图片网格 + 全局收紧
 """
 import os
+from collections import defaultdict
 from datetime import datetime, timedelta
+from io import BytesIO
 from docx import Document
-from docx.shared import Pt, Cm, RGBColor
+from docx.shared import Pt, Cm, Inches, RGBColor, Emu
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.oxml.ns import qn
+from docx.oxml.ns import qn, nsdecls
+from docx.oxml import parse_xml
+# PIL 可选依赖，用于智能图片宽度；不可用时统一使用默认宽度
+
 from services.logger import info, warning
 
 from models import SessionLocal, PlatformMention
@@ -19,18 +25,30 @@ from services.monitor import (
 from config import BNB_NAME, BNB_ADDRESS, BNB_PHONE
 
 # 输出目录
-REPORT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "reports")
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPORT_DIR = os.path.join(PROJECT_ROOT, "reports")
+
+# 颜色常量
+COLOR_PRIMARY = "2a3d33"      # 深绿
+COLOR_SECONDARY = "5b7b6f"    # 中绿
+COLOR_ACCENT = "8b7355"       # 暖棕
+COLOR_MUTED = "6b6b66"        # 灰色
+COLOR_POSITIVE = "388E3C"     # 正面绿（稍深）
+COLOR_NEUTRAL = "f9a825"      # 琥珀黄
+COLOR_NEGATIVE = "d32f2f"     # 深红
+COLOR_BORDER = "d5cec0"       # 边框米色
+COLOR_WHITE = "ffffff"
+COLOR_DARK = "1a1a1a"
+COLOR_CARD_BG = "faf8f5"      # 卡片暖白背景
+COLOR_HEADER_BG = "e8e4db"    # 表头背景
 
 
 def generate_weekly_report() -> dict:
-    """
-    主入口：收集最新数据并生成 DOCX 周报
-    返回报告路径和摘要信息
-    """
+    """主入口：收集最新数据并生成 DOCX 周报"""
     os.makedirs(REPORT_DIR, exist_ok=True)
 
     # 1. 收集最新平台数据
-    info("📡 正在收集6个平台最新数据...")
+    info("📡 正在收集平台最新数据...")
     search_results = search_platform_mentions()
 
     # 2. 获取汇总
@@ -61,289 +79,574 @@ def generate_weekly_report() -> dict:
     }
 
 
-def _build_docx(summary: dict, search_results: dict,
-                week_start: str, week_end: str) -> Document:
-    """构建 DOCX 文档"""
-    doc = Document()
+# ═══════════════════════════ 辅助 ═══════════════════════════
 
-    # ── 页面设置 ──
-    section = doc.sections[0]
-    section.page_width = Cm(21.0)
-    section.page_height = Cm(29.7)
-    section.top_margin = Cm(2.5)
-    section.bottom_margin = Cm(2.0)
-    section.left_margin = Cm(2.5)
-    section.right_margin = Cm(2.5)
+def _set_cell_shading(cell, color: str):
+    """设置表格单元格背景色"""
+    shading_elm = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{color}"/>')
+    cell._tc.get_or_add_tcPr().append(shading_elm)
 
-    # ── 样式预设 ──
-    style = doc.styles['Normal']
-    style.font.name = 'Microsoft YaHei'
-    style.font.size = Pt(10.5)
-    style.paragraph_format.line_spacing = 1.5
-    style.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
 
-    # ══════════════════════════════════════════
-    #  封面
-    # ══════════════════════════════════════════
-    for _ in range(6):
-        doc.add_paragraph()
-
-    title = doc.add_paragraph()
-    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = title.add_run(f"{BNB_NAME}")
-    run.font.size = Pt(28)
-    run.font.bold = True
-    run.font.color.rgb = RGBColor(0x2a, 0x3d, 0x33)
-    run.font.name = 'Microsoft YaHei'
+def _add_rich_run(paragraph, text: str, font_size: Pt = None, bold: bool = False,
+                  color: str = None, italic: bool = False,
+                  font_name: str = 'Microsoft YaHei'):
+    """添加带样式的文本片段"""
+    run = paragraph.add_run(text)
+    if font_size:
+        run.font.size = font_size
+    run.font.bold = bold
+    run.font.italic = italic
+    if color:
+        run.font.color.rgb = RGBColor(*_hex_to_rgb(color))
+    run.font.name = font_name
     run.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
+    return run
 
-    doc.add_paragraph()
 
-    subtitle = doc.add_paragraph()
-    subtitle.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = subtitle.add_run("口碑监控周报")
-    run.font.size = Pt(20)
-    run.font.color.rgb = RGBColor(0x5b, 0x7b, 0x6f)
-    run.font.name = 'Microsoft YaHei'
-    run.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
+def _hex_to_rgb(hex_color: str) -> tuple:
+    hex_color = hex_color.lstrip('#')
+    return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
 
-    doc.add_paragraph()
 
-    info = doc.add_paragraph()
-    info.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = info.add_run(f"报告周期：{week_start} — {week_end}\n{BNB_ADDRESS}\n{BNB_PHONE}")
-    run.font.size = Pt(11)
-    run.font.color.rgb = RGBColor(0x6b, 0x6b, 0x66)
-    run.font.name = 'Microsoft YaHei'
-    run.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
-
-    doc.add_page_break()
-
-    # ══════════════════════════════════════════
-    #  一、执行摘要
-    # ══════════════════════════════════════════
-    _add_heading(doc, "一、执行摘要", level=1)
-
-    overall = summary.get("overall_rating")
-    total_mentions = sum(p.get("total", 0) for p in summary.get("platforms", {}).values())
-
-    overview_text = (
-        f"本周（{week_start} — {week_end}）共监控 {len(MONITOR_PLATFORMS)} 个主流平台，"
-        f"累计获取 {total_mentions} 条评价与提及。"
+def _add_decorative_line(doc, color: str = COLOR_BORDER, width_pt: int = 1):
+    """添加装饰性细线（用段落边框实现）"""
+    p = doc.add_paragraph()
+    p.paragraph_format.space_before = Pt(2)
+    p.paragraph_format.space_after = Pt(2)
+    pPr = p._p.get_or_add_pPr()
+    pBdr = parse_xml(
+        f'<w:pBdr {nsdecls("w")}>'
+        f'<w:bottom w:val="single" w:sz="{width_pt * 8}" w:space="1" '
+        f'w:color="{color}"/>'
+        f'</w:pBdr>'
     )
-    if overall:
-        overview_text += f"各平台加权综合评分为 ⭐{overall}/5.0。"
-    else:
-        overview_text += "当前暂无足够评分数据进行综合计算。"
-
-    p = doc.add_paragraph(overview_text)
-    p.paragraph_format.first_line_indent = Cm(0.74)
-
-    # 综合评分卡片
-    if overall:
-        doc.add_paragraph()
-        card = doc.add_paragraph()
-        card.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run = card.add_run(f"⭐ 综合评分  {overall} / 5.0")
-        run.font.size = Pt(16)
-        run.font.bold = True
-        run.font.color.rgb = RGBColor(0x8b, 0x73, 0x55)
-        run.font.name = 'Microsoft YaHei'
-        run.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
-
-    # ══════════════════════════════════════════
-    #  二、各平台数据明细
-    # ══════════════════════════════════════════
-    doc.add_paragraph()
-    _add_heading(doc, "二、各平台数据明细", level=1)
-
-    # 汇总表格
-    table = doc.add_table(rows=1, cols=6)
-    table.style = 'Light Grid Accent 1'
-    table.alignment = WD_TABLE_ALIGNMENT.CENTER
-
-    # 表头
-    headers = ["平台", "评价数", "均分", "好评👍", "中评😊", "差评👎"]
-    for i, header in enumerate(headers):
-        cell = table.rows[0].cells[i]
-        cell.text = header
-        for paragraph in cell.paragraphs:
-            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            for run in paragraph.runs:
-                run.font.bold = True
-                run.font.size = Pt(9)
-
-    # 数据行
-    for platform in MONITOR_PLATFORMS:
-        data = summary.get("platforms", {}).get(platform, {})
-        row = table.add_row()
-        row.cells[0].text = platform
-        row.cells[1].text = str(data.get("total", 0))
-        row.cells[2].text = f"{data.get('avg_rating')}/5.0" if data.get("avg_rating") else "—"
-        row.cells[3].text = str(data.get("positive", 0))
-        row.cells[4].text = str(data.get("neutral", 0))
-        row.cells[5].text = str(data.get("negative", 0))
-
-    doc.add_paragraph()
-
-    # 各平台详情
-    for platform in MONITOR_PLATFORMS:
-        data = summary.get("platforms", {}).get(platform, {})
-        mentions_data = data.get("latest", {})
-
-        _add_heading(doc, f"{platform}", level=2)
-
-        if data.get("total", 0) == 0:
-            doc.add_paragraph(f"  本周暂无 {platform} 平台的新数据。")
-            continue
-
-        # 关键指标
-        indicators = doc.add_paragraph()
-        indicators.paragraph_format.left_indent = Cm(0.5)
-        run = indicators.add_run(
-            f"总提及：{data.get('total', 0)} 条  |  "
-            f"均分：{data.get('avg_rating', '—')}  |  "
-            f"情感：👍{data.get('positive', 0)} 😊{data.get('neutral', 0)} 👎{data.get('negative', 0)}"
-        )
-        run.font.size = Pt(9)
-        run.font.color.rgb = RGBColor(0x6b, 0x6b, 0x66)
-
-        # 最新评价摘要
-        if mentions_data and isinstance(mentions_data, dict):
-            title = mentions_data.get("title", "")
-            content = mentions_data.get("content", "")
-            rating = mentions_data.get("rating", "")
-            url = mentions_data.get("url", "")
-
-            if title or content:
-                quote = doc.add_paragraph()
-                quote.paragraph_format.left_indent = Cm(1.0)
-                quote.paragraph_format.space_before = Pt(4)
-
-                if rating:
-                    run = quote.add_run(f"【{rating}分】")
-                    run.font.bold = True
-                    run.font.size = Pt(9)
-
-                snippet = content[:200] if content else title[:200]
-                run = quote.add_run(f' "{snippet}..."')
-                run.font.size = Pt(9)
-                run.font.italic = True
-
-            if url:
-                link = doc.add_paragraph()
-                link.paragraph_format.left_indent = Cm(1.0)
-                run = link.add_run(f"🔗 {url}")
-                run.font.size = Pt(8)
-                run.font.color.rgb = RGBColor(0x3d, 0x53, 0x47)
-
-    # ══════════════════════════════════════════
-    #  三、评价截图区
-    # ══════════════════════════════════════════
-    doc.add_page_break()
-    _add_heading(doc, "三、平台评价截图", level=1)
-
-    doc.add_paragraph(
-        "以下为各平台评价入口链接，可手动截图添加至本区域。"
-        "建议每周截取评分页面和最新3条评价作为附件归档。"
-    )
-
-    platforms_links = get_platform_review_links()
-    for key, info in platforms_links.items():
-        p = doc.add_paragraph()
-        run = p.add_run(f"{info['icon']} {info['name']}")
-        run.font.bold = True
-        run.font.size = Pt(10)
-
-        p2 = doc.add_paragraph()
-        p2.paragraph_format.left_indent = Cm(1.0)
-        run = p2.add_run(info['review_url'])
-        run.font.size = Pt(8)
-        run.font.color.rgb = RGBColor(0x3d, 0x53, 0x47)
-
-        # 截图占位框
-        placeholder = doc.add_paragraph()
-        placeholder.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        placeholder.paragraph_format.space_before = Pt(6)
-        placeholder.paragraph_format.space_after = Pt(6)
-        run = placeholder.add_run(f"┌{'─'*40}┐\n│  [{info['name']} 评价截图]  │\n└{'─'*40}┘")
-        run.font.size = Pt(8)
-        run.font.color.rgb = RGBColor(0x99, 0x99, 0x90)
-
-        doc.add_paragraph()
-
-    # ══════════════════════════════════════════
-    #  四、趋势分析建议
-    # ══════════════════════════════════════════
-    doc.add_paragraph()
-    _add_heading(doc, "四、趋势分析与建议", level=1)
-
-    # 情感分布统计
-    total_pos = sum(p.get("positive", 0) for p in summary.get("platforms", {}).values())
-    total_neu = sum(p.get("neutral", 0) for p in summary.get("platforms", {}).values())
-    total_neg = sum(p.get("negative", 0) for p in summary.get("platforms", {}).values())
-    total_all = total_pos + total_neu + total_neg
-
-    if total_all > 0:
-        pos_pct = round(total_pos / total_all * 100)
-        neg_pct = round(total_neg / total_all * 100)
-
-        analysis = doc.add_paragraph()
-        analysis.paragraph_format.first_line_indent = Cm(0.74)
-        analysis.add_run(
-            f"本周正面评价占比 {pos_pct}%，负面评价占比 {neg_pct}%。"
-        )
-
-        if pos_pct >= 80:
-            analysis.add_run("整体口碑表现优秀，建议保持现有服务质量，持续关注新评价动态。")
-        elif pos_pct >= 60:
-            analysis.add_run("口碑良好，建议关注差评原因并及时改进。")
-        else:
-            analysis.add_run("口碑有待改善，建议重点排查差评原因，制定改进计划。")
-    else:
-        doc.add_paragraph("本周暂无足够数据进行分析。建议增加平台信息收集频率。")
-
-    doc.add_paragraph()
-
-    # 建议列表
-    suggestions = [
-        "每日检查携程/美团最新评价，对差评48小时内回复",
-        "鼓励满意客人离店时在平台写评价（退房好评推送已自动执行）",
-        "小红书和抖音端增加民宿日常内容发布，提高曝光度",
-        "关注竞品民宿评价动态，了解差异化服务方向",
-    ]
-    for s in suggestions:
-        p = doc.add_paragraph(f"• {s}", style='List Bullet')
-        for run in p.runs:
-            run.font.size = Pt(9)
-
-    # ══════════════════════════════════════════
-    #  页脚
-    # ══════════════════════════════════════════
-    doc.add_paragraph()
-    doc.add_paragraph()
-    footer_text = doc.add_paragraph()
-    footer_text.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = footer_text.add_run(
-        f"— {BNB_NAME} · 智能客服系统自动生成 —\n"
-        f"报告时间：{datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}"
-    )
-    run.font.size = Pt(8)
-    run.font.color.rgb = RGBColor(0x99, 0x99, 0x90)
-
-    return doc
+    pPr.append(pBdr)
+    return p
 
 
 def _add_heading(doc: Document, text: str, level: int = 1):
-    """添加带样式的标题"""
+    """添加带样式的标题（紧凑版）"""
     heading = doc.add_heading(text, level=level)
+    heading.paragraph_format.space_before = Pt(10) if level == 1 else Pt(6)
+    heading.paragraph_format.space_after = Pt(4) if level == 1 else Pt(2)
     for run in heading.runs:
         run.font.name = 'Microsoft YaHei'
         run.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
         if level == 1:
-            run.font.color.rgb = RGBColor(0x2a, 0x3d, 0x33)
-            run.font.size = Pt(16)
+            run.font.color.rgb = RGBColor(*_hex_to_rgb(COLOR_PRIMARY))
+            run.font.size = Pt(14)
         elif level == 2:
-            run.font.color.rgb = RGBColor(0x3d, 0x53, 0x47)
-            run.font.size = Pt(13)
+            run.font.color.rgb = RGBColor(*_hex_to_rgb(COLOR_SECONDARY))
+            run.font.size = Pt(11)
     return heading
+
+
+try:
+    from PIL import Image as PILImage
+    _HAS_PIL = True
+except ImportError:
+    _HAS_PIL = False
+
+
+def _prepare_image_for_docx(full_path: str) -> tuple:
+    """
+    准备图片供 python-docx 嵌入。返回 (stream_or_path, width_inches)
+    - 小红书下载的图片常为 WebP 格式但扩展名 .jpg，python-docx 不支持
+    - 用 Pillow 检测格式，WebP 则转 JPEG 到 BytesIO
+    - 同时用 Pillow 获取真实宽高比来确定图片宽度
+    """
+    img_width = Inches(2.1)  # 默认方形宽度
+
+    if not os.path.exists(full_path):
+        return (full_path, img_width)
+
+    size_kb = os.path.getsize(full_path) / 1024
+
+    if _HAS_PIL:
+        try:
+            img = PILImage.open(full_path)
+            w, h = img.size
+            aspect = w / h if h > 0 else 1.0
+            if aspect < 0.75:
+                img_width = Inches(1.6)
+            elif aspect > 1.5:
+                img_width = Inches(2.6)
+            else:
+                img_width = Inches(2.1)
+
+            # 检测 WebP 格式并转换为 JPEG
+            if img.format == 'WEBP':
+                buf = BytesIO()
+                img.convert('RGB').save(buf, format='JPEG', quality=90)
+                buf.seek(0)
+                img.close()
+                return (buf, img_width)
+            img.close()
+        except Exception:
+            # Pillow 失败时回退到文件大小启发式
+            if size_kb > 250:
+                img_width = Inches(2.6)
+            elif size_kb < 100:
+                img_width = Inches(1.7)
+    else:
+        # 无 Pillow，用文件大小估算
+        if size_kb > 250:
+            img_width = Inches(2.6)
+        elif size_kb < 100:
+            img_width = Inches(1.7)
+
+    return (full_path, img_width)
+
+
+# ═══════════════════════════ 文档构建 ═══════════════════════════
+
+def _build_docx(summary: dict, search_results: dict,
+                week_start: str, week_end: str) -> Document:
+    """构建 DOCX 文档 v3 — 紧凑优雅版"""
+    doc = Document()
+
+    # ── 页面设置（A4 标准边距）──
+    section = doc.sections[0]
+    section.page_width = Cm(21.0)
+    section.page_height = Cm(29.7)
+    section.top_margin = Cm(1.6)
+    section.bottom_margin = Cm(1.4)
+    section.left_margin = Cm(2.0)
+    section.right_margin = Cm(2.0)
+
+    # ── 全局样式（紧凑）──
+    style = doc.styles['Normal']
+    style.font.name = 'Microsoft YaHei'
+    style.font.size = Pt(10.5)
+    style.paragraph_format.line_spacing = 1.2
+    style.paragraph_format.space_after = Pt(3)
+    style.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
+
+    # ─── 封面 ───
+    _build_cover(doc, week_start, week_end)
+    doc.add_page_break()
+
+    # ─── 一、数据概览 ───
+    _add_heading(doc, "一、本周数据概览", level=1)
+    _add_decorative_line(doc)
+    _build_dashboard(doc, summary, week_start, week_end)
+
+    # ─── 二、平台评价 & 图片明细（合并原二+三）───
+    _add_heading(doc, "二、平台评价 & 图片明细", level=1)
+    _add_decorative_line(doc)
+    _build_platform_with_images(doc, summary)
+
+    # ─── 三、舆情分析 ───
+    _add_heading(doc, "三、舆情分析与改进建议", level=1)
+    _add_decorative_line(doc)
+    _build_analysis(doc, summary)
+
+    # ─── 页脚 ───
+    _add_decorative_line(doc, COLOR_BORDER, 1)
+    footer = doc.add_paragraph()
+    footer.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    footer.paragraph_format.space_before = Pt(4)
+    _add_rich_run(footer, f"—— {BNB_NAME} · 自动生成 ——  {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}", Pt(8), color=COLOR_MUTED)
+
+    return doc
+
+
+# ═══════════════════════════ 封面 ═══════════════════════════
+
+def _build_cover(doc, week_start: str, week_end: str):
+    """紧凑封面 — 约1/3页"""
+    for _ in range(3):
+        doc.add_paragraph()
+
+    _add_decorative_line(doc, COLOR_ACCENT, 2)
+
+    p = doc.add_paragraph()
+    p.paragraph_format.space_before = Pt(10)
+
+    title = doc.add_paragraph()
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    _add_rich_run(title, BNB_NAME, Pt(26), bold=True, color=COLOR_PRIMARY)
+
+    subtitle = doc.add_paragraph()
+    subtitle.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    subtitle.paragraph_format.space_before = Pt(4)
+    _add_rich_run(subtitle, "口碑监控周报", Pt(17), color=COLOR_SECONDARY)
+
+    # 期数
+    week_num = datetime.utcnow().isocalendar()[1]
+    period = doc.add_paragraph()
+    period.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    period.paragraph_format.space_before = Pt(6)
+    _add_rich_run(period, f"2026年 · 第{week_num}周", Pt(10), color=COLOR_MUTED)
+
+    _add_decorative_line(doc, COLOR_ACCENT, 2)
+
+    p2 = doc.add_paragraph()
+    p2.paragraph_format.space_before = Pt(10)
+
+    # 报告周期
+    date_info = doc.add_paragraph()
+    date_info.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    _add_rich_run(date_info, f"{week_start}  —  {week_end}", Pt(11), color=COLOR_MUTED)
+
+    # 地址电话同行
+    contact = doc.add_paragraph()
+    contact.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    contact.paragraph_format.space_before = Pt(4)
+    _add_rich_run(contact, f"{BNB_ADDRESS}    ☎ {BNB_PHONE}", Pt(9), color=COLOR_MUTED)
+
+
+# ═══════════════════════════ 仪表盘 ═══════════════════════════
+
+def _build_dashboard(doc, summary: dict, week_start: str, week_end: str):
+    """紧凑仪表盘 — KPI卡片 + 评分表"""
+    overall = summary.get("overall_rating")
+    platforms_data = summary.get("platforms", {})
+
+    total_mentions = sum(p.get("total", 0) for p in platforms_data.values())
+    total_pos = sum(p.get("positive", 0) for p in platforms_data.values())
+    total_neu = sum(p.get("neutral", 0) for p in platforms_data.values())
+    total_neg = sum(p.get("negative", 0) for p in platforms_data.values())
+    total_all = total_pos + total_neu + total_neg
+    active_platforms = sum(1 for p in platforms_data.values() if p.get("total", 0) > 0)
+
+    # 摘要（紧凑）
+    summary_text = (
+        f"监控 {len(MONITOR_PLATFORMS)} 个平台，{active_platforms} 个有活跃数据，"
+        f"累计 {total_mentions} 条评价。"
+    )
+    if overall:
+        summary_text += f"综合评分 ⭐{overall}/5.0。"
+    p = doc.add_paragraph(summary_text)
+    p.paragraph_format.space_after = Pt(6)
+
+    # KPI 卡片（单行4列，每列独立底色）
+    kpi_table = doc.add_table(rows=1, cols=4)
+    kpi_table.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+    card_colors = ["f0ede6", "e8f0ec", "eaf0f0", "f0f0e8"]
+    kpis = [
+        ("综合评分", f"⭐{overall}/5.0" if overall else "暂无", COLOR_ACCENT),
+        ("活跃平台", str(active_platforms), COLOR_PRIMARY),
+        ("评价总数", str(total_mentions), COLOR_SECONDARY),
+        ("好评率", f"{round(total_pos/total_all*100)}%" if total_all > 0 else "暂无",
+         COLOR_POSITIVE if (total_all > 0 and total_pos/total_all >= 0.7) else COLOR_NEUTRAL),
+    ]
+
+    for i, (label, value, color) in enumerate(kpis):
+        cell = kpi_table.rows[0].cells[i]
+        cell.width = Cm(3.6)
+        _set_cell_shading(cell, card_colors[i])
+        cell.paragraphs[0].clear()
+
+        p_val = cell.paragraphs[0]
+        p_val.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_val.paragraph_format.space_before = Pt(4)
+        p_val.paragraph_format.space_after = Pt(0)
+        _add_rich_run(p_val, value, Pt(16), bold=True, color=color)
+
+        p_label = cell.add_paragraph()
+        p_label.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_label.paragraph_format.space_before = Pt(1)
+        p_label.paragraph_format.space_after = Pt(4)
+        _add_rich_run(p_label, label, Pt(8.5), color=COLOR_MUTED)
+
+    # 评分概览表
+    p = doc.add_paragraph()
+    p.paragraph_format.space_before = Pt(8)
+    p.paragraph_format.space_after = Pt(2)
+    _add_rich_run(p, "各平台评分概览", Pt(10.5), bold=True, color=COLOR_PRIMARY)
+
+    table = doc.add_table(rows=1, cols=7)
+    table.style = 'Light Grid Accent 1'
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+    headers = ["平台", "条数", "均分", "评分", "👍", "😐", "👎"]
+    for i, header in enumerate(headers):
+        cell = table.rows[0].cells[i]
+        cell.text = ""
+        p = cell.paragraphs[0]
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.paragraph_format.space_before = Pt(1)
+        p.paragraph_format.space_after = Pt(1)
+        _add_rich_run(p, header, Pt(8.5), bold=True, color=COLOR_DARK)
+        _set_cell_shading(cell, COLOR_HEADER_BG)
+
+    for platform in MONITOR_PLATFORMS:
+        data = platforms_data.get(platform, {})
+        total = data.get("total", 0)
+        avg = data.get("avg_rating")
+        row = table.add_row()
+
+        vals = [
+            platform,
+            str(total),
+            f"{avg}/5.0" if avg else "—",
+            ("★" * round(avg) + "☆" * (5 - round(avg))) if avg else "—",
+            str(data.get("positive", 0)),
+            str(data.get("neutral", 0)),
+            str(data.get("negative", 0)),
+        ]
+        for ci, val in enumerate(vals):
+            cell = row.cells[ci]
+            cell.text = ""
+            p = cell.paragraphs[0]
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p.paragraph_format.space_before = Pt(1)
+            p.paragraph_format.space_after = Pt(1)
+            color = COLOR_DARK
+            if ci == 4:
+                color = COLOR_POSITIVE
+            elif ci == 5:
+                color = COLOR_NEUTRAL
+            elif ci == 6:
+                color = COLOR_NEGATIVE
+            _add_rich_run(p, val, Pt(8.5), bold=(ci in (4, 5, 6)), color=color)
+
+
+# ═══════════════════════════ 平台评价 & 图片（合并版）═══════════
+
+def _build_platform_with_images(doc, summary: dict):
+    """合并平台详情 + 评价图片为单一紧凑区域"""
+    platforms_data = summary.get("platforms", {})
+
+    # 按均分降序
+    sorted_platforms = sorted(
+        [(p, d) for p, d in platforms_data.items()],
+        key=lambda x: x[1].get("avg_rating") or 0,
+        reverse=True,
+    )
+
+    # 从 DB 获取所有有图片的 mention
+    db = SessionLocal()
+    try:
+        all_img_mentions = db.query(PlatformMention).filter(
+            PlatformMention.local_images != None
+        ).order_by(PlatformMention.collected_at.desc()).all()
+
+        # 按平台分组
+        imgs_by_platform = defaultdict(list)
+        for m in all_img_mentions:
+            if m.local_images:
+                imgs_by_platform[m.platform].append(m)
+    finally:
+        db.close()
+
+    for platform, data in sorted_platforms:
+        total = data.get("total", 0)
+        avg = data.get("avg_rating")
+        pos, neu, neg = data.get("positive", 0), data.get("neutral", 0), data.get("negative", 0)
+
+        # ── 平台标题行（紧凑：标题+评分+指标同行）──
+        _add_heading(doc, f"▸ {platform}", level=2)
+
+        if total == 0:
+            p = doc.add_paragraph(f"  本周暂无数据。")
+            p.paragraph_format.left_indent = Cm(0.3)
+            _add_rich_run(p, "", Pt(8), color=COLOR_MUTED)
+            _add_decorative_line(doc, COLOR_BORDER, 1)
+            continue
+
+        # 指标行（单行显示所有关键数据）
+        stars = "★" * round(avg) + "☆" * (5 - round(avg)) if avg else "—"
+        rating_text = f"{avg}/5.0" if avg else "—"
+        indicators = doc.add_paragraph()
+        indicators.paragraph_format.left_indent = Cm(0.2)
+        indicators.paragraph_format.space_after = Pt(2)
+        _add_rich_run(indicators, f"📊 {total}条评价  |  ", Pt(9.5), color=COLOR_MUTED)
+        _add_rich_run(indicators, f"均分 {rating_text} {stars}  |  ", Pt(9.5), color=COLOR_DARK)
+        _add_rich_run(indicators, f"👍{pos}  ", Pt(9.5), color=COLOR_POSITIVE)
+        _add_rich_run(indicators, f"😐{neu}  ", Pt(9.5), color=COLOR_NEUTRAL)
+        _add_rich_run(indicators, f"👎{neg}", Pt(9.5), color=COLOR_NEGATIVE)
+
+        # 情感条形
+        all_count = pos + neu + neg
+        if all_count > 0:
+            bar_line = doc.add_paragraph()
+            bar_line.paragraph_format.left_indent = Cm(0.3)
+            bar_line.paragraph_format.space_before = Pt(1)
+            bar_line.paragraph_format.space_after = Pt(2)
+            pos_w = max(round(pos / all_count * 24), 1 if pos > 0 else 0)
+            neg_w = max(round(neg / all_count * 24), 1 if neg > 0 else 0)
+            neu_w = max(24 - pos_w - neg_w, 0)
+            _add_rich_run(bar_line, "█" * pos_w, Pt(7), color=COLOR_POSITIVE)
+            _add_rich_run(bar_line, "█" * neu_w, Pt(7), color=COLOR_NEUTRAL)
+            _add_rich_run(bar_line, "█" * neg_w, Pt(7), color=COLOR_NEGATIVE)
+            _add_rich_run(bar_line, f"  {pos}好评 / {neu}中评 / {neg}差评", Pt(7.5), color=COLOR_MUTED)
+
+        # ── 最新评价摘要（仅文字）──
+        latest = data.get("latest", {})
+        if latest and isinstance(latest, dict):
+            title = latest.get("title", "")
+            content = latest.get("content", "")
+            rating_val = latest.get("rating")
+            url = latest.get("url", "")
+            sentiment = latest.get("sentiment", "neutral")
+            sent_emoji = {"positive": "😊", "neutral": "😐", "negative": "😞"}.get(sentiment, "")
+
+            if title or content:
+                quote_box = doc.add_paragraph()
+                quote_box.paragraph_format.left_indent = Cm(0.5)
+                quote_box.paragraph_format.space_before = Pt(3)
+                quote_box.paragraph_format.space_after = Pt(2)
+                if rating_val:
+                    _add_rich_run(quote_box, f"【{rating_val}分】", Pt(9), bold=True, color=COLOR_ACCENT)
+                snippet = (content or title)[:180]
+                _add_rich_run(quote_box, f' {sent_emoji} "{snippet}..."', Pt(9), italic=True, color=COLOR_DARK)
+            if url:
+                link_p = doc.add_paragraph()
+                link_p.paragraph_format.left_indent = Cm(0.5)
+                link_p.paragraph_format.space_after = Pt(4)
+                _add_rich_run(link_p, f"🔗 {url[:130]}", Pt(7.5), color=COLOR_SECONDARY)
+
+        # ── 评价配图（图片网格：2列表格）──
+        platform_mentions = imgs_by_platform.get(platform, [])
+        if platform_mentions:
+            # 收集该平台所有可用图片路径
+            all_local_imgs = []
+            for mention in platform_mentions[:6]:  # 最多取6条有图的评价
+                for img_path in (mention.local_images or []):
+                    full_path = os.path.join(PROJECT_ROOT, img_path)
+                    if os.path.exists(full_path) and os.path.getsize(full_path) > 500:
+                        all_local_imgs.append((full_path, mention.title or "", mention.rating))
+                        if len(all_local_imgs) >= 8:  # 每平台最多8张图（4行×2列）
+                            break
+                if len(all_local_imgs) >= 8:
+                    break
+
+            if all_local_imgs:
+                img_label = doc.add_paragraph()
+                img_label.paragraph_format.left_indent = Cm(0.2)
+                img_label.paragraph_format.space_before = Pt(4)
+                img_label.paragraph_format.space_after = Pt(2)
+                _add_rich_run(img_label, f"📷 评价配图（{len(all_local_imgs)}张）：", Pt(9), color=COLOR_MUTED)
+
+                # 图片网格表格（每行2列）
+                cols = 2
+                rows = (len(all_local_imgs) + cols - 1) // cols
+                img_table = doc.add_table(rows=rows, cols=cols)
+                img_table.alignment = WD_TABLE_ALIGNMENT.CENTER
+
+                for idx, (img_path, img_title, img_rating) in enumerate(all_local_imgs):
+                    row_idx = idx // cols
+                    col_idx = idx % cols
+                    cell = img_table.rows[row_idx].cells[col_idx]
+
+                    # 清除默认段落
+                    cell.paragraphs[0].clear()
+                    cell_p = cell.paragraphs[0]
+                    cell_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    cell_p.paragraph_format.space_before = Pt(3)
+                    cell_p.paragraph_format.space_after = Pt(1)
+
+                    # 准备图片（WebP→JPEG 转换 + 智能宽度）
+                    img_src, img_width = _prepare_image_for_docx(img_path)
+
+                    try:
+                        run = cell_p.add_run()
+                        run.add_picture(img_src, width=img_width)
+                    except Exception as e:
+                        _add_rich_run(cell_p, f"[图片加载失败]", Pt(7), color=COLOR_NEGATIVE)
+                        warning(f"嵌入图片失败 {img_path}: {e}")
+                        continue
+
+                    # 图片下方小字标注
+                    caption_p = cell.add_paragraph()
+                    caption_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    caption_p.paragraph_format.space_before = Pt(1)
+                    caption_p.paragraph_format.space_after = Pt(2)
+                    stars_str = f" {'★' * round(img_rating)}{'☆' * (5 - round(img_rating))}" if img_rating else ""
+                    _add_rich_run(caption_p, f"{img_title[:20]}{stars_str}", Pt(7), color=COLOR_MUTED)
+
+                # 移除未填充的行
+                # (python-docx 不支持直接删行，空单元格显示为空白即可)
+
+        # 平台间分隔
+        _add_decorative_line(doc, COLOR_BORDER, 1)
+        p = doc.add_paragraph()
+        p.paragraph_format.space_before = Pt(1)
+        p.paragraph_format.space_after = Pt(1)
+
+    # ── 各平台评价入口 ──
+    _add_heading(doc, "各平台评价入口", level=2)
+    platforms_links = get_platform_review_links()
+    for platform_name, info_item in platforms_links.items():
+        link_p = doc.add_paragraph()
+        link_p.paragraph_format.left_indent = Cm(0.3)
+        link_p.paragraph_format.space_after = Pt(1)
+        _add_rich_run(link_p, f"{info_item['icon']} {info_item['name']}：", Pt(9), bold=True, color=COLOR_MUTED)
+        _add_rich_run(link_p, info_item['review_url'], Pt(8), color=COLOR_SECONDARY)
+
+
+# ═══════════════════════════ 舆情分析 ═══════════════════════════
+
+def _build_analysis(doc, summary: dict):
+    """紧凑舆情分析与建议"""
+    platforms_data = summary.get("platforms", {})
+
+    total_pos = sum(p.get("positive", 0) for p in platforms_data.values())
+    total_neu = sum(p.get("neutral", 0) for p in platforms_data.values())
+    total_neg = sum(p.get("negative", 0) for p in platforms_data.values())
+    total_all = total_pos + total_neu + total_neg
+
+    if total_all > 0:
+        pos_pct = round(total_pos / total_all * 100)
+
+        doc.add_paragraph()
+        _add_heading(doc, "情感分布总览", level=2)
+
+        analysis = doc.add_paragraph()
+        analysis.paragraph_format.space_after = Pt(4)
+        _add_rich_run(analysis,
+            f"本周共 {total_all} 条有效评价——正面 {total_pos} 条（{pos_pct}%），"
+            f"中性 {total_neu} 条，负面 {total_neg} 条。",
+            Pt(10.5), color=COLOR_DARK)
+
+        # 健康度评估
+        assessment = doc.add_paragraph()
+        assessment.paragraph_format.left_indent = Cm(0.3)
+        assessment.paragraph_format.space_after = Pt(4)
+        if pos_pct >= 80:
+            _add_rich_run(assessment, "🟢 口碑健康度：优秀  ", Pt(10.5), bold=True, color=COLOR_POSITIVE)
+            _add_rich_run(assessment,
+                "整体口碑优秀，客人满意度高。保持现有服务标准，持续关注新增评价，差评48小时内回复。", Pt(10), color=COLOR_DARK)
+        elif pos_pct >= 60:
+            _add_rich_run(assessment, "🟡 口碑健康度：良好  ", Pt(10.5), bold=True, color=COLOR_NEUTRAL)
+            _add_rich_run(assessment,
+                "口碑良好但仍有改进空间。梳理差评共性原因，制定改进计划，积极回复各平台评价。", Pt(10), color=COLOR_DARK)
+        else:
+            _add_rich_run(assessment, "🔴 口碑健康度：需关注  ", Pt(10.5), bold=True, color=COLOR_NEGATIVE)
+            _add_rich_run(assessment,
+                "口碑需重点改善。立即排查差评根因，召开服务质量会议，制定系统化改进方案。", Pt(10), color=COLOR_DARK)
+
+        if total_neg > 0:
+            doc.add_paragraph()
+            _add_heading(doc, "⚠ 重点关注", level=2)
+            neg_note = doc.add_paragraph()
+            neg_note.paragraph_format.left_indent = Cm(0.3)
+            _add_rich_run(neg_note,
+                f"本周发现 {total_neg} 条负面评价，建议逐条分析并48小时内回复处理。回复「收集口碑」获取最新数据。",
+                Pt(10), color=COLOR_NEGATIVE)
+    else:
+        p = doc.add_paragraph("本周暂无足够数据进行舆情分析。")
+        p.paragraph_format.first_line_indent = Cm(0.74)
+
+    # 改进建议（紧凑列表）
+    doc.add_paragraph()
+    _add_heading(doc, "下周改进建议", level=2)
+
+    suggestions = [
+        ("评价回复", "每日检查携程/美团/飞猪最新评价，差评48小时内真诚回复"),
+        ("好评引导", "退房时引导满意客人在携程/美团写评价（退房好评推送已自动执行）"),
+        ("内容运营", "小红书和抖音每周发布2-3条民宿日常/周边攻略内容，提升自然曝光量"),
+        ("竞品对标", "关注庐山区域同类精品民宿评价趋势，了解差异化服务方向"),
+        ("服务优化", "针对高频差评关键词（隔音/卫生/水温）做预防性检查和改进"),
+    ]
+
+    for i, (title, detail) in enumerate(suggestions, 1):
+        item_p = doc.add_paragraph()
+        item_p.paragraph_format.left_indent = Cm(0.2)
+        item_p.paragraph_format.space_before = Pt(1)
+        item_p.paragraph_format.space_after = Pt(1)
+        _add_rich_run(item_p, f"{i}. {title}：", Pt(9.5), bold=True, color=COLOR_PRIMARY)
+        _add_rich_run(item_p, detail, Pt(9.5), color=COLOR_DARK)

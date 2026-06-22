@@ -40,3 +40,12 @@ node_modules/
 # OpenCLI
 .opencli/
 .env.local
+
+# 口碑监控图片缓存（采集后可重新生成）
+local_data/images/monitor/
+
+# 临时脚本/数据
+cleanup_and_collect.py
+recollect.py
+tmp_collect.json
+*_collect.json
