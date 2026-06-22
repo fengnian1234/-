@@ -456,9 +456,8 @@ def api_check_ai_enabled():
 
 
 @app.route("/api/booking/bind-room", methods=["POST"])
-@_require_staff_auth
 def api_bind_room_guest():
-    """合住人通过房间码绑定 — 需员工鉴权"""
+    """合住人通过房间码自助绑定（客人自助，无需员工鉴权）"""
     from services.booking import bind_room_guest
     data = request.get_json()
     if not data or "openid" not in data or "room_code" not in data:
@@ -620,8 +619,9 @@ def api_monitor_report():
     return jsonify({"report": generate_monitor_report()})
 
 @app.route("/api/monitor/collect", methods=["POST"])
+@_require_staff_auth
 def api_trigger_collection():
-    """触发平台信息收集"""
+    """触发平台信息收集（昂贵操作，需员工鉴权）"""
     from services.monitor import search_platform_mentions
     results = search_platform_mentions()
     return jsonify({"success": True, "results": results})
@@ -728,10 +728,10 @@ def api_update_order_status(order_id: int):
 #  周报生成（DOCX）
 # ══════════════════════════════════════════════════════════
 @app.route("/api/report/weekly", methods=["POST"])
+@_require_staff_auth
 def api_generate_weekly_report():
     """
-    生成口碑监控周报（DOCX格式）
-    触发平台数据收集 → 生成 .docx 文档
+    生成口碑监控周报（DOCX格式）— 昂贵操作，需员工鉴权
     """
     from services.report import generate_weekly_report
     try:
