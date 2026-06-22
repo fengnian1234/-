@@ -274,6 +274,10 @@ def _get_guest_context(openid: str) -> str:
         except Exception:
             pass
 
+        # 回头客标记
+        if pref and pref.visit_count and pref.visit_count > 1:
+            lines.append("⚠️ 这是一位回头客（第{}次入住），请用「欢迎回来」的语气，自然提及之前记住的偏好".format(pref.visit_count))
+
         if lines:
             return "## 当前客人信息\n" + "\n".join(f"- {l}" for l in lines)
         return ""
@@ -330,24 +334,50 @@ def _extract_preferences(openid: str, user_msg: str, ai_reply: str):
             break  # 每轮最多提取一条，避免过度写入
 
 
+def _promote_summary_to_preferences(openid: str, summary: str):
+    """会话清理前，将摘要中尚未入库的关键信息提升为永久偏好"""
+    if not summary:
+        return
+    # 摘要格式: "客人小明；关心话题：美食/路线；· 好：美式咖啡；· 忌：辣椒"
+    patterns = [
+        (r'好[：:]\s*([^\s；;，,]{2,20})', 'coffee'),
+        (r'偏好[：:]\s*([^\s；;，,]{2,20})', 'coffee'),
+        (r'忌[：:]\s*([^\s；;，,]{2,20})', 'diet'),
+        (r'过敏[：:]\s*([^\s；;，,]{2,20})', 'special'),
+        (r'不(?:吃|喝|喜欢)[：:]\s*([^\s；;，,]{2,20})', 'diet'),
+    ]
+    for pattern, key in patterns:
+        match = re.search(pattern, summary)
+        if match:
+            record_guest_preference(openid, key, match.group(1).strip())
+
+
 def _cleanup_stale_sessions():
-    """清理过期会话缓存（7天无活动）"""
+    """清理过期会话缓存，清理前将摘要提升为永久偏好"""
     now = _time_module.time()
     stale = [
         oid for oid, c in _conversation_cache.items()
         if now - c.get("last_active", 0) > SESSION_TTL_SECONDS
     ]
     for oid in stale:
+        # 清理前保存摘要中的关键信息
+        summary = _conversation_cache[oid].get("summary", "")
+        if summary:
+            _promote_summary_to_preferences(oid, summary)
         del _conversation_cache[oid]
     if stale:
-        debug(f"清理 {len(stale)} 个过期会话")
+        info(f"🧹 清理 {len(stale)} 个过期会话（偏好已持久化）")
 
 
 def reset_conversation(openid: str):
-    """重置指定用户的对话历史"""
+    """重置对话历史 — 清除临时会话，保留永久偏好"""
+    cache = _conversation_cache.get(openid, {})
+    summary = cache.get("summary", "") if isinstance(cache, dict) else ""
+    if summary:
+        _promote_summary_to_preferences(openid, summary)
     _conversation_cache.pop(openid, None)
     _pending_continuation.pop(openid, None)
-    info(f"已重置 {openid[:12]} 的对话历史")
+    info(f"已重置 {openid[:12]} 的对话历史（偏好已保留）")
 
 
 def record_guest_preference(openid: str, key: str, value: str):
