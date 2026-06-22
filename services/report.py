@@ -1,7 +1,7 @@
 """
 周报生成服务 - 生成 DOCX 格式的口碑监控周报
 使用 python-docx 生成紧凑优雅中式排版
-v3: 紧凑版 — 合并平台+图片区 + 图片网格 + 全局收紧
+v3.6: +趋势分析图表（matplotlib）
 """
 import os
 from collections import defaultdict
@@ -13,7 +13,17 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml
-# PIL 可选依赖，用于智能图片宽度；不可用时统一使用默认宽度
+
+# matplotlib 可选依赖，用于趋势图；不可用时降级为纯文字趋势
+try:
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import matplotlib.font_manager as fm
+    import matplotlib.ticker as mticker
+    _HAS_MPL = True
+except ImportError:
+    _HAS_MPL = False
 
 from services.logger import info, warning
 
@@ -198,6 +208,163 @@ def _prepare_image_for_docx(full_path: str) -> tuple:
     return (full_path, img_width)
 
 
+# ═══════════════════════════ 趋势分析 ═══════════════════════════
+
+# matplotlib 中文字体配置
+if _HAS_MPL:
+    _CHINESE_FONTS = ['Microsoft YaHei', 'SimHei', 'WenQuanYi Micro Hei',
+                       'Noto Sans CJK SC', 'PingFang SC', 'Heiti SC']
+    _available_fonts = {f.name for f in fm.fontManager.ttflist}
+    _selected_font = None
+    for _fn in _CHINESE_FONTS:
+        if _fn in _available_fonts:
+            _selected_font = _fn
+            break
+    if not _selected_font:
+        _selected_font = 'sans-serif'
+    plt.rcParams['font.sans-serif'] = [_selected_font, 'DejaVu Sans']
+    plt.rcParams['axes.unicode_minus'] = False
+
+
+def _query_weekly_trends(db, weeks: int = 6) -> list:
+    """从 PlatformMention 查询最近 N 周的逐周趋势数据"""
+    cutoff = datetime.utcnow() - timedelta(weeks=weeks)
+
+    mentions = db.query(PlatformMention).filter(
+        PlatformMention.collected_at >= cutoff
+    ).order_by(PlatformMention.collected_at.asc()).all()
+
+    # 按 ISO 周分组
+    weekly = defaultdict(lambda: {"total": 0, "ratings": [], "positive": 0, "neutral": 0, "negative": 0})
+
+    for m in mentions:
+        if not m.collected_at:
+            continue
+        iso = m.collected_at.isocalendar()
+        week_label = f"{iso[0]}W{iso[1]:02d}"
+        weekly[week_label]["total"] += 1
+        if m.rating and m.rating > 0:
+            weekly[week_label]["ratings"].append(m.rating)
+        sent = m.sentiment or "neutral"
+        if sent == "positive":
+            weekly[week_label]["positive"] += 1
+        elif sent == "negative":
+            weekly[week_label]["negative"] += 1
+        else:
+            weekly[week_label]["neutral"] += 1
+
+    result = []
+    for week_label in sorted(weekly.keys()):
+        data = weekly[week_label]
+        total = data["total"]
+        ratings = data["ratings"]
+        avg_rating = round(sum(ratings) / len(ratings), 2) if ratings else 0
+        pos_pct = round(data["positive"] / total * 100, 1) if total > 0 else 0
+        neu_pct = round(data["neutral"] / total * 100, 1) if total > 0 else 0
+        neg_pct = round(data["negative"] / total * 100, 1) if total > 0 else 0
+
+        result.append({
+            "week": week_label,
+            "total": total,
+            "avg_rating": avg_rating,
+            "positive": data["positive"],
+            "neutral": data["neutral"],
+            "negative": data["negative"],
+            "pos_pct": pos_pct,
+            "neu_pct": neu_pct,
+            "neg_pct": neg_pct,
+        })
+
+    return result
+
+
+def _generate_trend_chart(trend_data: list, chart_type: str, output_dir: str) -> str | None:
+    """用 matplotlib 生成单张趋势图 PNG，返回文件路径"""
+    if not _HAS_MPL or len(trend_data) < 2:
+        return None
+
+    weeks = [d["week"] for d in trend_data]
+    # 配色与报告统一
+    GREEN = '#2a3d33'
+    MUTED = '#8b7355'
+    POS = '#388E3C'
+    NEU = '#f9a825'
+    NEG = '#d32f2f'
+    BG = '#faf8f5'
+
+    fig, ax = plt.subplots(figsize=(6.8, 2.8))
+    fig.patch.set_facecolor(BG)
+    ax.set_facecolor(BG)
+
+    if chart_type == "rating":
+        ratings = [d["avg_rating"] for d in trend_data]
+        ax.plot(weeks, ratings, marker='o', color=GREEN, linewidth=2.2,
+                markersize=7, markerfacecolor='white', markeredgewidth=2,
+                markeredgecolor=GREEN)
+        ax.set_ylabel('平均评分', fontsize=10, color=GREEN)
+        ax.set_title('评分趋势', fontsize=12, fontweight='bold', color=GREEN, pad=8)
+        ax.set_ylim(max(0, min(ratings) - 0.5), 5.1)
+        for i, (x, y) in enumerate(zip(weeks, ratings)):
+            ax.annotate(f'{y:.1f}', (x, y), textcoords="offset points",
+                        xytext=(0, 10), ha='center', fontsize=8.5, color=GREEN)
+    elif chart_type == "mentions":
+        totals = [d["total"] for d in trend_data]
+        bars = ax.bar(weeks, totals, color=GREEN, width=0.45, alpha=0.85, edgecolor='white', linewidth=0.5)
+        ax.set_ylabel('提及数', fontsize=10, color=GREEN)
+        ax.set_title('提及数量趋势', fontsize=12, fontweight='bold', color=GREEN, pad=8)
+        for bar, val in zip(bars, totals):
+            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
+                    str(val), ha='center', fontsize=8.5, color=GREEN)
+    elif chart_type == "sentiment":
+        x = range(len(weeks))
+        width = 0.45
+        pos_vals = [d["positive"] for d in trend_data]
+        neu_vals = [d["neutral"] for d in trend_data]
+        neg_vals = [d["negative"] for d in trend_data]
+        ax.bar(x, pos_vals, width, label='正面', color=POS, alpha=0.85)
+        ax.bar(x, neu_vals, width, bottom=pos_vals, label='中性', color=NEU, alpha=0.85)
+        bottom_neu = [p + n for p, n in zip(pos_vals, neu_vals)]
+        ax.bar(x, neg_vals, width, bottom=bottom_neu, label='负面', color=NEG, alpha=0.85)
+        ax.set_xticks(x)
+        ax.set_xticklabels(weeks)
+        ax.set_ylabel('评价数', fontsize=10, color=GREEN)
+        ax.set_title('情感分布趋势', fontsize=12, fontweight='bold', color=GREEN, pad=8)
+        ax.legend(fontsize=8, loc='upper right', framealpha=0.9)
+
+    # 通用设置
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_color('#d5cec0')
+    ax.spines['bottom'].set_color('#d5cec0')
+    ax.tick_params(axis='both', colors='#6b6b66', labelsize=8.5)
+    ax.yaxis.set_major_locator(mticker.MaxNLocator(integer=True, nbins=5))
+
+    fig.tight_layout(pad=1.5)
+    filepath = os.path.join(output_dir, f"trend_{chart_type}.png")
+    fig.savefig(filepath, dpi=140, bbox_inches='tight', facecolor=BG, edgecolor='none')
+    plt.close(fig)
+    return filepath
+
+
+def _prepare_trend_charts(db) -> tuple:
+    """查询趋势数据并生成三张图表 PNG，返回 (chart_paths, trend_data)"""
+    trend_data = _query_weekly_trends(db, weeks=6)
+    if not _HAS_MPL or len(trend_data) < 2:
+        return [], trend_data
+
+    # 保存到临时目录
+    chart_dir = os.path.join(REPORT_DIR, "_trend_charts")
+    os.makedirs(chart_dir, exist_ok=True)
+
+    charts = []
+    for ctype in ("rating", "mentions", "sentiment"):
+        fp = _generate_trend_chart(trend_data, ctype, chart_dir)
+        if fp and os.path.exists(fp):
+            charts.append(fp)
+
+    return charts, trend_data
+
+
 # ═══════════════════════════ 文档构建 ═══════════════════════════
 
 def _build_docx(summary: dict, search_results: dict,
@@ -240,6 +407,86 @@ def _build_docx(summary: dict, search_results: dict,
     _add_heading(doc, "三、舆情分析与改进建议", level=1)
     _add_decorative_line(doc)
     _build_analysis(doc, summary)
+
+    # ─── 四、趋势分析（图表）───
+    db2 = SessionLocal()
+    try:
+        trend_charts, trend_data = _prepare_trend_charts(db2)
+    finally:
+        db2.close()
+
+    if trend_charts or trend_data:
+        _add_heading(doc, "四、趋势分析", level=1)
+        _add_decorative_line(doc)
+
+        if trend_charts:
+            intro = doc.add_paragraph()
+            intro.paragraph_format.space_after = Pt(6)
+            _add_rich_run(intro,
+                f"以下图表展示最近 {len(trend_data)} 周的口碑变化趋势（数据截止 {datetime.utcnow().strftime('%m.%d')}）：",
+                Pt(10.5), color=COLOR_DARK)
+
+            # 嵌入三张趋势图（每张图配简短解读）
+            chart_labels = {
+                "trend_rating.png": "📈 评分趋势 — 反映客人满意度变化，持续上升表明服务改进有效",
+                "trend_mentions.png": "📊 提及数量 — 反映品牌曝光度波动，受旅游淡旺季和内容运营影响",
+                "trend_sentiment.png": "🎭 情感分布 — 正面(绿)/中性(黄)/负面(红)占比变化，直观显示口碑健康度",
+            }
+            for chart_path in trend_charts:
+                fname = os.path.basename(chart_path)
+                label_text = chart_labels.get(fname, "")
+
+                # 趋势图宽度 5.8"，居中
+                chart_p = doc.add_paragraph()
+                chart_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                chart_p.paragraph_format.space_before = Pt(8)
+                chart_p.paragraph_format.space_after = Pt(2)
+
+                try:
+                    prepared_path, _ = _prepare_image_for_docx(chart_path)
+                    run = chart_p.add_run()
+                    run.add_picture(prepared_path, width=Inches(5.8))
+                except Exception as e:
+                    _add_rich_run(chart_p, f"[图表加载失败]", Pt(8), color=COLOR_NEGATIVE)
+                    warning(f"嵌入趋势图失败 {chart_path}: {e}")
+                    continue
+
+                if label_text:
+                    caption = doc.add_paragraph()
+                    caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    caption.paragraph_format.space_after = Pt(6)
+                    _add_rich_run(caption, label_text, Pt(8.5), color=COLOR_MUTED)
+        else:
+            # 无图表时的纯文字趋势
+            trend_note = doc.add_paragraph()
+            trend_note.paragraph_format.space_after = Pt(6)
+            if len(trend_data) < 2:
+                _add_rich_run(trend_note,
+                    "⚠ 趋势数据不足（需至少2周历史数据），将在后续周报中自动展示评分/提及/情感趋势图。",
+                    Pt(10.5), color=COLOR_MUTED)
+            elif not _HAS_MPL:
+                _add_rich_run(trend_note,
+                    "⚠ matplotlib 未安装，无法生成趋势图。安装后即可自动展示趋势图。",
+                    Pt(10.5), color=COLOR_MUTED)
+
+            # 文字趋势概述
+            if len(trend_data) >= 2:
+                latest = trend_data[-1]
+                prev = trend_data[-2]
+                dr = latest.get("avg_rating", 0) - prev.get("avg_rating", 0)
+                dt = latest.get("total", 0) - prev.get("total", 0)
+
+                text_trend = doc.add_paragraph()
+                text_trend.paragraph_format.left_indent = Cm(0.3)
+                text_trend.paragraph_format.space_after = Pt(2)
+                direction_r = "↑" if dr > 0 else ("↓" if dr < 0 else "→")
+                direction_t = "↑" if dt > 0 else ("↓" if dt < 0 else "→")
+                color_r = COLOR_POSITIVE if dr >= 0 else COLOR_NEGATIVE
+                color_t = COLOR_POSITIVE if dt >= 0 else COLOR_NEGATIVE
+                _add_rich_run(text_trend, f"与上周相比：评分 {latest.get('avg_rating',0)} ", Pt(10), color=COLOR_DARK)
+                _add_rich_run(text_trend, f"{direction_r}{abs(dr):.1f}", Pt(10), bold=True, color=color_r)
+                _add_rich_run(text_trend, f"  ·  提及数 {latest.get('total',0)} ", Pt(10), color=COLOR_DARK)
+                _add_rich_run(text_trend, f"{direction_t}{abs(dt)}", Pt(10), bold=True, color=color_t)
 
     # ─── 页脚 ───
     _add_decorative_line(doc, COLOR_BORDER, 1)
