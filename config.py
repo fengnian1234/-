@@ -28,6 +28,11 @@ WECHAT_ENCODING_AES_KEY = os.getenv("WECHAT_ENCODING_AES_KEY", "")
 WECHAT_MCH_ID = os.getenv("WECHAT_MCH_ID", "")         # 微信支付商户号
 WECHAT_MCH_KEY = os.getenv("WECHAT_MCH_KEY", "")       # 微信支付API密钥
 
+# ── 员工鉴权（保护预订管理/退房等敏感操作）─────────────────
+STAFF_API_KEY = os.getenv("STAFF_API_KEY", "")
+# 如果未设置，在 DEBUG 模式下允许本地请求通过，生产模式拒绝所有未鉴权请求
+STAFF_AUTH_REQUIRED = not DEBUG or bool(STAFF_API_KEY)
+
 # ── 微信小程序配置 ─────────────────────────────────────────
 WECHAT_MINI_APP_ID = os.getenv("WECHAT_MINI_APP_ID", "")
 WECHAT_MINI_APP_SECRET = os.getenv("WECHAT_MINI_APP_SECRET", "")
@@ -47,8 +52,8 @@ AI_MODEL = os.getenv("AI_MODEL", "deepseek-chat")
 AI_ENABLED = bool(ANTHROPIC_API_KEY)
 # 重要：AI仅在用户有确认预订后解锁（要求1）
 AI_REQUIRES_BOOKING = True
-# AI 请求间隔：每 N 秒最多 1 次 AI 请求
-AI_REQUEST_INTERVAL = int(os.getenv("AI_REQUEST_INTERVAL", "3"))
+# AI 请求间隔：每 N 秒最多 1 次 AI 请求（全局限流，改为per-user限流后此处作为兜底）
+AI_REQUEST_INTERVAL = float(os.getenv("AI_REQUEST_INTERVAL", "0.5"))
 # 单条消息最大长度（超过截断，防止 token 浪费）
 AI_MAX_MESSAGE_LENGTH = int(os.getenv("AI_MAX_MESSAGE_LENGTH", "500"))
 

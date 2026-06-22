@@ -6,12 +6,14 @@ import os
 import hashlib
 import time
 from datetime import datetime
+from functools import wraps
 from flask import Flask, request, jsonify, render_template, abort, g
 from services.logger import info, warning, error as log_error, debug, log_ai, log_keyword, log_booking
 from config import (
     DEBUG, SECRET_KEY, WECHAT_TOKEN, WECHAT_APP_ID, WECHAT_APP_SECRET,
     WECHAT_MINI_APP_ID, WECHAT_MINI_APP_SECRET,
     BASE_URL, BNB_NAME, BNB_CONFIGS,
+    STAFF_API_KEY, STAFF_AUTH_REQUIRED,
 )
 from models import init_db, SessionLocal, Booking
 from seed_data import seed_all
@@ -20,11 +22,34 @@ from bnb_context import get_current_bnb, get_current_bnb_id, get_bnb_id_from_pat
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
-# ── CORS 支持 ──────────────────────────────────────────
+# ── 员工鉴权装饰器 ───────────────────────────────────────
+def _require_staff_auth(f):
+    """保护敏感管理API：需要 X-Staff-Key 请求头匹配 STAFF_API_KEY"""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not STAFF_AUTH_REQUIRED:
+            return f(*args, **kwargs)
+        api_key = request.headers.get("X-Staff-Key", "")
+        if not api_key or api_key != STAFF_API_KEY:
+            warning(f"[AUTH] 未授权访问尝试: {request.path} from {request.remote_addr}")
+            return jsonify({"success": False, "message": "未授权访问"}), 401
+        return f(*args, **kwargs)
+    return decorated
+
+# ── CORS 支持（限制来源）──────────────────────────────────
 @app.after_request
 def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    # 仅允许已知可信来源
+    trusted = [
+        "http://127.0.0.1:5000",
+        "http://localhost:5000",
+        "https://yunshangguishu.com",
+    ]
+    origin = request.headers.get("Origin", "")
+    if origin and origin in trusted:
+        response.headers["Access-Control-Allow-Origin"] = origin
+    # 生产模式不允许任意跨域
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, X-Staff-Key"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     return response
 
@@ -323,8 +348,9 @@ def api_staff_dashboard():
     })
 
 @app.route("/api/staff/acknowledge", methods=["POST"])
+@_require_staff_auth
 def api_acknowledge_request():
-    """员工确认收到请求"""
+    """员工确认收到请求 — 需员工鉴权"""
     from services.notify import acknowledge_request
     data = request.get_json()
     if not data or "id" not in data:
@@ -333,8 +359,9 @@ def api_acknowledge_request():
     return jsonify({"success": True})
 
 @app.route("/api/staff/complete", methods=["POST"])
+@_require_staff_auth
 def api_complete_request():
-    """员工完成请求"""
+    """员工完成请求 — 需员工鉴权"""
     from services.notify import complete_request
     data = request.get_json()
     if not data or "id" not in data:
@@ -347,8 +374,9 @@ def api_complete_request():
 #  预订管理API（要求1、3、4）
 # ══════════════════════════════════════════════════════════
 @app.route("/api/booking/confirm", methods=["POST"])
+@_require_staff_auth
 def api_confirm_booking():
-    """前台确认预订（解锁AI）"""
+    """前台确认预订（解锁AI）— 需员工鉴权"""
     from services.booking import confirm_booking
     data = request.get_json()
     if not data:
@@ -385,8 +413,9 @@ def api_confirm_booking():
     })
 
 @app.route("/api/booking/<int:booking_id>/checkin", methods=["POST"])
+@_require_staff_auth
 def api_check_in(booking_id: int):
-    """办理入住"""
+    """办理入住 — 需员工鉴权"""
     from services.booking import check_in_booking
     data = request.get_json() or {}
     booking = check_in_booking(booking_id, data.get("room_number", ""))
@@ -395,8 +424,9 @@ def api_check_in(booking_id: int):
     return jsonify({"success": True, "booking": booking.to_dict()})
 
 @app.route("/api/booking/<int:booking_id>/checkout", methods=["POST"])
+@_require_staff_auth
 def api_check_out(booking_id: int):
-    """办理退房（触发30分钟好评推送倒计时）"""
+    """办理退房（触发30分钟好评推送倒计时）— 需员工鉴权"""
     from services.booking import check_out_booking
     booking = check_out_booking(booking_id)
     if not booking:
@@ -426,8 +456,9 @@ def api_check_ai_enabled():
 
 
 @app.route("/api/booking/bind-room", methods=["POST"])
+@_require_staff_auth
 def api_bind_room_guest():
-    """合住人通过房间码绑定"""
+    """合住人通过房间码绑定 — 需员工鉴权"""
     from services.booking import bind_room_guest
     data = request.get_json()
     if not data or "openid" not in data or "room_code" not in data:
@@ -832,9 +863,10 @@ def api_simulate_reset():
 @app.route("/api/simulate/mode", methods=["POST"])
 def api_simulate_set_mode():
     """
-    设置模拟用户的 AI 模式（通过模拟预订状态）
-    用于测试三种 AI 模式：travel_advisor | guest_butler | post_stay
+    设置模拟用户的 AI 模式（仅 DEBUG 模式可用）
     """
+    if not DEBUG:
+        return jsonify({"success": False, "message": "模拟器仅限开发模式使用"}), 403
     from services.ai import get_conversation_mode, reset_conversation
     from models import SessionLocal, Booking
     from datetime import datetime, timedelta

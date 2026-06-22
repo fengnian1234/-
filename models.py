@@ -349,6 +349,39 @@ class FoodRecommend(Base):
 
 
 # ══════════════════════════════════════════════════════════
+#  客人偏好模型（v3.6：个性化推荐数据基础）
+# ══════════════════════════════════════════════════════════
+class GuestPreference(Base):
+    __tablename__ = "guest_preferences"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    openid = Column(String(64), nullable=False, index=True, comment="微信openid")
+    bnb_id = Column(String(20), default="guishu", comment="所属民宿")
+    # 偏好字段（从对话中自动提取或人工标注）
+    coffee_style = Column(String(50), comment="咖啡口味偏好")
+    tea_style = Column(String(50), comment="茶饮偏好")
+    diet_notes = Column(String(200), comment="饮食忌口/偏好")
+    activity_likes = Column(String(200), comment="喜欢的活动类型")
+    room_pref = Column(String(100), comment="房型偏好")
+    special_notes = Column(String(300), comment="特殊备注（纪念日/过敏等）")
+    # 行为统计
+    visit_count = Column(Integer, default=1, comment="入住次数")
+    avg_rating_given = Column(Float, comment="历史均分")
+    last_topic = Column(String(100), comment="最近关心的话题")
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id, "openid": self.openid,
+            "coffee_style": self.coffee_style, "tea_style": self.tea_style,
+            "diet_notes": self.diet_notes, "activity_likes": self.activity_likes,
+            "room_pref": self.room_pref, "special_notes": self.special_notes,
+            "visit_count": self.visit_count, "last_topic": self.last_topic,
+        }
+
+
+# ══════════════════════════════════════════════════════════
 #  平台监控模型（要求6：收集主流平台民宿信息）
 # ══════════════════════════════════════════════════════════
 class PlatformMention(Base):
