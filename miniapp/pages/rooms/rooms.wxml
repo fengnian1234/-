@@ -4,7 +4,7 @@
   type="warning"
   icon="📌"
   title="预订须知"
-  items="{{['预订请通过携程/美团/飞猪/大众点评搜索「云上归墅」', '支付方式：平台在线支付或到店支付', '入住时间14:00后 · 退房时间12:00前', '订房成功后请截图发至民宿微信获取AI管家服务']}}"
+  items="{{noticeItems}}"
 />
 
 <block wx:if="{{!loading && rooms.length}}">

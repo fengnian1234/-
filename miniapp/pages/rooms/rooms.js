@@ -1,12 +1,25 @@
 const api = require('../../utils/api');
+const app = getApp();
 
 Page({
   data: {
     rooms: [],
     loading: true,
+    currentBnb: {},
+    noticeItems: [],
   },
 
   onLoad() {
+    const bnb = app.globalData.currentBnb;
+    this.setData({
+      currentBnb: bnb,
+      noticeItems: [
+        `预订请通过携程/美团/飞猪/大众点评搜索「${bnb.name}」`,
+        '支付方式：平台在线支付或到店支付',
+        '入住时间14:00后 · 退房时间12:00前',
+        '订房成功后请截图发至民宿微信获取AI管家服务'
+      ],
+    });
     this.fetchRooms();
   },
 

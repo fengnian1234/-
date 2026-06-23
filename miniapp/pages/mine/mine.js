@@ -64,8 +64,8 @@ Page({
   /** 关于民宿 */
   onAbout() {
     wx.showModal({
-      title: '关于云上归墅',
-      content: `${BNB.name}\n\n${BNB.address}\n电话：${BNB.phone}\n\n庐山之巅，大林沟路27号，云雾深处的静谧之所。携程4.9分·美团5.0分，期待您的光临。`,
+      title: `关于${BNB.shortName}`,
+      content: `${BNB.name}\n\n${BNB.address}\n电话：${BNB.phone}\n\n${BNB.description}\n\n期待您的光临。`,
       showCancel: false,
       confirmText: '好的',
     });

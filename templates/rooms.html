@@ -6,7 +6,7 @@
 <section class="page-header">
     <div class="container">
         <h1>🛏️ 房型展示</h1>
-        <p>8种精品房型 · U型三层小楼 · 11间客房 · 山景/云海/露台</p>
+        <p>{% if bnb_id == 'guishu' %}8种精品房型 · 11间客房 · U型三层小楼{% elif bnb_id == 'shanji' %}16种精品房型 · 30间客房 · 私享300平花园{% elif bnb_id == 'donglinwai' %}6种禅意房型 · 20间客房 · 东林寺旁{% endif %}</p>
     </div>
 </section>
 
@@ -14,10 +14,12 @@
     <div class="container">
         <div class="notice-card notice-card--warning" style="margin-bottom:1.5rem">
             <strong>📋 预订须知</strong><br>
-            🍳 民宿<strong>不提供早餐</strong>，一楼「三山二水咖啡」供应咖啡简餐<br>
+            🍳 民宿<strong>不提供早餐</strong>，{% if bnb_id == 'guishu' %}一楼「{{ bnb.cafe_name }}」供应咖啡简餐{% elif bnb_id == 'shanji' %}「{{ bnb.cafe_name }}」供应茶饮点心{% elif bnb_id == 'donglinwai' %}「{{ bnb.cafe_name }}」供应精品咖啡{% endif %}<br>
             🛏️ 所有房型<strong>不可加床</strong>，不提供婴儿床<br>
-            🐾 <strong>宠物友好</strong>：可免费携带猫狗入住（需提前联系）<br>
-            🅿️ 免费私家停车场  |  ⏰ 入住14:00后 · 退房12:00前  |  免押金
+            {% if bnb_id == 'donglinwai' %}🐾 <strong>宠物友好</strong>：可免费携带宠物入住（需提前联系）<br>
+            🧘 东林寺步行可达 · 免费洗衣服务<br>{% else %}🐾 <strong>宠物友好</strong>：可免费携带猫狗入住（需提前联系）<br>
+            🅿️ 免费私家停车场<br>{% endif %}
+            ⏰ 入住14:00后 · 退房12:00前  |  免押金
         </div>
         {% if rooms %}
         <div class="rooms-list">

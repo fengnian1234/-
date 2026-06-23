@@ -50,7 +50,7 @@
     <view class="intro-item fade-up visible">
       <view class="intro-item__icon">🏡</view>
       <text class="intro-item__title">山居小院</text>
-      <text class="intro-item__desc">庐山之巅，大林沟路27号，远离尘嚣的山间院落</text>
+      <text class="intro-item__desc">{{currentBnb.description}}</text>
     </view>
     <view class="intro-item fade-up visible">
       <view class="intro-item__icon">☕</view>

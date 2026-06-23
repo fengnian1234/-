@@ -3,7 +3,7 @@
 """
 from datetime import datetime, timedelta
 from sqlalchemy import func
-from models import SessionLocal, AggregatedOrder
+from models import SessionLocal, AggregatedOrder, Room
 
 
 PLATFORMS = {
@@ -171,11 +171,23 @@ def get_dashboard_stats(bnb_id=None) -> dict:
         db.close()
 
 
-def get_room_calendar(days: int = 14) -> list:
+def get_room_calendar(days: int = 14, bnb_id: str = "guishu") -> list:
     """获取未来N天的房态日历"""
     db = SessionLocal()
     try:
         today = datetime.utcnow()
+        # 按民宿查询实际客房总数
+        total_rooms = db.query(Room).filter(
+            Room.bnb_id == bnb_id
+        ).count()
+        # fallback: count total_count sum
+        if total_rooms == 0:
+            total_rooms = 1
+        else:
+            room_sum = db.query(Room).filter(Room.bnb_id == bnb_id).with_entities(
+                Room.total_count
+            ).all()
+            total_rooms = sum(r[0] for r in room_sum) if room_sum else total_rooms
         calendar = []
         for i in range(days):
             day = (today + timedelta(days=i)).strftime("%Y-%m-%d")
@@ -191,7 +203,7 @@ def get_room_calendar(days: int = 14) -> list:
             ).count()
 
             weekday = ["日","一","二","三","四","五","六"][(today + timedelta(days=i)).weekday()]
-            occupancy = min(100, round(staying / 11 * 100))  # 11间房
+            occupancy = min(100, round(staying / total_rooms * 100))
 
             calendar.append({
                 "date": day, "weekday": weekday,

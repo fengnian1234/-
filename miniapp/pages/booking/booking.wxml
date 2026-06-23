@@ -1,7 +1,7 @@
 <view class="page">
   <view class="page-header">
     <text class="page-header__title">预订民宿</text>
-    <text class="page-header__desc">在以下平台搜索「云上归墅」预订</text>
+    <text class="page-header__desc">在以下平台搜索「{{currentBnb.shortName}}」预订</text>
   </view>
 
   <view class="platform-list">

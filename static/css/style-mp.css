@@ -2,10 +2,17 @@
  * 小程序端样式覆盖 — 与网页端同结构、不同视觉
  * 通过 ?mp=1 参数激活，嵌入 miniapp-simulator iframe 时生效
  * 设计：淡雅 · 清秀 · 留白 — 比网页端更轻盈
+ * 配色跟随 BnB 切换，通过 [data-bnb] 选择器区分
  */
 
-/* ── 小程序端淡雅配色 ── */
+/* ── 共享 mp-mode 字体设定 ── */
 body.mp-mode {
+    font-weight: 340;
+    letter-spacing: 0.015em;
+}
+
+/* ── 小程序端淡雅配色（归墅 — 竹青淡调） ── */
+[data-bnb="guishu"] body.mp-mode {
     --color-primary: #6b9b7e;
     --color-primary-light: #8db89d;
     --color-primary-dark: #527a60;
@@ -16,10 +23,89 @@ body.mp-mode {
     --color-text-light: #7a8078;
     --color-text-lighter: #a0a89e;
     --color-border: #e4e8e0;
+    --color-white: #fffefb;
     --color-shadow: rgba(100,130,110,0.04);
     --color-shadow-hover: rgba(100,130,110,0.08);
-    font-weight: 340;
-    letter-spacing: 0.015em;
+}
+/* ── 山纪 — 茶褐暖调 ── */
+[data-bnb="shanji"] body.mp-mode {
+    --color-primary: #9b7a4a;
+    --color-primary-light: #b8965a;
+    --color-primary-dark: #7a5a30;
+    --color-accent: #c8a878;
+    --color-bg: #faf7f0;
+    --color-bg-light: #f3efe2;
+    --color-text: #3a3020;
+    --color-text-light: #7a7060;
+    --color-text-lighter: #a09880;
+    --color-border: #e0d8c0;
+    --color-white: #fffdf8;
+    --color-shadow: rgba(140,110,70,0.04);
+    --color-shadow-hover: rgba(140,110,70,0.08);
+}
+/* ── 东林外 — 禅灰蓝调 ── */
+[data-bnb="donglinwai"] body.mp-mode {
+    --color-primary: #7b8daa;
+    --color-primary-light: #9ba8c0;
+    --color-primary-dark: #5a6a80;
+    --color-accent: #b0a090;
+    --color-bg: #f5f7fa;
+    --color-bg-light: #eef1f6;
+    --color-text: #2a2e38;
+    --color-text-light: #6a7078;
+    --color-text-lighter: #9098a0;
+    --color-border: #d8dce4;
+    --color-white: #fcfdfe;
+    --color-shadow: rgba(100,110,130,0.04);
+    --color-shadow-hover: rgba(100,110,130,0.08);
+}
+/* ── 暗色模式 — 归墅 ── */
+[data-bnb="guishu"][data-theme="dark"] body.mp-mode {
+    --color-primary: #8db89d;
+    --color-primary-light: #6b9b7e;
+    --color-primary-dark: #a0c8b0;
+    --color-accent: #c8a080;
+    --color-bg: #1a1f1c;
+    --color-bg-light: #1e2420;
+    --color-text: #d8e0d4;
+    --color-text-light: #a0b0a0;
+    --color-text-lighter: #788878;
+    --color-border: #383f38;
+    --color-white: #1e2420;
+    --color-shadow: rgba(0,0,0,0.2);
+    --color-shadow-hover: rgba(0,0,0,0.3);
+}
+/* ── 暗色模式 — 山纪 ── */
+[data-bnb="shanji"][data-theme="dark"] body.mp-mode {
+    --color-primary: #b8965a;
+    --color-primary-light: #9b7a4a;
+    --color-primary-dark: #c8a868;
+    --color-accent: #c8a878;
+    --color-bg: #1f1c12;
+    --color-bg-light: #262218;
+    --color-text: #e0d8c8;
+    --color-text-light: #a09880;
+    --color-text-lighter: #787060;
+    --color-border: #383020;
+    --color-white: #262218;
+    --color-shadow: rgba(0,0,0,0.2);
+    --color-shadow-hover: rgba(0,0,0,0.3);
+}
+/* ── 暗色模式 — 东林外 ── */
+[data-bnb="donglinwai"][data-theme="dark"] body.mp-mode {
+    --color-primary: #9ba8c0;
+    --color-primary-light: #7b8daa;
+    --color-primary-dark: #b0c0d8;
+    --color-accent: #b0a090;
+    --color-bg: #1a1c20;
+    --color-bg-light: #1e2228;
+    --color-text: #d8dce0;
+    --color-text-light: #9098a8;
+    --color-text-lighter: #687078;
+    --color-border: #2a3038;
+    --color-white: #1e2228;
+    --color-shadow: rgba(0,0,0,0.2);
+    --color-shadow-hover: rgba(0,0,0,0.3);
 }
 
 /* ── 隐藏网页端专属元素 ── */
@@ -30,12 +116,19 @@ body.mp-mode .hero {
     max-height: 340px;
     overflow: hidden;
 }
+body.mp-mode .hero--photo {
+    max-height: 320px;
+    background-position: center 15%;
+}
 body.mp-mode .hero::after {
     /* 树冠剪影 — 结束位置下移，让四行文字完整显示在深色区 */
     height: 22%;
     bottom: -2px;
     left: -5%;
     right: -5%;
+}
+body.mp-mode .hero--photo::after {
+    height: 14%;
 }
 body.mp-mode .hero-overlay { padding: 2.5rem 1.2rem 2.5rem; }
 body.mp-mode .hero-title { font-size: 1.6rem; }
@@ -91,7 +184,7 @@ body.mp-mode .intro-icon {
     margin-bottom: 0;
 }
 body.mp-mode .intro-item h3 { font-size: 0.9rem; margin-bottom: 2px; }
-body.mp-mode .intro-item p { font-size: 0.82rem; line-height: 1.55; color: #2a3028; }
+body.mp-mode .intro-item p { font-size: 0.82rem; line-height: 1.55; color: var(--color-text); }
 
 /* ── 房型卡片 ── */
 body.mp-mode .rooms-preview {
@@ -145,6 +238,36 @@ body.mp-mode .healing-desc {
 body.mp-mode .healing-tiers {
     gap: 6px;
 }
+/* 功效标签 — mp-mode 显式声明，防止 body.mp-mode 的 font-weight 泄漏 */
+body.mp-mode .healing-tags {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+body.mp-mode .healing-tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 10px;
+    line-height: 1.6;
+    white-space: nowrap;
+}
+body.mp-mode .healing-tag--green  { background: #e8f5e9; color: #2e7d32; }
+body.mp-mode .healing-tag--blue   { background: #e3f2fd; color: #1565c0; }
+body.mp-mode .healing-tag--purple { background: #f3e5f5; color: #7b1fa2; }
+body.mp-mode .healing-tag--teal   { background: #e0f2f1; color: #00695c; }
+body.mp-mode .healing-tag--orange { background: #fff3e0; color: #e65100; }
+body.mp-mode .healing-tag--pink   { background: #fce4ec; color: #c2185b; }
+body.mp-mode .healing-tag--gold   { background: #fff8e1; color: #b8860b; }
+/* 暗色模式标签 */
+[data-theme="dark"] body.mp-mode .healing-tag--green  { background: rgba(46,125,50,0.2);  color: #81c784; }
+[data-theme="dark"] body.mp-mode .healing-tag--blue   { background: rgba(21,101,192,0.2);  color: #64b5f6; }
+[data-theme="dark"] body.mp-mode .healing-tag--purple { background: rgba(123,31,162,0.2);  color: #ce93d8; }
+[data-theme="dark"] body.mp-mode .healing-tag--teal   { background: rgba(0,105,92,0.2);    color: #80cbc4; }
+[data-theme="dark"] body.mp-mode .healing-tag--orange { background: rgba(230,81,0,0.2);    color: #ffb74d; }
+[data-theme="dark"] body.mp-mode .healing-tag--pink   { background: rgba(194,24,91,0.2);   color: #f48fb1; }
+[data-theme="dark"] body.mp-mode .healing-tag--gold   { background: rgba(184,134,11,0.2);  color: #ffd54f; }
 body.mp-mode .tier-item {
     padding: 8px 6px;
     min-width: 70px;
@@ -260,7 +383,7 @@ body.mp-mode .entry-card,
 body.mp-mode .intro-item,
 body.mp-mode .feature-item,
 body.mp-mode .review-card {
-    background: #fff;
+    background: var(--color-white);
 }
 
 /* ── 标题更清秀 ── */
@@ -283,7 +406,7 @@ body.mp-mode .btn-primary {
 
 /* ── 通知条 ── */
 body.mp-mode .notice-card {
-    background: #f8fcf9;
+    background: var(--color-bg-light);
     border-left-color: var(--color-primary-light);
 }
 
@@ -300,7 +423,7 @@ body.mp-mode .room-card {
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 1px 8px rgba(0,0,0,0.04);
-    background: #fff;
+    background: var(--color-white);
 }
 body.mp-mode .room-card-image {
     min-width: 105px;
@@ -316,7 +439,7 @@ body.mp-mode .room-card-image img {
     object-fit: cover;
 }
 body.mp-mode .room-card-placeholder {
-    background: linear-gradient(135deg, #e8f0e8, #dce8dc);
+    background: linear-gradient(135deg, var(--color-bg-light), var(--color-bg));
     width: 105px;
     height: 100%;
     display: flex;
@@ -406,39 +529,25 @@ body.mp-mode .room-card-badge {
 /* ── 隐藏 web 端 page-header（小程序不需要） ── */
 body.mp-mode .page-header { display: none; }
 
-/* ── 暗色模式：覆盖 mp-mode 浅色变量 ── */
-[data-theme="dark"] body.mp-mode {
-    --color-primary: #7bba8a;
-    --color-primary-light: #5a8a6a;
-    --color-primary-dark: #8bc89a;
-    --color-accent: #d4b088;
-    --color-bg: #181e1a;
-    --color-bg-light: #1e2420;
-    --color-text: #d8dfd4;
-    --color-text-light: #a0a898;
-    --color-text-lighter: #788078;
-    --color-border: #2e362f;
-    --color-shadow: rgba(0,0,0,0.25);
-    --color-shadow-hover: rgba(0,0,0,0.4);
-}
+/* ── 暗色模式：通用规则使用 CSS 变量（配色由上方 [data-bnb] 块控制） ── */
 [data-theme="dark"] body.mp-mode .entry-card,
 [data-theme="dark"] body.mp-mode .intro-item,
 [data-theme="dark"] body.mp-mode .feature-item,
 [data-theme="dark"] body.mp-mode .review-card,
 [data-theme="dark"] body.mp-mode .room-card {
-    background: #1e2420;
+    background: var(--color-bg-light);
 }
 [data-theme="dark"] body.mp-mode .notice-card {
-    background: #1a221c;
+    background: var(--color-bg);
     border-left-color: var(--color-primary);
 }
 [data-theme="dark"] body.mp-mode .redeem-item,
 [data-theme="dark"] body.mp-mode .room-card-placeholder {
-    background: #222a24;
+    background: var(--color-bg);
 }
 /* 暗色模式下硬编码深色文字覆盖为浅色 */
-[data-theme="dark"] body.mp-mode .intro-item p { color: #c8d0c4; }
-[data-theme="dark"] body.mp-mode .room-price { color: #e8d0b0; }
-[data-theme="dark"] body.mp-mode .room-original-price { color: #808878; }
-[data-theme="dark"] body.mp-mode .room-remaining.ok { color: #9ab89a; }
+[data-theme="dark"] body.mp-mode .intro-item p { color: var(--color-text); }
+[data-theme="dark"] body.mp-mode .room-price { color: var(--color-accent); }
+[data-theme="dark"] body.mp-mode .room-original-price { color: var(--color-text-lighter); }
+[data-theme="dark"] body.mp-mode .room-remaining.ok { color: var(--color-primary-light); }
 [data-theme="dark"] body.mp-mode .room-remaining.low { color: #d89080; }

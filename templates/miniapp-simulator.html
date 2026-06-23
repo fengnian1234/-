@@ -193,6 +193,11 @@ const BNB_PREFIX = { guishu: '/gs', shanji: '/sj', donglinwai: '/dlw' };
 const BNB_NAMES = { guishu: '云上·归墅', shanji: '云上·山纪', donglinwai: '云上·东林外' };
 const BNB_ICONS = { guishu: '🏡', shanji: '🍵', donglinwai: '🧘' };
 const BNB_COLORS = { guishu: '#4a7c59', shanji: '#8B6914', donglinwai: '#7B8DAD' };
+const BNB_GRADIENTS = {
+  guishu: 'linear-gradient(135deg, #4a7c59, #6b9b7e)',
+  shanji: 'linear-gradient(135deg, #8B6914, #a6863d)',
+  donglinwai: 'linear-gradient(135deg, #6b7d9a, #8b9ab0)',
+};
 
 // 每个民宿的Tab配置
 const BNB_TABS = {
@@ -249,12 +254,12 @@ function toggleTheme() {
 }
 
 function getUrl() {
-  if (currentTab === 'chat') return '/miniapp/chat';
+  if (currentTab === 'chat') return '/miniapp/chat?bnb=' + currentBnb;
   const prefix = BNB_PREFIX[currentBnb];
   const tabs = BNB_TABS[currentBnb];
   const tab = tabs.find(t => t.id === currentTab);
   const path = tab ? tab.path : '';
-  return prefix + '/' + path + '?mp=1';
+  return prefix + path + '?mp=1';
 }
 
 function renderTabBar() {
@@ -282,12 +287,26 @@ function switchBnb(bnbId) {
     if (el) el.classList.toggle('active', n.toLowerCase() === bnbId);
   });
   document.getElementById('infoBnb').textContent = BNB_NAMES[bnbId];
+  document.getElementById('infoTabCount').textContent = BNB_TABS[bnbId].length;
   currentTab = 'index'; // 切换民宿回到首页
   updateNavBar();
+  updateDrawerStyle();
+  updateShellColors();
   renderTabBar();
   document.getElementById('drawerPanel').classList.remove('show');
   document.getElementById('drawerOverlay').classList.remove('show');
   loadPage();
+}
+
+function updateShellColors() {
+  const c = BNB_COLORS[currentBnb];
+  document.documentElement.style.setProperty('--pri', c);
+  document.documentElement.style.setProperty('--tab-active', c);
+}
+
+function updateDrawerStyle() {
+  const h = document.querySelector('.drawer-header');
+  if (h) h.style.background = BNB_GRADIENTS[currentBnb];
 }
 
 function updateNavBar() {
@@ -316,7 +335,7 @@ function switchTab(tab) {
     document.getElementById('bnbBtn').style.display = 'none';
     document.getElementById('mineBtn').style.display = 'none';
     document.getElementById('themeBtn').style.display = 'none';
-    document.querySelector('.mp-nav').style.background = '#6b9b7e';
+    document.querySelector('.mp-nav').style.background = BNB_COLORS[currentBnb];
   } else {
     document.getElementById('bnbBtn').style.display = '';
     document.getElementById('mineBtn').style.display = '';
@@ -387,6 +406,7 @@ document.addEventListener('click', function(e) {
 // 初始化
 switchBnb('guishu');
 switchTab('index');
+updateDrawerStyle();
 </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="light" data-bnb="guishu">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,6 +21,37 @@
   --border: #3a423c; --shadow: 0 1px 4px rgba(0,0,0,.25);
   --input-bg: #333a35; --tag-bg: #2a3a2e;
   --navbar-bg: #111; --navbar-text: #d8e0d4;
+}
+/* ── BnB 色彩覆盖 ── */
+[data-bnb="shanji"] {
+  --pri: #8B6914; --pri-d: #6b4f12; --acc: #c4955a;
+  --bg: #f5f2e8; --panel-bg: #faf7f0; --card-bg: #fffdf8;
+  --text: #3a2e1a; --text2: #6b5540; --text3: #9a8870;
+  --bubble-me: #d4c898; --bubble-you: #fffdf8;
+  --border: #e0d8b8; --input-bg: #fffdf8; --tag-bg: #efe8d0;
+}
+[data-bnb="donglinwai"] {
+  --pri: #6b7d9a; --pri-d: #4a5a70; --acc: #a89880;
+  --bg: #eef1f5; --panel-bg: #f5f7fa; --card-bg: #fcfdfe;
+  --text: #2a2e38; --text2: #5a6070; --text3: #8a9098;
+  --bubble-me: #c8d0e0; --bubble-you: #fcfdfe;
+  --border: #d4dae4; --input-bg: #fcfdfe; --tag-bg: #e4eaf2;
+}
+[data-bnb="shanji"][data-theme="dark"] {
+  --pri: #a6863d; --pri-d: #8b6914; --acc: #d4b878;
+  --bg: #1f1c14; --panel-bg: #272316; --card-bg: #2f2a1c;
+  --text: #e0d8c0; --text2: #b0a888; --text3: #78684a;
+  --bubble-me: #4a3a20; --bubble-you: #2f2a1c;
+  --border: #3a3420; --shadow: 0 1px 4px rgba(0,0,0,.25);
+  --input-bg: #2f2a1c; --tag-bg: #3a3020;
+}
+[data-bnb="donglinwai"][data-theme="dark"] {
+  --pri: #8b9ab0; --pri-d: #6b7d9a; --acc: #c0b098;
+  --bg: #181c22; --panel-bg: #1e242c; --card-bg: #242a34;
+  --text: #d0d8e4; --text2: #a0a8b8; --text3: #6a7078;
+  --bubble-me: #2a3444; --bubble-you: #242a34;
+  --border: #2a303c; --shadow: 0 1px 4px rgba(0,0,0,.25);
+  --input-bg: #242a34; --tag-bg: #2a303c;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); height:100vh; overflow:hidden; }
@@ -148,6 +179,16 @@ input { font-family:inherit; outline:none; }
 <div class="panel-col">
 <h2>AI 管家测试面板</h2>
 
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+  <span style="font-size:12px;color:var(--text3)">BnB:</span>
+  <select id="bnbSelect" onchange="switchBnb(this.value)" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--card-bg);color:var(--text);font-size:12px;">
+    <option value="guishu">🌿 归墅</option>
+    <option value="shanji">🍵 山纪</option>
+    <option value="donglinwai">🔔 东林外</option>
+  </select>
+  <span id="bnbLabel" style="font-size:11px;color:var(--acc)"></span>
+</div>
+
 <h3>当前 AI 模式</h3>
 <div class="mode-bar">
   <button class="mode-btn active" onclick="setMode('travel_advisor',this)" id="btnTravel">旅行顾问</button>
@@ -216,12 +257,21 @@ const API = '/api/simulate-chat';
 const OPENID = 'sim_test_user';
 let stats = {total:0,keyword:0,ai:0,fallback:0};
 let currentMode = 'travel_advisor';
+let currentBnb = 'guishu';
+const BNB_NAMES = {guishu:'归墅', shanji:'山纪', donglinwai:'东林外'};
+
+function switchBnb(bnbId) {
+  currentBnb = bnbId;
+  document.documentElement.setAttribute('data-bnb', bnbId);
+  document.getElementById('bnbLabel').innerText = BNB_NAMES[bnbId] + ' · ' + (bnbId==='guishu'?'竹青':bnbId==='shanji'?'茶褐':'禅灰蓝');
+}
 
 // 初始化
 (async function init(){
   document.getElementById('timeTag').innerText = new Date().toLocaleString('zh-CN');
   document.getElementById('msgInput').addEventListener('keydown',e=>{if(e.key==='Enter') sendMsg();});
   renderKeywordGrid("travel_advisor");
+  switchBnb('guishu');
   addSysMsg('欢迎使用云上归墅微信公众号模拟器！\n\n当前模式：旅行顾问（预订前）\n你可以直接在输入框发送消息，或点击右侧测试按钮。\n\n试试发送「你好」或「1」开始体验吧～');
 })();
 
@@ -296,7 +346,7 @@ async function sendMsg(text){
   try{
     const r=await fetch(API,{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({content,openid:OPENID})
+      body:JSON.stringify({content,openid:OPENID,bnb_id:currentBnb})
     });
     const d=await r.json();
     addBubble(d.reply,'you',d.handler,d.mode,d.matched);

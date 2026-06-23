@@ -4,7 +4,7 @@
 {% set is_mp = request.args.get('mp') == '1' %}
 
 {% block content %}
-<section class="hero" style="background: linear-gradient(135deg, #7B8DAD 0%, #5B6D8D 50%, #3a4a6a 100%)">
+<section class="hero">
     <div class="hero-overlay">
         <h1 class="hero-title">🧘 疗愈空间</h1>
         <p class="hero-subtitle">东林寺旁 · 身心归处</p>
@@ -74,7 +74,15 @@ function renderCard(item){
   tiers.forEach(function(t,i){
     th += '<div class="tier-item tier-clickable" onclick="event.stopPropagation();openBooking('+item.id+','+i+')"><span class="tier-duration">'+t.duration+'</span><span class="tier-price">¥'+t.price+'</span><span class="tier-book-hint">预约</span></div>';
   });
-  return '<div class="healing-card"><div class="healing-card-header"><h3>'+item.name+'</h3><span class="healing-therapist">🧘‍♀️ '+(item.therapist||'琼儿老师')+'</span></div>'+
+  var tagsHtml = '';
+  if (item.tags && item.tags.length) {
+    tagsHtml = '<div class="healing-tags">';
+    item.tags.forEach(function(t){
+      tagsHtml += '<span class="healing-tag healing-tag--'+(t.color||'blue')+'">'+t.text+'</span>';
+    });
+    tagsHtml += '</div>';
+  }
+  return '<div class="healing-card"><div class="healing-card-header"><h3>'+item.name+'</h3><span class="healing-therapist">🧘‍♀️ '+(item.therapist||'琼儿老师')+'</span>'+tagsHtml+'</div>'+
     (item.description?'<p class="healing-desc">'+item.description+'</p>':'')+
     '<div class="healing-tiers">'+th+'</div></div>';
 }

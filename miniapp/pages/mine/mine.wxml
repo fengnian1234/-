@@ -88,7 +88,7 @@
     <view class="nav-item press-active" bindtap="onAbout">
       <view class="nav-item__left">
         <text class="nav-item__icon">ℹ️</text>
-        <text>关于云上归墅</text>
+        <text>关于{{currentBnb.shortName}}</text>
       </view>
       <text class="nav-item__arrow">→</text>
     </view>

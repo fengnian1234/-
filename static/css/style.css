@@ -40,6 +40,54 @@
     --max-width: 720px;
 }
 
+/* ── 山纪 (shanji) 茶褐暖调 ─────────────────────────────── */
+[data-bnb="shanji"] {
+    --color-primary: #8b6914;        /* 茶褐 — 陈年普洱 */
+    --color-primary-light: #a6863d;  /* 嫩茶 — 新采毛尖 */
+    --color-primary-dark: #6b4f12;   /* 老茶 — 古树茶砖 */
+    --color-accent: #c4955a;         /* 暖茶金 — 金骏眉汤色 */
+    --color-accent-light: #d8b878;   /* 浅茶金 — 白茶浅韵 */
+    --color-sky: #c4b898;            /* 茶烟 — 茶香氤氲 */
+    --color-mist: #e8dcc0;           /* 茶沫 — 茶汤浮沫 */
+    --color-bg: #faf7f0;             /* 宣纸 — 古籍书页 */
+    --color-bg-light: #f3efe2;       /* 米浆 — 手工宣纸 */
+    --color-bg-dark: #e6e0cb;        /* 竹帘 — 茶室遮光 */
+    --color-text: #3a2e1a;           /* 茶墨 — 墨入茶汤 */
+    --color-text-light: #6b5540;     /* 檀木 — 紫檀家具 */
+    --color-text-lighter: #9a8870;   /* 砂陶 — 紫砂壶身 */
+    --color-white: #fffdf8;          /* 暖白 — 热茶蒸汽 */
+    --color-border: #e0d8b8;         /* 麻绳 — 茶包挂线 */
+    --color-shadow: rgba(139,105,20,0.06);
+    --color-shadow-hover: rgba(139,105,20,0.12);
+    --color-success: #5b8c4a;
+    --color-warning: #b88830;
+    --color-danger: #c4554a;
+}
+
+/* ── 东林外 (donglinwai) 禅灰蓝冷调 ──────────────────────── */
+[data-bnb="donglinwai"] {
+    --color-primary: #6b7d9a;        /* 禅灰蓝 — 僧袍素色 */
+    --color-primary-light: #8b9ab0;  /* 晨钟 — 破晓天色 */
+    --color-primary-dark: #4a5a70;   /* 暮鼓 — 入夜山影 */
+    --color-accent: #a89880;         /* 禅木 — 佛珠手串 */
+    --color-accent-light: #c0b098;   /* 线香 — 檀香轻烟 */
+    --color-sky: #b0c0d8;            /* 远寺 — 天边古刹 */
+    --color-mist: #dce4ec;           /* 晨雾 — 山中薄雾 */
+    --color-bg: #f5f7fa;             /* 清心 — 明镜止水 */
+    --color-bg-light: #eef1f6;       /* 素笺 — 抄经白纸 */
+    --color-bg-dark: #e0e4ec;        /* 石阶 — 苔痕上阶 */
+    --color-text: #2a2e38;           /* 经文 — 墨写经卷 */
+    --color-text-light: #5a6070;     /* 青石 — 石板古道 */
+    --color-text-lighter: #8a9098;   /* 远山 — 天际线色 */
+    --color-white: #fcfdfe;          /* 净白 — 莲花花瓣 */
+    --color-border: #d4dae4;         /* 素墙 — 禅院围墙 */
+    --color-shadow: rgba(107,125,154,0.06);
+    --color-shadow-hover: rgba(107,125,154,0.12);
+    --color-success: #5a8a7a;        /* 菩提绿 */
+    --color-warning: #c9954a;
+    --color-danger: #c4554a;
+}
+
 /* ── 深色模式变量 ─────────────────────────────────────── */
 [data-theme="dark"] {
     --color-primary: #6baf7e;
@@ -60,6 +108,54 @@
     --color-shadow: rgba(0, 0, 0, 0.35);
     --color-shadow-hover: rgba(0, 0, 0, 0.50);
     --color-success: #5c9c5a;
+    --color-warning: #d0a050;
+    --color-danger: #cc6050;
+}
+
+/* ── 山纪 深色模式 ──────────────────────────────────────── */
+[data-bnb="shanji"][data-theme="dark"] {
+    --color-primary: #a6863d;
+    --color-primary-light: #8b7428;
+    --color-primary-dark: #6b5810;
+    --color-accent: #c4955a;
+    --color-accent-light: #d4a868;
+    --color-sky: #7a6a50;
+    --color-mist: #383020;
+    --color-bg: #1f1c12;
+    --color-bg-light: #262218;
+    --color-bg-dark: #2a261c;
+    --color-text: #e8ddd0;
+    --color-text-light: #b0a898;
+    --color-text-lighter: #787060;
+    --color-white: #262218;
+    --color-border: #383020;
+    --color-shadow: rgba(0, 0, 0, 0.35);
+    --color-shadow-hover: rgba(0, 0, 0, 0.50);
+    --color-success: #5c8c4a;
+    --color-warning: #c89840;
+    --color-danger: #cc6050;
+}
+
+/* ── 东林外 深色模式 ───────────────────────────────────── */
+[data-bnb="donglinwai"][data-theme="dark"] {
+    --color-primary: #8b9ab0;
+    --color-primary-light: #6b7d9a;
+    --color-primary-dark: #505a6a;
+    --color-accent: #a89880;
+    --color-accent-light: #b8a890;
+    --color-sky: #607080;
+    --color-mist: #282830;
+    --color-bg: #1a1c20;
+    --color-bg-light: #1e2228;
+    --color-bg-dark: #242830;
+    --color-text: #d8dce0;
+    --color-text-light: #a0a8b8;
+    --color-text-lighter: #687078;
+    --color-white: #202428;
+    --color-border: #2a3038;
+    --color-shadow: rgba(0, 0, 0, 0.35);
+    --color-shadow-hover: rgba(0, 0, 0, 0.50);
+    --color-success: #5a8a70;
     --color-warning: #d0a050;
     --color-danger: #cc6050;
 }
@@ -455,6 +551,20 @@ h4 { font-size: 1.05rem; }
 }
 [data-theme="dark"] .page-header::after { opacity: 0.25; }
 
+/* BnB 页头渐变 */
+[data-bnb="shanji"] .page-header {
+    background: linear-gradient(170deg, #c4b898 0%, #a6863d 20%, #8b6914 60%, #6b4f12 100%);
+}
+[data-bnb="shanji"][data-theme="dark"] .page-header {
+    background: linear-gradient(170deg, #5a4a30 0%, #4a3a20 40%, #3a2a10 100%);
+}
+[data-bnb="donglinwai"] .page-header {
+    background: linear-gradient(170deg, #b0c0d8 0%, #8b9ab0 20%, #6b7d9a 60%, #4a5a70 100%);
+}
+[data-bnb="donglinwai"][data-theme="dark"] .page-header {
+    background: linear-gradient(170deg, #3a4a60 0%, #2a3a50 40%, #1a2838 100%);
+}
+
 /* 季节页头渐变 */
 [data-season="autumn"] .page-header {
     background: linear-gradient(170deg, #d4b896 0%, #c49560 20%, #b87840 60%, #8b5e3c 100%);
@@ -568,6 +678,87 @@ h4 { font-size: 1.05rem; }
     background: var(--color-bg);
 }
 
+/* 照片背景 Hero — inline background-image 覆盖 .hero 的渐变 */
+.hero--photo {
+    background-size: cover !important;
+    background-position: center 20%;  /* 默认偏上，inline 可覆盖 */
+    background-repeat: no-repeat !important;
+    background-color: #2a3a28;  /* 图片加载前的占位色 */
+}
+[data-theme="dark"] .hero--photo {
+    background-color: #141a15;
+}
+/* 半透明色罩 — 底部加深保证文字可读，顶部融入主题色 */
+.hero--photo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        radial-gradient(ellipse at 50% 15%, var(--bnb-color, var(--color-primary)) 0%, transparent 55%),
+        linear-gradient(180deg,
+            rgba(0,0,0,0.15) 0%,
+            rgba(0,0,0,0.02) 30%,
+            rgba(0,0,0,0.30) 80%,
+            rgba(0,0,0,0.45) 100%);
+    opacity: 0.92;
+}
+/* 保留山形剪影，但降低高度适配照片 */
+.hero--photo::after {
+    bottom: -2px;
+    left: -5%;
+    right: -5%;
+    height: 18%;
+    background: var(--color-bg);
+    clip-path: polygon(
+        0% 100%, 0% 60%,
+        8% 50%, 16% 58%, 22% 42%, 30% 54%,
+        38% 32%, 45% 46%, 52% 28%, 58% 42%,
+        66% 34%, 74% 48%, 82% 28%, 88% 44%,
+        95% 36%, 100% 52%, 100% 100%
+    );
+    z-index: 2;
+}
+/* 文字确保在最上层 */
+.hero--photo .hero-overlay { z-index: 3; }
+
+/* ── 环境展示 ── */
+.env-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+.env-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: var(--color-bg-light);
+}
+.env-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+.env-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.env-card:hover img { transform: scale(1.05); }
+.env-card-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.6rem 1rem;
+    background: linear-gradient(transparent, rgba(0,0,0,0.55));
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
 /* hero 文字在暗色模式下保持亮白（hero背景始终为深色） */
 [data-theme="dark"] .hero-title {
     color: #f0ece0;
@@ -602,6 +793,40 @@ h4 { font-size: 1.05rem; }
     margin-top: 0.5rem;
     font-family: var(--font-serif);
     letter-spacing: 0.05em;
+}
+
+/* BnB Hero 渐变 — 非照片模式 */
+[data-bnb="shanji"] .hero:not(.hero--photo) {
+    background:
+        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(200,180,140,0.7) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 70% at 20% 70%, rgba(180,160,120,0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(200,150,106,0.35) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(200,180,140,0.4) 0%, transparent 55%),
+        linear-gradient(175deg, #6b4f12 0%, #8b6914 40%, #a6863d 100%);
+}
+[data-bnb="shanji"][data-theme="dark"] .hero:not(.hero--photo) {
+    background:
+        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(60,50,30,0.9) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 70% at 20% 70%, rgba(45,38,20,0.6) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(55,40,22,0.4) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(50,40,25,0.3) 0%, transparent 55%),
+        linear-gradient(175deg, #1f1a10 0%, #2a2218 40%, #302818 100%);
+}
+[data-bnb="donglinwai"] .hero:not(.hero--photo) {
+    background:
+        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(160,180,210,0.7) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 70% at 20% 70%, rgba(140,160,190,0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(168,152,128,0.35) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(170,185,200,0.4) 0%, transparent 55%),
+        linear-gradient(175deg, #4a5a70 0%, #6b7d9a 40%, #8b9ab0 100%);
+}
+[data-bnb="donglinwai"][data-theme="dark"] .hero:not(.hero--photo) {
+    background:
+        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(35,40,55,0.9) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 70% at 20% 70%, rgba(25,32,42,0.6) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(35,38,45,0.4) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(30,34,42,0.3) 0%, transparent 55%),
+        linear-gradient(175deg, #181c22 0%, #1e242c 40%, #263038 100%);
 }
 
 /* 冬季 hero 加强 — 雪景氛围 */
@@ -1472,7 +1697,7 @@ h4 { font-size: 1.05rem; }
     border-color: var(--color-primary); font-weight: 600;
 }
 [data-theme="dark"] .option-chip { background: #1f2620; border-color: #2e382f; color: #a0a898; }
-[data-theme="dark"] .option-chip.selected { background: #2a3d30; border-color: #4a7c59; color: #d8dfd4; }
+[data-theme="dark"] .option-chip.selected { background: color-mix(in srgb, var(--color-primary) 30%, transparent); border-color: var(--color-primary); color: var(--color-bg-light); }
 .drink-modal-actions { display: flex; gap: 0.6rem; margin-top: 1.2rem; }
 .drink-modal-actions button { flex: 1; }
 
@@ -2528,6 +2753,20 @@ h4 { font-size: 1.05rem; }
     color: rgba(216, 223, 212, 0.3);
 }
 
+/* BnB 页脚配色 */
+[data-bnb="shanji"] .footer {
+    background: linear-gradient(180deg, #5a4120, #3a2a15);
+}
+[data-bnb="shanji"][data-theme="dark"] .footer {
+    background: linear-gradient(180deg, #241a10, #1a1410);
+}
+[data-bnb="donglinwai"] .footer {
+    background: linear-gradient(180deg, #3a4a60, #283040);
+}
+[data-bnb="donglinwai"][data-theme="dark"] .footer {
+    background: linear-gradient(180deg, #1a1c24, #141820);
+}
+
 /* ── 通知卡片 ─────────────────────────────────────────── */
 .notice-card {
     padding: 0.8rem 1rem;
@@ -2937,8 +3176,8 @@ h4 { font-size: 1.05rem; }
 
 .tea-tasting {
     font-size: 0.9rem;
-    color: #8B6914;
-    background: rgba(139, 105, 20, 0.08);
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
     padding: 8px 12px;
     border-radius: 8px;
     margin-top: 8px;
@@ -3004,19 +3243,51 @@ h4 { font-size: 1.05rem; }
 
 .healing-card h3 {
     font-size: 1.15rem;
-    color: #7B8DAD;
+    color: var(--color-primary);
     margin: 0;
     flex-shrink: 0;
 }
 
 .healing-therapist {
     font-size: 0.72rem;
-    background: rgba(123,141,173,0.12);
-    color: #7B8DAD;
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    color: var(--color-primary);
     padding: 2px 10px;
     border-radius: 12px;
     font-weight: 500;
 }
+
+/* 功效标签 */
+.healing-tags {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+.healing-tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 10px;
+    line-height: 1.6;
+    white-space: nowrap;
+}
+.healing-tag--green  { background: #e8f5e9; color: #2e7d32; }
+.healing-tag--blue   { background: #e3f2fd; color: #1565c0; }
+.healing-tag--purple { background: #f3e5f5; color: #7b1fa2; }
+.healing-tag--teal   { background: #e0f2f1; color: #00695c; }
+.healing-tag--orange { background: #fff3e0; color: #e65100; }
+.healing-tag--pink   { background: #fce4ec; color: #c2185b; }
+.healing-tag--gold   { background: #fff8e1; color: #b8860b; }
+
+/* 暗色模式标签 */
+[data-theme="dark"] .healing-tag--green  { background: rgba(46,125,50,0.2);  color: #81c784; }
+[data-theme="dark"] .healing-tag--blue   { background: rgba(21,101,192,0.2);  color: #64b5f6; }
+[data-theme="dark"] .healing-tag--purple { background: rgba(123,31,162,0.2);  color: #ce93d8; }
+[data-theme="dark"] .healing-tag--teal   { background: rgba(0,105,92,0.2);    color: #80cbc4; }
+[data-theme="dark"] .healing-tag--orange { background: rgba(230,81,0,0.2);    color: #ffb74d; }
+[data-theme="dark"] .healing-tag--pink   { background: rgba(194,24,91,0.2);   color: #f48fb1; }
+[data-theme="dark"] .healing-tag--gold   { background: rgba(184,134,11,0.2);  color: #ffd54f; }
 
 .healing-desc {
     font-size: 0.88rem;
@@ -3071,15 +3342,15 @@ h4 { font-size: 1.05rem; }
 
 /* 暗色模式 */
 [data-theme="dark"] .healing-card h3 {
-    color: #a0b0d0;
+    color: var(--color-primary-light);
 }
 [data-theme="dark"] .healing-therapist {
-    background: rgba(160,176,208,0.15);
-    color: #a0b0d0;
+    background: color-mix(in srgb, var(--color-primary-light) 15%, transparent);
+    color: var(--color-primary-light);
 }
 [data-theme="dark"] .tier-item {
-    background: #1f2620;
-    border-color: #2e382f;
+    background: var(--color-bg-dark);
+    border-color: var(--color-border);
 }
 
 /* ── 疗愈预约弹窗 ─────────────────────────────────────────── */
@@ -3089,12 +3360,12 @@ h4 { font-size: 1.05rem; }
 }
 .tier-clickable:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 12px rgba(123,141,173,0.2);
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 .tier-book-hint {
     display: block;
     font-size: 0.65rem;
-    color: #7B8DAD;
+    color: var(--color-primary);
     margin-top: 2px;
 }
 
@@ -3112,10 +3383,10 @@ h4 { font-size: 1.05rem; }
 .booking-steps h2 {
     font-size: 1.2rem;
     margin-bottom: 16px;
-    color: #7B8DAD;
+    color: var(--color-primary);
 }
 .booking-summary {
-    background: rgba(123,141,173,0.08);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
     border-radius: 12px;
     padding: 14px 16px;
     margin-bottom: 20px;
@@ -3126,7 +3397,7 @@ h4 { font-size: 1.05rem; }
 }
 .booking-tier-badge {
     font-size: 0.8rem;
-    background: #7B8DAD;
+    background: var(--color-primary);
     color: #fff;
     padding: 3px 10px;
     border-radius: 12px;
@@ -3170,9 +3441,9 @@ h4 { font-size: 1.05rem; }
     color: var(--color-text-lighter);
 }
 .date-chip.active {
-    border-color: #7B8DAD;
-    background: rgba(123,141,173,0.1);
-    color: #7B8DAD;
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
     font-weight: 600;
 }
 
@@ -3193,12 +3464,12 @@ h4 { font-size: 1.05rem; }
     transition: all 0.15s;
 }
 .slot-chip.available:hover {
-    border-color: #7B8DAD;
-    background: rgba(123,141,173,0.08);
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
 }
 .slot-chip.selected {
-    border-color: #7B8DAD;
-    background: #7B8DAD;
+    border-color: var(--color-primary);
+    background: var(--color-primary);
     color: #fff;
     font-weight: 600;
 }
@@ -3230,8 +3501,8 @@ h4 { font-size: 1.05rem; }
 }
 .booking-input:focus {
     outline: none;
-    border-color: #7B8DAD;
-    box-shadow: 0 0 0 3px rgba(123,141,173,0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 .booking-success {
     padding: 24px 20px;
@@ -3327,7 +3598,7 @@ h4 { font-size: 1.05rem; }
 }
 
 /* 暗色模式 */
-[data-theme="dark"] .booking-summary { background: rgba(123,141,173,0.12); }
+[data-theme="dark"] .booking-summary { background: color-mix(in srgb, var(--color-primary) 12%, transparent); }
 [data-theme="dark"] .date-chip { background: #252927; }
 [data-theme="dark"] .slot-chip { background: #252927; }
 [data-theme="dark"] .slot-chip.unavailable { background: #1f2420; }
@@ -3348,32 +3619,50 @@ h4 { font-size: 1.05rem; }
 .bnb-dropdown {
     display: none;
     position: absolute;
-    top: 100%;
+    top: calc(100% + 6px);
     left: 0;
-    background: var(--card-bg);
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-    min-width: 220px;
+    background: var(--color-white);
+    border-radius: 14px;
+    box-shadow: 0 8px 36px rgba(0,0,0,0.16), 0 2px 8px rgba(0,0,0,0.06);
+    min-width: 240px;
     z-index: 100;
     overflow: hidden;
-    border: 1px solid var(--border);
+    border: 1px solid var(--color-border);
+}
+[data-theme="dark"] .bnb-dropdown {
+    background: #252e28;
+    border-color: #3a453e;
+    box-shadow: 0 8px 36px rgba(0,0,0,0.4);
 }
 .bnb-dropdown.open { display: block; }
 .bnb-dropdown-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 18px;
-    font-size: 0.9rem;
-    color: var(--text);
+    gap: 10px;
+    padding: 13px 20px;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--color-text);
     text-decoration: none;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
+    border-bottom: 1px solid var(--color-border);
+    transition: background 0.15s, color 0.15s;
 }
 .bnb-dropdown-item:last-child { border-bottom: none; }
-.bnb-dropdown-item:hover { background: var(--tag-bg); }
-.bnb-dropdown-item.active { background: color-mix(in srgb, var(--bnb-color, var(--color-primary)) 6%, transparent); }
-.bnb-dropdown-item span { font-size: 0.75rem; color: var(--text3); margin-left: auto; }
+.bnb-dropdown-item:hover {
+    background: color-mix(in srgb, var(--bnb-color, var(--color-primary)) 8%, transparent);
+    color: var(--bnb-color, var(--color-primary-dark));
+}
+.bnb-dropdown-item.active {
+    background: color-mix(in srgb, var(--bnb-color, var(--color-primary)) 12%, transparent);
+    color: var(--bnb-color, var(--color-primary-dark));
+    font-weight: 600;
+}
+.bnb-dropdown-item span {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    margin-left: auto;
+    font-weight: 400;
+}
 
 @media (max-width: 480px) {
     .tea-type-grid, .tea-exp-grid, .tea-prod-grid,

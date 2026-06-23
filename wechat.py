@@ -503,13 +503,13 @@ def handle_wechat_message(msg, bnb_id="guishu"):
     try:
         mode = get_conversation_mode(openid)
         if mode == 'travel_advisor':
-            ai_reply = chat_travel_advisor(openid, content)
+            ai_reply = chat_travel_advisor(openid, content, bnb_id=bnb_id)
         elif mode == 'pre_arrival':
-            ai_reply = chat_pre_arrival(openid, content)
+            ai_reply = chat_pre_arrival(openid, content, bnb_id=bnb_id)
         elif mode == 'post_stay':
-            ai_reply = chat_post_stay(openid, content)
+            ai_reply = chat_post_stay(openid, content, bnb_id=bnb_id)
         else:
-            ai_reply = chat(openid, content)
+            ai_reply = chat(openid, content, bnb_id=bnb_id)
         return ai_reply
     except Exception as e:
         log_error("wechat.ai_fallback", str(e))

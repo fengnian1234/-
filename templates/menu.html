@@ -1,11 +1,16 @@
 {% extends "base.html" %}
-{% block title %}咖啡简餐 - {{ bnb.short_name }}{% endblock %}
+{% block title %}{% if bnb_id == 'donglinwai' %}精品咖啡{% else %}咖啡简餐{% endif %} - {{ bnb.short_name }}{% endblock %}
 
 {% block content %}
 <section class="page-header">
     <div class="container">
+        {% if bnb_id == 'donglinwai' %}
+        <h1>☕ 精品咖啡</h1>
+        <p>「东林外咖啡」· 经典咖啡 · 风味拿铁 · 创意特调 · 云上奶茶</p>
+        {% else %}
         <h1>☕ 咖啡简餐</h1>
         <p>「三山二水咖啡」· 咖啡茶饮 · 简餐 · 甜品 · 特调饮品</p>
+        {% endif %}
     </div>
 </section>
 
@@ -15,12 +20,13 @@
         <div class="menu-container">
             {% for cat in categories %}
             {% if cat['items'] and cat['items']|length > 0 %}
-            {% set is_drink_cat = (cat.name == '咖啡+茶饮' or cat.name == '特调饮品') %}
+            {% set is_drink_cat = (cat.name == '咖啡+茶饮' or cat.name == '特调饮品' or bnb_id == 'donglinwai') %}
             <div class="menu-category" id="cat-{{ cat.id }}">
                 <h2 class="menu-cat-title">{{ cat.icon }} {{ cat.name }}</h2>
                 <div class="menu-items">
                     {% for item in cat['items'] %}
                     {% set is_tea = ('云雾茶' in item.name) %}
+                    {% set has_both = ('热/冰' in item.description) %}
                     <div class="menu-item {% if item.is_recommended %}recommended{% endif %}">
                         <div class="menu-item-info">
                             <div class="menu-item-header">
@@ -36,7 +42,7 @@
                             <p class="menu-item-desc">{{ item.description }}</p>
                             {% endif %}
                         </div>
-                        <button class="btn btn-sm btn-order" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}" data-tea="{% if is_tea %}true{% else %}false{% endif %}" data-drink="{% if is_drink_cat %}true{% else %}false{% endif %}">+ 点单</button>
+                        <button class="btn btn-sm btn-order" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}" data-tea="{% if is_tea %}true{% else %}false{% endif %}" data-drink="{% if is_drink_cat %}true{% else %}false{% endif %}" data-temp="{% if has_both %}both{% else %}single{% endif %}">+ 点单</button>
                     </div>
                     {% endfor %}
                 </div>
@@ -77,7 +83,7 @@
             <input type="text" id="room-number" placeholder="房间号（选填）">
             <input type="text" id="order-remark" placeholder="备注（选填）">
         </div>
-        <div class="order-notice">☕ 三山二水咖啡 · 点单后送餐到房<br>💳 支持微信支付，确认后为您准备</div>
+        <div class="order-notice">☕ {% if bnb_id == 'donglinwai' %}东林外咖啡 · 点单后送饮到房{% else %}三山二水咖啡 · 点单后送餐到房{% endif %}<br>💳 支持微信支付，确认后为您准备</div>
         <button class="btn btn-primary btn-block" onclick="submitOrder()">确认下单</button>
     </div>
 </div>
@@ -104,8 +110,9 @@ if (_mc) _mc.addEventListener('click', function(e) {
     const price = parseInt(btn.dataset.price);
     const isTea = btn.dataset.tea === 'true';
     const isDrink = btn.dataset.drink === 'true';
+    const tempMode = btn.dataset.temp || 'single';
     if (isTea) openTeaModal(id, name);
-    else if (isDrink) openDrinkModal(id, name, price);
+    else if (isDrink) openDrinkModal(id, name, price, tempMode);
     else addToOrder(id, name, price, '');
 });
 
@@ -144,12 +151,18 @@ function openTeaModal(id, name) {
     };
 }
 
-// 普通饮品弹窗
-function openDrinkModal(id, name, price) {
-    const isWater = name === '椰子水';
-    const iceLabel = isWater ? '冰量' : '冰量/温度';
-    const iceOpt3 = isWater ? '不额外加冰' : '温';
+// 普通饮品弹窗 — tempMode: 'both'=热冰皆可无需选, 'single'=只能选热/少冰/正常冰
+function openDrinkModal(id, name, price, tempMode) {
     const content = document.getElementById('drinkModalContent');
+    var iceHTML = '';
+    if (tempMode === 'single') {
+        iceHTML = `<div class="option-group"><div class="option-group-label">温度/冰量</div>
+            <div class="option-chips" data-group="ice">
+                <button class="option-chip" data-val="热">热</button>
+                <button class="option-chip selected" data-val="少冰">少冰</button>
+                <button class="option-chip" data-val="正常冰">正常冰</button>
+            </div></div>`;
+    }
     content.innerHTML = `<h3 style="text-align:center;color:var(--color-primary-dark);margin-bottom:1rem">🥤 ${name} <span style="font-weight:400;color:var(--color-accent)">¥${price}</span></h3>
         <div class="option-group"><div class="option-group-label">糖度</div>
             <div class="option-chips" data-group="sugar">
@@ -157,12 +170,7 @@ function openDrinkModal(id, name, price) {
                 <button class="option-chip selected" data-val="半糖">半糖</button>
                 <button class="option-chip" data-val="不额外加糖">不额外加糖</button>
             </div></div>
-        <div class="option-group"><div class="option-group-label">${iceLabel}</div>
-            <div class="option-chips" data-group="ice">
-                <button class="option-chip selected" data-val="正常冰">正常冰</button>
-                <button class="option-chip" data-val="少冰">少冰</button>
-                <button class="option-chip" data-val="${iceOpt3}">${iceOpt3}</button>
-            </div></div>
+        ${iceHTML}
         <div class="drink-modal-actions">
             <button class="btn btn-outline" onclick="closeDrinkModal()">取消</button>
             <button class="btn btn-primary" id="confirmDrinkBtn">加入购物车</button></div>`;
@@ -177,8 +185,12 @@ function openDrinkModal(id, name, price) {
     });
     document.getElementById('confirmDrinkBtn').onclick = function() {
         const sugar = content.querySelector('[data-group="sugar"] .option-chip.selected').dataset.val;
-        const ice = content.querySelector('[data-group="ice"] .option-chip.selected').dataset.val;
-        addToOrder(id, name, price, ' ' + sugar + '·' + ice);
+        var opts = ' ' + sugar;
+        if (tempMode === 'single') {
+            const ice = content.querySelector('[data-group="ice"] .option-chip.selected').dataset.val;
+            opts += '·' + ice;
+        }
+        addToOrder(id, name, price, opts);
         closeDrinkModal();
     };
 }
@@ -294,7 +306,7 @@ function showOrderPayment(order) {
           '<div class="pay-info">' +
             itemsHtml +
             (order.room_number ? '<div class="pay-row"><span>房间号</span><span>' + order.room_number + '</span></div>' : '') +
-            '<div class="pay-row"><span>商户</span><span>三山二水咖啡</span></div>' +
+            '<div class="pay-row"><span>商户</span><span>{{ '东林外咖啡' if bnb_id == 'donglinwai' else '三山二水咖啡' }}</span></div>' +
           '</div>' +
           '<button class="btn btn-primary btn-large pay-btn" onclick="confirmOrderPay(' + order.id + ')">💚 立即支付 ¥' + total + '</button>' +
           '<button class="btn btn-outline" style="width:100%;margin-top:0.5rem" onclick="backToCart()">← 返回购物车</button>' +

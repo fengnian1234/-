@@ -305,7 +305,10 @@ def miniapp_simulator():
 @app.route("/miniapp/chat")
 def miniapp_chat():
     """小程序 AI 管家聊天页"""
-    return render_template("miniapp-chat.html")
+    bnb_id = request.args.get("bnb", "guishu")
+    from bnb_context import get_bnb_config
+    bnb = get_bnb_config(bnb_id)
+    return render_template("miniapp-chat.html", bnb_id=bnb_id, bnb=bnb)
 
 @_bnb_route("/tea")
 def bnb_tea(bnb_prefix=None):
@@ -328,22 +331,51 @@ def staff_dashboard():
 
 @app.route("/api/staff/dashboard")
 def api_staff_dashboard():
-    """获取员工看板数据"""
+    """获取员工看板数据 — 含点餐订单（前台）+ 服务请求（主理人）"""
     from services.notify import get_pending_requests, get_all_requests_today, get_notification_stats
     from services.booking import get_review_reminders_due
+    from models import SessionLocal, Order
+    from datetime import datetime
 
     stats = get_notification_stats()
-    pending = get_pending_requests()
-    all_today = get_all_requests_today()
-    completed = [r for r in all_today if r["status"] == "completed"]
+    pending_svc = get_pending_requests()
+    all_today_svc = get_all_requests_today()
+    completed_svc = [r for r in all_today_svc if r["status"] == "completed"]
+
+    # 点餐订单：已支付未完成的
+    db = SessionLocal()
+    try:
+        paid_orders = db.query(Order).filter(
+            Order.pay_status == "paid",
+            Order.status.in_(["paid", "preparing"])
+        ).order_by(Order.created_at.asc()).all()
+        orders_frontdesk = [o.to_dict() for o in paid_orders if o.notify_target == "frontdesk"]
+        orders_manager = [o.to_dict() for o in paid_orders if o.notify_target == "manager"]
+        # 今日完成的订单
+        today = datetime.utcnow().date()
+        completed_orders = db.query(Order).filter(
+            Order.status.in_(["completed", "delivered"]),
+            Order.created_at >= today
+        ).order_by(Order.created_at.desc()).limit(20).all()
+    finally:
+        db.close()
 
     # 检查好评推送提醒
     review_reminders = get_review_reminders_due()
 
+    # 合并统计
+    total_pending = stats["pending"] + len(orders_frontdesk) + len(orders_manager)
+    stats["pending"] = total_pending
+    stats["frontdesk_pending"] = len(orders_frontdesk)
+    stats["manager_pending"] = stats["pending"] - len(orders_frontdesk)  # original + manager orders
+
     return jsonify({
         "stats": stats,
-        "pending": pending,
-        "completed": completed[:20],
+        "pending_svc": pending_svc,
+        "pending_orders_frontdesk": orders_frontdesk,
+        "pending_orders_manager": orders_manager,
+        "completed_svc": completed_svc[:20],
+        "completed_orders": [o.to_dict() for o in completed_orders],
         "review_reminders_count": len(review_reminders),
     })
 
@@ -573,6 +605,31 @@ def api_order_pay():
         db.close()
 
 
+@app.route("/api/order/<int:order_id>/status", methods=["POST"])
+def api_order_status(order_id: int):
+    """更新点餐订单状态（员工看板用）paid→preparing→delivered→completed"""
+    data = request.get_json() or {}
+    new_status = data.get("status", "")
+    if new_status not in ("preparing", "delivered", "completed", "cancelled"):
+        return jsonify({"success": False, "message": f"无效状态: {new_status}"}), 400
+    from models import SessionLocal, Order
+    db = SessionLocal()
+    try:
+        order = db.query(Order).filter(Order.id == order_id).first()
+        if not order:
+            return jsonify({"success": False, "message": "订单不存在"}), 404
+        order.status = new_status
+        if new_status == "delivered":
+            order.status = "completed"  # 送餐即完成
+        db.commit()
+        return jsonify({"success": True, "status": order.status, "order": order.to_dict()})
+    except Exception as e:
+        db.rollback()
+        return jsonify({"success": False, "message": str(e)}), 500
+    finally:
+        db.close()
+
+
 @app.route("/api/pay/create", methods=["POST"])
 def api_create_payment():
     """
@@ -694,7 +751,7 @@ def api_orders_dashboard():
     """获取订单看板统计数据"""
     from services.orders import get_dashboard_stats, get_room_calendar, get_platforms
     stats = get_dashboard_stats()
-    stats["calendar"] = get_room_calendar(14)
+    stats["calendar"] = get_room_calendar(14, bnb_id=get_current_bnb_id())
     stats["platform_list"] = get_platforms()
     return jsonify(stats)
 

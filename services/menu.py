@@ -67,11 +67,22 @@ def create_order(openid: str, items_data: list, room_number: str = "",
                  remark: str = "", bnb_id=None) -> Order:
     """创建订单
     items_data: [{"id": 1, "name": "庐山云雾茶", "quantity": 2, "price": 68}, ...]
+    自动判定通知目标：含体验/疗愈/茶道类 → 主理人，纯餐饮 → 前台点单机
     """
     bnb_id = _get_bnb_id(bnb_id)
+    from models import MenuItem, MenuCategory
     db = SessionLocal()
     try:
         total = sum(item["price"] * item["quantity"] for item in items_data)
+        # 判定通知目标
+        notify_target = "frontdesk"  # 默认前台点单机
+        for item in items_data:
+            mi = db.query(MenuItem).filter(MenuItem.id == item["id"]).first()
+            if mi:
+                cat = db.query(MenuCategory).filter(MenuCategory.id == mi.category_id).first()
+                if cat and ("体验" in cat.name or "疗愈" in cat.name or "茶道" in cat.name):
+                    notify_target = "manager"
+                    break
         order = Order(
             bnb_id=bnb_id,
             openid=openid,
@@ -80,6 +91,7 @@ def create_order(openid: str, items_data: list, room_number: str = "",
             total_price=total,
             status="pending",
             remark=remark,
+            notify_target=notify_target,
         )
         db.add(order)
         db.commit()

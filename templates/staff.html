@@ -17,7 +17,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
 .container{max-width:900px;margin:0 auto;padding:1rem}
 /* Stats */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0.8rem;margin-bottom:1.5rem}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:0.8rem;margin-bottom:1.5rem}
 .stat-card{background:var(--card-bg);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:var(--shadow)}
 .stat-value{font-size:2rem;font-weight:700;line-height:1.2}
 .stat-label{font-size:0.8rem;color:var(--text-light);margin-top:0.2rem}
@@ -56,7 +56,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .empty-state{text-align:center;padding:2rem;color:var(--text-light)}
 .empty-icon{font-size:3rem;margin-bottom:0.5rem}
 /* Responsive */
-@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.request-card{flex-wrap:wrap}.request-actions{width:100%;justify-content:flex-end}}
+@media(max-width:800px){.stats{grid-template-columns:repeat(3,1fr)}.dual-panel{grid-template-columns:1fr !important}.request-card{flex-wrap:wrap}.request-actions{width:100%;justify-content:flex-end}}
+@media(max-width:500px){.stats{grid-template-columns:repeat(2,1fr)}}
 /* 深色模式 */
 [data-theme="dark"]{--primary:#5a9a6e;--danger:#cc6050;--warning:#d0a050;--success:#5c9c5a;--bg:#1a1e1c;--card-bg:#252927;--border:#3a3e3b;--text:#dcd8cf;--text-light:#909088}
 [data-theme="dark"] .header{background:var(--primary);color:#dcd8cf}
@@ -85,15 +86,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
     <!-- 紧急提醒 -->
     <div class="alert-banner" id="alertBanner">
         <span class="dot"></span>
-        <span id="alertText">有新的服务请求！</span>
+        <span id="alertText">有新的请求！</span>
     </div>
 
     <!-- 统计 -->
     <div class="stats" id="statsArea"></div>
 
-    <!-- 待处理 -->
-    <h2 class="section-title">📋 待处理请求</h2>
-    <div class="request-list" id="pendingList"><div class="empty-state"><span class="empty-icon">✅</span><p>暂无待处理请求</p></div></div>
+    <!-- 双队列：前台点单机 + 主理人调配 -->
+    <div class="dual-panel" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+        <div>
+            <h2 class="section-title">🖥️ 前台点单机 <small style="font-weight:400;color:var(--text-light);font-size:0.75rem">餐饮订单</small></h2>
+            <div class="request-list" id="frontdeskList"><div class="empty-state"><span class="empty-icon">☕</span><p>暂无待处理订单</p></div></div>
+        </div>
+        <div>
+            <h2 class="section-title">👤 主理人调配 <small style="font-weight:400;color:var(--text-light);font-size:0.75rem">服务+体验</small></h2>
+            <div class="request-list" id="managerList"><div class="empty-state"><span class="empty-icon">📋</span><p>暂无待调配请求</p></div></div>
+        </div>
+    </div>
 
     <!-- 已处理 -->
     <h2 class="section-title" style="margin-top:1.5rem">✔️ 今日已完成</h2>
@@ -142,11 +151,14 @@ async function fetchData() {
         const resp = await fetch('/api/staff/dashboard');
         const data = await resp.json();
         renderStats(data.stats);
-        renderPending(data.pending);
-        renderCompleted(data.completed);
+        renderFrontdesk(data.pending_orders_frontdesk || []);
+        renderManager(data.pending_svc || [], data.pending_orders_manager || []);
+        renderCompleted(data.completed_svc || [], data.completed_orders || []);
         // 新请求提醒
         if (data.stats.pending > lastPendingCount && lastPendingCount > 0) {
-            showAlert(data.stats.pending);
+            var fd = (data.pending_orders_frontdesk || []).length;
+            var mg = (data.pending_svc || []).length + (data.pending_orders_manager || []).length;
+            showAlert(fd, mg);
             playAlertSound();
         }
         lastPendingCount = data.stats.pending;
@@ -157,57 +169,116 @@ async function fetchData() {
     }
 }
 
-function renderStats(stats) {
+function renderStats(data) {
+    var stats = data.stats || {};
+    var fd = (data.pending_orders_frontdesk || []).length;
+    var mg = (data.pending_svc || []).length + (data.pending_orders_manager || []).length;
     document.getElementById('statsArea').innerHTML = `
-        <div class="stat-card stat-pending"><div class="stat-value">${stats.pending}</div><div class="stat-label">待处理</div></div>
-        <div class="stat-card stat-today"><div class="stat-value">${stats.today_total}</div><div class="stat-label">今日总量</div></div>
-        <div class="stat-card stat-done"><div class="stat-value">${stats.today_completed}</div><div class="stat-label">已完成</div></div>
-        <div class="stat-card stat-rate"><div class="stat-value">${stats.completion_rate}</div><div class="stat-label">完成率</div></div>`;
+        <div class="stat-card stat-pending"><div class="stat-value">${fd}</div><div class="stat-label">🖥️ 前台待处理</div></div>
+        <div class="stat-card" style="--danger:#c9954a"><div class="stat-value" style="color:var(--warning)">${mg}</div><div class="stat-label">👤 主理人待调配</div></div>
+        <div class="stat-card stat-today"><div class="stat-value">${stats.today_total||0}</div><div class="stat-label">今日总量</div></div>
+        <div class="stat-card stat-done"><div class="stat-value">${stats.today_completed||0}</div><div class="stat-label">已完成</div></div>
+        <div class="stat-card stat-rate"><div class="stat-value">${stats.completion_rate||'N/A'}</div><div class="stat-label">完成率</div></div>`;
 }
 
-function renderPending(list) {
-    const el = document.getElementById('pendingList');
-    if (!list || list.length === 0) {
-        el.innerHTML = '<div class="empty-state"><span class="empty-icon">✅</span><p>暂无待处理请求</p></div>';
+// 前台点单机 — 餐饮订单
+function renderFrontdesk(orders) {
+    const el = document.getElementById('frontdeskList');
+    if (!orders || orders.length === 0) {
+        el.innerHTML = '<div class="empty-state"><span class="empty-icon">☕</span><p>暂无待处理订单</p></div>';
         return;
     }
-    el.innerHTML = list.map(r => `
-        <div class="request-card ${r.status}">
-            <span class="request-icon">🔔</span>
+    el.innerHTML = orders.map(o => {
+        var items = (o.items || []).map(i => i.name + '×' + i.quantity).join(', ');
+        var badge = o.status === 'preparing' ? '🔄 制作中' : '🆕 新订单';
+        var actions = o.status === 'paid'
+            ? `<button class="btn btn-warning" onclick="orderStatus(${o.id},'preparing')">开始准备</button>`
+            : `<button class="btn btn-success" onclick="orderStatus(${o.id},'delivered')">✅ 已送餐</button>`;
+        return `<div class="request-card pending">
+            <span class="request-icon">🍽️</span>
             <div class="request-info">
-                <div class="request-name">${r.service_name}</div>
+                <div class="request-name">${items || '订单 #'+o.id}</div>
                 <div class="request-meta">
-                    <span>🕐 ${r.created_at}</span>
-                    <span>🚪 ${r.room_number || '未填'}</span>
-                    <span>📊 ${r.status === 'acknowledged' ? '处理中' : '待确认'}</span>
+                    <span>🕐 ${o.created_at}</span>
+                    <span>🚪 ${o.room_number || '未填'}</span>
+                    <span>💰 ¥${o.total_price}</span>
+                    <span>${badge}</span>
                 </div>
             </div>
-            <div class="request-actions">
-                ${r.status === 'pending' ? `<button class="btn btn-warning" onclick="ack(${r.id})">确认收到</button>` : ''}
-                <button class="btn btn-success" onclick="done(${r.id})">✓ 完成</button>
-            </div>
-        </div>`).join('');
+            <div class="request-actions">${actions}</div>
+        </div>`;
+    }).join('');
 }
 
-function renderCompleted(list) {
+// 主理人调配 — 服务请求 + 体验类订单
+function renderManager(services, orders) {
+    const el = document.getElementById('managerList');
+    var items = [];
+    // 服务请求
+    (services || []).forEach(r => {
+        items.push({type:'svc', id:r.id, name:r.service_name, time:r.created_at, room:r.room_number, status:r.status});
+    });
+    // 体验/疗愈订单
+    (orders || []).forEach(o => {
+        var names = (o.items || []).map(i => i.name+'×'+i.quantity).join(', ');
+        items.push({type:'order', id:o.id, name:names||'体验订单', time:o.created_at, room:o.room_number, status:o.status, price:o.total_price});
+    });
+    if (items.length === 0) {
+        el.innerHTML = '<div class="empty-state"><span class="empty-icon">📋</span><p>暂无待调配请求</p></div>';
+        return;
+    }
+    el.innerHTML = items.map(r => {
+        var icon = r.type === 'order' ? '🧘' : '🔔';
+        var badge = r.type === 'order' ? '💰 ¥'+r.price : (r.status==='acknowledged'?'📊 处理中':'📊 待确认');
+        var actions = '';
+        if (r.type === 'svc') {
+            if (r.status === 'pending') actions += `<button class="btn btn-warning" onclick="ack(${r.id})">确认收到</button>`;
+            actions += `<button class="btn btn-success" onclick="done(${r.id})">✓ 完成</button>`;
+        } else {
+            actions = `<button class="btn btn-outline" onclick="orderStatus(${r.id},'preparing')">安排人员</button>`;
+        }
+        return `<div class="request-card pending">
+            <span class="request-icon">${icon}</span>
+            <div class="request-info">
+                <div class="request-name">${r.name}</div>
+                <div class="request-meta">
+                    <span>🕐 ${r.time}</span>
+                    <span>🚪 ${r.room || '未填'}</span>
+                    <span>${badge}</span>
+                </div>
+            </div>
+            <div class="request-actions">${actions}</div>
+        </div>`;
+    }).join('');
+}
+
+function renderCompleted(svcList, orderList) {
     const el = document.getElementById('completedList');
-    if (!list || list.length === 0) {
+    var items = [];
+    (svcList || []).forEach(r => {
+        items.push({icon:'✅', name:r.service_name, time:r.created_at, room:r.room_number, handler:r.handler});
+    });
+    (orderList || []).forEach(o => {
+        var names = (o.items || []).map(i => i.name+'×'+i.quantity).join(', ');
+        items.push({icon:'🍽️', name:names||'订单', time:o.created_at, room:o.room_number, handler:'前台'});
+    });
+    if (items.length === 0) {
         el.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span><p>今天还没有完成记录</p></div>';
         return;
     }
-    el.innerHTML = list.map(r => `
+    el.innerHTML = items.reverse().slice(0, 30).map(r => `
         <div class="request-card completed">
-            <span class="request-icon">✅</span>
+            <span class="request-icon">${r.icon}</span>
             <div class="request-info">
-                <div class="request-name">${r.service_name}</div>
-                <div class="request-meta"><span>🕐 ${r.created_at}</span><span>🚪 ${r.room_number || '未填'}</span><span>👤 ${r.handler || '系统'}</span></div>
+                <div class="request-name">${r.name}</div>
+                <div class="request-meta"><span>🕐 ${r.time}</span><span>🚪 ${r.room || '未填'}</span><span>👤 ${r.handler || '系统'}</span></div>
             </div>
         </div>`).join('');
 }
 
-function showAlert(count) {
+function showAlert(fd, mg) {
     const banner = document.getElementById('alertBanner');
-    document.getElementById('alertText').textContent = `🔔 有新的服务请求！当前待处理：${count} 条`;
+    document.getElementById('alertText').textContent = `🔔 新请求！🖥️前台 ${fd} 条 · 👤主理人 ${mg} 条`;
     banner.classList.add('show');
     setTimeout(() => banner.classList.remove('show'), 5000);
 }
@@ -218,6 +289,10 @@ async function ack(id) {
 }
 async function done(id) {
     await fetch('/api/staff/complete', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});
+    fetchData();
+}
+async function orderStatus(id, status) {
+    await fetch('/api/order/'+id+'/status', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:status})});
     fetchData();
 }
 

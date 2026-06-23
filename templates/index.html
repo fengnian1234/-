@@ -3,8 +3,17 @@
 {% set mp = '?mp=1' if request.args.get('mp') == '1' else '' %}
 
 {% block content %}
-<!-- 顶部大图 -->
-<section class="hero" style="{% if bnb_id == 'shanji' %}background: linear-gradient(135deg, #8B6914 0%, #6B4F12 50%, #3a2a0a 100%){% elif bnb_id == 'donglinwai' %}background: linear-gradient(135deg, #7B8DAD 0%, #5B6D8D 50%, #2a3a4a 100%){% endif %}">
+<!-- 顶部大图 — 民宿实拍照片背景 -->
+{% set hero_images = {
+    'guishu': '民宿小楼外观 hero.webp',
+    'shanji': '民宿楼外观 hero.webp',
+    'donglinwai': '内景 hero.webp'
+} %}
+{% if hero_images.get(bnb_id) %}
+<section class="hero hero--photo" style="background-image: url('{{ url_for('static', filename='img/exterior/' + bnb_id + '/' + hero_images[bnb_id]) }}'){% if bnb_id == 'guishu' %}; background-position: center 65%{% elif bnb_id == 'donglinwai' %}; background-position: center 60%{% endif %}">
+{% else %}
+<section class="hero">
+{% endif %}
     <div class="hero-overlay">
         <h1 class="hero-title">{{ bnb.name }}</h1>
         <p class="hero-subtitle" id="heroSubtitle">
@@ -43,13 +52,13 @@
                 <span class="entry-desc">一键呼叫</span>
             </a>
             {% if bnb_id == 'shanji' %}
-            <a href="{{ bnb_prefix }}/tea{{ mp }}" class="entry-card entry-card--feature" style="--card-color: #8B6914">
+            <a href="{{ bnb_prefix }}/tea{{ mp }}" class="entry-card entry-card--feature" style="--card-color: {{ bnb.theme_color }}">
                 <span class="entry-icon">🍵</span>
                 <span class="entry-title">茶园体验</span>
                 <span class="entry-desc">采茶·制茶·品茗</span>
             </a>
             {% elif bnb_id == 'donglinwai' %}
-            <a href="{{ bnb_prefix }}/healing{{ mp }}" class="entry-card entry-card--feature" style="--card-color: #7B8DAD">
+            <a href="{{ bnb_prefix }}/healing{{ mp }}" class="entry-card entry-card--feature" style="--card-color: {{ bnb.theme_color }}">
                 <span class="entry-icon">🧘</span>
                 <span class="entry-title">身心疗愈</span>
                 <span class="entry-desc">瑜伽·SPA·禅修</span>
@@ -64,14 +73,20 @@
     </div>
 </section>
 
-<!-- 索道通知 -->
+<!-- 索道通知（东林外在庐山脚下，无需索道） -->
+{% if bnb_id != 'donglinwai' %}
 <section class="section-padding" style="padding-bottom:0">
     <div class="container">
         <div class="notice-card notice-card--success">
+            {% if bnb_id == 'shanji' %}
+            <strong>🚡 庐山索道运营中</strong> — 索道上站步行<strong>3分钟</strong>即达山纪，观光车站也在门口～ 🏔️
+            {% else %}
             <strong>🚡 庐山索道已恢复运营</strong> — 2026年度检修（5.11-6.9）已结束，<strong>6月10日7:30起恢复正常</strong>。索道上站步行5分钟即达民宿～ 🏔️
+            {% endif %}
         </div>
     </div>
 </section>
+{% endif %}
 
 <!-- 民宿介绍（按 BnB 区分） -->
 <section class="intro section-padding">
@@ -97,6 +112,44 @@
         </div>
     </div>
 </section>
+
+<!-- 环境展示 — 民宿实拍照片 -->
+{% set env_photos = {
+    'guishu': [
+        ('static/img/exterior/guishu/外景白天.webp', '外景 · 山居小楼'),
+        ('static/img/exterior/guishu/外景傍晚.webp', '外景 · 暮色时分'),
+        ('static/img/exterior/guishu/前台咖啡馆.webp', '三山二水咖啡馆'),
+        ('static/img/exterior/guishu/餐品展示.webp', '咖啡简餐'),
+    ],
+    'shanji': [
+        ('static/img/exterior/shanji/民宿航拍图.webp', '航拍全景'),
+        ('static/img/exterior/shanji/民宿冬景.webp', '冬日山纪'),
+        ('static/img/exterior/shanji/民宿餐厅.webp', '山货餐厅'),
+        ('static/img/exterior/shanji/前台咖啡馆.webp', '咖啡书吧'),
+    ],
+    'donglinwai': [
+        ('static/img/exterior/donglinwai/民宿门头.webp', '民宿门头'),
+        ('static/img/exterior/donglinwai/内景夜景.webp', '庭院夜景'),
+        ('static/img/exterior/donglinwai/前台咖啡馆.webp', '前台·咖啡馆'),
+    ]
+} %}
+{% set photos = env_photos.get(bnb_id, []) %}
+{% if photos %}
+<section class="section-padding bg-light">
+    <div class="container">
+        <h2 class="section-title">民宿环境</h2>
+        <p class="section-desc">实拍 · {{ bnb.short_name }}的每一处风景</p>
+        <div class="env-gallery">
+            {% for src, label in photos %}
+            <div class="env-card">
+                <img src="{{ url_for('static', filename='img/exterior/' + bnb_id + '/' + src.split('/')[-1]) }}" alt="{{ label }}" loading="lazy">
+                <div class="env-card-label">{{ label }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
 
 <!-- 精选房型 -->
 <section class="featured-rooms section-padding bg-light">
@@ -128,32 +181,12 @@
     </div>
 </section>
 
-<!-- 功能介绍 -->
-<section class="section-padding">
-    <div class="container">
-        <h2 class="section-title">微信公众号智能客服</h2>
-        <p class="section-desc">关注公众号即可使用 · 预订前免费旅行顾问 · 预订后解锁专属AI管家</p>
-        <div class="feature-list">
-            <div class="feature-item"><span class="feature-icon">🤖</span><div class="feature-content"><h3>AI 智能管家</h3><p>预订前免费旅行顾问 · 预订后专属AI管家 · 离店后温暖复购关怀。全链路陪伴。</p></div></div>
-            <div class="feature-item"><span class="feature-icon">🔑</span><div class="feature-content"><h3>关键词秒回</h3><p>回复「房型」「菜单」「攻略」「服务」等关键词秒获信息。回复「人工」转接客服（8:00-22:00）。</p></div></div>
-            <div class="feature-item"><span class="feature-icon">🏨</span><div class="feature-content"><h3>平台预订</h3><p>通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」预订，确认后解锁专属AI管家。</p></div></div>
-            {% if bnb_id == 'shanji' %}
-            <div class="feature-item"><span class="feature-icon">🍵</span><div class="feature-content"><h3>茶园特色服务</h3><p>采茶体验、制茶工坊、茶道品鉴课、茶叶伴手礼——山纪独有，让茶香陪伴你的庐山之旅。</p></div></div>
-            {% elif bnb_id == 'donglinwai' %}
-            <div class="feature-item"><span class="feature-icon">🧘</span><div class="feature-content"><h3>疗愈特色服务</h3><p>晨间瑜伽、颂钵音疗、SPA按摩、禅修冥想——东林外独有，在庐山群峰间找回身心平衡。</p></div></div>
-            {% else %}
-            <div class="feature-item"><span class="feature-icon">☕</span><div class="feature-content"><h3>「三山二水咖啡」点单</h3><p>精品咖啡、茶饮、简餐轻食在线点单，支持微信支付，送餐到房。</p></div></div>
-            {% endif %}
-        </div>
-    </div>
-</section>
-
-<!-- 特色展示 / 住客评价 -->
+<!-- 住客好评 — 摆在智能客服上方，让客人先看到口碑 -->
 <section class="section-padding">
     <div class="container">
         {% if bnb_id == 'guishu' %}
         <h2 class="section-title">住客好评</h2>
-        <p class="section-desc">携程 4.7分 · 85条真实评价</p>
+        <p class="section-desc">携程 4.6分 · 真实住客评价</p>
         <div class="review-carousel">
             <div class="review-slides" id="reviewSlides">
                 <div class="review-slide">
@@ -183,25 +216,45 @@
         </div>
         {% elif bnb_id == 'shanji' %}
         <h2 class="section-title">住客好评</h2>
-        <p class="section-desc">携程 4.8分 · 62条真实评价</p>
+        <p class="section-desc">携程 4.6分 · 真实住客评价</p>
         <div class="review-list">
-            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"第一次体验采茶！清晨跟老师上山，云雾缭绕中亲手摘嫩芽，回来还学制茶，太有意思了～"</p><div class="review-author">茶语 · 2026年5月</div></div>
-            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"房间里就能闻到淡淡的茶香，窗外就是茶园。早晨泡一杯自产的云雾茶，看着山景，这就是向往的生活。"</p><div class="review-author">山居客 · 2026年4月</div></div>
-            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"制茶工坊超好玩！师傅手把手教杀青揉捻，做了一罐属于自己的茶带回家，朋友们都羡慕～"</p><div class="review-author">茶小白 · 2025年11月</div></div>
-            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐</div><p class="review-text">"茶道品鉴课学到了好多知识。盖碗冲泡、紫砂壶冲泡，老师讲解细致。茶园步道清晨走走特别舒服。"</p><div class="review-author">爱喝茶的老张 · 2026年3月</div></div>
-            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"在茶园里住了两晚，每天被茶香和鸟鸣叫醒。晚饭后的品茶时光是最惬意的，学到了分辨不同年份茶的方法。"</p><div class="review-author">闲云 · 2026年6月</div></div>
+            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"在庐山住进了水墨画里，白墙原木嵌在青山翠柏里。坐在阳台泡一杯云雾茶，静静看云雾流转，瞬间抚平浮躁。"</p><div class="review-author">daniel626 · 2026年6月</div></div>
+            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"300平花园庭院太绝了！咖啡书吧、云上茶吧，每一处都透着侘寂感。原木风房间宽敞，落地窗框成天然背景。"</p><div class="review-author">上山下海的茵茵 · 2026年4月</div></div>
+            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"离索道站特别近，步行几分钟就到了。站在阳台上就能看到牯岭镇美景。早餐江西拌粉超喜欢！"</p><div class="review-author">梦梦旅行酱 · 2026年5月</div></div>
+            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"住了三天临走居然舍不得。早上雾慢慢散了，山一点一点露出来，那个过程比直接看见大晴天还让人高兴。"</p><div class="review-author">海绵擦 · 2026年3月</div></div>
+            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"森系氛围戳中心巴，原木风满院绿意。床品软乎乎，地暖加智能马桶卫浴细节拉满，舒适度不输奢野酒店。"</p><div class="review-author">爱旅游的朵一 · 2026年3月</div></div>
         </div>
         {% elif bnb_id == 'donglinwai' %}
         <h2 class="section-title">住客好评</h2>
-        <p class="section-desc">携程 4.8分 · 48条真实评价</p>
+        <p class="section-desc">携程 4.7分 · 真实住客评价</p>
         <div class="review-list">
-            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"第一次体验颂钵音疗，琼儿老师太专业了！钵音从头顶到脚底层层波动，整个人像被温暖的水包裹，焦虑感完全消失了。"</p><div class="review-author">静心 · 2026年5月</div></div>
-            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"东林寺就在旁边，早晨听着钟声醒来，然后去上晨间瑜伽课。三天下来感觉整个人都轻盈了，强烈推荐给需要减压的朋友。"</p><div class="review-author">城市逃离者 · 2026年4月</div></div>
-            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"芳香裹肤是我做过最奢华的身体护理！草本泥膜温热敷满全身，然后玫瑰花瓣浴收尾，皮肤像婴儿一样嫩，值回票价～"</p><div class="review-author">美肤达人小C · 2026年3月</div></div>
-            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐</div><p class="review-text">"情绪疏压释放课程让我哭了又笑了，琼儿老师营造的安全空间让我敢于面对内心积压的情绪。离开时感觉卸下了千斤重担。"</p><div class="review-author">雨后的彩虹 · 2026年6月</div></div>
-            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"轻脊引香太适合久坐的上班族了！琼儿老师沿着脊柱一节节松解，配合温灸和精油，做完后整个背都轻松了，体态都挺拔了。"</p><div class="review-author">码农也需要疗愈 · 2026年2月</div></div>
+            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"很棒的一次出行体验！前台小哥很暖心，房间干净，整个民宿特别有艺术气息，还有一只可爱的小猫。"</p><div class="review-author">携程住客 · 2026年1月</div></div>
+            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"物超所值！无论硬件还是软性服务都极高水准。接送服务非常满意，已经推荐给了计划来玩的朋友。"</p><div class="review-author">携程住客 · 2026年1月</div></div>
+            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"房间干净整洁设施完善，紧邻西林寺和东林寺。服务热情周到，店里还有只小猫！下次还定这家。"</p><div class="review-author">携程住客 · 2026年2月</div></div>
+            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"本想不写评论但这次太舒服了。白色房子清清爽爽，院子里有水池和橘子树的院子。卫生到位地板锃亮！"</p><div class="review-author">携程住客 · 2025年12月</div></div>
+            <div class="review-card"><div class="review-stars">⭐⭐⭐⭐⭐</div><p class="review-text">"管家态度超好，一进门就惊艳。早上被浓浓咖啡味香醒，拿铁超级好喝！一切都是那么惊喜和意外。"</p><div class="review-author">微信用户 · 2026年1月</div></div>
         </div>
         {% endif %}
+    </div>
+</section>
+
+<!-- 功能介绍 — 微信公众号智能客服 -->
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title">微信公众号智能客服</h2>
+        <p class="section-desc">关注公众号即可使用 · 预订前免费旅行顾问 · 预订后解锁专属AI管家</p>
+        <div class="feature-list">
+            <div class="feature-item"><span class="feature-icon">🤖</span><div class="feature-content"><h3>AI 智能管家</h3><p>预订前免费旅行顾问 · 预订后专属AI管家 · 离店后温暖复购关怀。全链路陪伴。</p></div></div>
+            <div class="feature-item"><span class="feature-icon">🔑</span><div class="feature-content"><h3>关键词秒回</h3><p>回复「房型」「菜单」「攻略」「服务」等关键词秒获信息。回复「人工」转接客服（8:00-22:00）。</p></div></div>
+            <div class="feature-item"><span class="feature-icon">🏨</span><div class="feature-content"><h3>平台预订</h3><p>通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」预订，确认后解锁专属AI管家。</p></div></div>
+            {% if bnb_id == 'shanji' %}
+            <div class="feature-item"><span class="feature-icon">🍵</span><div class="feature-content"><h3>茶园特色服务</h3><p>采茶体验、制茶工坊、茶道品鉴课、茶叶伴手礼——山纪独有，让茶香陪伴你的庐山之旅。</p></div></div>
+            {% elif bnb_id == 'donglinwai' %}
+            <div class="feature-item"><span class="feature-icon">🧘</span><div class="feature-content"><h3>疗愈特色服务</h3><p>晨间瑜伽、颂钵音疗、SPA按摩、禅修冥想——东林外独有，在庐山群峰间找回身心平衡。</p></div></div>
+            {% else %}
+            <div class="feature-item"><span class="feature-icon">☕</span><div class="feature-content"><h3>「三山二水咖啡」点单</h3><p>精品咖啡、茶饮、简餐轻食在线点单，支持微信支付，送餐到房。</p></div></div>
+            {% endif %}
+        </div>
     </div>
 </section>
 <!-- 常见问题 -->
@@ -230,8 +283,8 @@
                 <div class="faq-a"><strong>宠物友好！</strong>可免费携带猫狗入住。请提前联系前台确认 📞{{ bnb.phone }}。</div>
             </div>
             <div class="faq-item" onclick="this.classList.toggle('open')">
-                <div class="faq-q">🚡 怎么到达民宿？<span class="faq-arrow">▾</span></div>
-                <div class="faq-a">📍 <strong>{{ bnb.address }}</strong><br>🚡 乘索道上山后步行即达<br>📞 前台电话：<strong>{{ bnb.phone }}</strong></div>
+                <div class="faq-q">🚗 怎么到达民宿？<span class="faq-arrow">▾</span></div>
+                <div class="faq-a">📍 <strong>{{ bnb.address }}</strong><br>{% if bnb_id == 'donglinwai' %}🚗 自驾或打车导航即达，距庐山站10km，九江站16km{% else %}🚡 乘索道上山后步行即达（约5分钟）{% endif %}<br>📞 前台电话：<strong>{{ bnb.phone }}</strong></div>
             </div>
             <div class="faq-item" onclick="this.classList.toggle('open')">
                 <div class="faq-q">🅿️ 有停车场吗？<span class="faq-arrow">▾</span></div>

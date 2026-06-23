@@ -114,45 +114,138 @@ local_data/  >  opencli  >  WebSearch  >  其他来源
 
 `local_data/images/` 和 `local_data/documents/` 中的官方文件权威最高。信息冲突时按此链采信。
 
-**在搜索小红书、携程、大众点评等中文平台时，优先使用 `opencli` 工具**（已安装全局 CLI）。opencli 提供原生站点适配器：
+**在搜索小红书、携程、大众点评等中文平台时，优先使用 `opencli` 工具**（已安装全局 CLI v1.8.4）。opencli 提供原生站点适配器：
 
 | 平台 | 适配器 | 常用命令 | 浏览器 |
 |------|--------|----------|:--:|
 | 携程 | `ctrip` | `search`, `hotel-search`, `hotel-suggest` | `search` 不需要 |
 | 小红书 | `xiaohongshu` | `search`, `note`, `download`, `feed` | 需要 |
 | 大众点评 | `dianping` | `search`, `shop` | 需要 |
+| 微博 | `weibo` | `search` | 需要 |
+| 知乎 | `zhihu` | `search` | 需要 |
 
-使用示例：
+### 浏览器依赖平台的使用前提
+
+小红书、大众点评、微博、知乎等需要登录态的写操作，**必须先完成以下前置步骤**（一次性配置）：
+
 ```bash
+# 1. 安装 Chrome 扩展（仅需一次）
+opencli browser init
+
+# 2. 使用前确保 Chrome 已打开且对应网站已登录
+#    - 大众点评：需在 Chrome 中登录 diangping.com
+#    - 小红书：需在 Chrome 中登录 xiaohongshu.com
+#    - 微博/知乎同理
+```
+
+**这些命令无需额外指定 session 或 cookie，opencli 会自动连接已登录的 Chrome 浏览器获取凭证。**
+
+### 命令使用示例
+
+```bash
+# ── 无需浏览器的命令（直接可用）──
 # 携程搜索（公开，无需浏览器）
 opencli ctrip search "庐山 云上归墅" -f json --limit 5
 
-# 携程酒店搜索（需要 Chrome 扩展）
+# ── 需要浏览器的命令（需先 opencli browser init + Chrome 已登录）──
+# 携程酒店搜索
 opencli ctrip hotel-search "庐山" --checkin 2026-06-25 -f json
 
-# 小红书搜索（需要先 opencli browser init 配置 Chrome 扩展 + 登录）
+# 小红书搜索
 opencli xiaohongshu search "庐山美食" -f json --limit 5
 
-# 大众点评搜索（需要 Chrome 扩展）
+# 小红书笔记下载（含图片）
+opencli xiaohongshu note <note_id> --download
+
+# 大众点评搜索
 opencli dianping search "庐山民宿" -f json --limit 5
+
+# 大众点评店铺详情
+opencli dianping shop <shop_id> -f json
 ```
 
-注意：小红书、大众点评等需要登录态的写操作，必须先用 `opencli browser init` 安装 Chrome 扩展并登录对应网站。
+### 图片获取策略
+
+| 来源 | 方法 | 说明 |
+|------|------|------|
+| 携程点评图片 | 解析 `dimg*.c-ctrip.com/images/` URL | 公开 CDN，无需登录 |
+| 小红书笔记图片 | `opencli xiaohongshu note <id> --download` | 需浏览器 |
+| 大众点评图片 | `opencli browser extract` 从店铺页提取 | 需浏览器 + 登录 |
+| 通用搜索图片 | WebSearch 找到图片 URL → `requests` 下载 | 兜底方案 |
+
+**注意事项：**
+- 携程 CDN 图片 URL 的尺寸参数：`_W_640_0.png`（640宽）、`_W_1920_1080.png`（全尺寸），下载时建议 750-1080px 宽度
+- opencli download 的图片默认保存在当前工作目录，需移动到 `static/img/` 下对应目录
+- 图片格式推荐 WebP（体积小）或 JPG（兼容性好），单张不超过 500KB
 
 ### 顾客导向原则
 
 面向客人的页面 (`preview/` 和 `templates/` 中除 `staff.html` 外的所有模板) **只展示对客人有益的功能**。员工看板、好评推送机制等内部运营功能不应出现在顾客页面。
 
-### 主题系统
+### BnB 色彩架构（CSS 变量一站切换范式）
 
-使用 `data-theme="dark"` 属性（挂载在 `<html>` 上）+ CSS 自定义属性覆盖实现深浅切换。所有颜色通过 `:root` 变量定义，暗色模式在 `[data-theme="dark"]` 选择器下覆盖。代码位置：
-- Flask 模板：`static/css/style.css` 的 `[data-theme="dark"]` 块
-- 预览页面：各自内联 `<style>` 中的 `[data-theme="dark"]` 块
-- 员工看板：`templates/staff.html` 内联样式中的独立暗色变量
+**核心原则：组件样式零硬编码。** 任何 CSS 规则中禁止出现 BnB 专属 hex 值（`#4a7c59`、`#8B6914`、`#7B8DAD` 及其衍生色）。所有 BnB 差异化颜色一律使用 CSS 变量引用（`var(--color-primary)` 等）。hex 值**只允许出现在变量定义块**（`:root`、`[data-bnb]`、`[data-bnb][data-theme]`）中。
 
-### 硬编码颜色
+**效果：** 新增一个 BnB 只需在各上下文各加 1 个 `[data-bnb]` 变量块，所有组件自动适配，零遗漏。
 
-避免在 HTML `style=""` 属性中使用硬编码颜色值。使用 CSS 类（如 `.notice-card--success`、`.notice-card--warning`、`.room-preview-gradient-sky`），确保暗色模式能正确覆盖。
+#### 三套基底色
+
+| BnB | ID | Primary | 中文 | 基调 |
+|-----|-----|---------|------|------|
+| 归墅 | `guishu` | `#4a7c59` | 竹青 | 山居、清新、自然 |
+| 山纪 | `shanji` | `#8B6914` | 茶褐 | 茶馆、沉稳、温暖 |
+| 东林外 | `donglinwai` | `#7B8DAD` | 禅灰蓝 | 禅寺、清净、治愈 |
+
+归墅使用 `:root` 默认值，山纪/东林外通过 `[data-bnb]` 选择器覆盖。
+
+#### 色彩上下文地图（新增 BnB 检查清单）
+
+| # | 上下文 | 文件 | 定义方式 | 变量数 |
+|---|--------|------|----------|--------|
+| 1 | Web 全局样式 | `static/css/style.css` | `[data-bnb="xxx"]` (light+dark 各 1 块) | 20 |
+| 2 | 小程序 WebView | `static/css/style-mp.css` | `[data-bnb="xxx"] body.mp-mode` (light+dark) | 10 |
+| 3 | AI 管家页 | `templates/miniapp-chat.html` | `<html data-bnb>` + `[data-bnb="xxx"]` CSS | 7 |
+| 4 | 模拟器外壳 | `templates/miniapp-simulator.html` | `BNB_COLORS` + `BNB_GRADIENTS` JS 常量 | 2 组 |
+| 5 | Python 配置 | `config.py` | `BNB_CONFIGS["xxx"]["theme_color"]` | 1 |
+| 6 | 微信原生小程序 | `miniapp/utils/constants.js` | `BNB_CONFIG` 对象 | 1 |
+
+**新增 BnB 操作步骤：** 按上表顺序，在 6 个位置各添加 1 个定义块，颜色值使用新 BnB 的主色及其衍生色（浅/深/背景/文字/边框）。
+
+#### CSS 变量参考（style.css `:root`）
+
+| 变量 | 用途 | 典型组件 |
+|------|------|----------|
+| `--color-primary` | 主色 | 按钮、链接、激活态、标题 |
+| `--color-primary-light` | 浅主色 | hover 态、浅色背景 |
+| `--color-primary-dark` | 深主色 | 渐变终点、深色强调 |
+| `--color-accent` | 强调色（暖木/茶金/禅木） | 价格、标签、次要按钮 |
+| `--color-accent-light` | 浅强调色 | 浅色标签背景 |
+| `--color-bg` | 页面背景 | `body` 背景 |
+| `--color-bg-light` | 浅背景 | 卡片、面板 |
+| `--color-bg-dark` | 深背景 | 暗色区域、表头 |
+| `--color-text` | 主文字 | 正文 |
+| `--color-text-light` | 次文字 | 描述、meta 信息 |
+| `--color-text-lighter` | 弱文字 | 占位符、禁用态 |
+| `--color-white` | 表面白 | 卡片背景（各 BnB 微调色温） |
+| `--color-border` | 边框 | 分割线、输入框边框 |
+| `--color-shadow` | 阴影 | 卡片阴影 |
+| `--color-sky` | 天色 | Hero 渐变起点 |
+| `--color-mist` | 雾色 | Hero 渐变中间色 |
+| `--color-success` / `--color-warning` / `--color-danger` | 语义色 | 各 BnB 可微调 |
+
+#### 主题系统（深色模式）
+
+使用 `data-theme="dark"` 属性（挂载在 `<html>` 上）+ CSS 自定义属性覆盖实现深浅切换。暗色模式变量定义在 `[data-theme="dark"]` 和 `[data-bnb="xxx"][data-theme="dark"]` 选择器下。
+
+CSS 选择器优先级链：`:root` → `[data-bnb]` → `[data-theme]` → `[data-bnb][data-theme]` → `[data-season]` → `[data-season][data-theme]`
+
+#### 组件开发规范
+
+1. **只用变量，不写 hex**：组件 CSS 中所有颜色通过 `var(--color-xxx)` 引用，禁止硬编码
+2. **rgba 改用 color-mix**：`rgba(123,141,173,0.12)` → `color-mix(in srgb, var(--color-primary) 12%, transparent)`
+3. **渐变可在 `[data-bnb]` 块中覆盖**：Hero、Page-header、Footer 等大面积渐变需要在 BnB 块中单独定义（无法用单一变量表达多色渐变终点）
+4. **模板中 Jinja2 动态色用 `{{ bnb.theme_color }}`**：仅在需要设置 `--bnb-color` 或 `--card-color` 等动态 CSS 变量时使用
+5. **新增组件时自问**："如果 BnB 从归墅切换到山纪，这个颜色应该跟着变吗？" → 是：用变量；否：用中性色
 
 ## 微信消息流
 
@@ -204,4 +297,9 @@ curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/staff
 
 # 微信接入验证（需要先配置 Token）
 # GET /wechat?signature=...&echostr=...&timestamp=...&nonce=...
+
+# BnB 色彩验证 — 每个 BnB 分别检查
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/gs/
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/sj/
+curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/dlw/
 ```

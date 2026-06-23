@@ -207,6 +207,8 @@ class Order(Base):
     wechat_order_id = Column(String(64), comment="微信支付订单号")
     wechat_transaction_id = Column(String(64), comment="微信支付交易号")
     remark = Column(Text, comment="备注")
+    notify_target = Column(String(20), default="frontdesk",
+                          comment="通知目标: frontdesk=前台点单机 / manager=主理人调配")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -219,6 +221,7 @@ class Order(Base):
             "status": self.status,
             "pay_status": self.pay_status,
             "remark": self.remark,
+            "notify_target": self.notify_target,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M") if self.created_at else None,
         }
 
@@ -732,6 +735,7 @@ class HealingCourse(Base):
     price_tiers = Column(JSON, comment="阶梯价格 [{duration, price, note}]")
     therapist = Column(String(50), default="琼儿老师", comment="疗愈师")
     images = Column(JSON, comment="图片列表")
+    tags = Column(JSON, comment="功效标签 [{text, color}]")
     is_available = Column(Boolean, default=True)
     sort_order = Column(Integer, default=0)
 
@@ -745,6 +749,7 @@ class HealingCourse(Base):
             "price_tiers": self.price_tiers or [],
             "therapist": self.therapist or "琼儿老师",
             "images": self.images or [],
+            "tags": self.tags or [],
             "is_available": self.is_available,
         }
 
