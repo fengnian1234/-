@@ -228,11 +228,11 @@ def refresh_local_data():
     return _build_local_data()
 
 
-def _get_guest_context(openid: str) -> str:
+def _get_guest_context(openid: str, bnb_id: str = "guishu") -> str:
     """为AI提示词获取当前客户的个性化上下文"""
     try:
         from services.booking import get_booking_by_openid
-        booking = get_booking_by_openid(openid)
+        booking = get_booking_by_openid(openid, bnb_id=bnb_id)
         if not booking:
             return ""
         guest_name = booking.get("guest_name", "") or ""
@@ -826,7 +826,7 @@ def _call_ai(system_template: str, user_openid: str, user_message: str, bnb_id: 
     try:
         # 注入本地数据 + 客人个性化上下文
         local_data = _get_local_data(bnb_id)
-        guest_context = _get_guest_context(user_openid)
+        guest_context = _get_guest_context(user_openid, bnb_id=bnb_id)
         system_prompt = system_template.replace("{LOCAL_DATA}", local_data).replace("{GUEST_CONTEXT}", guest_context)
 
         # 加载/初始化会话缓存
@@ -933,15 +933,15 @@ def chat_travel_advisor(user_openid: str, user_message: str, bnb_id: str = "guis
 
 def chat_pre_arrival(user_openid: str, user_message: str, bnb_id: str = "guishu") -> str:
     """已预订但未入住：到店前管家"""
-    if AI_REQUIRES_BOOKING and not is_ai_enabled(user_openid):
-        return _booking_required_reply()
+    if AI_REQUIRES_BOOKING and not is_ai_enabled(user_openid, bnb_id=bnb_id):
+        return _booking_required_reply(bnb_id=bnb_id)
     return _call_ai(_get_system_prompt("pre_arrival", bnb_id), user_openid, user_message, bnb_id)
 
 
 def chat(user_openid: str, user_message: str, bnb_id: str = "guishu") -> str:
     """已入住：专属AI管家（需预订验证）"""
-    if AI_REQUIRES_BOOKING and not is_ai_enabled(user_openid):
-        return _booking_required_reply()
+    if AI_REQUIRES_BOOKING and not is_ai_enabled(user_openid, bnb_id=bnb_id):
+        return _booking_required_reply(bnb_id=bnb_id)
     return _call_ai(_get_system_prompt("guest", bnb_id), user_openid, user_message, bnb_id)
 
 
@@ -1070,17 +1070,17 @@ def continue_reply(user_openid: str) -> str:
 
 
 
-def get_conversation_mode(user_openid: str) -> str:
+def get_conversation_mode(user_openid: str, bnb_id: str = "guishu") -> str:
     """
     根据用户预订状态返回AI模式（四层权限）
     Returns: 'travel_advisor' | 'pre_arrival' | 'guest_butler' | 'post_stay'
     """
     from services.booking import is_checked_in
-    if is_checked_in(user_openid):
+    if is_checked_in(user_openid, bnb_id=bnb_id):
         return 'guest_butler'
-    if is_ai_enabled(user_openid):
+    if is_ai_enabled(user_openid, bnb_id=bnb_id):
         return 'pre_arrival'
-    booking = get_booking_by_openid(user_openid, include_checked_out=True)
+    booking = get_booking_by_openid(user_openid, include_checked_out=True, bnb_id=bnb_id)
     if booking and booking.get('status') == 'checked_out':
         return 'post_stay'
     return 'travel_advisor'

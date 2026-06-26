@@ -517,7 +517,7 @@ def handle_wechat_message(msg, bnb_id="guishu"):
 
     # 2. AI智能对话（v3.2 四层权限：旅行顾问 / 到店前 / 入住中 / 离店后）
     try:
-        mode = get_conversation_mode(openid)
+        mode = get_conversation_mode(openid, bnb_id=bnb_id)
         if mode == 'travel_advisor':
             ai_reply = chat_travel_advisor(openid, content, bnb_id=bnb_id)
         elif mode == 'pre_arrival':
