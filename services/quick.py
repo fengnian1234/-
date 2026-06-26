@@ -82,7 +82,7 @@ def format_services_text(bnb_id=None):
 
 
 def handle_service_request(service_name: str, openid: str = "",
-                          room_number: str = "") -> str:
+                          room_number: str = "", bnb_id: str = "guishu") -> str:
     """处理服务请求，返回确认信息（要求2：同时创建通知）"""
     services = get_all_services()
 
@@ -107,6 +107,7 @@ def handle_service_request(service_name: str, openid: str = "",
             service_name=matched['name'],
             room_number=room_number,
             urgency="normal",
+            bnb_id=bnb_id,
         )
     except Exception:
         debug("服务请求通知创建失败（不影响主流程）")

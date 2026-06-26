@@ -653,13 +653,14 @@ MEMORY_SUMMARIZE_THRESHOLD = 20  # 超过20条触发摘要压缩
 SESSION_TTL_SECONDS = 7 * 24 * 3600  # 会话7天无活动自动清理
 
 
-def _save_conversation(openid: str, role: str, content: str):
+def _save_conversation(openid: str, role: str, content: str, bnb_id: str = "guishu"):
     """持久化对话记录到数据库（完整存储，不截断）"""
     try:
         from models import SessionLocal, MessageLog
         db = SessionLocal()
         log = MessageLog(
             openid=openid,
+            bnb_id=bnb_id,
             message_type=role,
             content=content[:2000],  # 完整存储，最长2000字符
             reply=content[:2000] if role == 'assistant' else ''
@@ -669,13 +670,14 @@ def _save_conversation(openid: str, role: str, content: str):
         warning("对话持久化失败")
 
 
-def _load_conversation(openid: str, limit: int = 40) -> list:
+def _load_conversation(openid: str, limit: int = 40, bnb_id: str = "guishu") -> list:
     """从数据库加载最近对话历史（完整内容）"""
     try:
         from models import SessionLocal, MessageLog
         db = SessionLocal()
         logs = db.query(MessageLog).filter(
-            MessageLog.openid == openid
+            MessageLog.openid == openid,
+            MessageLog.bnb_id == bnb_id,
         ).order_by(MessageLog.created_at.desc()).limit(limit).all()
         db.close()
         history = []
@@ -795,7 +797,7 @@ def _build_messages(system_template: str, history: list, user_message: str,
     return messages
 
 
-def _call_ai(system_template: str, user_openid: str, user_message: str) -> str:
+def _call_ai(system_template: str, user_openid: str, user_message: str, bnb_id: str = "guishu") -> str:
     """通用的AI调用函数，自动注入本地数据 + 输入校验 + 并发控制 + 记忆管理"""
     if not AI_ENABLED:
         return _fallback_reply()
@@ -833,7 +835,7 @@ def _call_ai(system_template: str, user_openid: str, user_message: str) -> str:
         # 加载/初始化会话缓存
         if user_openid not in _conversation_cache:
             _conversation_cache[user_openid] = {
-                "history": _load_conversation(user_openid),
+                "history": _load_conversation(user_openid, bnb_id=bnb_id),
                 "summary": "",
                 "last_active": _time_module.time(),
             }
@@ -881,8 +883,8 @@ def _call_ai(system_template: str, user_openid: str, user_message: str) -> str:
 
         history.append({"role": "user", "content": user_message})
         history.append({"role": "assistant", "content": ai_reply})
-        _save_conversation(user_openid, "user", user_message)
-        _save_conversation(user_openid, "assistant", ai_reply)  # 完整存储
+        _save_conversation(user_openid, "user", user_message, bnb_id)
+        _save_conversation(user_openid, "assistant", ai_reply, bnb_id)  # 完整存储
 
         # 更新缓存（包含摘要）
         cache["history"] = history[-CONVERSATION_MAX_HISTORY:]
@@ -909,38 +911,38 @@ def _get_system_prompt(prompt_type: str, bnb_id: str = "guishu") -> str:
     """获取民宿专属的系统提示词（替换硬编码的归墅信息）"""
     info = _bnb_info(bnb_id)
     if prompt_type == "travel":
-        return TRAVEL_ADVISOR_SYSTEM.replace("{{BNB_INFO}}", info)
+        return TRAVEL_ADVISOR_SYSTEM.replace("{BNB_INFO}", info)
     elif prompt_type == "pre_arrival":
-        return PRE_ARRIVAL_SYSTEM.replace("{{BNB_INFO}}", info)
+        return PRE_ARRIVAL_SYSTEM.replace("{BNB_INFO}", info)
     elif prompt_type == "guest":
-        return GUEST_BUTLER_SYSTEM.replace("{{BNB_INFO}}", info)
+        return GUEST_BUTLER_SYSTEM.replace("{BNB_INFO}", info)
     elif prompt_type == "post_stay":
-        return POST_STAY_SYSTEM.replace("{{BNB_INFO}}", info)
-    return GUEST_BUTLER_SYSTEM.replace("{{BNB_INFO}}", info)
+        return POST_STAY_SYSTEM.replace("{BNB_INFO}", info)
+    return GUEST_BUTLER_SYSTEM.replace("{BNB_INFO}", info)
 
 
 def chat_travel_advisor(user_openid: str, user_message: str, bnb_id: str = "guishu") -> str:
     """预订前：免费旅行顾问（所有人可用）"""
-    return _call_ai(_get_system_prompt("travel", bnb_id), user_openid, user_message)
+    return _call_ai(_get_system_prompt("travel", bnb_id), user_openid, user_message, bnb_id)
 
 
 def chat_pre_arrival(user_openid: str, user_message: str, bnb_id: str = "guishu") -> str:
     """已预订但未入住：到店前管家"""
     if AI_REQUIRES_BOOKING and not is_ai_enabled(user_openid):
         return _booking_required_reply()
-    return _call_ai(_get_system_prompt("pre_arrival", bnb_id), user_openid, user_message)
+    return _call_ai(_get_system_prompt("pre_arrival", bnb_id), user_openid, user_message, bnb_id)
 
 
 def chat(user_openid: str, user_message: str, bnb_id: str = "guishu") -> str:
     """已入住：专属AI管家（需预订验证）"""
     if AI_REQUIRES_BOOKING and not is_ai_enabled(user_openid):
         return _booking_required_reply()
-    return _call_ai(_get_system_prompt("guest", bnb_id), user_openid, user_message)
+    return _call_ai(_get_system_prompt("guest", bnb_id), user_openid, user_message, bnb_id)
 
 
 def chat_post_stay(user_openid: str, user_message: str, bnb_id: str = "guishu") -> str:
     """离店后：复购关怀"""
-    return _call_ai(_get_system_prompt("post_stay", bnb_id), user_openid, user_message)
+    return _call_ai(_get_system_prompt("post_stay", bnb_id), user_openid, user_message, bnb_id)
 
 
 # ══════════════════════════════════════════════════════════

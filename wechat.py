@@ -69,7 +69,7 @@ def _require_check_in_reply(openid: str) -> str:
     )
 
 
-def _guard_service(service_name: str):
+def _guard_service(service_name: str, bnb_id: str = "guishu"):
     """
     包装服务请求处理：先检查是否已实际入住，未入住则拒绝。
     """
@@ -79,11 +79,11 @@ def _guard_service(service_name: str):
             return _require_booking_reply()
         if not is_checked_in(openid):
             return _require_check_in_reply(openid)
-        return handle_service_request(service_name, openid=openid)
+        return handle_service_request(service_name, openid=openid, bnb_id=bnb_id)
     return handler
 
 
-def _guard_service_capture(msg, match):
+def _guard_service_capture(msg, match, bnb_id: str = "guishu"):
     """
     处理「服务+名称」类关键词（含捕获组）。
     先检查是否已实际入住，未入住则拒绝。
@@ -93,7 +93,7 @@ def _guard_service_capture(msg, match):
         return _require_booking_reply()
     if not is_checked_in(openid):
         return _require_check_in_reply(openid)
-    return handle_service_request(match.group(2), openid=openid)
+    return handle_service_request(match.group(2), openid=openid, bnb_id=bnb_id)
 
 
 def is_human_service_time() -> bool:
@@ -162,21 +162,21 @@ def build_keyword_routes(bnb_id="guishu"):
         (r"^(服务|快捷|4)$",
          lambda msg, m: format_services_text(bnb_id=bnb_id)),
         (r"^(服务|我要)(.+)$",
-         lambda msg, m: _guard_service_capture(msg, m)),
+         lambda msg, m: _guard_service_capture(msg, m, bnb_id=bnb_id)),
         (r"^(打扫|清洁|卫生)$",
-         lambda msg, m: _guard_service("打扫")(msg, m)),
+         lambda msg, m: _guard_service("打扫", bnb_id=bnb_id)(msg, m)),
         (r"^(续住|续房|延住)$",
          lambda msg, m: handle_extend_stay(msg)),
         (r"^(维修|修理|坏了)$",
-         lambda msg, m: _guard_service("维修")(msg, m)),
+         lambda msg, m: _guard_service("维修", bnb_id=bnb_id)(msg, m)),
         (r"^(叫醒|叫早|morning.?call)$",
-         lambda msg, m: _guard_service("叫醒")(msg, m)),
+         lambda msg, m: _guard_service("叫醒", bnb_id=bnb_id)(msg, m)),
         (r"^(退房|离店|退宿)$",
-         lambda msg, m: _guard_service("退房")(msg, m)),
+         lambda msg, m: _guard_service("退房", bnb_id=bnb_id)(msg, m)),
         (r"^(加床|加被|婴儿床|儿童床)$",
          lambda msg, m: "🛏️ 温馨提示：本民宿所有房型不可加床，不提供婴儿床。\n\n如需额外被褥枕头，可回复「补充用品」或「人工」联系前台～"),
         (r"^(送餐|送饭)$",
-         lambda msg, m: _guard_service("送餐")(msg, m)),
+         lambda msg, m: _guard_service("送餐", bnb_id=bnb_id)(msg, m)),
         (r"^(wifi|WiFi|无线|网络)$",
          lambda msg, m: format_wifi_info(bnb_id=bnb_id)),
 
@@ -494,7 +494,7 @@ def handle_wechat_message(msg, bnb_id="guishu"):
             try:
                 from models import SessionLocal, MessageLog
                 db = SessionLocal()
-                log_entry = MessageLog(openid=openid, message_type="text", content=content, reply=str(reply)[:500])
+                log_entry = MessageLog(openid=openid, bnb_id=bnb_id, message_type="text", content=content, reply=str(reply)[:500])
                 db.add(log_entry); db.commit(); db.close()
             except Exception:
                 debug("消息日志记录失败")

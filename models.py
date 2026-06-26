@@ -424,11 +424,13 @@ class PlatformMention(Base):
 #  消息日志
 # ══════════════════════════════════════════════════════════
 class MessageLog(Base):
-    """消息日志 — 预留：微信消息记录（Phase 3 接入微信客服消息API后启用）"""
+    """消息日志 — 微信消息记录 + AI对话历史"""
     __tablename__ = "message_logs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     openid = Column(String(100), nullable=False, index=True, comment="微信用户openid")
+    bnb_id = Column(String(20), default="guishu", index=True, comment="所属民宿")
+    message_type = Column(String(20), default="text", comment="消息类型: text/event/user/assistant/system")
     content = Column(Text)
     reply = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -661,7 +663,7 @@ class TeaType(Base):
     def to_dict(self):
         return {
             "id": self.id,
-            "bnbs_id": self.bnb_id,
+            "bnb_id": self.bnb_id,
             "name": self.name,
             "description": self.description,
             "origin": self.origin,
