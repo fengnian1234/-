@@ -11,7 +11,6 @@ from models import get_db, Booking, RoomGuest
 from services.logger import info, warning, error as log_error, log_booking
 from config import (
     BOOKING_PLATFORMS, REVIEW_PLATFORMS, REVIEW_REMINDER_DELAY_MINUTES,
-    BNB_NAME, BNB_ADDRESS,
 )
 
 

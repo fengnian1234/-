@@ -303,3 +303,45 @@ curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/gs/
 curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/sj/
 curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/dlw/
 ```
+
+## 多 BnB 编码规范（2026-06-27 复盘制定）
+
+### 核心原则
+
+**所有 BnB 差异化信息（名称/电话/地址/颜色）必须从 `BNB_CONFIGS[bnb_id]` 运行时获取，禁止模块级固化。**
+
+### 禁止事项
+
+| # | ❌ 禁止 | ✅ 正确 |
+|---|--------|--------|
+| 1 | 模块级 f-string 含 BNB_* 常量 | 普通字符串 + `{PLACEHOLDER}` + `.replace()` |
+| 2 | `import X as Y` 后 lambda 引用 `X` | 不重命名，或 lambda 用重命名后的 `Y` |
+| 3 | `except Exception: pass` | 至少 `debug(f"失败: {e}")` |
+| 4 | 硬编码民宿名/电话/地址 | `BNB_CONFIGS[bnb_id]["xxx"]` 或 `cfg["xxx"]` |
+| 5 | 新增模型列不更新迁移 | 模型 + `run_migrations()` + 所有 `Model(...)` 调用点同步改 |
+
+### BnB 上下文系统
+
+```python
+# 入口处设置（app.py before_request / wechat.py handle_wechat_message 已自动调用）
+from bnb_context import set_current_bnb
+set_current_bnb(bnb_id)
+
+# 任意位置获取（无需传参）
+from bnb_context import get_current_bnb_id
+bnb_id = get_current_bnb_id()
+cfg = BNB_CONFIGS[bnb_id]
+
+# 服务层兼容用法（优先参数 > Flask g > 线程本地 > 默认值）
+from bnb_context import get_service_bnb_id
+bnb_id = get_service_bnb_id(bnb_id)
+```
+
+### 向后兼容别名（DEPRECATED）
+
+`config.py` 中 `BNB_NAME`、`BNB_PHONE`、`BNB_ADDRESS` 等始终为归墅值，仅允许在以下场景使用：
+- 应用启动日志（app.py）
+- 归墅专属周报（services/report.py）
+- 作为 `BNB_CONFIGS.get()` 的 fallback 默认值
+
+**新增代码禁止引用这些别名。**

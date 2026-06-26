@@ -115,7 +115,7 @@ BNB_CONFIGS = {
     },
 }
 
-# ── 向后兼容别名（旧代码引用 BNB_NAME 等）──────────────
+# ── 向后兼容别名（DEPRECATED：始终为归墅值，多 BnB 场景请用 BNB_CONFIGS[bnb_id] 或 bnb_context）──
 BNB_NAME = BNB_CONFIGS["guishu"]["name"]
 BNB_SHORT_NAME = BNB_CONFIGS["guishu"]["short_name"]
 BNB_ADDRESS = BNB_CONFIGS["guishu"]["address"]

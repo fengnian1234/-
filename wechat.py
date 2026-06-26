@@ -35,12 +35,13 @@ def _get_openid(msg) -> str:
     return str(getattr(msg, 'source', getattr(msg, 'from_user', 'unknown')))
 
 
-def _require_booking_reply() -> str:
+def _require_booking_reply(bnb_id: str = "guishu") -> str:
     """未预订用户尝试使用住店服务时的统一回复"""
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
     return (
         "🎐 这是入住后才能使用的服务哦～\n\n"
         "您目前还没有确认的预订记录。\n\n"
-        "🏨 预订方式：携程/美团/飞猪/大众点评搜索「云上归墅」\n"
+        f"🏨 预订方式：携程/美团/飞猪/大众点评搜索「{cfg['short_name']}」\n"
         "💡 预订后回复「绑定预订」，联系前台确认即可解锁全部住店服务\n\n"
         "不过在预订之前，您可以：\n"
         "  · 直接问我任何庐山旅游问题\n"
@@ -76,7 +77,7 @@ def _guard_service(service_name: str, bnb_id: str = "guishu"):
     def handler(msg, match):
         openid = _get_openid(msg)
         if not is_ai_enabled(openid):
-            return _require_booking_reply()
+            return _require_booking_reply(bnb_id=bnb_id)
         if not is_checked_in(openid):
             return _require_check_in_reply(openid)
         return handle_service_request(service_name, openid=openid, bnb_id=bnb_id)
@@ -90,7 +91,7 @@ def _guard_service_capture(msg, match, bnb_id: str = "guishu"):
     """
     openid = _get_openid(msg)
     if not is_ai_enabled(openid):
-        return _require_booking_reply()
+        return _require_booking_reply(bnb_id=bnb_id)
     if not is_checked_in(openid):
         return _require_check_in_reply(openid)
     return handle_service_request(match.group(2), openid=openid, bnb_id=bnb_id)
@@ -166,7 +167,7 @@ def build_keyword_routes(bnb_id="guishu"):
         (r"^(打扫|清洁|卫生)$",
          lambda msg, m: _guard_service("打扫", bnb_id=bnb_id)(msg, m)),
         (r"^(续住|续房|延住)$",
-         lambda msg, m: handle_extend_stay(msg)),
+         lambda msg, m: handle_extend_stay(msg, bnb_id=bnb_id)),
         (r"^(维修|修理|坏了)$",
          lambda msg, m: _guard_service("维修", bnb_id=bnb_id)(msg, m)),
         (r"^(叫醒|叫早|morning.?call)$",
@@ -326,9 +327,10 @@ def _get_menu_url() -> str:
     return f"{BASE_URL}/menu"
 
 
-def handle_extend_stay(msg) -> str:
+def handle_extend_stay(msg, bnb_id: str = "guishu") -> str:
     """处理续住/延住请求——既创建员工通知，又实际延长预订日期"""
     openid = _get_openid(msg)
+    phone = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"]).get("phone", BNB_PHONE)
 
     # 1. 必须先有有效预订
     if not is_ai_enabled(openid):
@@ -351,11 +353,12 @@ def handle_extend_stay(msg) -> str:
             service_name="续住",
             room_number=booking.get('room_number', '') if booking else '',
             urgency="high",
+            bnb_id=bnb_id,
         )
     except Exception as e:
         log_error("wechat.ai_fallback", str(e))
 
-    # 4. 拼装回复
+    # 5. 拼装回复
     if updated:
         new_date = updated.get('check_out_date', '待确认')
         return (
@@ -363,14 +366,14 @@ def handle_extend_stay(msg) -> str:
             f"📅 退房日期已延长至：{new_date}\n"
             f"🛎️ 续住期间所有管家服务照常使用～\n\n"
             f"💡 如需续住多天，请直接告知或联系前台调整\n"
-            f"📞 前台电话：{BNB_PHONE}"
+            f"📞 前台电话：{phone}"
         )
     else:
         return (
             f"🏨 续住请求已收到！\n\n"
             f"📅 已通知前台为您办理续住手续\n"
             f"💡 默认为您延长1天，如需续住多天请告知前台\n\n"
-            f"📞 前台电话：16607927666\n\n"
+            f"📞 前台电话：{phone}\n\n"
             f"当前管家服务不受影响，请放心～"
         )
 
@@ -475,6 +478,10 @@ def handle_wechat_message(msg, bnb_id="guishu"):
     处理微信消息的主入口
     路由优先级：关键词匹配 > AI对话（需预订） > 兜底
     """
+    # 注入请求级 BnB 上下文（服务层可通过 get_current_bnb_id() 获取）
+    from bnb_context import set_current_bnb
+    set_current_bnb(bnb_id)
+
     # 获取用户消息内容
     if hasattr(msg, 'content'):
         content = msg.content.strip()
@@ -537,6 +544,8 @@ def handle_wechat_message(msg, bnb_id="guishu"):
 # ══════════════════════════════════════════════════════════
 def handle_event(event_msg, bnb_id="guishu"):
     """处理微信事件推送"""
+    from bnb_context import set_current_bnb
+    set_current_bnb(bnb_id)
     event_type = getattr(event_msg, 'event', '')
 
     if event_type == 'subscribe':

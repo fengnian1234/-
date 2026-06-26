@@ -17,7 +17,7 @@ from config import (
 )
 from models import init_db, SessionLocal, Booking
 from seed_data import seed_all
-from bnb_context import get_current_bnb, get_current_bnb_id, get_bnb_id_from_path
+from bnb_context import get_current_bnb, get_current_bnb_id, get_bnb_id_from_path, set_current_bnb
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -104,6 +104,13 @@ def server_error(e):
     return render_template('500.html'), 500
 
 
+# ── BnB 上下文注入 ───────────────────────────────────────
+@app.before_request
+def _inject_bnb_context():
+    """每个请求开始时自动注入 BnB 上下文（路径解析 → Flask g）"""
+    set_current_bnb(get_bnb_id_from_path())
+
+
 # ── 应用初始化 ───────────────────────────────────────────
 def init_app():
     """初始化应用：创建数据库并填充种子数据"""
@@ -140,6 +147,7 @@ def _verify_wechat(bnb_id="guishu"):
 
 def _handle_wechat_post(bnb_id="guishu"):
     """处理微信消息推送（注入 bnb_id 到消息处理）"""
+    set_current_bnb(bnb_id)  # 显式设置请求级 BnB 上下文
     from wechatpy import parse_message
     from wechatpy.replies import TextReply
     from wechat import handle_wechat_message, handle_event
