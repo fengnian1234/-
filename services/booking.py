@@ -288,17 +288,20 @@ def generate_review_message(booking: Booking) -> str:
     )
 
 
-def format_booking_platforms_text() -> str:
+def format_booking_platforms_text(bnb_id="guishu") -> str:
     """格式化预订平台信息（要求3：跳转主流平台）"""
+    from config import BOOKING_PLATFORMS_BY_BNB, BNB_CONFIGS
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
+    platforms = BOOKING_PLATFORMS_BY_BNB.get(bnb_id, BOOKING_PLATFORMS_BY_BNB["guishu"])
     lines = [
-        "🏨 *预订云上·归墅*\n",
-        f"📍 {BNB_ADDRESS}\n",
+        f"🏨 *预订{cfg['name']}*\n",
+        f"📍 {cfg['address']}\n",
         "本民宿已接入以下主流预订平台，\n点击链接即可跳转预订：\n",
     ]
 
-    for key, plat in BOOKING_PLATFORMS.items():
+    for key, plat in platforms.items():
         lines.append(
-            f"{plat['icon']} *{plat['name']}* → 搜索「云上归墅」\n"
+            f"{plat['icon']} *{plat['name']}* → 搜索「{cfg['short_name']}」\n"
             f"  {plat['url']}\n"
         )
 

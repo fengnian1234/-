@@ -237,16 +237,22 @@ def format_food_detail_text(food_id: int, bnb_id=None):
     return "\n".join(lines)
 
 
-def format_location_text():
+def format_location_text(bnb_id="guishu"):
     """格式化民宿位置和导航信息"""
-    from config import BNB_ADDRESS, BNB_LATITUDE, BNB_LONGITUDE, BNB_PHONE, BNB_NAME
+    from config import BNB_CONFIGS
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
+    name = cfg["name"]
+    address = cfg["address"]
+    lat = cfg["latitude"]
+    lng = cfg["longitude"]
+    phone = cfg["phone"]
 
-    amap_link = generate_amap_link(BNB_NAME, BNB_LATITUDE, BNB_LONGITUDE)
+    amap_link = generate_amap_link(name, lat, lng)
 
-    return f"""📍 *{BNB_NAME} · 位置导航*
+    return f"""📍 *{name} · 位置导航*
 
-🏠 地址：{BNB_ADDRESS}
-📞 电话：{BNB_PHONE}
+🏠 地址：{address}
+📞 电话：{phone}
 
 🗺️ *点击导航*
   · 高德地图：{amap_link}
