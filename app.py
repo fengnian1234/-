@@ -681,14 +681,16 @@ def api_pay_notify():
 def api_monitor_summary():
     """获取各平台信息汇总（供主Agent使用）"""
     from services.monitor import agent_collect_platform_info
-    info = agent_collect_platform_info()
+    from bnb_context import get_current_bnb_id
+    info = agent_collect_platform_info(bnb_id=get_current_bnb_id())
     return jsonify(info)
 
 @app.route("/api/monitor/report")
 def api_monitor_report():
     """获取平台口碑文字报告"""
     from services.monitor import generate_monitor_report
-    return jsonify({"report": generate_monitor_report()})
+    from bnb_context import get_current_bnb_id
+    return jsonify({"report": generate_monitor_report(bnb_id=get_current_bnb_id())})
 
 @app.route("/api/monitor/collect", methods=["POST"])
 @_require_staff_auth

@@ -112,7 +112,7 @@ def _build_local_data(bnb_id: str = "guishu") -> str:
                 )
             lines.append("")
     except Exception:
-        debug(f"本地数据加载: 房型数据失败 ({bnb_id})")
+        debug(f"本地数据加载: 房型数据失败 ({bnb_id})", exc_info=True)
 
     # ── 菜单数据 ──
     try:
@@ -129,7 +129,7 @@ def _build_local_data(bnb_id: str = "guishu") -> str:
                     )
             lines.append("")
     except Exception:
-        debug(f"本地数据加载: 菜单数据失败 ({bnb_id})")
+        debug(f"本地数据加载: 菜单数据失败 ({bnb_id})", exc_info=True)
 
     # ── 游玩路线 ──
     try:
@@ -144,7 +144,7 @@ def _build_local_data(bnb_id: str = "guishu") -> str:
                 )
             lines.append("")
     except Exception:
-        debug(f"本地数据加载: 游玩路线失败 ({bnb_id})")
+        debug(f"本地数据加载: 游玩路线失败 ({bnb_id})", exc_info=True)
 
     # ── 美食推荐 ──
     try:
@@ -160,7 +160,7 @@ def _build_local_data(bnb_id: str = "guishu") -> str:
                 )
             lines.append("")
     except Exception:
-        debug(f"本地数据加载: 美食推荐失败 ({bnb_id})")
+        debug(f"本地数据加载: 美食推荐失败 ({bnb_id})", exc_info=True)
 
     # ── 快捷服务 ──
     try:
@@ -175,7 +175,7 @@ def _build_local_data(bnb_id: str = "guishu") -> str:
                 )
             lines.append("")
     except Exception:
-        debug(f"本地数据加载: 快捷服务失败 ({bnb_id})")
+        debug(f"本地数据加载: 快捷服务失败 ({bnb_id})", exc_info=True)
 
     # 本地文档引用
     try:
@@ -188,7 +188,7 @@ def _build_local_data(bnb_id: str = "guishu") -> str:
             lines.append('[本地文档: 美食图片参考 — 回答相关问题时可引用]')
             lines.append(doc_content[:2000])
     except Exception:
-        debug("本地数据加载: 文档引用失败")
+        debug("本地数据加载: 文档引用失败", exc_info=True)
 
     # ── 牯岭镇美食全攻略（v3.6: 携程/小红书/微博搜索整理）──
     try:
@@ -202,7 +202,7 @@ def _build_local_data(bnb_id: str = "guishu") -> str:
             lines.append('[庐山牯岭镇美食全攻略 — 回答客人美食咨询时优先参考以下信息]')
             lines.append(food_content[:3000])
     except Exception:
-        debug("本地数据加载: 美食攻略文件读取失败")
+        debug("本地数据加载: 美食攻略文件读取失败", exc_info=True)
 
     # ── 牯岭镇娱乐休闲指南（v3.6: 携程/小红书/微博搜索整理）──
     try:
@@ -215,7 +215,7 @@ def _build_local_data(bnb_id: str = "guishu") -> str:
             lines.append('[庐山牯岭镇娱乐休闲指南 — 回答客人夜间娱乐/咖啡/酒吧/购物问题时优先参考]')
             lines.append(fun_content[:2000])
     except Exception:
-        debug("本地数据加载: 娱乐指南文件读取失败")
+        debug("本地数据加载: 娱乐指南文件读取失败", exc_info=True)
 
     _local_data_cache = "\n".join(lines)
     return _local_data_cache

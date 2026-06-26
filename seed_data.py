@@ -4,7 +4,7 @@ v2：菜单改为咖啡简餐，地址更新为大林沟路27号
 初始化数据库时自动填充
 """
 from services.logger import info, warning, error as log_error
-from models import SessionLocal, init_db, Room, MenuCategory, MenuItem, QuickService, TravelRoute, FoodRecommend, Booking, AggregatedOrder, GuestPoints, PointLog
+from models import SessionLocal, init_db, Room, MenuCategory, MenuItem, QuickService, TravelRoute, FoodRecommend, Booking, AggregatedOrder, GuestPoints, PointLog, Bnb
 
 
 # 房型图片辅助 — 图片按 sort_order 编号 room01 ~ room08（归墅专用）
@@ -57,6 +57,9 @@ def seed_all():
     db = SessionLocal()
 
     try:
+        # 0. 确保 Bnb 基础信息表已填充（从 BNB_CONFIGS 同步）
+        seed_bnbs(db)
+
         # 检查哪些民宿已有客房数据
         existing_bnbs = set()
         if db.query(Room).count() > 0:
@@ -96,6 +99,42 @@ def seed_all():
         raise
     finally:
         db.close()
+
+
+def seed_bnbs(db):
+    """从 BNB_CONFIGS 同步民宿基础信息到 bnbs 表（upsert）"""
+    from config import BNB_CONFIGS
+
+    for bnb_id, cfg in BNB_CONFIGS.items():
+        existing = db.query(Bnb).filter(Bnb.bnb_id == bnb_id).first()
+        if existing:
+            # 更新可能变更的字段
+            existing.name = cfg["name"]
+            existing.short_name = cfg["short_name"]
+            existing.address = cfg["address"]
+            existing.phone = cfg["phone"]
+            existing.latitude = cfg.get("latitude")
+            existing.longitude = cfg.get("longitude")
+            existing.description = cfg.get("description", "")
+            existing.theme_color = cfg.get("theme_color", "")
+            existing.is_active = True
+        else:
+            bnb = Bnb(
+                bnb_id=bnb_id,
+                name=cfg["name"],
+                short_name=cfg["short_name"],
+                address=cfg["address"],
+                phone=cfg["phone"],
+                latitude=cfg.get("latitude"),
+                longitude=cfg.get("longitude"),
+                description=cfg.get("description", ""),
+                theme_color=cfg.get("theme_color", ""),
+                is_active=True,
+                sort_order=list(BNB_CONFIGS.keys()).index(bnb_id),
+            )
+            db.add(bnb)
+    db.commit()
+    info(f"✅ BnB 基础信息已同步: {len(BNB_CONFIGS)} 家民宿")
 
 
 def seed_rooms(db, bnb_id="guishu"):

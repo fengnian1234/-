@@ -94,12 +94,12 @@ PLATFORM_SEARCH_CONFIG = {
     "携程": {
         "type": "opencli",
         "cmd": ["opencli.cmd", "ctrip", "search", "{query}", "-f", "json", "--limit", "5"],
-        "query_override": "庐山 云上归墅",
+        "query_template": "庐山 {short_name}",  # {short_name} 由 bnb_id 动态替换
     },
     "大众点评": {
         "type": "opencli",
         "cmd": ["opencli.cmd", "dianping", "search", "{query}", "--city", "九江", "-f", "json", "--limit", "5"],
-        "query_override": "云上·归墅",
+        "query_template": "{short_name}",  # {short_name} 由 bnb_id 动态替换
     },
     "小红书": {
         "type": "opencli",
@@ -108,12 +108,12 @@ PLATFORM_SEARCH_CONFIG = {
     "微博": {
         "type": "opencli",
         "cmd": ["opencli.cmd", "weibo", "search", "{query}", "-f", "json", "--limit", "5"],
-        "query_override": "云上归墅",
+        "query_template": "{short_name}",  # {short_name} 由 bnb_id 动态替换
     },
     "知乎": {
         "type": "opencli",
         "cmd": ["opencli.cmd", "zhihu", "search", "{keyword}", "-f", "json", "--limit", "5"],
-        "query_override": "庐山民宿推荐",
+        "query_template": "庐山民宿推荐",  # 知乎通用搜索词
     },
     "飞猪": {"type": "websearch"},
     # 暂无有效搜索方式 → 跳过
@@ -388,14 +388,18 @@ def _search_via_websearch(query: str, max_results: int = 5) -> str:
 # ══════════════════════════════════════════════════════════
 
 
-def _search_platform(platform: str, query: str, max_results: int = 5) -> tuple:
+def _search_platform(platform: str, query: str, max_results: int = 5, bnb_id: str = "guishu") -> tuple:
     """
     为指定平台选择最佳搜索后端
     【新优先级】opencli 原生适配器(结构化数据) → 二级深度采集(详情图片+正文) → browser搜索 → WebSearch兜底
     返回 (mentions列表, _, 后端名称)
     """
     config = PLATFORM_SEARCH_CONFIG.get(platform, {"type": "websearch"})
-    if config.get("query_override"):
+    if config.get("query_template"):
+        from config import BNB_CONFIGS
+        cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
+        query = config["query_template"].replace("{short_name}", cfg["short_name"]).replace("{name}", cfg["name"])
+    elif config.get("query_override"):
         query = config["query_override"]
 
     if config["type"] == "skip":
@@ -838,13 +842,14 @@ def search_platform_mentions(query: str = "", bnb_id: str = "guishu") -> dict:
     搜索各平台关于民宿的信息
     策略: opencli browser (Chrome截图) → opencli 适配器 → WebSearch 兜底
     """
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
     if not query:
-        query = MONITOR_SEARCH_QUERY
+        query = f"{cfg['name']} 庐山 评价"
 
     results = {
         "query": query,
         "timestamp": datetime.utcnow().isoformat(),
-        "bnb_name": BNB_NAME,
+        "bnb_name": cfg["name"],
         "search_backend": "opencli browser + opencli + WebSearch",
         "platforms": {},
     }
@@ -853,7 +858,7 @@ def search_platform_mentions(query: str = "", bnb_id: str = "guishu") -> dict:
         info(f"🔍 正在搜索 {platform}...")
 
         try:
-            mentions, _, backend = _search_platform(platform, query, max_results=5)
+            mentions, _, backend = _search_platform(platform, query, max_results=5, bnb_id=bnb_id)
 
             if mentions:
                 stored_count = store_mentions(platform, mentions, bnb_id)
@@ -1042,19 +1047,22 @@ def store_mentions(platform: str, mentions: list, bnb_id: str = "guishu"):
         db.close()
 
 
-def get_mentions_summary() -> dict:
-    """获取各平台信息汇总"""
+def get_mentions_summary(bnb_id: str = "guishu") -> dict:
+    """获取各平台信息汇总（按 bnb_id 过滤）"""
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
+    search_query = f"{cfg['name']} 庐山 评价"
     db = SessionLocal()
     try:
         summary = {
-            "bnb_name": BNB_NAME,
+            "bnb_name": cfg["name"],
             "updated_at": datetime.utcnow().isoformat(),
             "platforms": {},
         }
 
         for platform in MONITOR_PLATFORMS:
             mentions = db.query(PlatformMention).filter(
-                PlatformMention.platform == platform
+                PlatformMention.platform == platform,
+                PlatformMention.bnb_id == bnb_id,
             ).order_by(PlatformMention.collected_at.desc()).limit(20).all()
 
             if not mentions:
@@ -1062,7 +1070,7 @@ def get_mentions_summary() -> dict:
                     "total": 0, "avg_rating": None,
                     "positive": 0, "neutral": 0, "negative": 0,
                     "latest": None,
-                    "search_url": _get_search_url(platform, MONITOR_SEARCH_QUERY),
+                    "search_url": _get_search_url(platform, search_query),
                 }
                 continue
 
@@ -1076,7 +1084,7 @@ def get_mentions_summary() -> dict:
                 "neutral": sentiments.count("neutral"),
                 "negative": sentiments.count("negative"),
                 "latest": mentions[0].to_dict() if mentions else None,
-                "search_url": _get_search_url(platform, MONITOR_SEARCH_QUERY),
+                "search_url": _get_search_url(platform, search_query),
             }
 
         # 总体评分（加权平均）
@@ -1122,21 +1130,17 @@ def _sentiment_bar(positive: int, neutral: int, negative: int, width: int = 10) 
 
 def generate_monitor_report(bnb_id: str = "guishu") -> str:
     """生成平台监控报告（给主Agent / 微信客服使用）"""
-    # 按民宿获取对应配置
-    if bnb_id and bnb_id != "guishu":
-        from bnb_context import get_bnb_config
-        cfg = get_bnb_config(bnb_id)
-        bnb_name = cfg.get("name", BNB_NAME)
-    else:
-        bnb_name = BNB_NAME
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
+    bnb_name = cfg["name"]
+    bnb_addr = cfg["address"]
 
-    summary = get_mentions_summary()
+    summary = get_mentions_summary(bnb_id=bnb_id)
 
     if summary["overall_rating"] is None:
         return (
             "📊 *口碑简报*\n\n"
             "目前暂无主流平台的评价数据汇总。\n\n"
-            f"{bnb_name}位于庐山风景名胜区大林沟路27号，"
+            f"{bnb_name}位于{bnb_addr}，"
             "欢迎在携程/美团/飞猪/大众点评搜索查看最新评价～\n\n"
             "💡 回复「收集口碑」触发平台信息实时收集"
         )
@@ -1185,29 +1189,31 @@ def generate_monitor_report(bnb_id: str = "guishu") -> str:
     return "\n".join(lines)
 
 
-def agent_collect_platform_info() -> dict:
+def agent_collect_platform_info(bnb_id: str = "guishu") -> dict:
     """
     子Agent入口：收集所有主流平台信息
     返回给主Agent的结构化数据
     """
-    search_results = search_platform_mentions()
-    db_summary = get_mentions_summary()
+    from config import MONITOR_KEYWORDS_BY_BNB
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
+    search_results = search_platform_mentions(bnb_id=bnb_id)
+    db_summary = get_mentions_summary(bnb_id=bnb_id)
 
     return {
         "search_results": search_results,
         "historical_summary": db_summary,
         "monitor_platforms": MONITOR_PLATFORMS,
         "bnb_info": {
-            "name": BNB_NAME,
-            "address": "庐山山上·庐山风景名胜区大林沟路27号",
-            "search_keywords": MONITOR_KEYWORDS,
+            "name": cfg["name"],
+            "address": cfg["address"],
+            "search_keywords": MONITOR_KEYWORDS_BY_BNB.get(bnb_id, MONITOR_KEYWORDS_BY_BNB["guishu"]),
         },
         "collection_timestamp": datetime.utcnow().isoformat(),
         "powered_by": "opencli (平台精准搜索) + WebSearch/Bing (通用兜底)",
     }
 
 
-def get_platform_review_links() -> dict:
-    """获取所有平台评价链接汇总"""
-    from config import REVIEW_PLATFORMS
-    return REVIEW_PLATFORMS
+def get_platform_review_links(bnb_id: str = "guishu") -> dict:
+    """获取指定民宿的所有平台评价链接汇总"""
+    from config import REVIEW_PLATFORMS_BY_BNB
+    return REVIEW_PLATFORMS_BY_BNB.get(bnb_id, REVIEW_PLATFORMS_BY_BNB.get("guishu", {}))

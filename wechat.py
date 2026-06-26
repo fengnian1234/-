@@ -427,7 +427,7 @@ def handle_human_service(bnb_id: str = "guishu") -> str:
 def format_review_links(bnb_id="guishu") -> str:
     """格式化各平台好评链接（要求4）"""
     lines = ["⭐ *各平台评价入口*\n"]
-    platforms = get_platform_review_links()
+    platforms = get_platform_review_links(bnb_id=bnb_id)
     for key, info in platforms.items():
         lines.append(f"{info['icon']} *{info['name']}*")
         lines.append(f"  {info['review_url']}\n")

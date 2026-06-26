@@ -59,10 +59,10 @@ def generate_weekly_report() -> dict:
 
     # 1. 收集最新平台数据
     info("📡 正在收集平台最新数据...")
-    search_results = search_platform_mentions()
+    search_results = search_platform_mentions(bnb_id="guishu")
 
     # 2. 获取汇总
-    summary = get_mentions_summary()
+    summary = get_mentions_summary(bnb_id="guishu")
 
     # 3. 生成 DOCX
     now = datetime.utcnow()
