@@ -833,7 +833,7 @@ def _analyze_sentiment(text: str) -> str:
 #  主搜索入口
 # ══════════════════════════════════════════════════════════
 
-def search_platform_mentions(query: str = "") -> dict:
+def search_platform_mentions(query: str = "", bnb_id: str = "guishu") -> dict:
     """
     搜索各平台关于民宿的信息
     策略: opencli browser (Chrome截图) → opencli 适配器 → WebSearch 兜底
@@ -856,7 +856,7 @@ def search_platform_mentions(query: str = "") -> dict:
             mentions, _, backend = _search_platform(platform, query, max_results=5)
 
             if mentions:
-                stored_count = store_mentions(platform, mentions)
+                stored_count = store_mentions(platform, mentions, bnb_id)
                 # 统计已下载图片数
                 total_imgs = sum(len(m.get("image_urls", [])) for m in mentions)
                 info(f"    {platform} [{backend}]: {len(mentions)}条提及, {total_imgs}张图片URL, 新存{stored_count}条")
@@ -977,7 +977,7 @@ def download_mention_images(image_urls: list, platform: str) -> list:
     return local_paths
 
 
-def store_mentions(platform: str, mentions: list):
+def store_mentions(platform: str, mentions: list, bnb_id: str = "guishu"):
     """将收集到的提及存储到数据库（URL去重），并下载关联的图片"""
     db = SessionLocal()
     try:
@@ -1020,6 +1020,7 @@ def store_mentions(platform: str, mentions: list):
                 local_images = download_mention_images(image_urls, platform) if image_urls else []
 
             mention = PlatformMention(
+                bnb_id=bnb_id,
                 platform=platform,
                 mention_type=m.get("type", "review"),
                 title=m.get("title", ""),

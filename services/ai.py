@@ -666,8 +666,8 @@ def _save_conversation(openid: str, role: str, content: str, bnb_id: str = "guis
             reply=content[:2000] if role == 'assistant' else ''
         )
         db.add(log); db.commit(); db.close()
-    except Exception:
-        warning("对话持久化失败")
+    except Exception as e:
+        warning(f"对话持久化失败: {e}")
 
 
 def _load_conversation(openid: str, limit: int = 40, bnb_id: str = "guishu") -> list:
