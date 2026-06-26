@@ -217,15 +217,21 @@ def _build_local_data(bnb_id: str = "guishu") -> str:
     except Exception:
         debug("本地数据加载: 娱乐指南文件读取失败", exc_info=True)
 
-    _local_data_cache = "\n".join(lines)
-    return _local_data_cache
+    _local_data_cache[bnb_id] = "\n".join(lines)
+    return _local_data_cache[bnb_id]
 
 
-def refresh_local_data():
+def refresh_local_data(bnb_id: str = None):
     """强制刷新本地数据缓存（数据变更后调用）"""
     global _local_data_cache
-    _local_data_cache = None
-    return _build_local_data()
+    if bnb_id:
+        _local_data_cache.pop(bnb_id, None)
+        return _build_local_data(bnb_id)
+    else:
+        _local_data_cache = {}
+        for bid in BNB_CONFIGS:
+            _build_local_data(bid)
+        return None
 
 
 def _get_guest_context(openid: str, bnb_id: str = "guishu") -> str:
