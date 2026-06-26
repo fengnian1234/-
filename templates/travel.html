@@ -28,7 +28,7 @@
         {% if routes %}
         <div class="routes-list">
             {% for route in routes %}
-            <a href="/travel/{{ route.id }}" class="route-card">
+            <a href="{{ bnb_prefix }}/travel/{{ route.id }}" class="route-card">
                 <div class="route-card-header">
                     <h3>{{ route.name }}</h3>
                     <span class="difficulty-badge difficulty-{{ route.difficulty }}">
@@ -78,7 +78,7 @@
         {% if foods %}
         <div class="foods-list">
             {% for food in foods %}
-            <a href="/travel/food/{{ food.id }}" class="food-card" onclick="showFoodModal({{ food.id }}); return false;">
+            <a href="{{ bnb_prefix }}/travel/food/{{ food.id }}" class="food-card" onclick="showFoodModal({{ food.id }}); return false;">
                 {% if food.images and food.images|length > 0 %}
                 <div class="food-card-img">
                     <img src="{{ food.images[0] }}" alt="{{ food.name }}" loading="lazy">
@@ -127,7 +127,7 @@
 var _foodsData = {{ foods | tojson | safe }};
 function showFoodModal(id) {
     var f = _foodsData.find(function(f){return f.id===id;});
-    if (!f) { window.location.href='/travel/food/'+id; return; }
+    if (!f) { window.location.href='{{ bnb_prefix }}/travel/food/'+id; return; }
     var tagsHtml = (f.tags||[]).map(function(t){return '<span class="food-tag">'+t+'</span>';}).join('');
     var detailHtml = (f.detail_content||'').split('\n\n').filter(function(p){return p.trim();}).map(function(p){return '<p>'+p.trim().replace(/\n/g,'<br>')+'</p>';}).join('');
     var imgs = f.images || [];

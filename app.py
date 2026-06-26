@@ -437,6 +437,7 @@ def api_confirm_booking():
         check_in_date=data["check_in"],
         room_name=data.get("room_type", ""),
         room_code=booking.room_code,
+        bnb_id=booking.bnb_id,
     )
     return jsonify({
         "success": True,
@@ -470,6 +471,7 @@ def api_check_out(booking_id: int):
     post_stay_msg = generate_post_stay_message(
         guest_name=booking.guest_name or "",
         room_name=booking.room_type or "",
+        bnb_id=booking.bnb_id,
     )
     return jsonify({
         "success": True,

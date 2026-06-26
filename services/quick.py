@@ -45,7 +45,9 @@ def format_services_text(bnb_id=None):
     if not services:
         return "暂无快捷服务信息～"
 
-    lines = ["🛎️ *云上归墅 · 快捷服务*\n"]
+    from config import BNB_CONFIGS
+    name = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])["short_name"]
+    lines = [f"🛎️ *{name} · 快捷服务*\n"]
 
     categories = {}
     for svc in services:

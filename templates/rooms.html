@@ -97,7 +97,7 @@ var _roomsData = {{ rooms | tojson | safe }};
 var _roomSlideIdx = 0, _roomSlideTotal = 0;
 function showRoomModal(id) {
     var r = _roomsData.find(function(r){return r.id===id;});
-    if (!r) { window.location.href='/rooms/'+id; return; }
+    if (!r) { window.location.href='{{ bnb_prefix }}/rooms/'+id; return; }
     var imgs = (r.images||[]);
     var slidesHtml = imgs.length ? imgs.map(function(src,i){
         return '<div class="gallery-slide'+(i===0?' active':'')+'"><img src="'+src+'" alt="'+r.name+'" loading="'+(i===0?'eager':'lazy')+'"></div>';

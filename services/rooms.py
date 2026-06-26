@@ -52,7 +52,9 @@ def format_rooms_text(bnb_id=None):
     if not rooms:
         return "暂无房间信息，请联系人工客服～"
 
-    lines = ["🛏️ *云上归墅 · 房型展示*\n"]
+    from config import BNB_CONFIGS
+    name = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])["short_name"]
+    lines = [f"🛏️ *{name} · 房型展示*\n"]
     for i, room in enumerate(rooms, 1):
         view_icon = {"山景": "🏔️", "云海": "☁️", "竹林": "🎋"}.get(room["view_type"], "🏡")
         lines.append(
@@ -123,7 +125,9 @@ def format_rooms_with_images(bnb_id=None):
     if not rooms:
         return "暂无房间信息"
 
-    lines = ["🖼️ *云上归墅 · 房间图赏*\n"]
+    from config import BNB_CONFIGS
+    name = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])["short_name"]
+    lines = [f"🖼️ *{name} · 房间图赏*\n"]
     for room in rooms:
         images = room.get("images", [])
         img_urls = [img if isinstance(img, str) else img.get("url", "") for img in images[:3]]

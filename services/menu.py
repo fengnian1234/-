@@ -116,7 +116,9 @@ def format_menu_text(bnb_id=None):
     if not categories:
         return "暂无菜单信息，请咨询前台～"
 
-    lines = ["☕ *云上·归墅 · 咖啡简餐*\n"]
+    from config import BNB_CONFIGS
+    name = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])["short_name"]
+    lines = [f"☕ *{name} · 咖啡简餐*\n"]
     lines.append("本民宿不提供正餐，以下为咖啡、茶饮与简餐～\n")
 
     # 先展示推荐
