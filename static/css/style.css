@@ -656,6 +656,20 @@ h4 { font-size: 1.05rem; }
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* ── 骨架屏脉冲动画 ── */
+@keyframes skeletonPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+}
+.skeleton-pulse {
+    background: var(--color-border);
+    border-radius: var(--radius-sm);
+    animation: skeletonPulse 1.5s ease-in-out infinite;
+    min-height: 3rem;
+    color: transparent !important;
+}
+.skeleton-pulse * { visibility: hidden; }
+
 .hero-title {
     font-family: var(--font-serif);
     font-size: 2.6rem;

@@ -155,7 +155,7 @@ function openTeaModal(id, name) {
 function openDrinkModal(id, name, price, tempMode) {
     const content = document.getElementById('drinkModalContent');
     var iceHTML = '';
-    if (tempMode === 'single') {
+    if (tempMode === 'both' || tempMode === 'single') {
         iceHTML = `<div class="option-group"><div class="option-group-label">温度/冰量</div>
             <div class="option-chips" data-group="ice">
                 <button class="option-chip" data-val="热">热</button>
@@ -186,7 +186,7 @@ function openDrinkModal(id, name, price, tempMode) {
     document.getElementById('confirmDrinkBtn').onclick = function() {
         const sugar = content.querySelector('[data-group="sugar"] .option-chip.selected').dataset.val;
         var opts = ' ' + sugar;
-        if (tempMode === 'single') {
+        if (tempMode === 'both' || tempMode === 'single') {
             const ice = content.querySelector('[data-group="ice"] .option-chip.selected').dataset.val;
             opts += '·' + ice;
         }

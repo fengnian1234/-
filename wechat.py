@@ -178,7 +178,7 @@ def build_keyword_routes(bnb_id="guishu"):
         (r"^(送餐|送饭)$",
          lambda msg, m: _guard_service("送餐")(msg, m)),
         (r"^(wifi|WiFi|无线|网络)$",
-         lambda msg, m: format_wifi_info()),
+         lambda msg, m: format_wifi_info(bnb_id=bnb_id)),
 
         # ── 茶园相关（山纪专属）──────────────────────────
         (r"^(茶|茶园|品茶|茶叶|制茶|茶道|茶文化)$",

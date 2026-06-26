@@ -66,6 +66,19 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 .typing span:nth-child(2) { animation-delay:.2s; }
 .typing span:nth-child(3) { animation-delay:.4s; }
 @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+
+/* 暗色模式 */
+[data-theme="dark"] {
+  --bg: #1a1f1b; --chat-bg: #1f2620;
+  --text: #d8dfd4; --text2: #a0a898;
+  --pri: #6baf7e; --pri-light: #1f2b22;
+  --bubble-me: #2a3d2a; --bubble-you: #252927;
+  --border: #2e382f;
+}
+[data-theme="dark"] .input-area { background: #252927; }
+[data-theme="dark"] .input-area input { background: #1a1f1b; color: #d8dfd4; }
+[data-theme="dark"] .quick-hints { background: #252927; }
+[data-theme="dark"] .chat-header { background: linear-gradient(135deg, #2a4040, #3d5c48); }
 </style>
 </head>
 <body>
@@ -100,6 +113,14 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 </div>
 
 <script>
+// 接收模拟器主题同步
+window.addEventListener('message', function(e) {
+    if (e.origin !== window.location.origin) return;
+    if (e.data && e.data.type === 'setTheme' && e.data.theme) {
+        document.documentElement.setAttribute('data-theme', e.data.theme);
+    }
+});
+
 const API = '/api/simulate-chat';
 const OPENID = 'mp_test_user';
 const BNB_ID = '{{ bnb_id }}';
