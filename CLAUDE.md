@@ -20,6 +20,17 @@ taskkill //F //IM python.exe
 
 Python 是嵌入式发行版，路径固定为 `C:/Users/admin/python-embed/python.exe`，**必须**设置 `PYTHONUTF8=1` 环境变量。
 
+## 工作流规范
+
+**每次修改完成后，必须立即提交并推送到远程仓库。** 不要等用户提醒。
+
+```bash
+# 修改完成后的标准收尾流程
+git add <修改的文件>
+git commit -m "<简要描述>"
+git push origin main
+```
+
 ## 架构概览
 
 ```

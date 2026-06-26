@@ -51,10 +51,10 @@ def _require_booking_reply(bnb_id: str = "guishu") -> str:
     )
 
 
-def _require_check_in_reply(openid: str) -> str:
+def _require_check_in_reply(openid: str, bnb_id: str = "guishu") -> str:
     """已预订但未入住的用户尝试使用住店服务时的回复"""
     from services.booking import get_booking_by_openid
-    booking = get_booking_by_openid(openid)
+    booking = get_booking_by_openid(openid, bnb_id=bnb_id)
     check_in = booking.get('check_in_date', '待确认') if booking else '待确认'
     return (
         f"🎐 这些服务需要您到店入住后才能使用哦～\n\n"
@@ -76,10 +76,10 @@ def _guard_service(service_name: str, bnb_id: str = "guishu"):
     """
     def handler(msg, match):
         openid = _get_openid(msg)
-        if not is_ai_enabled(openid):
+        if not is_ai_enabled(openid, bnb_id=bnb_id):
             return _require_booking_reply(bnb_id=bnb_id)
-        if not is_checked_in(openid):
-            return _require_check_in_reply(openid)
+        if not is_checked_in(openid, bnb_id=bnb_id):
+            return _require_check_in_reply(openid, bnb_id=bnb_id)
         return handle_service_request(service_name, openid=openid, bnb_id=bnb_id)
     return handler
 
@@ -90,10 +90,10 @@ def _guard_service_capture(msg, match, bnb_id: str = "guishu"):
     先检查是否已实际入住，未入住则拒绝。
     """
     openid = _get_openid(msg)
-    if not is_ai_enabled(openid):
+    if not is_ai_enabled(openid, bnb_id=bnb_id):
         return _require_booking_reply(bnb_id=bnb_id)
-    if not is_checked_in(openid):
-        return _require_check_in_reply(openid)
+    if not is_checked_in(openid, bnb_id=bnb_id):
+        return _require_check_in_reply(openid, bnb_id=bnb_id)
     return handle_service_request(match.group(2), openid=openid, bnb_id=bnb_id)
 
 
@@ -219,10 +219,13 @@ def build_keyword_routes(bnb_id="guishu"):
 def handle_bind_booking(msg) -> str:
     """处理预订绑定请求（要求1：解锁AI的前提）"""
     openid = str(getattr(msg, 'source', getattr(msg, 'from_user', 'unknown')))
+    from bnb_context import get_current_bnb_id
+    bnb_id = get_current_bnb_id()
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
 
-    if is_ai_enabled(openid):
+    if is_ai_enabled(openid, bnb_id=bnb_id):
         from services.booking import get_booking_by_openid
-        booking = get_booking_by_openid(openid)
+        booking = get_booking_by_openid(openid, bnb_id=bnb_id)
         room_code = booking.get("room_code", "") if booking else ""
         lines = [
             "✅ 您的专属AI管家已就绪～",
@@ -240,7 +243,7 @@ def handle_bind_booking(msg) -> str:
         "🔗 *绑定预订*\n\n"
         "请在以下平台预订后，联系前台确认预订即可解锁专属AI管家：\n\n"
         "🏨 携程 | 🏠 美团 | ✈️ 飞猪 | ⭐ 大众点评\n"
-        "  搜索「云上·归墅」\n\n"
+        f"  搜索「{cfg['short_name']}」\n\n"
         "💡 前台确认预订后，专属AI管家自动解锁\n"
         "💡 现在就可以免费使用旅行顾问～直接问我庐山攻略\n"
         "💡 回复「预订」查看各平台预订链接\n"
@@ -276,7 +279,8 @@ def handle_show_room_code(msg) -> str:
     """预订者查看自己的房间共享码"""
     openid = _get_openid(msg)
     from services.booking import get_booking_by_openid
-    booking = get_booking_by_openid(openid)
+    from bnb_context import get_current_bnb_id
+    booking = get_booking_by_openid(openid, bnb_id=get_current_bnb_id())
     if not booking:
         return "您还没有有效预订，无法生成房间共享码。\n\n💡 预订后回复「绑定预订」解锁 AI 管家～"
 
@@ -333,17 +337,17 @@ def handle_extend_stay(msg, bnb_id: str = "guishu") -> str:
     phone = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"]).get("phone", BNB_PHONE)
 
     # 1. 必须先有有效预订
-    if not is_ai_enabled(openid):
-        return _require_booking_reply()
+    if not is_ai_enabled(openid, bnb_id=bnb_id):
+        return _require_booking_reply(bnb_id=bnb_id)
 
     # 2. 必须已实际入住
-    if not is_checked_in(openid):
-        return _require_check_in_reply(openid)
+    if not is_checked_in(openid, bnb_id=bnb_id):
+        return _require_check_in_reply(openid, bnb_id=bnb_id)
 
     # 3. 尝试延长预订（默认+1天）
     from services.booking import extend_booking, get_booking_by_openid
-    updated = extend_booking(openid, extra_days=1)
-    booking = get_booking_by_openid(openid, include_checked_out=True)
+    updated = extend_booking(openid, extra_days=1, bnb_id=bnb_id)
+    booking = get_booking_by_openid(openid, include_checked_out=True, bnb_id=bnb_id)
 
     # 4. 创建员工通知
     try:

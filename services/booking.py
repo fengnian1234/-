@@ -11,13 +11,26 @@ from models import get_db, Booking, RoomGuest
 from services.logger import info, warning, error as log_error, log_booking
 from config import (
     BOOKING_PLATFORMS, REVIEW_PLATFORMS, REVIEW_REMINDER_DELAY_MINUTES,
+    BNB_CONFIGS,
 )
 
 
-def get_booking_by_openid(openid: str, include_checked_out: bool = False):
-    """获取用户最近预订（预订者本人 或 合住人）"""
+def _resolve_bnb_id(bnb_id: str = None) -> str:
+    """解析 bnb_id：优先参数 > Flask g > 线程本地 > 默认 guishu"""
+    if bnb_id:
+        return bnb_id
+    try:
+        from bnb_context import get_current_bnb_id
+        return get_current_bnb_id()
+    except Exception:
+        return "guishu"
+
+
+def get_booking_by_openid(openid: str, include_checked_out: bool = False, bnb_id: str = None):
+    """获取用户最近预订（预订者本人 或 合住人），按 bnb_id 过滤"""
+    bnb_id = _resolve_bnb_id(bnb_id)
     with get_db() as db:
-        booking, role = _get_active_booking_for_openid(db, openid)
+        booking, role = _get_active_booking_for_openid(db, openid, bnb_id=bnb_id)
         if booking:
             result = booking.to_dict()
             result["role"] = role
@@ -27,6 +40,7 @@ def get_booking_by_openid(openid: str, include_checked_out: bool = False):
             # 查本人
             booking = db.query(Booking).filter(
                 Booking.openid == openid,
+                Booking.bnb_id == bnb_id,
                 Booking.status == "checked_out",
             ).order_by(Booking.created_at.desc()).first()
             # 查合住人关联的已退房记录
@@ -37,6 +51,7 @@ def get_booking_by_openid(openid: str, include_checked_out: bool = False):
                 if guest:
                     booking = db.query(Booking).filter(
                         Booking.room_code == guest.room_code,
+                        Booking.bnb_id == bnb_id,
                         Booking.status == "checked_out",
                     ).order_by(Booking.created_at.desc()).first()
             if booking:
@@ -45,14 +60,17 @@ def get_booking_by_openid(openid: str, include_checked_out: bool = False):
         return None
 
 
-def _get_active_booking_for_openid(db, openid: str):
+def _get_active_booking_for_openid(db, openid: str, bnb_id: str = None):
     """
     查找用户关联的有效预订（预订者本人 或 通过房间码绑定的合住人）
     返回 (Booking, role) 或 (None, None)
     """
+    bnb_id = _resolve_bnb_id(bnb_id)
+
     # 1. 先查本人预订
     booking = db.query(Booking).filter(
         Booking.openid == openid,
+        Booking.bnb_id == bnb_id,
         Booking.ai_enabled == True,
         Booking.status.in_(["confirmed", "checked_in"]),
     ).first()
@@ -67,6 +85,7 @@ def _get_active_booking_for_openid(db, openid: str):
     if guest:
         booking = db.query(Booking).filter(
             Booking.room_code == guest.room_code,
+            Booking.bnb_id == bnb_id,
             Booking.ai_enabled == True,
             Booking.status.in_(["confirmed", "checked_in"]),
         ).first()
@@ -76,19 +95,21 @@ def _get_active_booking_for_openid(db, openid: str):
     return None, None
 
 
-def is_checked_in(openid: str) -> bool:
-    """检查用户是否已实际入住（含合住人）"""
+def is_checked_in(openid: str, bnb_id: str = None) -> bool:
+    """检查用户是否已实际入住（含合住人），按 bnb_id 过滤"""
+    bnb_id = _resolve_bnb_id(bnb_id)
     with get_db() as db:
-        booking, _ = _get_active_booking_for_openid(db, openid)
+        booking, _ = _get_active_booking_for_openid(db, openid, bnb_id=bnb_id)
         if booking and booking.status == "checked_in":
             return True
         return False
 
 
-def is_ai_enabled(openid: str) -> bool:
-    """检查用户的AI对话是否已解锁（预订者本人或合住人）"""
+def is_ai_enabled(openid: str, bnb_id: str = None) -> bool:
+    """检查用户的AI对话是否已解锁（预订者本人或合住人），按 bnb_id 过滤"""
+    bnb_id = _resolve_bnb_id(bnb_id)
     with get_db() as db:
-        booking, _ = _get_active_booking_for_openid(db, openid)
+        booking, _ = _get_active_booking_for_openid(db, openid, bnb_id=bnb_id)
         return booking is not None
 
 
@@ -149,9 +170,10 @@ def bind_room_guest(room_code: str, openid: str, guest_name: str = "", relation:
             db.commit()
             log_booking(openid, "bind_room", f"room_code={room_code} name={guest_name}")
 
+        bnb_name = BNB_CONFIGS.get(booking.bnb_id, BNB_CONFIGS["guishu"]).get("short_name", "云上归墅") if booking.bnb_id else "云上归墅"
         return {
             "success": True,
-            "message": f"绑定成功！欢迎加入 {booking.room_type or '云上归墅'}，AI 管家已就绪～",
+            "message": f"绑定成功！欢迎加入 {booking.room_type or bnb_name}，AI 管家已就绪～",
             "booking": booking.to_dict(),
             "room_code": room_code,
             "role": "guest",
@@ -213,14 +235,16 @@ def check_in_booking(booking_id: int, room_number: str = "") -> Booking:
         return booking
 
 
-def extend_booking(openid: str, extra_days: int = 1) -> dict:
+def extend_booking(openid: str, extra_days: int = 1, bnb_id: str = None) -> dict:
     """
-    续住：延长客人的退房日期。
+    续住：延长客人的退房日期，按 bnb_id 过滤。
     返回更新后的预订信息，失败返回 None。
     """
+    bnb_id = _resolve_bnb_id(bnb_id)
     with get_db() as db:
         booking = db.query(Booking).filter(
             Booking.openid == openid,
+            Booking.bnb_id == bnb_id,
             Booking.status.in_(["confirmed", "checked_in"]),
         ).order_by(Booking.created_at.desc()).first()
 

@@ -86,7 +86,7 @@ def format_services_text(bnb_id=None):
 def handle_service_request(service_name: str, openid: str = "",
                           room_number: str = "", bnb_id: str = "guishu") -> str:
     """处理服务请求，返回确认信息（要求2：同时创建通知）"""
-    services = get_all_services()
+    services = get_all_services(bnb_id=bnb_id)
 
     # 模糊匹配
     matched = None

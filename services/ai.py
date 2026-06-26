@@ -82,25 +82,28 @@ def _validate_and_sanitize(openid: str, content: str) -> str | None:
 #  本地数据注入（从数据库读取对客人有帮助的准确信息）
 # ══════════════════════════════════════════════════════════
 
-_local_data_cache = None
+_local_data_cache = {}  # {bnb_id: str} — 每家民宿独立缓存
 
-def _build_local_data() -> str:
+def _build_local_data(bnb_id: str = "guishu") -> str:
     """
     从数据库收集全部对客人有帮助的信息，构建紧凑数据块注入系统提示词。
-    每次模块加载时刷新一次（种子数据为静态数据）。
+    按 bnb_id 独立缓存，确保不同民宿的客人看到各自的数据。
     """
     global _local_data_cache
-    if _local_data_cache:
-        return _local_data_cache
+    if bnb_id in _local_data_cache:
+        return _local_data_cache[bnb_id]
 
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
+    bnb_name = cfg["name"]
+    cafe_name = cfg.get("cafe_name", "咖啡")
     lines = []
 
     # ── 房型数据 ──
     try:
         from services.rooms import get_all_rooms
-        rooms = get_all_rooms()
+        rooms = get_all_rooms(bnb_id=bnb_id)
         if rooms:
-            lines.append("[房型数据 — 以下为云上归墅全部房型，回答时引用准确信息]")
+            lines.append(f"[房型数据 — 以下为{bnb_name}全部房型，回答时引用准确信息]")
             for r in rooms:
                 lines.append(
                     f"  {r['name']} | {r['price']}元/晚 | "
@@ -109,14 +112,14 @@ def _build_local_data() -> str:
                 )
             lines.append("")
     except Exception:
-        debug("本地数据加载: 房型数据失败")
+        debug(f"本地数据加载: 房型数据失败 ({bnb_id})")
 
     # ── 菜单数据 ──
     try:
         from services.menu import get_menu_categories
-        cats = get_menu_categories()
+        cats = get_menu_categories(bnb_id=bnb_id)
         if cats:
-            lines.append("[三山二水咖啡菜单 — 回答餐饮问题时引用准确信息]")
+            lines.append(f"[{cafe_name}菜单 — 回答餐饮问题时引用准确信息]")
             for cat in cats:
                 lines.append(f"  [{cat['name']}]")
                 for item in cat.get('items', []):
@@ -126,12 +129,12 @@ def _build_local_data() -> str:
                     )
             lines.append("")
     except Exception:
-        debug("本地数据加载: 菜单数据失败")
+        debug(f"本地数据加载: 菜单数据失败 ({bnb_id})")
 
     # ── 游玩路线 ──
     try:
         from services.travel import get_all_routes
-        routes = get_all_routes()
+        routes = get_all_routes(bnb_id=bnb_id)
         if routes:
             lines.append("[庐山游玩路线 — 回答旅游问题时引用准确信息]")
             for rt in routes:
@@ -141,12 +144,12 @@ def _build_local_data() -> str:
                 )
             lines.append("")
     except Exception:
-        debug("本地数据加载: 游玩路线失败")
+        debug(f"本地数据加载: 游玩路线失败 ({bnb_id})")
 
     # ── 美食推荐 ──
     try:
         from services.travel import get_all_food_recommends
-        foods = get_all_food_recommends()
+        foods = get_all_food_recommends(bnb_id=bnb_id)
         if foods:
             lines.append("[周边美食推荐 — 回答美食问题时引用准确信息]")
             for fd in foods:
@@ -157,12 +160,12 @@ def _build_local_data() -> str:
                 )
             lines.append("")
     except Exception:
-        debug("本地数据加载: 美食推荐失败")
+        debug(f"本地数据加载: 美食推荐失败 ({bnb_id})")
 
     # ── 快捷服务 ──
     try:
         from services.quick import get_all_services
-        svcs = get_all_services()
+        svcs = get_all_services(bnb_id=bnb_id)
         if svcs:
             lines.append("[快捷服务 — 回答服务相关问题时引用准确信息]")
             for sv in svcs:
@@ -172,7 +175,7 @@ def _build_local_data() -> str:
                 )
             lines.append("")
     except Exception:
-        debug("本地数据加载: 快捷服务失败")
+        debug(f"本地数据加载: 快捷服务失败 ({bnb_id})")
 
     # 本地文档引用
     try:
@@ -429,14 +432,9 @@ def _vary_reply_opener() -> str:
     return opener
 
 
-LOCAL_DATA = ""  # 延迟初始化，首次调用时自动构建
-
-
-def _get_local_data() -> str:
-    global LOCAL_DATA
-    if not LOCAL_DATA:
-        LOCAL_DATA = _build_local_data()
-    return LOCAL_DATA
+def _get_local_data(bnb_id: str = "guishu") -> str:
+    """获取指定民宿的本地数据（按 bnb_id 缓存）"""
+    return _build_local_data(bnb_id)
 
 
 # ══════════════════════════════════════════════════════════
@@ -827,7 +825,7 @@ def _call_ai(system_template: str, user_openid: str, user_message: str, bnb_id: 
 
     try:
         # 注入本地数据 + 客人个性化上下文
-        local_data = _get_local_data()
+        local_data = _get_local_data(bnb_id)
         guest_context = _get_guest_context(user_openid)
         system_prompt = system_template.replace("{LOCAL_DATA}", local_data).replace("{GUEST_CONTEXT}", guest_context)
 
