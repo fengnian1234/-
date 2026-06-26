@@ -272,7 +272,7 @@ def _get_guest_context(openid: str) -> str:
             finally:
                 db.close()
         except Exception:
-            pass
+            warning(f"客人画像DB查询失败: {openid[:12]}", exc_info=True)
 
         # 回头客标记
         if pref and pref.visit_count and pref.visit_count > 1:
@@ -282,6 +282,7 @@ def _get_guest_context(openid: str) -> str:
             return "## 当前客人信息\n" + "\n".join(f"- {l}" for l in lines)
         return ""
     except Exception:
+        warning("构建客人画像失败", exc_info=True)
         return ""
 
 
@@ -410,7 +411,7 @@ def record_guest_preference(openid: str, key: str, value: str):
         finally:
             db.close()
     except Exception:
-        pass
+        warning(f"偏好记录失败: {openid[:12]} {key}={str(value)[:30]}", exc_info=True)
 
 
 # 回复风格多样化：开场/转场短语轮转

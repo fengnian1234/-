@@ -151,6 +151,7 @@ def _handle_wechat_post(bnb_id="guishu"):
     try:
         msg = parse_message(xml_data)
     except Exception:
+        log_error("wechat.parse_xml", "XML解析失败", exc_info=True)
         return "success"
 
     msg_type = getattr(msg, 'type', '')
@@ -184,6 +185,7 @@ def _handle_wechat_post(bnb_id="guishu"):
         return xml_response
 
     except Exception:
+        log_error("wechat.handle_message", "消息处理异常", exc_info=True)
         return "success"
 
 
@@ -627,7 +629,8 @@ def api_order_status(order_id: int):
         return jsonify({"success": True, "status": order.status, "order": order.to_dict()})
     except Exception as e:
         db.rollback()
-        return jsonify({"success": False, "message": str(e)}), 500
+        log_error("api.order_status", str(e), exc_info=True)
+        return jsonify({"success": False, "message": "状态更新失败，请稍后重试"}), 500
     finally:
         db.close()
 
@@ -1259,7 +1262,8 @@ def api_miniapp_login():
         )
         result = resp.json()
     except Exception as e:
-        return jsonify({"success": False, "message": f"微信接口调用失败: {e}"}), 502
+        log_error("api.wx_login", str(e), exc_info=True)
+        return jsonify({"success": False, "message": "微信登录失败，请稍后重试"}), 502
 
     if result.get("errcode", 0) != 0:
         return jsonify({

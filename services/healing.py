@@ -6,6 +6,7 @@
 from datetime import datetime, timedelta, date as date_type
 from models import SessionLocal, HealingCourse, HealingAppointment
 from bnb_context import get_service_bnb_id as _get_bnb_id
+from services.logger import error as log_error
 
 BUSINESS_HOURS_START = 9   # 9:00
 BUSINESS_HOURS_END = 20    # 20:00
@@ -223,7 +224,8 @@ def create_appointment(data, bnb_id=None):
         }
     except Exception as e:
         db.rollback()
-        return {"error": f"预约失败: {str(e)}"}
+        log_error("healing.create_appointment", str(e), exc_info=True)
+        return {"error": "预约失败，请稍后重试"}
     finally:
         db.close()
 
@@ -247,7 +249,8 @@ def confirm_payment(appointment_id, bnb_id=None):
         return {"success": True, "message": "支付成功！🧘‍♀️ 琼儿老师将在约定时间等候您～"}
     except Exception as e:
         db.rollback()
-        return {"error": f"支付确认失败: {str(e)}"}
+        log_error("healing.confirm_payment", str(e), exc_info=True)
+        return {"error": "支付确认失败，请稍后重试"}
     finally:
         db.close()
 

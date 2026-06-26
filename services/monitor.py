@@ -230,6 +230,7 @@ def _take_browser_screenshot(platform: str, query: str) -> tuple:
             return [], [os.path.join("local_data", "images", "monitor", filename)], "screenshot_ok"
         return [], [], "screenshot_failed"
     except Exception:
+        debug("浏览器截图失败", exc_info=True)
         return [], [], "screenshot_error"
 
 
@@ -280,7 +281,7 @@ def _search_via_browser(platform: str, query: str, max_results: int = 5) -> tupl
                 _run(["browser", session, "scroll", "down"], timeout=8)
                 time.sleep(2)
             except Exception:
-                pass
+                debug(f"browser scroll 失败 ({platform})", exc_info=True)
 
         # 3. 提取页面内容
         content = ""
@@ -862,7 +863,7 @@ def _deep_dive_weibo_posts(mentions: list) -> list:
                                 )
                                 time.sleep(1.5)
                             except Exception:
-                                pass
+                                debug(f"weibo browser scroll 失败", exc_info=True)
 
                         # 提取页面内容
                         br_ext = subprocess.run(

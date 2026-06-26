@@ -25,7 +25,7 @@ try:
 except ImportError:
     _HAS_MPL = False
 
-from services.logger import info, warning
+from services.logger import info, warning, debug
 
 from models import SessionLocal, PlatformMention
 from services.monitor import (
@@ -194,6 +194,7 @@ def _prepare_image_for_docx(full_path: str) -> tuple:
             img.close()
         except Exception:
             # Pillow 失败时回退到文件大小启发式
+            debug("Pillow 图片处理失败，回退到文件大小启发式", exc_info=True)
             if size_kb > 250:
                 img_width = Inches(2.6)
             elif size_kb < 100:
