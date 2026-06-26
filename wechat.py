@@ -412,8 +412,9 @@ def format_greeting(bnb_id="guishu") -> str:
 
 def handle_human_service(bnb_id: str = "guishu") -> str:
     """处理人工客服转接"""
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
     if is_human_service_time():
-        phone = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"]).get("phone", BNB_PHONE)
+        phone = cfg.get("phone", BNB_PHONE)
         return (
             "正在为您转接人工客服... 👩‍💼\n\n"
             f"☎️ 也可直接拨打前台电话：{phone}\n"
@@ -421,7 +422,7 @@ def handle_human_service(bnb_id: str = "guishu") -> str:
             "请稍候，客服马上为您服务～"
         )
     else:
-        return AUTO_REPLY_NIGHT
+        return AUTO_REPLY_NIGHT.replace("{short_name}", cfg["short_name"])
 
 
 def format_review_links(bnb_id="guishu") -> str:
