@@ -6,7 +6,7 @@ import time
 import hashlib
 import random
 from datetime import datetime
-from models import SessionLocal, MenuCategory, MenuItem, Order
+from models import get_db, MenuCategory, MenuItem, Order
 from config import WECHAT_APP_ID, WECHAT_MCH_ID, WECHAT_MCH_KEY
 from bnb_context import get_service_bnb_id as _get_bnb_id
 
@@ -14,44 +14,35 @@ from bnb_context import get_service_bnb_id as _get_bnb_id
 def get_menu_categories(bnb_id=None):
     """获取所有菜单分类"""
     bnb_id = _get_bnb_id(bnb_id)
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         categories = db.query(MenuCategory).filter(
             MenuCategory.bnb_id == bnb_id
         ).order_by(MenuCategory.sort_order).all()
         return [c.to_dict() for c in categories]
-    finally:
-        db.close()
 
 
 def get_menu_items_by_category(category_id: int, bnb_id=None):
     """按分类获取菜品"""
     bnb_id = _get_bnb_id(bnb_id)
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         items = db.query(MenuItem).filter(
             MenuItem.bnb_id == bnb_id,
             MenuItem.category_id == category_id,
             MenuItem.is_available == True
         ).order_by(MenuItem.sort_order).all()
         return [i.to_dict() for i in items]
-    finally:
-        db.close()
 
 
 def get_recommended_items(bnb_id=None):
     """获取推荐菜品"""
     bnb_id = _get_bnb_id(bnb_id)
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         items = db.query(MenuItem).filter(
             MenuItem.bnb_id == bnb_id,
             MenuItem.is_available == True,
             MenuItem.is_recommended == True
         ).order_by(MenuItem.sort_order).all()
         return [i.to_dict() for i in items]
-    finally:
-        db.close()
 
 
 def create_order(openid: str, items_data: list, room_number: str = "",
@@ -62,8 +53,7 @@ def create_order(openid: str, items_data: list, room_number: str = "",
     """
     bnb_id = _get_bnb_id(bnb_id)
     from models import MenuItem, MenuCategory
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         total = sum(item["price"] * item["quantity"] for item in items_data)
         # 判定通知目标
         notify_target = "frontdesk"  # 默认前台点单机
@@ -88,33 +78,25 @@ def create_order(openid: str, items_data: list, room_number: str = "",
         db.commit()
         db.refresh(order)
         return order
-    finally:
-        db.close()
 
 
 def get_user_orders(openid: str, limit: int = 10, bnb_id=None):
     """获取用户订单列表"""
     bnb_id = _get_bnb_id(bnb_id)
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         orders = db.query(Order).filter(
             Order.bnb_id == bnb_id,
             Order.openid == openid
         ).order_by(Order.created_at.desc()).limit(limit).all()
         return [o.to_dict() for o in orders]
-    finally:
-        db.close()
 
 
 def get_order_status(order_id: int, bnb_id=None):
     """查询订单状态"""
     bnb_id = _get_bnb_id(bnb_id)
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         order = db.query(Order).filter(Order.id == order_id, Order.bnb_id == bnb_id).first()
         return order.to_dict() if order else None
-    finally:
-        db.close()
 
 
 STATUS_LABELS = {

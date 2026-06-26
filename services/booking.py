@@ -7,7 +7,7 @@
 import secrets
 import string
 from datetime import datetime, timedelta
-from models import SessionLocal, Booking, RoomGuest
+from models import get_db, Booking, RoomGuest
 from services.logger import info, warning, error as log_error, log_booking
 from config import (
     BOOKING_PLATFORMS, REVIEW_PLATFORMS, REVIEW_REMINDER_DELAY_MINUTES,
@@ -17,8 +17,7 @@ from config import (
 
 def get_booking_by_openid(openid: str, include_checked_out: bool = False):
     """获取用户最近预订（预订者本人 或 合住人）"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         booking, role = _get_active_booking_for_openid(db, openid)
         if booking:
             result = booking.to_dict()
@@ -45,8 +44,6 @@ def get_booking_by_openid(openid: str, include_checked_out: bool = False):
                 result = booking.to_dict()
                 return result
         return None
-    finally:
-        db.close()
 
 
 def _get_active_booking_for_openid(db, openid: str):
@@ -82,24 +79,18 @@ def _get_active_booking_for_openid(db, openid: str):
 
 def is_checked_in(openid: str) -> bool:
     """检查用户是否已实际入住（含合住人）"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         booking, _ = _get_active_booking_for_openid(db, openid)
         if booking and booking.status == "checked_in":
             return True
         return False
-    finally:
-        db.close()
 
 
 def is_ai_enabled(openid: str) -> bool:
     """检查用户的AI对话是否已解锁（预订者本人或合住人）"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         booking, _ = _get_active_booking_for_openid(db, openid)
         return booking is not None
-    finally:
-        db.close()
 
 
 def _generate_room_code() -> str:
@@ -107,13 +98,10 @@ def _generate_room_code() -> str:
     chars = string.ascii_uppercase + string.digits
     for _ in range(10):  # 最多重试10次
         code = ''.join(secrets.choice(chars) for _ in range(6))
-        db = SessionLocal()
-        try:
+        with get_db() as db:
             exists = db.query(Booking).filter(Booking.room_code == code).first()
             if not exists:
                 return code
-        finally:
-            db.close()
     return ''.join(secrets.choice(chars) for _ in range(6))  # 兜底
 
 
@@ -122,8 +110,7 @@ def bind_room_guest(room_code: str, openid: str, guest_name: str = "", relation:
     合住人通过房间码绑定，共享 AI 管家全部权限。
     返回 {"success": True/False, "message": "...", "booking": {...}}
     """
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         # 1. 验证房间码有效性
         booking = db.query(Booking).filter(
             Booking.room_code == room_code,
@@ -171,21 +158,15 @@ def bind_room_guest(room_code: str, openid: str, guest_name: str = "", relation:
             "role": "guest",
         }
 
-    finally:
-        db.close()
-
 
 def get_room_guests(room_code: str) -> list:
     """获取某房间码下的所有合住人"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         guests = db.query(RoomGuest).filter(
             RoomGuest.room_code == room_code,
             RoomGuest.is_active == True,
         ).all()
         return [g.to_dict() for g in guests]
-    finally:
-        db.close()
 
 
 def confirm_booking(openid: str, guest_name: str, phone: str,
@@ -198,8 +179,7 @@ def confirm_booking(openid: str, guest_name: str, phone: str,
             bnb_id = getattr(g, 'bnb_id', 'guishu')
         except RuntimeError:
             bnb_id = 'guishu'
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         room_code = _generate_room_code()
         booking = Booking(
             bnb_id=bnb_id,
@@ -218,14 +198,11 @@ def confirm_booking(openid: str, guest_name: str, phone: str,
         db.commit()
         db.refresh(booking)
         return booking
-    finally:
-        db.close()
 
 
 def check_in_booking(booking_id: int, room_number: str = "") -> Booking:
     """办理入住"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         booking = db.query(Booking).filter(Booking.id == booking_id).first()
         if booking:
             booking.status = "checked_in"
@@ -235,8 +212,6 @@ def check_in_booking(booking_id: int, room_number: str = "") -> Booking:
             # 预加载属性，避免返回后 session 关闭导致 DetachedInstanceError
             _ = (booking.id, booking.status, booking.room_number, booking.guest_name, booking.room_type)
         return booking
-    finally:
-        db.close()
 
 
 def extend_booking(openid: str, extra_days: int = 1) -> dict:
@@ -244,8 +219,7 @@ def extend_booking(openid: str, extra_days: int = 1) -> dict:
     续住：延长客人的退房日期。
     返回更新后的预订信息，失败返回 None。
     """
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         booking = db.query(Booking).filter(
             Booking.openid == openid,
             Booking.status.in_(["confirmed", "checked_in"]),
@@ -266,14 +240,11 @@ def extend_booking(openid: str, extra_days: int = 1) -> dict:
 
         db.commit()
         return booking.to_dict()
-    finally:
-        db.close()
 
 
 def check_out_booking(booking_id: int) -> Booking:
     """办理退房（标记退房时间，触发好评推送倒计时）"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         booking = db.query(Booking).filter(Booking.id == booking_id).first()
         if booking:
             booking.status = "checked_out"
@@ -282,14 +253,11 @@ def check_out_booking(booking_id: int) -> Booking:
             # 预加载属性，避免返回后 session 关闭导致 DetachedInstanceError
             _ = (booking.id, booking.status, booking.guest_name, booking.room_type, booking.checked_out_at)
         return booking
-    finally:
-        db.close()
 
 
 def get_review_reminders_due():
     """获取需要推送好评提醒的退房记录（退房30分钟后）"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         cutoff = datetime.utcnow() - timedelta(minutes=REVIEW_REMINDER_DELAY_MINUTES)
         bookings = db.query(Booking).filter(
             Booking.status == "checked_out",
@@ -297,14 +265,11 @@ def get_review_reminders_due():
             Booking.checked_out_at <= cutoff,
         ).all()
         return bookings
-    finally:
-        db.close()
 
 
 def mark_review_sent(booking_id: int, platform: str):
     """标记好评已推送"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         booking = db.query(Booking).filter(Booking.id == booking_id).first()
         if booking:
             booking.review_sent = True
@@ -312,8 +277,6 @@ def mark_review_sent(booking_id: int, platform: str):
             booking.review_platform = platform
             booking.status = "completed"
             db.commit()
-    finally:
-        db.close()
 
 
 def generate_review_message(booking: Booking) -> str:

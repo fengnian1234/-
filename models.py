@@ -3,6 +3,7 @@
 使用 SQLAlchemy + SQLite，轻量且方便迁移
 """
 from datetime import datetime, timedelta
+from contextlib import contextmanager
 from sqlalchemy import (
     create_engine, Column, Integer, String, Float, Text,
     Boolean, DateTime, ForeignKey, JSON
@@ -449,6 +450,20 @@ elif DB_TYPE == "sqlite":
 
 engine = create_engine(DATABASE_URL, **_engine_kwargs)
 SessionLocal = sessionmaker(bind=engine)
+
+
+@contextmanager
+def get_db():
+    """数据库会话上下文管理器 — 自动 commit/rollback/close"""
+    db = SessionLocal()
+    try:
+        yield db
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        db.close()
 
 
 # ══════════════════════════════════════════════════════════

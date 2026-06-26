@@ -5,7 +5,7 @@
 - 浏览器声音提醒支持
 """
 from datetime import datetime
-from models import SessionLocal, ServiceRequest
+from models import get_db, ServiceRequest
 from bnb_context import get_service_bnb_id as _get_bnb_id
 
 
@@ -15,8 +15,7 @@ def create_service_request(openid: str, service_name: str,
                            notes: str = "", bnb_id=None) -> ServiceRequest:
     """创建服务请求并记录到通知队列"""
     bnb_id = _get_bnb_id(bnb_id)
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         req = ServiceRequest(
             bnb_id=bnb_id,
             openid=openid,
@@ -29,40 +28,31 @@ def create_service_request(openid: str, service_name: str,
         db.commit()
         db.refresh(req)
         return req
-    finally:
-        db.close()
 
 
 def get_pending_requests():
     """获取所有待处理的服务请求"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         requests = db.query(ServiceRequest).filter(
             ServiceRequest.status.in_(["pending", "acknowledged"])
         ).order_by(ServiceRequest.urgency.desc(),
                    ServiceRequest.created_at.asc()).all()
         return [r.to_dict() for r in requests]
-    finally:
-        db.close()
 
 
 def get_all_requests_today():
     """获取今日所有服务请求"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         today = datetime.utcnow().date()
         requests = db.query(ServiceRequest).filter(
             ServiceRequest.created_at >= today
         ).order_by(ServiceRequest.created_at.desc()).all()
         return [r.to_dict() for r in requests]
-    finally:
-        db.close()
 
 
 def acknowledge_request(request_id: int, handler: str = ""):
     """员工确认收到请求"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         req = db.query(ServiceRequest).filter(
             ServiceRequest.id == request_id
         ).first()
@@ -73,14 +63,11 @@ def acknowledge_request(request_id: int, handler: str = ""):
             db.commit()
             return True
         return False
-    finally:
-        db.close()
 
 
 def complete_request(request_id: int, notes: str = ""):
     """完成服务请求"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         req = db.query(ServiceRequest).filter(
             ServiceRequest.id == request_id
         ).first()
@@ -92,25 +79,19 @@ def complete_request(request_id: int, notes: str = ""):
             db.commit()
             return True
         return False
-    finally:
-        db.close()
 
 
 def get_pending_count() -> int:
     """获取待处理请求数量（用于角标显示）"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         return db.query(ServiceRequest).filter(
             ServiceRequest.status == "pending"
         ).count()
-    finally:
-        db.close()
 
 
 def get_notification_stats() -> dict:
     """获取通知统计"""
-    db = SessionLocal()
-    try:
+    with get_db() as db:
         today = datetime.utcnow().date()
         pending = db.query(ServiceRequest).filter(
             ServiceRequest.status == "pending"
@@ -130,5 +111,3 @@ def get_notification_stats() -> dict:
             "completion_rate": f"{today_completed/today_total*100:.0f}%"
             if today_total > 0 else "N/A",
         }
-    finally:
-        db.close()
