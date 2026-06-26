@@ -5,16 +5,10 @@
 - 茶叶商城
 """
 from models import SessionLocal, TeaType, TeaExperience, TeaProduct
+from bnb_context import get_service_bnb_id as _get_bnb_id
 
-
-def _get_bnb_id(bnb_id=None):
-    if bnb_id:
-        return bnb_id
-    try:
-        from flask import g
-        return getattr(g, 'bnb_id', 'shanji')
-    except RuntimeError:
-        return 'shanji'
+# 茶园模块专属山纪，覆写默认值
+_get_bnb_id = lambda bnb_id=None: get_service_bnb_id(bnb_id, "shanji")
 
 
 def get_tea_types(bnb_id=None):

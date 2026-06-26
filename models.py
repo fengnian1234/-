@@ -66,7 +66,7 @@ class Booking(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
-    openid = Column(String(100), nullable=False, comment="微信用户openid（预订者）")
+    openid = Column(String(100), nullable=False, index=True, comment="微信用户openid（预订者）")
     guest_name = Column(String(50), comment="客人姓名")
     phone = Column(String(20), comment="联系电话")
     room_type = Column(String(50), comment="预订房型")
@@ -427,8 +427,7 @@ class MessageLog(Base):
     __tablename__ = "message_logs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    openid = Column(String(100), nullable=False)
-    message_type = Column(String(20))
+    openid = Column(String(100), nullable=False, index=True, comment="微信用户openid")
     content = Column(Text)
     reply = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -865,7 +864,7 @@ class HealingAppointment(Base):
 
 
 def run_migrations():
-    """自动迁移：为已有表添加缺失的列（SQLite ALTER TABLE ADD COLUMN）"""
+    """自动迁移：为已有表添加缺失的列和索引（SQLite）"""
     from sqlalchemy import text, inspect
     inspector = inspect(engine)
 
@@ -876,7 +875,14 @@ def run_migrations():
         ],
     }
 
+    # 需要添加的索引: {表名: [(列名, 索引名)]}
+    index_migrations = {
+        "bookings": [("openid", "idx_bookings_openid")],
+        "message_logs": [("openid", "idx_message_logs_openid")],
+    }
+
     with engine.connect() as conn:
+        # ── 列迁移 ──
         for table, columns in migrations.items():
             if not inspector.has_table(table):
                 continue
@@ -893,6 +899,24 @@ def run_migrations():
                     except Exception as e:
                         from services.logger import warning as _warn
                         _warn(f"迁移 {table}.{col_name} 跳过: {e}")
+
+        # ── 索引迁移 ──
+        for table, indexes in index_migrations.items():
+            if not inspector.has_table(table):
+                continue
+            existing_indexes = {idx["name"] for idx in inspector.get_indexes(table)}
+            for col_name, idx_name in indexes:
+                if idx_name not in existing_indexes:
+                    try:
+                        conn.execute(text(
+                            f"CREATE INDEX IF NOT EXISTS {idx_name} ON {table} ({col_name})"
+                        ))
+                        conn.commit()
+                        from services.logger import info as _info
+                        _info(f"✅ 迁移: 索引 {idx_name} ON {table}({col_name}) 已创建")
+                    except Exception as e:
+                        from services.logger import warning as _warn
+                        _warn(f"迁移 索引 {idx_name} 跳过: {e}")
 
 
 def init_db():

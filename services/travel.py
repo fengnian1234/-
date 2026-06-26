@@ -2,16 +2,7 @@
 旅游推荐服务 - 庐山游玩路线、美食推荐、地图导航
 """
 from models import SessionLocal, TravelRoute, FoodRecommend
-
-
-def _get_bnb_id(bnb_id=None):
-    if bnb_id:
-        return bnb_id
-    try:
-        from flask import g
-        return getattr(g, 'bnb_id', 'guishu')
-    except RuntimeError:
-        return 'guishu'
+from bnb_context import get_service_bnb_id as _get_bnb_id
 
 
 def get_all_routes(bnb_id=None):

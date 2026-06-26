@@ -600,7 +600,9 @@ def api_order_pay():
         })
     except Exception as e:
         db.rollback()
-        return jsonify({"error": str(e)}), 500
+        from services.logger import error as log_error
+        log_error("api.pay_order", str(e), exc_info=True)
+        return jsonify({"message": "支付处理失败，请稍后重试"}), 500
     finally:
         db.close()
 

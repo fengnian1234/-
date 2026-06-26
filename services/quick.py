@@ -6,16 +6,7 @@ from datetime import datetime
 from models import SessionLocal, QuickService
 from services.notify import create_service_request
 from services.logger import debug
-
-
-def _get_bnb_id(bnb_id=None):
-    if bnb_id:
-        return bnb_id
-    try:
-        from flask import g
-        return getattr(g, 'bnb_id', 'guishu')
-    except RuntimeError:
-        return 'guishu'
+from bnb_context import get_service_bnb_id as _get_bnb_id
 
 
 def get_all_services(bnb_id=None):

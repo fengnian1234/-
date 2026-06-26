@@ -267,7 +267,7 @@ def handle_bind_room_code(msg, room_code: str) -> str:
             f"  · 房间码输入正确（6位字母数字）\n"
             f"  · 预订仍然有效\n"
             f"  · 码区分大小写？不区分，直接输入即可\n\n"
-            f"📞 如有疑问，联系前台：16607927666"
+            f"📞 如有疑问，联系前台：{BNB_PHONE}"
         )
 
 
@@ -363,7 +363,7 @@ def handle_extend_stay(msg) -> str:
             f"📅 退房日期已延长至：{new_date}\n"
             f"🛎️ 续住期间所有管家服务照常使用～\n\n"
             f"💡 如需续住多天，请直接告知或联系前台调整\n"
-            f"📞 前台电话：16607927666"
+            f"📞 前台电话：{BNB_PHONE}"
         )
     else:
         return (
@@ -375,11 +375,15 @@ def handle_extend_stay(msg) -> str:
         )
 
 
-def format_wifi_info() -> str:
+def format_wifi_info(bnb_id: str = "guishu") -> str:
+    from bnb_context import get_bnb_config
+    cfg = get_bnb_config(bnb_id)
+    ssid = cfg.get("wifi_ssid", "云上·归墅")
+    pwd = cfg.get("wifi_password", "yunshang888")
     return (
         "📶 *WiFi 信息*\n\n"
-        "网络名称：云上·归墅\n"
-        "密码：yunshang888\n\n"
+        f"网络名称：{ssid}\n"
+        f"密码：{pwd}\n\n"
         "连接后即可畅享高速网络～"
     )
 

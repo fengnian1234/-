@@ -204,6 +204,7 @@ const BNB_TABS = {
   guishu: [
     { id:'index', icon:'🏠', label:'首页', path:'' },
     { id:'rooms', icon:'🛏️', label:'房型', path:'/rooms' },
+    { id:'travel', icon:'🗺️', label:'攻略', path:'/travel' },
     { id:'menu', icon:'☕', label:'点餐', path:'/menu' },
     { id:'services', icon:'🛎️', label:'服务', path:'/services' },
     { id:'chat', icon:'🤖', label:'管家', path:null },
@@ -212,6 +213,7 @@ const BNB_TABS = {
     { id:'index', icon:'🏠', label:'首页', path:'' },
     { id:'rooms', icon:'🛏️', label:'房型', path:'/rooms' },
     { id:'tea', icon:'🍵', label:'茶园', path:'/tea' },
+    { id:'travel', icon:'🗺️', label:'攻略', path:'/travel' },
     { id:'menu', icon:'☕', label:'点餐', path:'/menu' },
     { id:'services', icon:'🛎️', label:'服务', path:'/services' },
     { id:'chat', icon:'🤖', label:'管家', path:null },
@@ -220,6 +222,7 @@ const BNB_TABS = {
     { id:'index', icon:'🏠', label:'首页', path:'' },
     { id:'rooms', icon:'🛏️', label:'房型', path:'/rooms' },
     { id:'healing', icon:'🧘', label:'疗愈', path:'/healing' },
+    { id:'travel', icon:'🗺️', label:'攻略', path:'/travel' },
     { id:'menu', icon:'☕', label:'点餐', path:'/menu' },
     { id:'services', icon:'🛎️', label:'服务', path:'/services' },
     { id:'chat', icon:'🤖', label:'管家', path:null },
@@ -245,7 +248,7 @@ function applyTheme(t) {
   // 同步 iframe 内容主题（无需刷新）
   var iframe = document.getElementById('contentFrame');
   if (iframe && iframe.contentWindow) {
-    iframe.contentWindow.postMessage({ type: 'setTheme', theme: t }, '*');
+    iframe.contentWindow.postMessage({ type: 'setTheme', theme: t }, window.location.origin);
   }
 }
 
@@ -353,7 +356,7 @@ function loadPage() {
   // iframe 加载后同步当前主题
   frame.onload = function() {
     if (frame.contentWindow) {
-      frame.contentWindow.postMessage({ type: 'setTheme', theme: currentTheme }, '*');
+      frame.contentWindow.postMessage({ type: 'setTheme', theme: currentTheme }, window.location.origin);
     }
   };
 }
@@ -386,6 +389,8 @@ async function loadDrawerData() {
 
 // Tab 联动：监听 iframe 导航
 window.addEventListener('message', function(e) {
+  // 仅接受同源消息
+  if (e.origin !== window.location.origin) return;
   if (!e.data || !e.data.tab) return;
   const tab = e.data.tab;
   const validTabs = BNB_TABS[currentBnb].map(t => t.id);

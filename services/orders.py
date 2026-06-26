@@ -4,6 +4,7 @@
 from datetime import datetime, timedelta
 from sqlalchemy import func
 from models import SessionLocal, AggregatedOrder, Room
+from bnb_context import get_service_bnb_id as _get_bnb_id
 
 
 PLATFORMS = {
@@ -20,16 +21,6 @@ PLATFORMS = {
 def get_platforms() -> list:
     """获取平台列表"""
     return [{"key": k, **v} for k, v in PLATFORMS.items()]
-
-
-def _get_bnb_id(bnb_id=None):
-    if bnb_id:
-        return bnb_id
-    try:
-        from flask import g
-        return getattr(g, 'bnb_id', 'guishu')
-    except RuntimeError:
-        return 'guishu'
 
 
 def add_order(data: dict) -> dict:

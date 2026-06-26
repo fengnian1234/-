@@ -2,17 +2,7 @@
 房间服务 - 房型查询、展示、预订咨询
 """
 from models import SessionLocal, Room
-
-
-def _get_bnb_id(bnb_id=None):
-    """获取 bnb_id：优先参数 > Flask g > 默认 guishu"""
-    if bnb_id:
-        return bnb_id
-    try:
-        from flask import g
-        return getattr(g, 'bnb_id', 'guishu')
-    except RuntimeError:
-        return 'guishu'
+from bnb_context import get_service_bnb_id as _get_bnb_id
 
 
 def get_all_rooms(bnb_id=None):

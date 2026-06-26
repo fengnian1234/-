@@ -6,16 +6,7 @@
 """
 from datetime import datetime
 from models import SessionLocal, ServiceRequest
-
-
-def _get_bnb_id(bnb_id=None):
-    if bnb_id:
-        return bnb_id
-    try:
-        from flask import g
-        return getattr(g, 'bnb_id', 'guishu')
-    except RuntimeError:
-        return 'guishu'
+from bnb_context import get_service_bnb_id as _get_bnb_id
 
 
 def create_service_request(openid: str, service_name: str,

@@ -63,6 +63,26 @@ def get_bnb_config(bnb_id: str) -> dict:
     return BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
 
 
+def get_service_bnb_id(bnb_id: str = None, default: str = "guishu") -> str:
+    """服务层统一获取 bnb_id：优先参数 > Flask g > 默认值
+
+    使用方式（在 services/*.py 中）：
+        from bnb_context import get_service_bnb_id as _get_bnb_id
+
+    示例：
+        _get_bnb_id(bnb_id, "guishu")      # 归墅系服务
+        _get_bnb_id(bnb_id, "shanji")      # 山纪系服务
+        _get_bnb_id(bnb_id, "donglinwai")  # 东林外系服务
+    """
+    if bnb_id:
+        return bnb_id
+    try:
+        from flask import g
+        return getattr(g, 'bnb_id', default)
+    except RuntimeError:
+        return default
+
+
 def get_all_bnbs() -> list[dict]:
     """获取所有活跃民宿配置列表"""
     return [

@@ -5,21 +5,15 @@
 """
 from datetime import datetime, timedelta, date as date_type
 from models import SessionLocal, HealingCourse, HealingAppointment
+from bnb_context import get_service_bnb_id as _get_bnb_id
 
 BUSINESS_HOURS_START = 9   # 9:00
 BUSINESS_HOURS_END = 20    # 20:00
 SLOT_INTERVAL = 30         # 每30分钟一个时间槽
 MIN_ADVANCE_HOURS = 2      # 至少提前2小时预约
 
-
-def _get_bnb_id(bnb_id=None):
-    if bnb_id:
-        return bnb_id
-    try:
-        from flask import g
-        return getattr(g, 'bnb_id', 'donglinwai')
-    except RuntimeError:
-        return 'donglinwai'
+# 疗愈模块专属东林外，覆写默认值
+_get_bnb_id = lambda bnb_id=None: get_service_bnb_id(bnb_id, "donglinwai")
 
 
 def _parse_duration_minutes(dur_str):

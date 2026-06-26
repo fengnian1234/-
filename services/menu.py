@@ -8,16 +8,7 @@ import random
 from datetime import datetime
 from models import SessionLocal, MenuCategory, MenuItem, Order
 from config import WECHAT_APP_ID, WECHAT_MCH_ID, WECHAT_MCH_KEY
-
-
-def _get_bnb_id(bnb_id=None):
-    if bnb_id:
-        return bnb_id
-    try:
-        from flask import g
-        return getattr(g, 'bnb_id', 'guishu')
-    except RuntimeError:
-        return 'guishu'
+from bnb_context import get_service_bnb_id as _get_bnb_id
 
 
 def get_menu_categories(bnb_id=None):

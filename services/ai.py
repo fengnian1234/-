@@ -8,15 +8,15 @@ AI智能对话服务 v3.1 — 全链路AI管家
 import json
 import re
 import threading
+import os
 import time as _time_module
 from config import (
     ANTHROPIC_API_KEY, ANTHROPIC_BASE_URL, AI_MODEL, AI_ENABLED, AI_REQUIRES_BOOKING,
     AI_REQUEST_INTERVAL, AI_MAX_MESSAGE_LENGTH,
     BNB_NAME, BNB_ADDRESS, BNB_PHONE, BNB_CONFIGS,
 )
-from services.logger import debug, warning, log_ai
+from services.logger import debug, info, warning, error as log_error, log_ai
 from services.booking import is_ai_enabled, get_booking_by_openid
-from services.logger import info, warning, error as log_error, debug, log_ai
 
 
 # ══════════════════════════════════════════════════════════
@@ -872,7 +872,7 @@ def _call_ai(system_template: str, user_openid: str, user_message: str) -> str:
         ai_reply = _sanitize_ai_reply(ai_reply)
         # 检测截断：兼容 Anthropic(stop_reason) 和 DeepSeek/OpenAI(finish_reason)
         stop = getattr(response, 'stop_reason', None) or getattr(response, 'finish_reason', '')
-        truncated = stop in ('max_tokens', 'length', 'stop')
+        truncated = stop in ('max_tokens', 'length')  # 'stop'=自然完成，非截断
 
         # 记录截断状态（用于「继续生成」）
         if truncated:
@@ -893,7 +893,7 @@ def _call_ai(system_template: str, user_openid: str, user_message: str) -> str:
         if truncated:
             ai_reply += "\n\n📝 [回复较长，回复「继续」查看完整内容]"
 
-        return ai_reply
+        return _vary_reply_opener() + ai_reply
 
     except Exception as e:
         log_error("ai.call", str(e), exc_info=True)
