@@ -890,12 +890,16 @@ def run_migrations():
             ("image_urls", "JSON", "原始图片URL列表"),
             ("local_images", "JSON", "本地下载的图片路径列表"),
         ],
+        "message_logs": [
+            ("bnb_id", "VARCHAR(20) DEFAULT 'guishu'", "所属民宿"),
+            ("message_type", "VARCHAR(20) DEFAULT 'text'", "消息类型"),
+        ],
     }
 
     # 需要添加的索引: {表名: [(列名, 索引名)]}
     index_migrations = {
         "bookings": [("openid", "idx_bookings_openid")],
-        "message_logs": [("openid", "idx_message_logs_openid")],
+        "message_logs": [("openid", "idx_message_logs_openid"), ("bnb_id", "idx_message_logs_bnb_id")],
     }
 
     with engine.connect() as conn:
