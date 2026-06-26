@@ -10,8 +10,8 @@
 import re
 from datetime import datetime
 from config import (
-    WELCOME_MESSAGE, AUTO_REPLY_NIGHT, HUMAN_SERVICE_OPEN_HOURS,
-    BNB_NAME, BNB_ADDRESS, BNB_PHONE, BNB_CONFIGS,
+    AUTO_REPLY_NIGHT, HUMAN_SERVICE_OPEN_HOURS,
+    BNB_PHONE, BNB_CONFIGS,
 )
 from services.rooms import format_rooms_text, format_room_detail_text, format_rooms_with_images
 from services.menu import format_menu_text, format_recommended_text, format_order_status_text

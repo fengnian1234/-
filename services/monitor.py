@@ -15,7 +15,7 @@ import requests
 
 from models import SessionLocal, PlatformMention
 from services.logger import info, warning, debug
-from config import MONITOR_PLATFORMS, MONITOR_KEYWORDS, MONITOR_SEARCH_QUERY, BNB_NAME
+from config import MONITOR_PLATFORMS
 
 # 确保 subprocess 能找到 opencli（npm 全局安装路径）
 _NPM_BIN = os.path.expandvars(r"%APPDATA%\npm")
