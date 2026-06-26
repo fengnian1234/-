@@ -1546,6 +1546,11 @@ h4 { font-size: 1.05rem; }
     z-index: 200;
     flex-direction: column;
     max-height: 70vh;
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+.order-panel.open {
+    transform: translateY(0);
 }
 
 .order-panel-header {
@@ -2284,6 +2289,11 @@ h4 { font-size: 1.05rem; }
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(2px);
+    animation: overlayFadeIn .25s ease;
+}
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .modal-content {
@@ -2295,6 +2305,11 @@ h4 { font-size: 1.05rem; }
     max-width: 320px;
     width: 100%;
     box-shadow: var(--shadow-lg);
+    animation: modalPopIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes modalPopIn {
+    from { opacity: 0; transform: scale(.92) translateY(16px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .modal-icon {
@@ -2709,13 +2724,15 @@ h4 { font-size: 1.05rem; }
 .faq-a {
     font-size: 0.82rem;
     color: var(--color-text-light);
-    margin-top: 0.5rem;
-    display: none;
     line-height: 1.7;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s ease, margin-top .35s ease;
 }
 
 .faq-item.open .faq-a {
-    display: block;
+    max-height: 20rem;
+    margin-top: 0.5rem;
 }
 
 /* ── 空状态 ───────────────────────────────────────────── */

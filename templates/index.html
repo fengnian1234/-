@@ -343,6 +343,11 @@
   function moveSlide(dir) { goSlide(idx + dir); }
   function resetTimer() { clearInterval(timer); timer = setInterval(function(){ moveSlide(1); }, 4000); }
   resetTimer();
+  // hover/触摸时暂停自动轮播
+  slides.addEventListener('mouseenter', function(){ clearInterval(timer); });
+  slides.addEventListener('mouseleave', resetTimer);
+  slides.addEventListener('touchstart', function(){ clearInterval(timer); }, {passive: true});
+  slides.addEventListener('touchend', resetTimer);
   window.goSlide = goSlide; window.moveSlide = moveSlide; // 暴露给 onclick
 })();
 // Tab联动：通知父窗口切换高亮

@@ -237,12 +237,16 @@ function updateOrderPanel() {
 
 function toggleOrderPanel() {
     const panel = document.getElementById('order-panel');
-    if (panel.style.display === 'none' || !panel.style.display) {
+    if (!panel.classList.contains('open')) {
         // 打开面板时，如果之前在支付页则重置回购物车
         if (_currentOrderId) backToCart();
         panel.style.display = 'flex';
+        requestAnimationFrame(() => panel.classList.add('open'));
     } else {
-        panel.style.display = 'none';
+        panel.classList.remove('open');
+        panel.addEventListener('transitionend', function() {
+            panel.style.display = 'none';
+        }, { once: true });
     }
 }
 
