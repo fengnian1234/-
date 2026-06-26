@@ -5,7 +5,7 @@
 """
 from datetime import datetime, timedelta, date as date_type
 from models import SessionLocal, HealingCourse, HealingAppointment
-from bnb_context import get_service_bnb_id as _get_bnb_id
+from bnb_context import get_service_bnb_id
 from services.logger import error as log_error
 
 BUSINESS_HOURS_START = 9   # 9:00

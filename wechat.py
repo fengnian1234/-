@@ -11,7 +11,7 @@ import re
 from datetime import datetime
 from config import (
     WELCOME_MESSAGE, AUTO_REPLY_NIGHT, HUMAN_SERVICE_OPEN_HOURS,
-    BNB_NAME, BNB_ADDRESS, BNB_PHONE,
+    BNB_NAME, BNB_ADDRESS, BNB_PHONE, BNB_CONFIGS,
 )
 from services.rooms import format_rooms_text, format_room_detail_text, format_rooms_with_images
 from services.menu import format_menu_text, format_recommended_text, format_order_status_text
@@ -200,7 +200,7 @@ def build_keyword_routes(bnb_id="guishu"):
 
         # ── 客服相关 ─────────────────────────────────────
         (r"^(人工|转人工|客服|人工客服|5)$",
-         lambda msg, m: handle_human_service()),
+         lambda msg, m: handle_human_service(bnb_id=bnb_id)),
         (r"^(帮助|help|功能|菜单|说明)$",
          lambda msg, m: format_welcome(bnb_id=bnb_id)),
         (r"^(你好|hi|hello|嗨|在吗|您好)$",
@@ -403,12 +403,13 @@ def format_greeting(bnb_id="guishu") -> str:
     )
 
 
-def handle_human_service() -> str:
+def handle_human_service(bnb_id: str = "guishu") -> str:
     """处理人工客服转接"""
     if is_human_service_time():
+        phone = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"]).get("phone", BNB_PHONE)
         return (
             "正在为您转接人工客服... 👩‍💼\n\n"
-            f"☎️ 也可直接拨打前台电话：{BNB_PHONE}\n"
+            f"☎️ 也可直接拨打前台电话：{phone}\n"
             "🕐 人工客服在线时间：8:00 - 22:00\n\n"
             "请稍候，客服马上为您服务～"
         )
@@ -560,7 +561,7 @@ def handle_menu_click(event_key: str, bnb_id="guishu") -> str:
         'service': lambda: format_services_text(bnb_id=bnb_id),
         'location': lambda: format_location_text(bnb_id=bnb_id),
         'booking': lambda: format_booking_platforms_text(bnb_id=bnb_id),
-        'contact': lambda: handle_human_service(),
+        'contact': lambda: handle_human_service(bnb_id=bnb_id),
         'food': lambda: format_food_text(bnb_id=bnb_id),
         'reviews': lambda: generate_monitor_report(bnb_id=bnb_id),
     }

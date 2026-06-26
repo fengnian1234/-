@@ -5,7 +5,7 @@
 - 茶叶商城
 """
 from models import SessionLocal, TeaType, TeaExperience, TeaProduct
-from bnb_context import get_service_bnb_id as _get_bnb_id
+from bnb_context import get_service_bnb_id
 
 # 茶园模块专属山纪，覆写默认值
 _get_bnb_id = lambda bnb_id=None: get_service_bnb_id(bnb_id, "shanji")
