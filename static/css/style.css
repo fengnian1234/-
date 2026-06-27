@@ -605,7 +605,7 @@ h4 { font-size: 1.05rem; }
         radial-gradient(ellipse 50% 70% at 20% 70%, rgba(122,171,142,0.5) 0%, transparent 60%),
         radial-gradient(ellipse 60% 40% at 80% 90%, rgba(200,150,106,0.35) 0%, transparent 50%),
         radial-gradient(ellipse 70% 50% at 10% 20%, rgba(180,210,190,0.4) 0%, transparent 55%),
-        linear-gradient(175deg, #3b5e47 0%, #4a7c59 40%, #6b9b7e 100%);
+        linear-gradient(175deg, var(--color-primary-dark) 0%, var(--color-primary) 40%, var(--color-primary-light) 100%);
     display: flex;
     align-items: center;
     justify-content: center;

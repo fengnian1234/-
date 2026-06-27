@@ -55,7 +55,9 @@ def get_tea_products(bnb_id=None):
 def format_tea_text(bnb_id=None):
     """格式化为微信文本输出"""
     bnb_id = _get_bnb_id(bnb_id)
-    lines = ["🍵 *云上山纪 · 茶园体验*\n"]
+    from bnb_context import get_bnb_config
+    cfg = get_bnb_config(bnb_id)
+    lines = [f"🍵 *{cfg['short_name']} · 茶园体验*\n"]
 
     types = get_tea_types(bnb_id=bnb_id)
     if types:

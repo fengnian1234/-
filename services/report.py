@@ -32,7 +32,7 @@ from services.monitor import (
     get_mentions_summary, search_platform_mentions,
     get_platform_review_links, MONITOR_PLATFORMS,
 )
-from config import BNB_NAME, BNB_ADDRESS, BNB_PHONE
+from config import BNB_NAME, BNB_ADDRESS, BNB_PHONE, BNB_CONFIGS
 
 # 输出目录
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -68,7 +68,8 @@ def generate_weekly_report() -> dict:
     now = datetime.utcnow()
     week_start = (now - timedelta(days=7)).strftime("%Y.%m.%d")
     week_end = now.strftime("%Y.%m.%d")
-    filename = f"云上归墅_口碑周报_{now.strftime('%Y%m%d_%H%M')}.docx"
+    cfg = BNB_CONFIGS["guishu"]
+    filename = f"{cfg['short_name']}_口碑周报_{now.strftime('%Y%m%d_%H%M')}.docx"
     filepath = os.path.join(REPORT_DIR, filename)
 
     doc = _build_docx(summary, search_results, week_start, week_end)
@@ -817,7 +818,7 @@ def _build_platform_with_images(doc, summary: dict):
 
     # ── 各平台评价入口 ──
     _add_heading(doc, "各平台评价入口", level=2)
-    platforms_links = get_platform_review_links()
+    platforms_links = get_platform_review_links(bnb_id="guishu")
     for platform_name, info_item in platforms_links.items():
         link_p = doc.add_paragraph()
         link_p.paragraph_format.left_indent = Cm(0.3)

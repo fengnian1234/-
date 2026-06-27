@@ -10,8 +10,7 @@ from datetime import datetime, timedelta
 from models import get_db, Booking, RoomGuest
 from services.logger import info, warning, error as log_error, log_booking
 from config import (
-    BOOKING_PLATFORMS, REVIEW_PLATFORMS, REVIEW_REMINDER_DELAY_MINUTES,
-    BNB_CONFIGS,
+    REVIEW_REMINDER_DELAY_MINUTES, BNB_CONFIGS,
 )
 
 
@@ -170,7 +169,7 @@ def bind_room_guest(room_code: str, openid: str, guest_name: str = "", relation:
             db.commit()
             log_booking(openid, "bind_room", f"room_code={room_code} name={guest_name}")
 
-        bnb_name = BNB_CONFIGS.get(booking.bnb_id, BNB_CONFIGS["guishu"]).get("short_name", "云上归墅") if booking.bnb_id else "云上归墅"
+        bnb_name = BNB_CONFIGS.get(booking.bnb_id, BNB_CONFIGS["guishu"]).get("short_name", BNB_CONFIGS["guishu"]["short_name"]) if booking.bnb_id else BNB_CONFIGS["guishu"]["short_name"]
         return {
             "success": True,
             "message": f"绑定成功！欢迎加入 {booking.room_type or bnb_name}，AI 管家已就绪～",

@@ -385,7 +385,7 @@ def handle_extend_stay(msg, bnb_id: str = "guishu") -> str:
 def format_wifi_info(bnb_id: str = "guishu") -> str:
     from bnb_context import get_bnb_config
     cfg = get_bnb_config(bnb_id)
-    ssid = cfg.get("wifi_ssid", "云上·归墅")
+    ssid = cfg.get("wifi_ssid", cfg.get("short_name", "云上·归墅"))
     pwd = cfg.get("wifi_password", "yunshang888")
     return (
         "📶 *WiFi 信息*\n\n"
@@ -592,10 +592,11 @@ def _tea_or_fallback(bnb_id="guishu"):
     if bnb_id == "shanji":
         from services.tea import format_tea_text
         return format_tea_text(bnb_id=bnb_id)
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
     return (
-        "🍵 茶园体验是「云上·山纪」的特色服务哦～\n\n"
+        f"🍵 茶园体验是「{cfg['short_name']}」的特色服务哦～\n\n"
         "山纪民宿坐拥庐山茶园，提供采茶、制茶、品茶等体验。\n"
-        "如需了解更多，请通过小程序切换到山纪民宿，或直接搜索「云上山纪」预订～"
+        f"如需了解更多，请通过小程序切换到山纪民宿，或直接搜索「{cfg['short_name']}」预订～"
     )
 
 
@@ -604,10 +605,11 @@ def _healing_or_fallback(bnb_id="guishu"):
     if bnb_id == "donglinwai":
         from services.healing import format_healing_text
         return format_healing_text(bnb_id=bnb_id)
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
     return (
-        "🧘 疗愈体验是「云上·东林外」的特色服务哦～\n\n"
+        f"🧘 疗愈体验是「{cfg['short_name']}」的特色服务哦～\n\n"
         "东林外民宿紧邻东林寺，提供瑜伽、禅修、SPA等身心疗愈项目。\n"
-        "如需了解更多，请通过小程序切换到东林外民宿，或直接搜索「云上东林外」预订～"
+        f"如需了解更多，请通过小程序切换到东林外民宿，或直接搜索「{cfg['short_name']}」预订～"
     )
 
 

@@ -248,12 +248,14 @@ def _bnb_route(rule, **kwargs):
 @_bnb_route("/")
 def bnb_index(bnb_prefix=None):
     from services.rooms import get_featured_rooms
-    return render_template("index.html", featured_rooms=get_featured_rooms(4))
+    from bnb_context import get_current_bnb_id
+    return render_template("index.html", featured_rooms=get_featured_rooms(4, bnb_id=get_current_bnb_id()))
 
 @_bnb_route("/rooms")
 def bnb_rooms(bnb_prefix=None):
     from services.rooms import get_all_rooms
-    return render_template("rooms.html", rooms=get_all_rooms())
+    from bnb_context import get_current_bnb_id
+    return render_template("rooms.html", rooms=get_all_rooms(bnb_id=get_current_bnb_id()))
 
 @_bnb_route("/rooms/<int:room_id>")
 def bnb_room_detail(room_id: int, bnb_prefix=None):
@@ -265,12 +267,15 @@ def bnb_room_detail(room_id: int, bnb_prefix=None):
 @_bnb_route("/menu")
 def bnb_menu(bnb_prefix=None):
     from services.menu import get_menu_categories
-    return render_template("menu.html", categories=get_menu_categories())
+    from bnb_context import get_current_bnb_id
+    return render_template("menu.html", categories=get_menu_categories(bnb_id=get_current_bnb_id()))
 
 @_bnb_route("/travel")
 def bnb_travel(bnb_prefix=None):
     from services.travel import get_all_routes, get_all_food_recommends
-    return render_template("travel.html", routes=get_all_routes(), foods=get_all_food_recommends())
+    from bnb_context import get_current_bnb_id
+    bid = get_current_bnb_id()
+    return render_template("travel.html", routes=get_all_routes(bnb_id=bid), foods=get_all_food_recommends(bnb_id=bid))
 
 @_bnb_route("/travel/<int:route_id>")
 def bnb_travel_detail(route_id: int, bnb_prefix=None):
@@ -289,7 +294,8 @@ def bnb_food_detail(food_id: int, bnb_prefix=None):
 @_bnb_route("/services")
 def bnb_services(bnb_prefix=None):
     from services.quick import get_all_services
-    return render_template("services.html", services=get_all_services())
+    from bnb_context import get_current_bnb_id
+    return render_template("services.html", services=get_all_services(bnb_id=get_current_bnb_id()))
 
 @_bnb_route("/map")
 def bnb_map(bnb_prefix=None):
@@ -492,10 +498,11 @@ def api_check_out(booking_id: int):
 def api_check_ai_enabled():
     """检查用户AI是否解锁"""
     from services.booking import is_ai_enabled
+    from bnb_context import get_current_bnb_id
     data = request.get_json()
     if not data or "openid" not in data:
         return jsonify({"error": "缺少openid"}), 400
-    enabled = is_ai_enabled(data["openid"])
+    enabled = is_ai_enabled(data["openid"], bnb_id=get_current_bnb_id())
     return jsonify({"ai_enabled": enabled})
 
 
@@ -515,10 +522,11 @@ def api_bind_room_guest():
 def api_get_room_code():
     """获取用户的房间共享码"""
     from services.booking import get_booking_by_openid, get_room_guests
+    from bnb_context import get_current_bnb_id
     data = request.get_json()
     if not data or "openid" not in data:
         return jsonify({"success": False, "message": "缺少 openid"}), 400
-    booking = get_booking_by_openid(data["openid"])
+    booking = get_booking_by_openid(data["openid"], bnb_id=get_current_bnb_id())
     if not booking:
         return jsonify({"success": False, "message": "未找到有效预订"})
     return jsonify({
@@ -551,7 +559,8 @@ def api_check_review_reminders():
 def api_review_platforms():
     """获取所有平台评价链接"""
     from services.monitor import get_platform_review_links
-    return jsonify(get_platform_review_links())
+    from bnb_context import get_current_bnb_id
+    return jsonify(get_platform_review_links(bnb_id=get_current_bnb_id()))
 
 
 # ══════════════════════════════════════════════════════════
@@ -1182,7 +1191,8 @@ def health():
 def api_rooms():
     """获取所有房型列表（JSON）"""
     from services.rooms import get_all_rooms
-    return jsonify({"success": True, "rooms": get_all_rooms()})
+    from bnb_context import get_current_bnb_id
+    return jsonify({"success": True, "rooms": get_all_rooms(bnb_id=get_current_bnb_id())})
 
 
 @app.route("/api/rooms/<int:room_id>")
@@ -1200,10 +1210,12 @@ def api_room_detail(room_id: int):
 def api_menu():
     """获取菜单（含分类和菜品，JSON）"""
     from services.menu import get_menu_categories, get_recommended_items
+    from bnb_context import get_current_bnb_id
+    bid = get_current_bnb_id()
     return jsonify({
         "success": True,
-        "categories": get_menu_categories(),
-        "recommended": get_recommended_items(),
+        "categories": get_menu_categories(bnb_id=bid),
+        "recommended": get_recommended_items(bnb_id=bid),
     })
 
 
@@ -1212,10 +1224,12 @@ def api_menu():
 def api_travel():
     """获取旅游路线和美食推荐（JSON）"""
     from services.travel import get_all_routes, get_all_food_recommends
+    from bnb_context import get_current_bnb_id
+    bid = get_current_bnb_id()
     return jsonify({
         "success": True,
-        "routes": get_all_routes(),
-        "foods": get_all_food_recommends(),
+        "routes": get_all_routes(bnb_id=bid),
+        "foods": get_all_food_recommends(bnb_id=bid),
     })
 
 
@@ -1244,7 +1258,8 @@ def api_food_detail(food_id: int):
 def api_services():
     """获取所有快捷服务（JSON）"""
     from services.quick import get_all_services
-    return jsonify({"success": True, "services": get_all_services()})
+    from bnb_context import get_current_bnb_id
+    return jsonify({"success": True, "services": get_all_services(bnb_id=get_current_bnb_id())})
 
 
 # ── 小程序登录 ───────────────────────────────────────────

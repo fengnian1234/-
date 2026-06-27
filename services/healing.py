@@ -306,9 +306,11 @@ def get_healing_categories(bnb_id=None):
 def format_healing_text(bnb_id=None):
     """格式化为微信文本输出"""
     bnb_id = _get_bnb_id(bnb_id)
+    from bnb_context import get_bnb_config
+    cfg = get_bnb_config(bnb_id)
     categories = get_healing_categories(bnb_id=bnb_id)
 
-    lines = ["🧘 *云上·东林外 · 疗愈空间*\n"]
+    lines = [f"🧘 *{cfg['short_name']} · 疗愈空间*\n"]
     lines.append("所有项目均由琼儿老师一对一服务\n")
 
     for cat in categories:
@@ -329,7 +331,7 @@ def format_healing_text(bnb_id=None):
                 lines.append(f"    {c['description'][:80]}")
         lines.append("")
 
-    lines.append("📍 云上·东林外 | 庐山·东林寺旁")
+    lines.append(f"📍 {cfg['short_name']} | 庐山·东林寺旁")
     lines.append("📞 回复「预订」或联系前台预约")
     lines.append("💡 回复「疗愈」查看更多详情")
     return "\n".join(lines)
