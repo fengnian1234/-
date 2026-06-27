@@ -107,7 +107,7 @@ python run.py
 ## 📁 项目结构
 
 ```
-d:/cc/
+.
 ├── app.py                  # Flask 主应用（83 条有效路由）
 ├── config.py               # 配置文件
 ├── models.py               # 数据库模型（SQLAlchemy + SQLite）

@@ -1,4 +1,5 @@
 """生成项目开发计划 Excel 文档"""
+import os
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
@@ -439,7 +440,7 @@ set_col_widths(ws6, [12, 18, 42, 16, 18, 24, 40])
 # ═══════════════════════════════════════════════
 # 保存
 # ═══════════════════════════════════════════════
-output = "d:/cc/reports/云上归墅_项目开发计划_20260614.xlsx"
+output = os.path.join(os.path.dirname(os.path.abspath(__file__)), "云上归墅_项目开发计划_20260614.xlsx")
 wb.save(output)
 print(f"✅ Excel 已保存: {output}")
 print(f"共 {len(wb.sheetnames)} 个工作表: {', '.join(wb.sheetnames)}")
