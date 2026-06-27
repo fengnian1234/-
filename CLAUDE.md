@@ -5,20 +5,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 启动命令
 
 ```bash
-# 启动开发服务器
-PYTHONUTF8=1 C:/Users/admin/python-embed/python.exe d:/cc/run.py
+# 启动开发服务器（从项目根目录执行）
+PYTHONUTF8=1 ~/python-embed/python.exe run.py
 
 # 单行快速启动（跳过启动横幅）
-PYTHONUTF8=1 C:/Users/admin/python-embed/python.exe -c "from app import app,init_app;init_app();app.run(host='0.0.0.0',port=5000,debug=True)"
+PYTHONUTF8=1 ~/python-embed/python.exe -c "from app import app,init_app;init_app();app.run(host='0.0.0.0',port=5000,debug=True)"
 
 # 安装依赖
-C:/Users/admin/python-embed/python.exe -m pip install <package>
+~/python-embed/python.exe -m pip install <package>
 
 # 停止所有 Python 进程
 taskkill //F //IM python.exe
 ```
 
-Python 是嵌入式发行版，路径固定为 `C:/Users/admin/python-embed/python.exe`，**必须**设置 `PYTHONUTF8=1` 环境变量。
+Python 是嵌入式发行版，位于 `~/python-embed/`（`~` = 当前用户主目录，跨设备通用）。**必须**设置 `PYTHONUTF8=1` 环境变量。如果 `.exe` 后缀不省略则用 `~/python-embed/python.exe`。
 
 ## 工作流规范
 

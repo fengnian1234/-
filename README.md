@@ -36,7 +36,7 @@
 
 ### 1. 环境要求
 - Python 3.10+
-- 嵌入式发行版已预装于 `C:\Users\admin\python-embed\`
+- 嵌入式发行版已预装于用户主目录 `~/python-embed/`（`~` = `C:\Users\<你的用户名>\`）
 
 ### 2. 安装依赖
 
