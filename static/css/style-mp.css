@@ -11,101 +11,117 @@ body.mp-mode {
     letter-spacing: 0.015em;
 }
 
-/* ── 小程序端淡雅配色（归墅 — 竹青淡调） ── */
+/* ── 小程序端配色（归墅） ── */
 [data-bnb="guishu"] body.mp-mode {
     --color-primary: #6b9b7e;
     --color-primary-light: #8db89d;
     --color-primary-dark: #527a60;
     --color-accent: #c8a080;
-    --color-bg: #f8faf7;
-    --color-bg-light: #f2f6f0;
-    --color-text: #3a4038;
-    --color-text-light: #7a8078;
-    --color-text-lighter: #a0a89e;
-    --color-border: #e4e8e0;
-    --color-white: #fffefb;
-    --color-shadow: rgba(100,130,110,0.04);
-    --color-shadow-hover: rgba(100,130,110,0.08);
+    --color-accent-light: #d8b898;
+    --color-sky: #8eb8c9;
+    --color-mist: #d4e5d8;
+    --color-bg: #F8F5F1;
+    --color-bg-light: #F0EBE1;
+    --color-bg-dark: #E8E3D8;
+    --color-text: #2D2A26;
+    --color-text-light: #8C8C8C;
+    --color-text-lighter: #B0ADA6;
+    --color-border: #E0DCD5;
+    --color-white: #FAF9F6;
+    --color-shadow: rgba(0,0,0,0.04);
+    --color-shadow-hover: rgba(0,0,0,0.06);
+    --color-success: #5b8c5a;
+    --color-warning: #c9954a;
+    --color-danger: #c4554a;
 }
-/* ── 山纪 — 茶褐暖调 ── */
+/* ── 山纪 ── */
 [data-bnb="shanji"] body.mp-mode {
     --color-primary: #9b7a4a;
     --color-primary-light: #b8965a;
     --color-primary-dark: #7a5a30;
     --color-accent: #c8a878;
-    --color-bg: #faf7f0;
-    --color-bg-light: #f3efe2;
-    --color-text: #3a3020;
-    --color-text-light: #7a7060;
-    --color-text-lighter: #a09880;
-    --color-border: #e0d8c0;
-    --color-white: #fffdf8;
-    --color-shadow: rgba(140,110,70,0.04);
-    --color-shadow-hover: rgba(140,110,70,0.08);
+    --color-accent-light: #d8c098;
+    --color-sky: #c4b898;
+    --color-mist: #e8dcc0;
+    --color-bg: #F8F5F1;
+    --color-bg-light: #F0EBE1;
+    --color-bg-dark: #E8E3D8;
+    --color-text: #2D2A26;
+    --color-text-light: #8C8C8C;
+    --color-text-lighter: #B0ADA6;
+    --color-border: #E0DCD5;
+    --color-white: #FAF9F6;
+    --color-shadow: rgba(0,0,0,0.04);
+    --color-shadow-hover: rgba(0,0,0,0.06);
+    --color-success: #5b8c4a;
+    --color-warning: #b88830;
+    --color-danger: #c4554a;
 }
-/* ── 东林外 — 禅灰蓝调 ── */
+/* ── 东林外 ── */
 [data-bnb="donglinwai"] body.mp-mode {
     --color-primary: #7b8daa;
     --color-primary-light: #9ba8c0;
     --color-primary-dark: #5a6a80;
     --color-accent: #b0a090;
-    --color-bg: #f5f7fa;
-    --color-bg-light: #eef1f6;
-    --color-text: #2a2e38;
-    --color-text-light: #6a7078;
-    --color-text-lighter: #9098a0;
-    --color-border: #d8dce4;
-    --color-white: #fcfdfe;
-    --color-shadow: rgba(100,110,130,0.04);
-    --color-shadow-hover: rgba(100,110,130,0.08);
+    --color-accent-light: #c8b8a8;
+    --color-sky: #b0c0d8;
+    --color-mist: #dce4ec;
+    --color-bg: #F8F5F1;
+    --color-bg-light: #F0EBE1;
+    --color-bg-dark: #E8E3D8;
+    --color-text: #2D2A26;
+    --color-text-light: #8C8C8C;
+    --color-text-lighter: #B0ADA6;
+    --color-border: #E0DCD5;
+    --color-white: #FAF9F6;
+    --color-shadow: rgba(0,0,0,0.04);
+    --color-shadow-hover: rgba(0,0,0,0.06);
+    --color-success: #5a8a7a;
+    --color-warning: #c9954a;
+    --color-danger: #c4554a;
 }
-/* ── 暗色模式 — 归墅 ── */
+/* ── 暗色模式 — 统一暖暗基底 ── */
+[data-bnb="guishu"][data-theme="dark"] body.mp-mode,
+[data-bnb="shanji"][data-theme="dark"] body.mp-mode,
+[data-bnb="donglinwai"][data-theme="dark"] body.mp-mode {
+    --color-bg: #1E1C1A;
+    --color-bg-light: #242220;
+    --color-bg-dark: #2A2824;
+    --color-text: #D8D5D0;
+    --color-text-light: #A09890;
+    --color-text-lighter: #6A6560;
+    --color-border: #2E2C28;
+    --color-white: #242220;
+    --color-shadow: rgba(0,0,0,0.35);
+    --color-shadow-hover: rgba(0,0,0,0.50);
+}
+/* 暗色模式各 BnB 品牌色 */
 [data-bnb="guishu"][data-theme="dark"] body.mp-mode {
     --color-primary: #8db89d;
     --color-primary-light: #6b9b7e;
     --color-primary-dark: #a0c8b0;
     --color-accent: #c8a080;
-    --color-bg: #1a1f1c;
-    --color-bg-light: #1e2420;
-    --color-text: #d8e0d4;
-    --color-text-light: #a0b0a0;
-    --color-text-lighter: #788878;
-    --color-border: #383f38;
-    --color-white: #1e2420;
-    --color-shadow: rgba(0,0,0,0.2);
-    --color-shadow-hover: rgba(0,0,0,0.3);
+    --color-accent-light: #d8b898;
+    --color-sky: #6a95a8;
+    --color-mist: #2a3a2e;
 }
-/* ── 暗色模式 — 山纪 ── */
 [data-bnb="shanji"][data-theme="dark"] body.mp-mode {
     --color-primary: #b8965a;
     --color-primary-light: #9b7a4a;
     --color-primary-dark: #c8a868;
     --color-accent: #c8a878;
-    --color-bg: #1f1c12;
-    --color-bg-light: #262218;
-    --color-text: #e0d8c8;
-    --color-text-light: #a09880;
-    --color-text-lighter: #787060;
-    --color-border: #383020;
-    --color-white: #262218;
-    --color-shadow: rgba(0,0,0,0.2);
-    --color-shadow-hover: rgba(0,0,0,0.3);
+    --color-accent-light: #d8c098;
+    --color-sky: #7a6a50;
+    --color-mist: #383020;
 }
-/* ── 暗色模式 — 东林外 ── */
 [data-bnb="donglinwai"][data-theme="dark"] body.mp-mode {
     --color-primary: #9ba8c0;
     --color-primary-light: #7b8daa;
     --color-primary-dark: #b0c0d8;
     --color-accent: #b0a090;
-    --color-bg: #1a1c20;
-    --color-bg-light: #1e2228;
-    --color-text: #d8dce0;
-    --color-text-light: #9098a8;
-    --color-text-lighter: #687078;
-    --color-border: #2a3038;
-    --color-white: #1e2228;
-    --color-shadow: rgba(0,0,0,0.2);
-    --color-shadow-hover: rgba(0,0,0,0.3);
+    --color-accent-light: #c8b8a8;
+    --color-sky: #607080;
+    --color-mist: #282830;
 }
 
 /* ── 隐藏网页端专属元素 ── */

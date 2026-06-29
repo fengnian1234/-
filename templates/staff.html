@@ -8,12 +8,12 @@
 (function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);})();
 </script>
 <style>
-:root{--primary:#2a3d33;--danger:#c4554a;--warning:#c9954a;--success:#5b8c5a;--bg:#f5f3ee;--card-bg:#fff;--border:#e0dcd5;--text:#333;--text-light:#888;--radius:10px;--shadow:0 2px 8px rgba(0,0,0,0.06)}
+:root{--primary:#2a3d33;--danger:#c4554a;--warning:#c9954a;--success:#5b8c5a;--bg:#F8F5F1;--card-bg:#FAF9F6;--border:#E0DCD5;--text:#2D2A26;--text-light:#8C8C8C;--radius:14px;--shadow:0 1px 4px rgba(0,0,0,0.04)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
 .header{background:var(--primary);color:#fff;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .header h1{font-size:1.2rem;font-weight:600}
-.header-badge{background:var(--danger);color:#fff;padding:0.3rem 0.8rem;border-radius:20px;font-size:0.9rem;font-weight:700;animation:pulse 2s infinite}
+.header-badge{background:var(--danger);color:#fff;padding:0.3rem 0.8rem;border-radius:24px;font-size:0.9rem;font-weight:700;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
 .container{max-width:900px;margin:0 auto;padding:1rem}
 /* Stats */
