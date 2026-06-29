@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>AI 管家 · {{ bnb.short_name }}</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
 <style>
 :root {
   --bg: #F8F5F1; --chat-bg: #F0EBE1;
@@ -76,7 +77,7 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 <body>
 
 <div class="chat-header">
-  <div class="avatar">🤖</div>
+  <div class="avatar"><i class="ri-robot-line"></i></div>
   <div class="info">
     <div class="name" id="headerName">{{ bnb.short_name }} · AI 管家</div>
     <div class="status">在线 · 随时为您服务</div>
@@ -85,12 +86,12 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 </div>
 
 <div class="quick-hints" id="quickHints">
-  <button class="quick-hint" onclick="send('房型有哪些')">🛏️ 房型</button>
-  <button class="quick-hint" onclick="send('周边美食推荐')">🍜 美食</button>
-  <button class="quick-hint" onclick="send('庐山一日游')">🗺️ 一日游</button>
-  <button class="quick-hint" onclick="send('怎么到民宿')">🚗 交通</button>
-  <button class="quick-hint" onclick="send('WiFi密码')">📶 WiFi</button>
-  <button class="quick-hint" onclick="send('打扫卫生')">🧹 打扫</button>
+  <button class="quick-hint" onclick="send('房型有哪些')"><i class="ri-hotel-bed-line"></i> 房型</button>
+  <button class="quick-hint" onclick="send('周边美食推荐')"><i class="ri-bowl-line"></i> 美食</button>
+  <button class="quick-hint" onclick="send('庐山一日游')"><i class="ri-map-line"></i> 一日游</button>
+  <button class="quick-hint" onclick="send('怎么到民宿')"><i class="ri-car-line"></i> 交通</button>
+  <button class="quick-hint" onclick="send('WiFi密码')"><i class="ri-wifi-line"></i> WiFi</button>
+  <button class="quick-hint" onclick="send('打扫卫生')"><i class="ri-brush-line"></i> 打扫</button>
 </div>
 
 <div class="chat-area" id="chatArea">
@@ -101,7 +102,7 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 
 <div class="input-area">
   <input type="text" id="msgInput" placeholder="输入消息..." autofocus>
-  <button onclick="send()">➤</button>
+  <button onclick="send()"><i class="ri-arrow-right-s-line"></i></button>
 </div>
 
 <script>
@@ -121,7 +122,7 @@ let isTyping = false;
 (function init(){
   document.getElementById('timeTag').innerText = new Date().toLocaleString('zh-CN');
   document.getElementById('msgInput').addEventListener('keydown', e => { if(e.key==='Enter') send(); });
-  addSysMsg('你好！我是{{ bnb.short_name }}的 AI 管家 🤖\n\n可以问我房型、美食、攻略、交通等问题，也可以直接说「打扫」「叫醒」等快捷指令～');
+  addSysMsg('你好！我是{{ bnb.short_name }}的 AI 管家 <i class="ri-robot-line"></i>\n\n可以问我房型、美食、攻略、交通等问题，也可以直接说「打扫」「叫醒」等快捷指令～');
 
   // 读取 BnB 主题色 — 以自身 data-bnb 的 CSS 变量为准
   try {
@@ -150,7 +151,7 @@ function addSysMsg(text) {
   const area = document.getElementById('chatArea');
   const div = document.createElement('div');
   div.style.cssText = 'text-align:center;font-size:12px;color:#999;padding:8px 12px;line-height:1.6;white-space:pre-wrap;';
-  div.textContent = text;
+  div.innerHTML = text;
   area.appendChild(div);
 }
 
