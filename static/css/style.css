@@ -597,7 +597,7 @@ h4 { font-size: 1.05rem; }
     height: 65vh;
     min-height: 360px;
     max-height: 560px;
-    background: linear-gradient(175deg, color-mix(in srgb, var(--color-primary) 18%, var(--color-bg)) 0%, var(--color-bg) 50%, color-mix(in srgb, var(--color-mist) 40%, var(--color-bg)) 100%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 8%, var(--color-bg)) 0%, var(--color-bg) 30%, var(--color-bg) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -673,7 +673,7 @@ h4 { font-size: 1.05rem; }
 }
 
 [data-theme="dark"] .hero {
-    background: linear-gradient(175deg, color-mix(in srgb, var(--color-primary) 12%, var(--color-bg)) 0%, var(--color-bg) 50%, color-mix(in srgb, var(--color-mist) 25%, var(--color-bg)) 100%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 8%, var(--color-bg)) 0%, var(--color-bg) 30%, var(--color-bg) 100%);
 }
 [data-theme="dark"] .hero::after {
     background: var(--color-bg);
@@ -801,13 +801,13 @@ h4 { font-size: 1.05rem; }
 [data-bnb="donglinwai"] .hero:not(.hero--photo),
 [data-season="winter"] .hero,
 [data-season="autumn"] .hero {
-    background: linear-gradient(175deg, color-mix(in srgb, var(--color-primary) 18%, var(--color-bg)) 0%, var(--color-bg) 50%, color-mix(in srgb, var(--color-mist) 40%, var(--color-bg)) 100%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 8%, var(--color-bg)) 0%, var(--color-bg) 30%, var(--color-bg) 100%);
 }
 [data-bnb="shanji"][data-theme="dark"] .hero:not(.hero--photo),
 [data-bnb="donglinwai"][data-theme="dark"] .hero:not(.hero--photo),
 [data-season="winter"][data-theme="dark"] .hero,
 [data-season="autumn"][data-theme="dark"] .hero {
-    background: linear-gradient(175deg, color-mix(in srgb, var(--color-primary) 12%, var(--color-bg)) 0%, var(--color-bg) 50%, color-mix(in srgb, var(--color-mist) 25%, var(--color-bg)) 100%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 8%, var(--color-bg)) 0%, var(--color-bg) 30%, var(--color-bg) 100%);
 }
 
 /* ── 快捷入口 ─────────────────────────────────────────── */
