@@ -3460,6 +3460,20 @@ h4 { font-size: 1.05rem; }
 }
 .tea-hero-logo:hover { transform: scale(1.05); }
 
+/* ── 免费标签 ── */
+.free-badge {
+    display: inline-block;
+    background: var(--color-success);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 20px;
+    vertical-align: middle;
+    letter-spacing: 0.05em;
+    margin-left: 6px;
+}
+
 /* ── 排队信息 ── */
 .queue-info {
     margin: 16px 0;
