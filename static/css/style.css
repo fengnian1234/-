@@ -597,7 +597,7 @@ h4 { font-size: 1.05rem; }
     height: 65vh;
     min-height: 360px;
     max-height: 560px;
-    background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 8%, var(--color-bg)) 0%, var(--color-bg) 30%, var(--color-bg) 100%);
+    background: var(--color-bg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -611,9 +611,7 @@ h4 { font-size: 1.05rem; }
     content: '';
     position: absolute;
     inset: 0;
-    background:
-        radial-gradient(ellipse at 70% 10%, rgba(255,255,255,0.08) 0%, transparent 50%),
-        radial-gradient(circle at 30% 60%, rgba(255,255,255,0.05) 0%, transparent 40%);
+    background: none;
     z-index: 1;
 }
 
@@ -673,7 +671,7 @@ h4 { font-size: 1.05rem; }
 }
 
 [data-theme="dark"] .hero {
-    background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 8%, var(--color-bg)) 0%, var(--color-bg) 30%, var(--color-bg) 100%);
+    background: var(--color-bg);
 }
 [data-theme="dark"] .hero::after {
     background: var(--color-bg);
@@ -684,10 +682,10 @@ h4 { font-size: 1.05rem; }
     background-size: cover !important;
     background-position: center 20%;  /* 默认偏上，inline 可覆盖 */
     background-repeat: no-repeat !important;
-    background-color: color-mix(in srgb, var(--color-primary-dark) 70%, black);  /* 图片加载前的占位色 */
+    background-color: var(--color-bg);  /* 图片加载前的占位色 */
 }
 [data-theme="dark"] .hero--photo {
-    background-color: color-mix(in srgb, var(--color-primary-dark) 30%, black);
+    background-color: var(--color-bg);
 }
 /* 半透明色罩 — 底部微微加深保证白色文字可读，中上部保持照片原色 */
 .hero--photo::before {
@@ -801,13 +799,13 @@ h4 { font-size: 1.05rem; }
 [data-bnb="donglinwai"] .hero:not(.hero--photo),
 [data-season="winter"] .hero,
 [data-season="autumn"] .hero {
-    background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 8%, var(--color-bg)) 0%, var(--color-bg) 30%, var(--color-bg) 100%);
+    background: var(--color-bg);
 }
 [data-bnb="shanji"][data-theme="dark"] .hero:not(.hero--photo),
 [data-bnb="donglinwai"][data-theme="dark"] .hero:not(.hero--photo),
 [data-season="winter"][data-theme="dark"] .hero,
 [data-season="autumn"][data-theme="dark"] .hero {
-    background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 8%, var(--color-bg)) 0%, var(--color-bg) 30%, var(--color-bg) 100%);
+    background: var(--color-bg);
 }
 
 /* ── 快捷入口 ─────────────────────────────────────────── */
