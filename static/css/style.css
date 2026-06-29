@@ -514,21 +514,31 @@ h4 { font-size: 1.05rem; }
 
 /* 主题切换按钮 */
 .theme-toggle {
-    background: none;
+    background: var(--color-bg-light);
     border: none;
     cursor: pointer;
-    padding: 0.35rem;
-    border-radius: var(--radius-sm);
-    font-size: 1.1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 1rem;
     line-height: 1;
-    transition: background var(--transition);
+    transition: background var(--transition), color var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-left: 0.4rem;
+    color: var(--color-text);
+    flex-shrink: 0;
+}
+[data-theme="dark"] .theme-toggle {
+    background: rgba(255,255,255,.12);
+    color: #fff;
 }
 .theme-toggle:hover {
-    background: var(--color-bg-light);
+    background: var(--color-bg-dark);
+}
+[data-theme="dark"] .theme-toggle:hover {
+    background: rgba(255,255,255,.22);
 }
 
 /* ── 页头 — 变量驱动渐变 ─────────────────────────────── */
