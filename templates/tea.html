@@ -216,6 +216,19 @@
         <button class="btn btn-ghost" onclick="cancelTeaPay()" style="margin-top:8px">返回购物车</button>
     </div>
 </div>
+
+<!-- ═══════════════════════ 重新预约二次确认弹窗 ═══════════════════════ -->
+<div class="confirm-overlay" id="confirmOverlay" style="display:none">
+    <div class="confirm-dialog">
+        <div class="confirm-icon"><i class="ph-thin ph-warning-circle"></i></div>
+        <h3 class="confirm-title">确认重新预约？</h3>
+        <p class="confirm-desc">重新预约后，当前预约码 <strong id="confirmOldCode"></strong> 将自动失效，到店时无法再使用原预约码核验。确定要继续吗？</p>
+        <div class="confirm-actions">
+            <button class="btn btn-ghost" onclick="cancelClearReservation()">取消</button>
+            <button class="btn btn-danger" onclick="confirmClearReservation()">确认重新预约</button>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 
@@ -541,10 +554,17 @@ function showReservationResult(res) {
 
 // ── 清除预约，回到表单 ──
 function clearReservation() {
+  // 显示旧预约码在确认文案中
+  document.getElementById('confirmOldCode').textContent = _reservationCode || '——';
+  document.getElementById('confirmOverlay').style.display = '';
+}
+
+function confirmClearReservation() {
   localStorage.removeItem(STORAGE_KEY);
   _reservationCode = '';
   _orderUnlocked = false;
   _pageState = 'form';
+  document.getElementById('confirmOverlay').style.display = 'none';
   document.getElementById('reservationForm').style.display = '';
   document.getElementById('reservationResult').style.display = 'none';
   document.getElementById('orderLockOverlay').style.display = '';
@@ -552,6 +572,10 @@ function clearReservation() {
   renderAllCategories(_allExperiences);
   updateDebugToggle();
   document.getElementById('reservationForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelClearReservation() {
+  document.getElementById('confirmOverlay').style.display = 'none';
 }
 
 // ── debug 模式：在表单和结果间切换 ──
