@@ -218,8 +218,13 @@ body.mp-mode .feature-item h3 { font-size: 0.9rem; }
 body.mp-mode .feature-item p { font-size: 0.75rem; }
 
 /* ── 评价卡片 ── */
-body.mp-mode .review-card { padding: 16px; }
-body.mp-mode .review-text { font-size: 0.8rem; }
+body.mp-mode .section-desc { margin-bottom: 0.6rem; }
+body.mp-mode .review-card { padding: 10px 12px; }
+body.mp-mode .review-stars { margin-bottom: 0.2rem; font-size: 0.75rem; }
+body.mp-mode .review-text { font-size: 0.75rem; margin-bottom: 0.2rem; }
+body.mp-mode .review-author { font-size: 0.65rem; }
+body.mp-mode .review-slide { gap: 0.5rem; }
+body.mp-mode .carousel-nav { margin-top: 0.5rem; }
 
 /* ── FAQ ── */
 body.mp-mode .faq-q { font-size: 0.85rem; padding: 14px 12px; }
