@@ -3275,27 +3275,11 @@ h4 { font-size: 1.05rem; }
 /* ── 日期横向滚动条 ── */
 .date-chip-strip {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
-    overflow-x: auto;
-    padding: 4px 2px 8px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    position: relative;
-}
-.date-chip-strip::-webkit-scrollbar { display: none; }
-/* 右侧渐变提示还有更多日期 */
-.date-chip-strip::after {
-    content: '';
-    position: sticky;
-    right: 0;
-    min-width: 28px;
-    height: 100%;
-    background: linear-gradient(to right, transparent, var(--color-bg) 70%);
-    pointer-events: none;
-    flex: 0 0 auto;
+    padding: 4px 0;
 }
 .date-chip {
-    flex: 0 0 auto;
     padding: 8px 12px;
     border: 1.5px solid var(--color-border);
     border-radius: 10px;
@@ -3304,7 +3288,8 @@ h4 { font-size: 1.05rem; }
     white-space: nowrap;
     background: var(--color-bg);
     transition: all 0.2s;
-    min-width: 58px;
+    min-width: 62px;
+    flex: 1 0 auto;
 }
 .date-chip:hover { border-color: color-mix(in srgb, var(--color-primary) 50%, transparent); }
 .date-chip.selected {
