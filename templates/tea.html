@@ -5,7 +5,7 @@
 <!-- 茶园 Hero -->
 <section class="hero">
     <div class="hero-overlay">
-        <h1 class="hero-title"><i class="ri-cup-line" style="font-size:2rem"></i> 山纪茶园</h1>
+        <h1 class="hero-title"><i class="ph-thin ph-coffee" style="font-size:2rem"></i> 山纪茶园</h1>
         <p class="hero-subtitle">庐山云雾茶香，伴你悠然山居</p>
         <p class="hero-desc">自种茶园 · 采茶制茶体验 · 品茗茶道课 · 茶叶伴手礼</p>
     </div>
@@ -14,12 +14,12 @@
 <!-- 茶叶品类 -->
 <section class="section-padding">
     <div class="container">
-        <h2 class="section-title"><i class="ri-seedling-line"></i> 茶叶品类</h2>
+        <h2 class="section-title"><i class="ph-thin ph-seedling"></i> 茶叶品类</h2>
         <p class="section-desc">庐山云雾带海拔800米以上，芽叶肥壮、白毫显露</p>
         <div class="tea-type-grid" id="teaTypes">
             <div class="tea-type-card skeleton-pulse"><div class="tea-type-img">🍃</div><h3>加载中...</h3><p></p></div>
             <div class="tea-type-card skeleton-pulse"><div class="tea-type-img">🍂</div><h3>加载中...</h3><p></p></div>
-            <div class="tea-type-card skeleton-pulse"><div class="tea-type-img"><i class="ri-cup-line"></i></div><h3>加载中...</h3><p></p></div>
+            <div class="tea-type-card skeleton-pulse"><div class="tea-type-img"><i class="ph-thin ph-coffee"></i></div><h3>加载中...</h3><p></p></div>
         </div>
     </div>
 </section>
@@ -27,7 +27,7 @@
 <!-- 茶园体验 -->
 <section class="section-padding bg-light">
     <div class="container">
-        <h2 class="section-title"><i class="ri-user-heart-line"></i> 茶园体验</h2>
+        <h2 class="section-title"><i class="ph-thin ph-heart-straight"></i> 茶园体验</h2>
         <p class="section-desc">亲手采茶制茶，感受庐山茶文化的魅力</p>
         <div class="tea-exp-grid" id="teaExps">
             <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
@@ -81,7 +81,7 @@ function renderTeaTypes(types) {
       <h3>${t.name}</h3>
       <p class="tea-origin">📍 ${t.origin||''}</p>
       <p>${t.description||''}</p>
-      ${t.tasting_notes ? `<p class="tea-tasting"><i class="ri-cup-line"></i> 品鉴：${t.tasting_notes}</p>` : ''}
+      ${t.tasting_notes ? `<p class="tea-tasting"><i class="ph-thin ph-coffee"></i> 品鉴：${t.tasting_notes}</p>` : ''}
       ${t.brewing_method ? `<p class="tea-brew">🫖 冲泡：${t.brewing_method}</p>` : ''}
     </div>
   `).join('');
@@ -93,7 +93,7 @@ function renderTeaExps(exps) {
     <div class="tea-exp-card">
       <h3>${e.name}</h3>
       <p class="price">¥${e.price} <span>/人</span></p>
-      <p><i class="ri-time-line"></i> ${e.duration||''}  |  <i class="ri-group-line"></i> 最多${e.capacity||10}人</p>
+      <p><i class="ph-thin ph-clock"></i> ${e.duration||''}  |  <i class="ph-thin ph-users"></i> 最多${e.capacity||10}人</p>
       <p>${e.description||''}</p>
       ${e.includes ? `<div class="tea-includes">${e.includes.map(i=>'<span class="tag">'+i+'</span>').join(' ')}</div>` : ''}
     </div>

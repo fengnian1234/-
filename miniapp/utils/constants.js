@@ -15,7 +15,7 @@ const BNBS = {
     phone: '16607927666',
     latitude: 29.5568,
     longitude: 115.9797,
-    themeColor: '#2C4335',
+    themeColor: '#5C8E6B',
     description: '庐山之巅，大林沟路27号，云雾深处的静谧之所。',
   },
   shanji: {
@@ -26,7 +26,7 @@ const BNBS = {
     phone: '19880281717',
     latitude: 29.572595,
     longitude: 115.978075,
-    themeColor: '#6B4F10',
+    themeColor: '#2C4335',
     description: '位于景区中心，30间精品客房，私享300平花园庭院。咖啡书吧、云上茶吧、山货餐厅，提供贴心管家服务。',
     features: ['tea'],
   },

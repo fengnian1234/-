@@ -6,7 +6,7 @@
 {% block content %}
 <section class="hero">
     <div class="hero-overlay">
-        <h1 class="hero-title"><i class="ri-mental-health-line" style="font-size:2rem"></i> 疗愈空间</h1>
+        <h1 class="hero-title"><i class="ph-thin ph-flower-lotus" style="font-size:2rem"></i> 疗愈空间</h1>
         <p class="hero-subtitle">东林寺旁 · 身心归处</p>
         <p class="hero-desc">一对一个案服务 · 琼儿老师全程陪伴</p>
     </div>
@@ -21,11 +21,11 @@
 <section class="section-padding bg-light">
     <div class="container">
         <div class="notice-card notice-card--success">
-            <strong><i class="ri-clipboard-line"></i> 预约须知</strong><br>
-            <i class="ri-mental-health-line"></i> 琼儿老师一对一服务<br>
-            <i class="ri-time-line"></i> 提前2小时预约 · 🕘 9:00-20:00<br>
-            <i class="ri-money-cny-circle-line"></i> 先预约后付款 · 支持微信支付<br>
-            <i class="ri-phone-line"></i> {{ bnb.phone }}
+            <strong><i class="ph-thin ph-clipboard-text"></i> 预约须知</strong><br>
+            <i class="ph-thin ph-flower-lotus"></i> 琼儿老师一对一服务<br>
+            <i class="ph-thin ph-clock"></i> 提前2小时预约 · 🕘 9:00-20:00<br>
+            <i class="ph-thin ph-currency-cny"></i> 先预约后付款 · 支持微信支付<br>
+            <i class="ph-thin ph-phone"></i> {{ bnb.phone }}
         </div>
     </div>
 </section>
@@ -49,23 +49,23 @@ var isMP = {{ 'true' if is_mp else 'false' }};
     .then(function(r){ return r.json(); })
     .then(function(data){
       if (!data.success || !data.courses.length) {
-        c.innerHTML = '<div class="empty-state"><span class="empty-icon"><i class="ri-mental-health-line" style="font-size:3rem"></i></span><p>疗愈项目即将上线</p></div>';
+        c.innerHTML = '<div class="empty-state"><span class="empty-icon"><i class="ph-thin ph-flower-lotus" style="font-size:3rem"></i></span><p>疗愈项目即将上线</p></div>';
         return;
       }
       _healingData = data.courses;
-      var grouped = {}, catIcons = {'音疗疗愈':'🔔','芳香疗愈':'<i class="ri-leaf-line"></i>','情绪疗愈':'💙'};
+      var grouped = {}, catIcons = {'音疗疗愈':'🔔','芳香疗愈':'<i class="ph-thin ph-leaf"></i>','情绪疗愈':'💙'};
       data.courses.forEach(function(x){
         if (!grouped[x.category]) grouped[x.category] = [];
         grouped[x.category].push(x);
       });
       var h = '';
       Object.keys(grouped).forEach(function(cat){
-        h += '<div class="healing-category"><h2 class="section-title">'+(catIcons[cat]||'<i class="ri-mental-health-line"></i>')+' '+cat+'</h2><div class="healing-grid">';
+        h += '<div class="healing-category"><h2 class="section-title">'+(catIcons[cat]||'<i class="ph-thin ph-flower-lotus"></i>')+' '+cat+'</h2><div class="healing-grid">';
         grouped[cat].forEach(function(item){ h += renderCard(item); });
         h += '</div></div>';
       });
       c.innerHTML = h;
-    }).catch(function(){ c.innerHTML = '<div class="empty-state"><span class="empty-icon"><i class="ri-mental-health-line" style="font-size:3rem"></i></span><p>加载失败</p></div>'; });
+    }).catch(function(){ c.innerHTML = '<div class="empty-state"><span class="empty-icon"><i class="ph-thin ph-flower-lotus" style="font-size:3rem"></i></span><p>加载失败</p></div>'; });
 })();
 
 function renderCard(item){
@@ -82,7 +82,7 @@ function renderCard(item){
     });
     tagsHtml += '</div>';
   }
-  return '<div class="healing-card"><div class="healing-card-header"><h3>'+item.name+'</h3><span class="healing-therapist"><i class="ri-mental-health-line"></i> '+(item.therapist||'琼儿老师')+'</span>'+tagsHtml+'</div>'+
+  return '<div class="healing-card"><div class="healing-card-header"><h3>'+item.name+'</h3><span class="healing-therapist"><i class="ph-thin ph-flower-lotus"></i> '+(item.therapist||'琼儿老师')+'</span>'+tagsHtml+'</div>'+
     (item.description?'<p class="healing-desc">'+item.description+'</p>':'')+
     '<div class="healing-tiers">'+th+'</div></div>';
 }
@@ -98,13 +98,13 @@ function openBooking(courseId, tierIdx){
 
   document.getElementById('bookingContent').innerHTML =
     '<div class="booking-steps">'+
-      '<h2><i class="ri-clipboard-line"></i> '+_bookingCourse.name+'</h2>'+
-      '<div class="booking-summary"><span class="booking-tier-badge">'+_bookingTier.duration+' · ¥'+_bookingTier.price+'</span><span class="booking-therapist"><i class="ri-mental-health-line"></i> 琼儿老师</span></div>'+
+      '<h2><i class="ph-thin ph-clipboard-text"></i> '+_bookingCourse.name+'</h2>'+
+      '<div class="booking-summary"><span class="booking-tier-badge">'+_bookingTier.duration+' · ¥'+_bookingTier.price+'</span><span class="booking-therapist"><i class="ph-thin ph-flower-lotus"></i> 琼儿老师</span></div>'+
       '<div class="booking-section"><h4>📅 日期</h4><div class="date-picker">'+dates+'</div></div>'+
-      '<div class="booking-section"><h4><i class="ri-time-line"></i> 时间</h4><div class="slot-grid" id="slotGrid"><p class="slot-empty">点击日期查看可用时段</p></div></div>'+
+      '<div class="booking-section"><h4><i class="ph-thin ph-clock"></i> 时间</h4><div class="slot-grid" id="slotGrid"><p class="slot-empty">点击日期查看可用时段</p></div></div>'+
       '<div class="booking-section booking-info-row"><input class="booking-input" id="guestName" placeholder="姓名" maxlength="20"><input class="booking-input" id="guestPhone" type="tel" placeholder="手机号" maxlength="15"></div>'+
       '<button class="btn btn-primary btn-large" style="width:100%" onclick="submitBooking()">确认预约 · ￥'+_bookingTier.price+'</button>'+
-      '<p class="booking-hint"><i class="ri-time-line"></i> 提前2小时 · 预约后需完成支付</p>'+
+      '<p class="booking-hint"><i class="ph-thin ph-clock"></i> 提前2小时 · 预约后需完成支付</p>'+
     '</div>';
   document.getElementById('bookingModal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -176,7 +176,7 @@ function showPayment(appt){
         '<div class="pay-row"><span>项目</span><span>'+appt.course_name+'</span></div>'+
         '<div class="pay-row"><span>时长</span><span>'+appt.tier_duration+'</span></div>'+
         '<div class="pay-row"><span>时间</span><span>'+appt.appointment_date+' '+appt.appointment_time+'</span></div>'+
-        '<div class="pay-row"><span>疗愈师</span><span><i class="ri-mental-health-line"></i> 琼儿老师</span></div>'+
+        '<div class="pay-row"><span>疗愈师</span><span><i class="ph-thin ph-flower-lotus"></i> 琼儿老师</span></div>'+
         '<div class="pay-row"><span>商户</span><span>云上·东林外</span></div>'+
       '</div>'+
       '<button class="btn btn-primary btn-large pay-btn" onclick="confirmPay('+appt.id+')">💚 立即支付 ¥'+appt.tier_price+'</button>'+
@@ -195,11 +195,11 @@ function confirmPay(apptId){
       if (data.error) { alert(data.error); if(btn){ btn.disabled=false; btn.textContent='立即支付'; } return; }
       document.getElementById('bookingContent').innerHTML =
         '<div class="pay-page" style="text-align:center">'+
-          '<span style="font-size:3rem"><i class="ri-check-line"></i></span><h2>支付成功</h2>'+
+          '<span style="font-size:3rem"><i class="ph-thin ph-check"></i></span><h2>支付成功</h2>'+
           '<div class="pay-info" style="text-align:left">'+
             '<div class="pay-row"><span>预约编号</span><span>#'+apptId+'</span></div>'+
           '</div>'+
-          '<p style="color:var(--color-primary-dark);margin:12px 0"><i class="ri-mental-health-line"></i> 琼儿老师将在约定时间等候您</p>'+
+          '<p style="color:var(--color-primary-dark);margin:12px 0"><i class="ph-thin ph-flower-lotus"></i> 琼儿老师将在约定时间等候您</p>'+
           '<button class="btn btn-primary" onclick="closeBooking()">完成</button>'+
         '</div>';
     }).catch(function(){ alert('支付失败'); if(btn){ btn.disabled=false; btn.textContent='立即支付'; } });

@@ -5,7 +5,7 @@
 {% block content %}
 <section class="page-header">
     <div class="container">
-        <h1><i class="ri-hotel-bed-line" style="font-size:2rem"></i> 房型展示</h1>
+        <h1><i class="ph-thin ph-bed" style="font-size:2rem"></i> 房型展示</h1>
         <p>{% if bnb_id == 'guishu' %}8种精品房型 · 11间客房 · U型三层小楼{% elif bnb_id == 'shanji' %}16种精品房型 · 30间客房 · 私享300平花园{% elif bnb_id == 'donglinwai' %}6种禅意房型 · 20间客房 · 东林寺旁{% endif %}</p>
     </div>
 </section>
@@ -14,11 +14,11 @@
     <div class="container">
         <div class="notice-card notice-card--warning" style="margin-bottom:1.5rem">
             <strong>📋 预订须知</strong><br>
-            <i class="ri-restaurant-line"></i> 民宿<strong>不提供早餐</strong>，{% if bnb_id == 'guishu' %}一楼「{{ bnb.cafe_name }}」供应咖啡简餐{% elif bnb_id == 'shanji' %}「{{ bnb.cafe_name }}」供应茶饮点心{% elif bnb_id == 'donglinwai' %}「{{ bnb.cafe_name }}」供应精品咖啡{% endif %}<br>
-            <i class="ri-hotel-bed-line"></i> 所有房型<strong>不可加床</strong>，不提供婴儿床<br>
-            {% if bnb_id == 'donglinwai' %}<i class="ri-footprint-line"></i> <strong>宠物友好</strong>：可免费携带宠物入住（需提前联系）<br>
-            <i class="ri-mental-health-line"></i> 东林寺步行可达 · 免费洗衣服务<br>{% else %}<i class="ri-footprint-line"></i> <strong>宠物友好</strong>：可免费携带猫狗入住（需提前联系）<br>
-            <i class="ri-parking-box-line"></i> 免费私家停车场<br>{% endif %}
+            <i class="ph-thin ph-fork-knife"></i> 民宿<strong>不提供早餐</strong>，{% if bnb_id == 'guishu' %}一楼「{{ bnb.cafe_name }}」供应咖啡简餐{% elif bnb_id == 'shanji' %}「{{ bnb.cafe_name }}」供应茶饮点心{% elif bnb_id == 'donglinwai' %}「{{ bnb.cafe_name }}」供应精品咖啡{% endif %}<br>
+            <i class="ph-thin ph-bed"></i> 所有房型<strong>不可加床</strong>，不提供婴儿床<br>
+            {% if bnb_id == 'donglinwai' %}<i class="ph-thin ph-paw-print"></i> <strong>宠物友好</strong>：可免费携带宠物入住（需提前联系）<br>
+            <i class="ph-thin ph-flower-lotus"></i> 东林寺步行可达 · 免费洗衣服务<br>{% else %}<i class="ph-thin ph-paw-print"></i> <strong>宠物友好</strong>：可免费携带猫狗入住（需提前联系）<br>
+            <i class="ph-thin ph-parking"></i> 免费私家停车场<br>{% endif %}
             ⏰ 入住14:00后 · 退房12:00前  |  免押金
         </div>
         {% if rooms %}
@@ -34,15 +34,15 @@
                         {% endif %}
                     {% else %}
                     <div class="room-card-placeholder">
-                        <span><i class="ri-home-line"></i></span>
+                        <span><i class="ph-thin ph-house"></i></span>
                     </div>
                     {% endif %}
                     <div class="room-card-badge">
-                        {% if room.view_type == "山景" %}<i class="ri-landscape-line"></i> 山景
+                        {% if room.view_type == "山景" %}<i class="ph-thin ph-mountains"></i> 山景
                         {% elif room.view_type == "云海" %}☁️ 云海
                         {% elif room.view_type == "竹林" %}🎋 竹林
-                        {% elif room.view_type == "山景/露台" %}<i class="ri-landscape-line"></i>🌿 山景/露台
-                        {% else %}<i class="ri-home-line"></i> {{ room.view_type }}
+                        {% elif room.view_type == "山景/露台" %}<i class="ph-thin ph-mountains"></i>🌿 山景/露台
+                        {% else %}<i class="ph-thin ph-house"></i> {{ room.view_type }}
                         {% endif %}
                     </div>
                 </div>
@@ -53,14 +53,14 @@
                     </div>
                     <p class="room-card-desc">{{ room.description[:100] }}{% if room.description|length > 100 %}...{% endif %}</p>
                     <div class="room-card-meta">
-                        <span><i class="ri-user-line"></i> {{ room.capacity }}人</span>
-                        <span><i class="ri-hotel-bed-line"></i> {{ room.bed_type }}</span>
-                        <span><i class="ri-ruler-line"></i> {{ room.area }}</span>
+                        <span><i class="ph-thin ph-user"></i> {{ room.capacity }}人</span>
+                        <span><i class="ph-thin ph-bed"></i> {{ room.bed_type }}</span>
+                        <span><i class="ph-thin ph-ruler"></i> {{ room.area }}</span>
                     </div>
                     <div class="room-card-footer">
                         <span class="room-price">¥{{ room.price }}<small>/晚</small></span>
                         {% if room.total_count and room.total_count == 1 %}
-                        <span class="room-remaining low"><i class="ri-fire-line"></i> 仅剩1间</span>
+                        <span class="room-remaining low"><i class="ph-thin ph-fire"></i> 仅剩1间</span>
                         {% elif room.total_count and room.total_count <= 2 %}
                         <span class="room-remaining low">仅剩{{ room.total_count }}间</span>
                         {% elif room.total_count %}
@@ -77,7 +77,7 @@
         </div>
         {% else %}
         <div class="empty-state">
-            <span class="empty-icon"><i class="ri-hotel-bed-line" style="font-size:3rem"></i></span>
+            <span class="empty-icon"><i class="ph-thin ph-bed" style="font-size:3rem"></i></span>
             <p>暂无房间信息</p>
         </div>
         {% endif %}
@@ -101,19 +101,19 @@ function showRoomModal(id) {
     var imgs = (r.images||[]);
     var slidesHtml = imgs.length ? imgs.map(function(src,i){
         return '<div class="gallery-slide'+(i===0?' active':'')+'"><img src="'+src+'" alt="'+r.name+'" loading="'+(i===0?'eager':'lazy')+'"></div>';
-    }).join('') : '<div class="gallery-slide active"><div class="gallery-placeholder"><span><i class="ri-home-line"></i></span><p>暂无图片</p></div></div>';
+    }).join('') : '<div class="gallery-slide active"><div class="gallery-placeholder"><span><i class="ph-thin ph-house"></i></span><p>暂无图片</p></div></div>';
     var navHtml = imgs.length>1 ? '<button class="gallery-arrow gallery-prev" onclick="event.stopPropagation();roomSlideChange(-1)">‹</button><button class="gallery-arrow gallery-next" onclick="event.stopPropagation();roomSlideChange(1)">›</button><div class="gallery-dots" id="rmDots">'+imgs.map(function(_,i){return '<button class="gallery-dot'+(i===0?' active':'')+'" onclick="event.stopPropagation();goRoomSlide('+i+')"></button>';}).join('')+'</div><div class="gallery-counter" id="rmCounter">1 / '+imgs.length+'</div>' : '';
-    var remainingHtml = r.total_count && r.total_count <= 2 ? '<span class="room-remaining low"><i class="ri-fire-line"></i> 仅剩'+r.total_count+'间</span>' : (r.total_count ? '<span class="room-remaining ok">热订中</span>' : '');
+    var remainingHtml = r.total_count && r.total_count <= 2 ? '<span class="room-remaining low"><i class="ph-thin ph-fire"></i> 仅剩'+r.total_count+'间</span>' : (r.total_count ? '<span class="room-remaining ok">热订中</span>' : '');
     var discountHtml = r.original_price && r.original_price > r.price ? '<span class="original-price">¥'+r.original_price+'</span><span class="discount-tag">省¥'+(r.original_price-r.price)+'</span>' : '';
     var amenitiesHtml = (r.amenities||[]).map(function(a){return '<span class="amenity-tag">'+a+'</span>';}).join('');
     document.getElementById('roomModalContent').innerHTML =
         '<div class="room-gallery-carousel"><div class="gallery-main" id="rmGallery">'+slidesHtml+'</div>'+navHtml+'</div>'
         +'<div class="room-info-section"><div class="room-info-header"><h2>'+r.name+'</h2><span class="room-type-badge">'+r.room_type+'</span></div>'
         +'<div class="room-price-block"><span class="current-price">¥'+r.price+'</span><span class="per-night">/晚</span> '+remainingHtml+' '+discountHtml+'</div>'
-        +'<div class="room-info-grid"><div class="info-item"><span class="info-label"><i class="ri-user-line"></i> 可住</span><span class="info-value">'+r.capacity+'人</span></div><div class="info-item"><span class="info-label"><i class="ri-hotel-bed-line"></i> 床型</span><span class="info-value">'+r.bed_type+'</span></div><div class="info-item"><span class="info-label"><i class="ri-ruler-line"></i> 面积</span><span class="info-value">'+r.area+'</span></div><div class="info-item"><span class="info-label"><i class="ri-sun-foggy-line"></i> 景观</span><span class="info-value">'+r.view_type+'</span></div></div>'
-        +'<div class="room-description"><h3><i class="ri-file-text-line"></i> 房间介绍</h3><p>'+r.description+'</p></div>'
-        +(amenitiesHtml?'<div class="room-amenities"><h3><i class="ri-sparkling-line"></i> 房间设施</h3><div class="amenities-list">'+amenitiesHtml+'</div></div>':'')
-        +'<div class="room-actions"><button class="btn btn-primary btn-large" onclick="alert(\'请拨打前台电话预订：{{ bnb.phone }}\\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～\')"><i class="ri-phone-line"></i> 预订咨询</button><a href="{{ bnb_prefix }}/rooms{{ mp }}" class="btn btn-outline btn-large">← 返回房型列表</a></div></div>';
+        +'<div class="room-info-grid"><div class="info-item"><span class="info-label"><i class="ph-thin ph-user"></i> 可住</span><span class="info-value">'+r.capacity+'人</span></div><div class="info-item"><span class="info-label"><i class="ph-thin ph-bed"></i> 床型</span><span class="info-value">'+r.bed_type+'</span></div><div class="info-item"><span class="info-label"><i class="ph-thin ph-ruler"></i> 面积</span><span class="info-value">'+r.area+'</span></div><div class="info-item"><span class="info-label"><i class="ph-thin ph-cloud-sun"></i> 景观</span><span class="info-value">'+r.view_type+'</span></div></div>'
+        +'<div class="room-description"><h3><i class="ph-thin ph-file-text"></i> 房间介绍</h3><p>'+r.description+'</p></div>'
+        +(amenitiesHtml?'<div class="room-amenities"><h3><i class="ph-thin ph-sparkle"></i> 房间设施</h3><div class="amenities-list">'+amenitiesHtml+'</div></div>':'')
+        +'<div class="room-actions"><button class="btn btn-primary btn-large" onclick="alert(\'请拨打前台电话预订：{{ bnb.phone }}\\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～\')"><i class="ph-thin ph-phone"></i> 预订咨询</button><a href="{{ bnb_prefix }}/rooms{{ mp }}" class="btn btn-outline btn-large">← 返回房型列表</a></div></div>';
     document.getElementById('roomModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
     _roomSlideIdx = 0; _roomSlideTotal = imgs.length;

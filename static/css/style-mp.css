@@ -11,8 +11,31 @@ body.mp-mode {
     letter-spacing: 0.015em;
 }
 
-/* ── 小程序端配色（归墅） ── */
+/* ── 小程序端配色（归墅·浅清绿） ── */
 [data-bnb="guishu"] body.mp-mode {
+    --color-primary: #5C8E6B;
+    --color-primary-light: #7DAA8A;
+    --color-primary-dark: #457355;
+    --color-accent: #C89878;
+    --color-accent-light: #D8B090;
+    --color-sky: #A0BCB8;
+    --color-mist: #DCE8E0;
+    --color-bg: #F8F5F1;
+    --color-bg-light: #F0EBE1;
+    --color-bg-dark: #E8E3D8;
+    --color-text: #2D2A26;
+    --color-text-light: #8C8C8C;
+    --color-text-lighter: #B0ADA6;
+    --color-border: #E0DCD5;
+    --color-white: #FAF9F6;
+    --color-shadow: rgba(0,0,0,0.04);
+    --color-shadow-hover: rgba(0,0,0,0.06);
+    --color-success: #5b8c5a;
+    --color-warning: #c9954a;
+    --color-danger: #c4554a;
+}
+/* ── 山纪（深林地绿·参考文字色）── */
+[data-bnb="shanji"] body.mp-mode {
     --color-primary: #2C4335;
     --color-primary-light: #4A6E5A;
     --color-primary-dark: #1E2E24;
@@ -32,29 +55,6 @@ body.mp-mode {
     --color-shadow-hover: rgba(0,0,0,0.06);
     --color-success: #5b8c5a;
     --color-warning: #c9954a;
-    --color-danger: #c4554a;
-}
-/* ── 山纪 ── */
-[data-bnb="shanji"] body.mp-mode {
-    --color-primary: #6B4F10;
-    --color-primary-light: #8A6E2E;
-    --color-primary-dark: #4A3610;
-    --color-accent: #B08040;
-    --color-accent-light: #C09860;
-    --color-sky: #B8A888;
-    --color-mist: #E4D8B8;
-    --color-bg: #F8F5F1;
-    --color-bg-light: #F0EBE1;
-    --color-bg-dark: #E8E3D8;
-    --color-text: #2D2A26;
-    --color-text-light: #8C8C8C;
-    --color-text-lighter: #B0ADA6;
-    --color-border: #E0DCD5;
-    --color-white: #FAF9F6;
-    --color-shadow: rgba(0,0,0,0.04);
-    --color-shadow-hover: rgba(0,0,0,0.06);
-    --color-success: #5b8c4a;
-    --color-warning: #b88830;
     --color-danger: #c4554a;
 }
 /* ── 东林外 ── */
@@ -97,22 +97,22 @@ body.mp-mode {
 }
 /* 暗色模式各 BnB 品牌色 */
 [data-bnb="guishu"][data-theme="dark"] body.mp-mode {
+    --color-primary: #7DAA8A;
+    --color-primary-light: #5C8E6B;
+    --color-primary-dark: #457355;
+    --color-accent: #D0A880;
+    --color-accent-light: #DCBCA0;
+    --color-sky: #7AA0A0;
+    --color-mist: #1E2C24;
+}
+[data-bnb="shanji"][data-theme="dark"] body.mp-mode {
     --color-primary: #5A8E6A;
     --color-primary-light: #4A7058;
-    --color-primary-dark: #6A9E7A;
+    --color-primary-dark: #304838;
     --color-accent: #B08050;
     --color-accent-light: #C09870;
     --color-sky: #5A8090;
     --color-mist: #243028;
-}
-[data-bnb="shanji"][data-theme="dark"] body.mp-mode {
-    --color-primary: #8A6E2E;
-    --color-primary-light: #6E5A20;
-    --color-primary-dark: #A08040;
-    --color-accent: #B08040;
-    --color-accent-light: #C09050;
-    --color-sky: #665840;
-    --color-mist: #2C2418;
 }
 [data-bnb="donglinwai"][data-theme="dark"] body.mp-mode {
     --color-primary: #6A7D95;

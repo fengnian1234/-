@@ -4,27 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>AI 管家 · {{ bnb.short_name }}</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/thin/style.css">
 <style>
 :root {
-  --bg: #F8F5F1; --chat-bg: #F0EBE1;
+  --bg: #F8F5F1; --chat-bg: #FAF9F6;
   --text: #2D2A26; --text2: #8C8C8C;
-  --pri: #2C4335; --pri-light: #e8efe8;
-  --bubble-me: #c0d8c0; --bubble-you: #FAF9F6;
+  --pri: #5C8E6B; --pri-light: #e8efe8;
+  --bubble-me: #FAF9F6; --bubble-you: #FAF9F6;
   --border: #E0DCD5;
 }
 [data-bnb="shanji"] {
-  --bg: #F8F5F1; --chat-bg: #F0EBE1;
+  --bg: #F8F5F1; --chat-bg: #FAF9F6;
   --text: #2D2A26; --text2: #8C8C8C;
-  --pri: #6B4F10; --pri-light: #f0e4d0;
-  --bubble-me: #e0d0b0; --bubble-you: #FAF9F6;
+  --pri: #2C4335; --pri-light: #e8efe8;
+  --bubble-me: #FAF9F6; --bubble-you: #FAF9F6;
   --border: #E0DCD5;
 }
 [data-bnb="donglinwai"] {
-  --bg: #F8F5F1; --chat-bg: #F0EBE1;
+  --bg: #F8F5F1; --chat-bg: #FAF9F6;
   --text: #2D2A26; --text2: #8C8C8C;
   --pri: #4A5D78; --pri-light: #e4eaf2;
-  --bubble-me: #c8d4e4; --bubble-you: #FAF9F6;
+  --bubble-me: #FAF9F6; --bubble-you: #FAF9F6;
   --border: #E0DCD5;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -64,20 +64,20 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 [data-theme="dark"] {
   --bg: #1E1C1A; --chat-bg: #242220;
   --text: #D8D5D0; --text2: #A09890;
-  --pri: #5A8E6A; --pri-light: #1f2b22;
-  --bubble-me: #253828; --bubble-you: #2A2824;
+  --pri: #7DAA8A; --pri-light: #243028;
+  --bubble-me: #2A2824; --bubble-you: #2A2824;
   --border: #2E2C28;
 }
-[data-theme="dark"] .input-area { background: #2A2824; }
-[data-theme="dark"] .input-area input { background: #1E1C1A; color: #D8D5D0; }
-[data-theme="dark"] .quick-hints { background: #2A2824; }
+[data-theme="dark"] .input-area { background: var(--color-bg-dark, #2A2824); }
+[data-theme="dark"] .input-area input { background: var(--color-bg, #1E1C1A); color: var(--color-text, #D8D5D0); }
+[data-theme="dark"] .quick-hints { background: var(--color-bg-dark, #2A2824); }
 [data-theme="dark"] .chat-header { background: linear-gradient(135deg, var(--pri), color-mix(in srgb, var(--pri) 60%, black)); }
 </style>
 </head>
 <body>
 
 <div class="chat-header">
-  <div class="avatar"><i class="ri-robot-line"></i></div>
+  <div class="avatar"><i class="ph-thin ph-robot"></i></div>
   <div class="info">
     <div class="name" id="headerName">{{ bnb.short_name }} · AI 管家</div>
     <div class="status">在线 · 随时为您服务</div>
@@ -86,12 +86,12 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 </div>
 
 <div class="quick-hints" id="quickHints">
-  <button class="quick-hint" onclick="send('房型有哪些')"><i class="ri-hotel-bed-line"></i> 房型</button>
-  <button class="quick-hint" onclick="send('周边美食推荐')"><i class="ri-bowl-line"></i> 美食</button>
-  <button class="quick-hint" onclick="send('庐山一日游')"><i class="ri-map-line"></i> 一日游</button>
-  <button class="quick-hint" onclick="send('怎么到民宿')"><i class="ri-car-line"></i> 交通</button>
-  <button class="quick-hint" onclick="send('WiFi密码')"><i class="ri-wifi-line"></i> WiFi</button>
-  <button class="quick-hint" onclick="send('打扫卫生')"><i class="ri-brush-line"></i> 打扫</button>
+  <button class="quick-hint" onclick="send('房型有哪些')"><i class="ph-thin ph-bed"></i> 房型</button>
+  <button class="quick-hint" onclick="send('周边美食推荐')"><i class="ph-thin ph-bowl-food"></i> 美食</button>
+  <button class="quick-hint" onclick="send('庐山一日游')"><i class="ph-thin ph-map-trifold"></i> 一日游</button>
+  <button class="quick-hint" onclick="send('怎么到民宿')"><i class="ph-thin ph-car"></i> 交通</button>
+  <button class="quick-hint" onclick="send('WiFi密码')"><i class="ph-thin ph-wifi-high"></i> WiFi</button>
+  <button class="quick-hint" onclick="send('打扫卫生')"><i class="ph-thin ph-broom"></i> 打扫</button>
 </div>
 
 <div class="chat-area" id="chatArea">
@@ -102,7 +102,7 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 
 <div class="input-area">
   <input type="text" id="msgInput" placeholder="输入消息..." autofocus>
-  <button onclick="send()"><i class="ri-arrow-right-s-line"></i></button>
+  <button onclick="send()"><i class="ph-thin ph-caret-right"></i></button>
 </div>
 
 <script>
@@ -122,7 +122,7 @@ let isTyping = false;
 (function init(){
   document.getElementById('timeTag').innerText = new Date().toLocaleString('zh-CN');
   document.getElementById('msgInput').addEventListener('keydown', e => { if(e.key==='Enter') send(); });
-  addSysMsg('你好！我是{{ bnb.short_name }}的 AI 管家 <i class="ri-robot-line"></i>\n\n可以问我房型、美食、攻略、交通等问题，也可以直接说「打扫」「叫醒」等快捷指令～');
+  addSysMsg('你好！我是{{ bnb.short_name }}的 AI 管家 <i class="ph-thin ph-robot"></i>\n\n可以问我房型、美食、攻略、交通等问题，也可以直接说「打扫」「叫醒」等快捷指令～');
 
   // 读取 BnB 主题色 — 以自身 data-bnb 的 CSS 变量为准
   try {

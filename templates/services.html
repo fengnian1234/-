@@ -4,7 +4,7 @@
 {% block content %}
 <section class="page-header">
     <div class="container">
-        <h1><i class="ri-service-line" style="font-size:2rem"></i> 快捷服务</h1>
+        <h1><i class="ph-thin ph-handshake" style="font-size:2rem"></i> 快捷服务</h1>
         <p>一键呼叫，即刻响应</p>
     </div>
 </section>
@@ -29,22 +29,22 @@
                 'other': '其他服务'
             } %}
             {% set cat_icons = {
-                'housekeeping': 'ri-brush-line',
-                'maintenance': 'ri-tools-line',
-                'frontdesk': 'ri-building-line',
-                'other': 'ri-archive-line'
+                'housekeeping': 'ph-broom',
+                'maintenance': 'ph-wrench',
+                'frontdesk': 'ph-buildings',
+                'other': 'ph-archive'
             } %}
 
             {% for cat_name, cat_services in categories.items() %}
             <div class="service-group">
-                <h3 class="service-group-title"><i class="ri {{ cat_icons.get(cat_name, 'ri-clipboard-line') }}"></i> {{ cat_labels.get(cat_name, cat_name) }}</h3>
+                <h3 class="service-group-title"><i class="ph-thin {{ cat_icons.get(cat_name, 'ph-clipboard-text') }}"></i> {{ cat_labels.get(cat_name, cat_name) }}</h3>
                 <div class="service-grid">
                     {% for svc in cat_services %}
                     <button class="service-card" onclick="requestService('{{ svc.name }}')">
-                        <span class="service-icon">{% if svc.icon %}{{ svc.icon }}{% else %}<i class="ri-square-line"></i>{% endif %}</span>
+                        <span class="service-icon">{% if svc.icon %}{{ svc.icon }}{% else %}<i class="ph-thin ph-square"></i>{% endif %}</span>
                         <h4 class="service-name">{{ svc.name }}</h4>
                         <p class="service-desc">{{ svc.description }}</p>
-                        <span class="service-time"><i class="ri-time-line"></i> {{ svc.estimated_time or '尽快处理' }}</span>
+                        <span class="service-time"><i class="ph-thin ph-clock"></i> {{ svc.estimated_time or '尽快处理' }}</span>
                     </button>
                     {% endfor %}
                 </div>
@@ -53,14 +53,14 @@
         </div>
         {% else %}
         <div class="empty-state">
-            <span class="empty-icon"><i class="ri-service-line" style="font-size:3rem"></i></span>
+            <span class="empty-icon"><i class="ph-thin ph-handshake" style="font-size:3rem"></i></span>
             <p>暂无快捷服务信息</p>
         </div>
         {% endif %}
 
         <!-- 紧急联系 -->
         <div class="emergency-contact">
-            <h3><i class="ri-phone-line"></i> 紧急联系</h3>
+            <h3><i class="ph-thin ph-phone"></i> 紧急联系</h3>
             <p>如需紧急帮助，请直接拨打前台电话</p>
             <a href="tel:{{ bnb.phone }}" class="btn btn-primary btn-large">
                 ☎️ 拨打前台
@@ -73,7 +73,7 @@
 <div id="service-modal" class="modal" style="display:none;">
     <div class="modal-overlay" onclick="closeModal()"></div>
     <div class="modal-content">
-        <div class="modal-icon"><i class="ri-check-line"></i></div>
+        <div class="modal-icon"><i class="ph-thin ph-check"></i></div>
         <h3 id="modal-title">服务请求已收到</h3>
         <p id="modal-message"></p>
         <button class="btn btn-primary" onclick="closeModal()">知道了</button>

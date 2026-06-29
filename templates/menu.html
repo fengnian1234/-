@@ -5,10 +5,10 @@
 <section class="page-header">
     <div class="container">
         {% if bnb_id == 'donglinwai' %}
-        <h1><i class="ri-cup-line" style="font-size:2rem"></i> 精品咖啡</h1>
+        <h1><i class="ph-thin ph-coffee" style="font-size:2rem"></i> 精品咖啡</h1>
         <p>「东林外咖啡」· 经典咖啡 · 风味拿铁 · 创意特调 · 云上奶茶</p>
         {% else %}
-        <h1><i class="ri-cup-line" style="font-size:2rem"></i> 咖啡简餐</h1>
+        <h1><i class="ph-thin ph-coffee" style="font-size:2rem"></i> 咖啡简餐</h1>
         <p>「三山二水咖啡」· 咖啡茶饮 · 简餐 · 甜品 · 特调饮品</p>
         {% endif %}
     </div>
@@ -33,7 +33,7 @@
                                 <h4>
                                     {{ item.name }}
                                     {% if item.is_recommended %}
-                                    <span class="rec-badge"><i class="ri-star-line"></i>推荐</span>
+                                    <span class="rec-badge"><i class="ph-thin ph-star"></i>推荐</span>
                                     {% endif %}
                                 </h4>
                                 <span class="menu-item-price">{% if is_tea %}¥38起{% else %}¥{{ item.price }}{% endif %}</span>
@@ -68,8 +68,8 @@
 <!-- 点餐浮窗 -->
 <div id="order-panel" class="order-panel" style="display:none;">
     <div class="order-panel-header">
-        <h3><i class="ri-shopping-cart-line"></i> 已选菜品</h3>
-        <button class="btn-close" onclick="toggleOrderPanel()"><i class="ri-close-line"></i></button>
+        <h3><i class="ph-thin ph-shopping-cart"></i> 已选菜品</h3>
+        <button class="btn-close" onclick="toggleOrderPanel()"><i class="ph-thin ph-x"></i></button>
     </div>
     <div class="order-panel-body" id="order-items">
         <p class="empty-hint">还没有选择菜品～</p>
@@ -83,14 +83,14 @@
             <input type="text" id="room-number" placeholder="房间号（选填）">
             <input type="text" id="order-remark" placeholder="备注（选填）">
         </div>
-        <div class="order-notice"><i class="ri-cup-line"></i> {% if bnb_id == 'donglinwai' %}东林外咖啡 · 点单后送饮到房{% else %}三山二水咖啡 · 点单后送餐到房{% endif %}<br><i class="ri-bank-card-line"></i> 支持微信支付，确认后为您准备</div>
+        <div class="order-notice"><i class="ph-thin ph-coffee"></i> {% if bnb_id == 'donglinwai' %}东林外咖啡 · 点单后送饮到房{% else %}三山二水咖啡 · 点单后送餐到房{% endif %}<br><i class="ph-thin ph-credit-card"></i> 支持微信支付，确认后为您准备</div>
         <button class="btn btn-primary btn-block" onclick="submitOrder()">确认下单</button>
     </div>
 </div>
 
 <!-- 点餐按钮 -->
 <button class="fab" onclick="toggleOrderPanel()">
-    <span class="fab-icon"><i class="ri-shopping-cart-line"></i></span>
+    <span class="fab-icon"><i class="ph-thin ph-shopping-cart"></i></span>
     <span class="fab-badge" id="cart-badge" data-count="0"></span>
 </button>
 {% endblock %}
@@ -119,7 +119,7 @@ if (_mc) _mc.addEventListener('click', function(e) {
 // 庐山云雾茶弹窗
 function openTeaModal(id, name) {
     const content = document.getElementById('drinkModalContent');
-    content.innerHTML = `<h3 style="text-align:center;color:var(--color-primary-dark);margin-bottom:1rem"><i class="ri-cup-line"></i> ${name}</h3>
+    content.innerHTML = `<h3 style="text-align:center;color:var(--color-primary-dark);margin-bottom:1rem"><i class="ph-thin ph-coffee"></i> ${name}</h3>
         <div class="option-group"><div class="option-group-label">茶叶类型</div>
             <div class="option-chips" data-group="type">
                 <button class="option-chip selected" data-val="红茶">红茶</button>
@@ -163,7 +163,7 @@ function openDrinkModal(id, name, price, tempMode) {
                 <button class="option-chip" data-val="正常冰">正常冰</button>
             </div></div>`;
     }
-    content.innerHTML = `<h3 style="text-align:center;color:var(--color-primary-dark);margin-bottom:1rem"><i class="ri-goblet-line"></i> ${name} <span style="font-weight:400;color:var(--color-accent)">¥${price}</span></h3>
+    content.innerHTML = `<h3 style="text-align:center;color:var(--color-primary-dark);margin-bottom:1rem"><i class="ph-thin ph-wine"></i> ${name} <span style="font-weight:400;color:var(--color-accent)">¥${price}</span></h3>
         <div class="option-group"><div class="option-group-label">糖度</div>
             <div class="option-chips" data-group="sugar">
                 <button class="option-chip" data-val="全糖">全糖</button>
@@ -305,14 +305,14 @@ function showOrderPayment(order) {
 
     document.getElementById('order-items').innerHTML =
         '<div class="pay-page">' +
-          '<div class="pay-header"><span class="pay-title">微信支付</span><button class="pay-close" onclick="backToCart()" title="返回购物车"><i class="ri-close-line"></i></button></div>' +
+          '<div class="pay-header"><span class="pay-title">微信支付</span><button class="pay-close" onclick="backToCart()" title="返回购物车"><i class="ph-thin ph-x"></i></button></div>' +
           '<div class="pay-amount">¥<strong>' + total + '</strong></div>' +
           '<div class="pay-info">' +
             itemsHtml +
             (order.room_number ? '<div class="pay-row"><span>房间号</span><span>' + order.room_number + '</span></div>' : '') +
             '<div class="pay-row"><span>商户</span><span>{{ '东林外咖啡' if bnb_id == 'donglinwai' else '三山二水咖啡' }}</span></div>' +
           '</div>' +
-          '<button class="btn btn-primary btn-large pay-btn" onclick="confirmOrderPay(' + order.id + ')"><i class="ri-heart-line"></i> 立即支付 ¥' + total + '</button>' +
+          '<button class="btn btn-primary btn-large pay-btn" onclick="confirmOrderPay(' + order.id + ')"><i class="ph-thin ph-heart"></i> 立即支付 ¥' + total + '</button>' +
           '<button class="btn btn-outline" style="width:100%;margin-top:0.5rem" onclick="backToCart()">← 返回购物车</button>' +
           '<p class="pay-hint" style="text-align:center;font-size:0.72rem;color:var(--color-text-lighter);margin-top:8px">（模拟微信支付环境）</p>' +
         '</div>';
@@ -347,11 +347,11 @@ function confirmOrderPay(orderId) {
         if (data.error) { alert(data.error); if (btn) { btn.disabled = false; btn.textContent = '立即支付'; } return; }
         document.getElementById('order-items').innerHTML =
             '<div class="pay-page" style="text-align:center">' +
-              '<span style="font-size:3rem"><i class="ri-check-line"></i></span><h2>支付成功</h2>' +
+              '<span style="font-size:3rem"><i class="ph-thin ph-check"></i></span><h2>支付成功</h2>' +
               '<div class="pay-info" style="text-align:left">' +
                 '<div class="pay-row"><span>订单编号</span><span>#' + orderId + '</span></div>' +
               '</div>' +
-              '<p style="color:var(--color-primary-dark);margin:12px 0"><i class="ri-cup-line"></i> 我们会尽快为您准备，送餐到房～</p>' +
+              '<p style="color:var(--color-primary-dark);margin:12px 0"><i class="ph-thin ph-coffee"></i> 我们会尽快为您准备，送餐到房～</p>' +
               '<button class="btn btn-primary" onclick="finishOrder()">完成</button>' +
             '</div>';
     })
