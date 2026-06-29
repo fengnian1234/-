@@ -78,11 +78,7 @@
 <section class="section-padding" style="padding-bottom:0">
     <div class="container">
         <div class="notice-card notice-card--success">
-            {% if bnb_id == 'shanji' %}
-            <strong><i class="ph-thin ph-cable-car"></i> 庐山索道运营中</strong> — 索道上站步行<strong>3分钟</strong>即达山纪，观光车站也在门口～ <i class="ph-thin ph-mountains"></i>
-            {% else %}
-            <strong><i class="ph-thin ph-cable-car"></i> 庐山索道已恢复运营</strong> — 2026年度检修（5.11-6.9）已结束，<strong>6月10日7:30起恢复正常</strong>。索道上站步行5分钟即达民宿～ <i class="ph-thin ph-mountains"></i>
-            {% endif %}
+            <strong><i class="ph-thin ph-cable-car"></i> 庐山索道运营中</strong> — 索道上站步行<strong>{% if bnb_id == 'shanji' %}3{% else %}5{% endif %}分钟</strong>即达民宿，观光车站也在门口～ <i class="ph-thin ph-mountains"></i>
         </div>
     </div>
 </section>
