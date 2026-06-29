@@ -657,3 +657,8 @@ body.mp-mode .rd-value { font-size: 0.85rem; }
 /* 排队信息 */
 body.mp-mode .queue-info { padding: 12px 14px; }
 body.mp-mode .queue-num { font-size: 1.1rem; }
+
+/* 常见问题 */
+body.mp-mode .faq-item { padding: 0.35rem 0.6rem; border-radius: 6px; }
+body.mp-mode .faq-q { font-size: 0.75rem; }
+body.mp-mode .faq-a { font-size: 0.72rem; line-height: 1.45; }
