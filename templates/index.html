@@ -22,7 +22,7 @@
             {% elif bnb_id == 'donglinwai' %}放下尘嚣，身心归一
             {% endif %}
         </p>
-        <p class="hero-desc">{{ bnb.description }}</p>
+        <p class="hero-desc">{{ bnb.get('short_description', bnb.description) if request.args.get('mp') == '1' else bnb.description }}</p>
         <p class="hero-seasonal" id="heroSeasonal"></p>
     </div>
 </section>
