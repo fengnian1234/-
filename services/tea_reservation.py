@@ -158,18 +158,14 @@ def create_reservation(data, bnb_id=None):
     """创建茶场预约"""
     bnb_id = _get_bnb_id(bnb_id)
 
-    guest_name = (data.get("guest_name") or "").strip()
-    guest_phone = (data.get("guest_phone") or "").strip()
+    guest_name = (data.get("guest_name") or "").strip() or "访客"
+    guest_phone = (data.get("guest_phone") or "").strip() or "00000000000"
     guest_count = data.get("guest_count", 1)
     reservation_date = (data.get("reservation_date") or "").strip()
     reservation_time = (data.get("reservation_time") or "").strip()
     openid = (data.get("openid") or "web_user").strip()
 
     # ── 参数校验 ──
-    if not guest_name:
-        return {"error": "请输入姓名"}
-    if not guest_phone or len(guest_phone) < 10:
-        return {"error": "请输入正确的手机号"}
     if guest_count not in (1, 2):
         return {"error": "人数仅支持单人(1)或双人(2)"}
     if not reservation_date:

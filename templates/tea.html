@@ -141,14 +141,14 @@
                 <div class="time-slot-grid" id="timeSlots"><p class="empty-hint">请先选择日期</p></div>
             </div>
 
-            <!-- 联系信息 -->
+            <!-- 联系信息（选填） -->
             <div class="reserve-field-row">
                 <div class="reserve-field flex-1">
-                    <label class="reserve-label">姓名</label>
+                    <label class="reserve-label">姓名 <span class="reserve-hint">（选填）</span></label>
                     <input type="text" id="reserveName" class="reserve-input" placeholder="您的姓名" maxlength="20">
                 </div>
                 <div class="reserve-field flex-1">
-                    <label class="reserve-label">手机号</label>
+                    <label class="reserve-label">手机号 <span class="reserve-hint">（选填）</span></label>
                     <input type="tel" id="reservePhone" class="reserve-input" placeholder="11位手机号" maxlength="11">
                 </div>
             </div>
@@ -223,6 +223,7 @@
 
 
 {% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script>
 // ══════════════════════════════════════════════════════════
 //  全局状态
@@ -406,10 +407,8 @@ function selectGuestCount(n) {
 async function submitReservation() {
   const errEl = document.getElementById('reserveError');
   errEl.textContent = '';
-  const name = document.getElementById('reserveName').value.trim();
-  const phone = document.getElementById('reservePhone').value.trim();
-  if(!name) { errEl.textContent = '请输入姓名'; return; }
-  if(!phone || phone.length < 10) { errEl.textContent = '请输入正确的手机号'; return; }
+  const name = document.getElementById('reserveName').value.trim() || '访客';
+  const phone = document.getElementById('reservePhone').value.trim() || '00000000000';
   if(!_selectedDate) { errEl.textContent = '请选择预约日期'; return; }
   if(!_selectedTime) { errEl.textContent = '请选择到店时间'; return; }
 
@@ -447,7 +446,8 @@ function showReservationResult(res) {
   document.getElementById('reservationResult').style.display = '';
   document.getElementById('reserveResultCard').innerHTML = `
     <div class="reservation-code-display">${res.reservation_code}</div>
-    <p class="reservation-code-hint">到店时请出示此预约码给工作人员核验</p>
+    <p class="reservation-code-hint">到店时请出示此预约码或二维码给工作人员核验</p>
+    <div id="qrcodeContainer" style="display:flex;justify-content:center;margin:16px 0"></div>
     <div class="reservation-detail-grid">
       <div class="reservation-detail-item">
         <span class="rd-label">日期</span>
@@ -468,6 +468,18 @@ function showReservationResult(res) {
     </div>
     <p class="reservation-checkin-hint">核验后即可解锁点单功能，请在下方输入预约码核验</p>
   `;
+  // 生成二维码
+  setTimeout(() => {
+    const container = document.getElementById('qrcodeContainer');
+    if(container && typeof QRCode !== 'undefined') {
+      container.innerHTML = '';
+      new QRCode(container, {
+        text: res.reservation_code,
+        width: 160, height: 160,
+        colorDark: '#2C4335', colorLight: '#ffffff',
+      });
+    }
+  }, 100);
   // 滚动到结果区
   document.getElementById('reservationResult').scrollIntoView({ behavior: 'smooth' });
   // 预填核验码
