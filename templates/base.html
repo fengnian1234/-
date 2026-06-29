@@ -32,7 +32,7 @@
             <!-- BnB 下拉切换 -->
             <div class="bnb-dropdown" id="bnbDropdown">
                 <a href="/gs/" class="bnb-dropdown-item {% if bnb_id == 'guishu' %}active{% endif %}"><i class="ph-thin ph-house"></i> 云上·归墅<span>经典山居</span></a>
-                <a href="/sj/" class="bnb-dropdown-item {% if bnb_id == 'shanji' %}active{% endif %}"><i class="ph-thin ph-coffee"></i> 云上·山纪<span>茶园体验</span></a>
+                <a href="/sj/" class="bnb-dropdown-item {% if bnb_id == 'shanji' %}active{% endif %}"><i class="ph-thin ph-coffee"></i> 云上·山纪<span>此山茶场</span></a>
                 <a href="/dlw/" class="bnb-dropdown-item {% if bnb_id == 'donglinwai' %}active{% endif %}"><i class="ph-thin ph-flower-lotus"></i> 云上·东林外<span>身心疗愈</span></a>
             </div>
             <nav class="nav-links">
@@ -42,7 +42,7 @@
                 <a href="{{ bp }}/menu" class="{% if '/menu' in path %}active{% endif %}">点餐</a>
                 <a href="{{ bp }}/travel" class="{% if '/travel' in path %}active{% endif %}">攻略</a>
                 <a href="{{ bp }}/services" class="{% if '/services' in path %}active{% endif %}">服务</a>
-                {% if bnb_id == 'shanji' %}<a href="{{ bp }}/tea" class="nav-feature {% if '/tea' in path %}active{% endif %}"><i class="ph-thin ph-coffee"></i> 茶园</a>{% endif %}
+                {% if bnb_id == 'shanji' %}<a href="{{ bp }}/tea" class="nav-feature {% if '/tea' in path %}active{% endif %}"><i class="ph-thin ph-coffee"></i> 此山茶场</a>{% endif %}
                 {% if bnb_id == 'donglinwai' %}<a href="{{ bp }}/healing" class="nav-feature {% if '/healing' in path %}active{% endif %}"><i class="ph-thin ph-flower-lotus"></i> 疗愈</a>{% endif %}
             </nav>
             <button id="theme-toggle" class="theme-toggle" aria-label="切换深色/浅色模式" title="切换深色/浅色模式">

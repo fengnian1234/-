@@ -675,14 +675,15 @@ class TeaType(Base):
 
 
 class TeaExperience(Base):
-    """茶园体验项目"""
+    """茶园体验/消费项目（体验/简餐/饮品/甜品）"""
     __tablename__ = "tea_experiences"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     bnb_id = Column(String(20), nullable=False, default="shanji", index=True, comment="所属民宿")
     name = Column(String(100), nullable=False, comment="体验名称")
+    category = Column(String(20), default="experience", comment="分类: experience/meal/drink/dessert")
     description = Column(Text, comment="描述")
-    duration = Column(String(50), comment="时长")
+    duration = Column(String(50), comment="时长/份量")
     price = Column(Float, comment="价格")
     capacity = Column(Integer, default=10, comment="容量")
     includes = Column(JSON, comment="包含项目")
@@ -695,6 +696,7 @@ class TeaExperience(Base):
             "id": self.id,
             "bnb_id": self.bnb_id,
             "name": self.name,
+            "category": self.category,
             "description": self.description,
             "duration": self.duration,
             "price": self.price,
@@ -893,6 +895,9 @@ def run_migrations():
         "message_logs": [
             ("bnb_id", "VARCHAR(20) DEFAULT 'guishu'", "所属民宿"),
             ("message_type", "VARCHAR(20) DEFAULT 'text'", "消息类型"),
+        ],
+        "tea_experiences": [
+            ("category", "VARCHAR(20) DEFAULT 'experience'", "分类: experience/meal/drink/dessert"),
         ],
     }
 

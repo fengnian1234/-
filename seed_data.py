@@ -517,7 +517,7 @@ def _seed_shanji_menu(db):
         MenuItem(bnb_id="shanji", category_id=c1, name="山货炒饭", price=32, description="腊肉+笋干+香菇，山货满满", sort_order=4),
         MenuItem(bnb_id="shanji", category_id=c1, name="江西拌粉", price=22, description="地道江西米粉，住客早餐好评率最高", sort_order=5),
         MenuItem(bnb_id="shanji", category_id=c2, name="茶道品鉴体验", price=128, description="茶艺师一对一，品鉴三款云雾茶，60分钟", is_recommended=True, sort_order=1),
-        MenuItem(bnb_id="shanji", category_id=c2, name="茶园采茶体验", price=168, description="前往山纪茶园亲手采茶+制茶，90分钟，含茶礼", sort_order=2),
+        MenuItem(bnb_id="shanji", category_id=c2, name="此山采茶体验", price=168, description="此山茶场亲手采茶+制茶，90分钟，含茶礼伴手礼", sort_order=2),
         MenuItem(bnb_id="shanji", category_id=c2, name="茶点拼盘", price=48, description="桂花糕+核桃酥+绿豆糕，配一壶茶", sort_order=3),
     ]
     db.add_all(items)
@@ -621,7 +621,7 @@ def _seed_shanji_services(db):
         QuickService(bnb_id="shanji", name="旅游咨询", description="庐山景点介绍、门票预订、天气查询", icon="🏞️", category="frontdesk", estimated_time="即刻咨询", sort_order=6),
         QuickService(bnb_id="shanji", name="免费路线规划", description="管家根据您的偏好定制游玩路线，不收任何费用", icon="🗺️", category="frontdesk", estimated_time="即刻咨询", sort_order=7),
         QuickService(bnb_id="shanji", name="旅拍服务", description="云端光影·山纪臻享艺术旅拍体验，含45分钟专属拍摄", icon="📸", category="frontdesk", estimated_time="约45分钟", sort_order=8),
-        QuickService(bnb_id="shanji", name="茶道体验预约", description="茶园采茶/制茶/茶道品鉴体验预约", icon="🍵", category="frontdesk", estimated_time="即刻预约", sort_order=9),
+        QuickService(bnb_id="shanji", name="茶道体验预约", description="此山茶场采茶/制茶/茶道品鉴体验预约", icon="🍵", category="frontdesk", estimated_time="即刻预约", sort_order=9),
         QuickService(bnb_id="shanji", name="手工课程预约", description="陶瓷文化体验、手工课程预约", icon="🎨", category="frontdesk", estimated_time="即刻预约", sort_order=10),
         QuickService(bnb_id="shanji", name="叫车服务", description="预约出租车或包车游览庐山", icon="🚕", category="frontdesk", estimated_time="约15分钟", sort_order=11),
         QuickService(bnb_id="shanji", name="叫醒服务", description="设定叫醒时间，准时电话提醒", icon="⏰", category="frontdesk", estimated_time="准时执行", sort_order=12),
@@ -1325,13 +1325,17 @@ def seed_points(db):
 
 
 def seed_tea(bnb_id="shanji"):
-    """茶园模块种子数据（云上·山纪）"""
+    """此山茶场种子数据（云上·山纪）— 幂等：先清旧数据再插入"""
     from models import SessionLocal, TeaType, TeaExperience, TeaProduct
     db = SessionLocal()
     try:
-        if db.query(TeaType).count() > 0:
-            return
-        # 茶叶品类
+        # 幂等：先清此山纪的旧茶场数据
+        db.query(TeaProduct).filter(TeaProduct.bnb_id == bnb_id).delete()
+        db.query(TeaExperience).filter(TeaExperience.bnb_id == bnb_id).delete()
+        db.query(TeaType).filter(TeaType.bnb_id == bnb_id).delete()
+        db.flush()
+
+        # ── 茶叶品类 ──
         types = [
             TeaType(bnb_id=bnb_id, name="庐山云雾茶", description="中国十大名茶之一，生长于庐山海拔800米以上的云雾带，芽叶肥壮、白毫显露、香高味醇",
                     origin="庐山汉阳峰云雾带", brewing_method="85°C山泉水，玻璃杯上投法，3分钟",
@@ -1346,32 +1350,72 @@ def seed_tea(bnb_id="shanji"):
         db.add_all(types)
         db.flush()
 
-        # 茶园体验
+        # ── 消费项目（按分类）──
         exps = [
-            TeaExperience(bnb_id=bnb_id, name="晨雾采茶体验", description="清晨跟随茶农上山，在晨雾中亲手采摘嫩芽，感受茶山清晨的宁静",
+            # 简餐 (meal)
+            TeaExperience(bnb_id=bnb_id, category="meal", name="素面", description="庐山山泉煮面，配时令山野菜，清淡养胃",
+                          duration="约15分钟出品", price=28, capacity=0,
+                          includes=["时令山野菜", "手工面条"], sort_order=1),
+            TeaExperience(bnb_id=bnb_id, category="meal", name="茶香炒饭", description="庐山云雾茶入饭，配松仁火腿炒制，茶香四溢",
+                          duration="约15分钟出品", price=38, capacity=0,
+                          includes=["云雾茶粉", "松仁", "火腿丁"], sort_order=2),
+            TeaExperience(bnb_id=bnb_id, category="meal", name="庐山石鸡煲", description="庐山特产石鸡，配以茶树菇文火慢炖，鲜香浓郁",
+                          duration="约30分钟出品", price=88, capacity=0,
+                          includes=["庐山石鸡", "茶树菇", "时蔬"], sort_order=3),
+            # 饮品 (drink)
+            TeaExperience(bnb_id=bnb_id, category="drink", name="云雾冷萃", description="庐山云雾茶低温冷萃8小时，清冽甘甜，夏日首选",
+                          duration="即刻出杯", price=32, capacity=0,
+                          includes=["冷萃云雾茶", "冰块"], sort_order=4),
+            TeaExperience(bnb_id=bnb_id, category="drink", name="古树红茶拿铁", description="云南古树红茶+鲜牛乳，茶香奶滑，温热舒心",
+                          duration="即刻出杯", price=36, capacity=0,
+                          includes=["古树红茶", "鲜牛乳"], sort_order=5),
+            TeaExperience(bnb_id=bnb_id, category="drink", name="桂花云雾奶盖", description="云雾茶底+鲜奶奶盖+干桂花，此山招牌特调",
+                          duration="即刻出杯", price=32, capacity=0,
+                          includes=["云雾茶底", "鲜奶奶盖", "干桂花"], sort_order=6),
+            TeaExperience(bnb_id=bnb_id, category="drink", name="手冲单品·庐山云雾", description="茶艺师手冲一壶云雾茶，配两只茶杯，适合二人对饮",
+                          duration="约10分钟", price=68, capacity=0,
+                          includes=["一壶云雾茶", "两只茶杯", "茶点"], sort_order=7),
+            # 甜品 (dessert)
+            TeaExperience(bnb_id=bnb_id, category="dessert", name="茶冻", description="云雾茶汤+石花菜凝冻，Q弹清甜，入口即化",
+                          duration="即刻出品", price=22, capacity=0,
+                          includes=["云雾茶汤", "石花菜", "桂花蜜"], sort_order=8),
+            TeaExperience(bnb_id=bnb_id, category="dessert", name="抹茶芝士蛋糕", description="日式抹茶+奶油奶酪，绵密细腻，茶香回甘",
+                          duration="即刻出品", price=38, capacity=0,
+                          includes=["日式抹茶粉", "奶油奶酪"], sort_order=9),
+            TeaExperience(bnb_id=bnb_id, category="dessert", name="桂花酒酿圆子", description="庐山桂花+手工糯米圆子，甜糯温暖，经典江西甜品",
+                          duration="约10分钟", price=26, capacity=0,
+                          includes=["庐山桂花", "手工糯米圆子", "酒酿"], sort_order=10),
+            # 茶道体验 (experience)
+            TeaExperience(bnb_id=bnb_id, category="experience", name="晨雾采茶体验", description="清晨跟随茶农上山，在晨雾中亲手采摘嫩芽，感受茶山清晨的宁静",
                           duration="2小时", price=128, capacity=10,
-                          includes=["采茶竹篓", "茶农指导", "鲜制云雾茶一杯"], sort_order=1),
-            TeaExperience(bnb_id=bnb_id, name="手工制茶工坊", description="在制茶师傅指导下，亲手完成杀青、揉捻、干燥等工序，制作属于自己的茶",
+                          includes=["采茶竹篓", "茶农指导", "鲜制云雾茶一杯"], sort_order=11),
+            TeaExperience(bnb_id=bnb_id, category="experience", name="手工制茶工坊", description="在制茶师傅指导下，亲手完成杀青、揉捻、干燥等工序，制作属于自己的茶",
                           duration="3小时", price=268, capacity=6,
-                          includes=["茶叶原料", "制茶工具", "自制茶叶50g带回家"], sort_order=2),
-            TeaExperience(bnb_id=bnb_id, name="茶道品鉴课", description="学习盖碗、紫砂壶冲泡技法，品鉴三款不同年份的庐山茶",
+                          includes=["茶叶原料", "制茶工具", "自制茶叶50g带回家"], sort_order=12),
+            TeaExperience(bnb_id=bnb_id, category="experience", name="茶道品鉴课", description="学习盖碗、紫砂壶冲泡技法，品鉴三款不同年份的庐山茶",
                           duration="1.5小时", price=168, capacity=8,
-                          includes=["三款茶品", "茶点", "茶道器具使用"], sort_order=3),
+                          includes=["三款茶品", "茶点", "茶道器具使用"], sort_order=13),
         ]
         db.add_all(exps)
 
-        # 茶叶商品
+        # ── 茶叶伴手礼 ──
         prods = [
             TeaProduct(bnb_id=bnb_id, name="庐山云雾茶·特级", tea_type_id=types[0].id,
-                       price=288, weight="100g", description="明前手工采摘，一芽一叶，鲜醇回甘", stock=20, sort_order=1),
+                       price=288, weight="100g/盒", description="明前手工采摘，一芽一叶，鲜醇回甘，礼品木盒装", stock=20, sort_order=1),
             TeaProduct(bnb_id=bnb_id, name="庐山云雾茶·一级", tea_type_id=types[0].id,
-                       price=168, weight="100g", description="谷雨前采摘，香气浓郁，口感醇厚", stock=50, sort_order=2),
+                       price=168, weight="100g/盒", description="谷雨前采摘，香气浓郁，口感醇厚，纸盒精装", stock=50, sort_order=2),
             TeaProduct(bnb_id=bnb_id, name="庐山红茶·蜜韵", tea_type_id=types[1].id,
-                       price=138, weight="100g", description="蜜糖甜香，暖胃养心，冬日首选", stock=30, sort_order=3),
+                       price=138, weight="100g/盒", description="蜜糖甜香，暖胃养心，冬日首选", stock=30, sort_order=3),
+            TeaProduct(bnb_id=bnb_id, name="此山茶饼", tea_type_id=None,
+                       price=68, weight="200g/饼", description="庐山云雾茶粉+糯米手工压制，茶香扑鼻，配茶佳点", stock=40, sort_order=4),
+            TeaProduct(bnb_id=bnb_id, name="自采茶叶·礼品装", tea_type_id=None,
+                       price=388, weight="150g/木盒", description="茶场自采自制，精选一芽一叶，手工木盒精装，送礼体面", stock=15, sort_order=5),
+            TeaProduct(bnb_id=bnb_id, name="自采茶叶·袋装", tea_type_id=None,
+                       price=128, weight="80g/袋", description="茶场自采自制，日常饮用实惠装，自留首选", stock=30, sort_order=6),
         ]
         db.add_all(prods)
         db.commit()
-        print("  ✅ 茶园模块种子数据填充完成")
+        print("  ✅ 此山茶场种子数据填充完成")
     finally:
         db.close()
 

@@ -181,10 +181,10 @@ def build_keyword_routes(bnb_id="guishu"):
         (r"^(wifi|WiFi|无线|网络)$",
          lambda msg, m: format_wifi_info(bnb_id=bnb_id)),
 
-        # ── 茶园相关（山纪专属）──────────────────────────
-        (r"^(茶|茶园|品茶|茶叶|制茶|茶道|茶文化)$",
+        # ── 此山茶场（山纪专属）──────────────────────────
+        (r"^(茶|茶园|茶场|品茶|茶叶|制茶|茶道|茶文化|此山茶场)$",
          lambda msg, m: _tea_or_fallback(bnb_id)),
-        (r"^(茶园体验|采茶|制茶体验)$",
+        (r"^(茶园体验|采茶|制茶体验|此山茶)$",
          lambda msg, m: _tea_or_fallback(bnb_id)),
 
         # ── 疗愈相关（东林外专属）─────────────────────────
@@ -588,14 +588,14 @@ def handle_menu_click(event_key: str, bnb_id="guishu") -> str:
 
 
 def _tea_or_fallback(bnb_id="guishu"):
-    """茶园相关关键词处理：山纪专属，其他民宿引导"""
+    """此山茶场关键词处理：山纪专属，其他民宿引导"""
     if bnb_id == "shanji":
         from services.tea import format_tea_text
         return format_tea_text(bnb_id=bnb_id)
     cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
     return (
-        f"· 茶园体验是「{cfg['short_name']}」的特色服务哦～\n\n"
-        "山纪民宿坐拥庐山茶园，提供采茶、制茶、品茶等体验。\n"
+        f"· 此山茶场是「{cfg['short_name']}」的特色服务哦～\n\n"
+        "山纪此山茶场提供简餐、饮品、甜品、采茶制茶体验及茶叶伴手礼。\n"
         f"如需了解更多，请通过小程序切换到山纪民宿，或直接搜索「{cfg['short_name']}」预订～"
     )
 

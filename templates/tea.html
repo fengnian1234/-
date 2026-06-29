@@ -1,13 +1,84 @@
 {% extends "base.html" %}
-{% block title %}{{ bnb.short_name }} · 茶园{% endblock %}
+{% block title %}{{ bnb.short_name }} · 此山茶场{% endblock %}
 
 {% block content %}
-<!-- 茶园 Hero -->
+<!-- 此山茶场 Hero -->
 <section class="hero">
     <div class="hero-overlay">
-        <h1 class="hero-title"><i class="ph-thin ph-coffee" style="font-size:2rem"></i> 山纪茶园</h1>
-        <p class="hero-subtitle">庐山云雾茶香，伴你悠然山居</p>
-        <p class="hero-desc">自种茶园 · 采茶制茶体验 · 品茗茶道课 · 茶叶伴手礼</p>
+        <h1 class="hero-title"><i class="ph-thin ph-storefront" style="font-size:2rem"></i> 此山茶场</h1>
+        <p class="hero-subtitle">庐山索道旁，一方茶香庭院</p>
+        <p class="hero-desc">简餐 · 饮品 · 甜品 · 采茶制茶体验 · 茶叶伴手礼</p>
+    </div>
+</section>
+
+<!-- 营业时间与预约规则 -->
+<section class="section-padding">
+    <div class="container">
+        <div class="venue-info-card">
+            <div class="venue-info-row">
+                <div class="venue-info-item">
+                    <i class="ph-thin ph-clock"></i>
+                    <span class="venue-label">营业时间</span>
+                    <p>早场 7:00 — 10:00</p>
+                    <p>晚场 15:00 — 22:00</p>
+                    <p class="venue-note">点单截止 22:00 · 10:30 结束营业</p>
+                </div>
+                <div class="venue-info-item">
+                    <i class="ph-thin ph-calendar-check"></i>
+                    <span class="venue-label">预约制入场</span>
+                    <p>凭预约码或二维码核验</p>
+                    <p>验证后方可进入服务区与拍照打卡区</p>
+                    <p class="venue-note">请提前预约，恕不接待非预约访客</p>
+                </div>
+                <div class="venue-info-item">
+                    <i class="ph-thin ph-storefront"></i>
+                    <span class="venue-label">服务项目</span>
+                    <p>简餐 · 饮品 · 甜品</p>
+                    <p>茶饼 · 自采茶叶</p>
+                    <p class="venue-note">茶道体验需提前1天预约</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 简餐 -->
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title"><i class="ph-thin ph-bowl-food"></i> 简餐</h2>
+        <p class="section-desc">山泉煮面，茶香入饭，庐山本味</p>
+        <div class="tea-cat-grid" id="teaMeals">
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+        </div>
+    </div>
+</section>
+
+<!-- 饮品 -->
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title"><i class="ph-thin ph-coffee"></i> 饮品</h2>
+        <p class="section-desc">云雾冷萃，手冲对饮，山中一壶茶</p>
+        <div class="tea-cat-grid" id="teaDrinks">
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+        </div>
+    </div>
+</section>
+
+<!-- 甜品 -->
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title"><i class="ph-thin ph-cake"></i> 甜品</h2>
+        <p class="section-desc">茶冻凝香，桂花酿酒，一口江南</p>
+        <div class="tea-cat-grid" id="teaDesserts">
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+        </div>
     </div>
 </section>
 
@@ -19,17 +90,17 @@
         <div class="tea-type-grid" id="teaTypes">
             <div class="tea-type-card skeleton-pulse"><div class="tea-type-img">🍃</div><h3>加载中...</h3><p></p></div>
             <div class="tea-type-card skeleton-pulse"><div class="tea-type-img">🍂</div><h3>加载中...</h3><p></p></div>
-            <div class="tea-type-card skeleton-pulse"><div class="tea-type-img"><i class="ph-thin ph-coffee"></i></div><h3>加载中...</h3><p></p></div>
+            <div class="tea-type-card skeleton-pulse"><div class="tea-type-img"><i class="ph-thin ph-flower"></i></div><h3>加载中...</h3><p></p></div>
         </div>
     </div>
 </section>
 
-<!-- 茶园体验 -->
+<!-- 茶道体验 -->
 <section class="section-padding">
     <div class="container">
-        <h2 class="section-title"><i class="ph-thin ph-heart-straight"></i> 茶园体验</h2>
+        <h2 class="section-title"><i class="ph-thin ph-heart-straight"></i> 茶道体验</h2>
         <p class="section-desc">亲手采茶制茶，感受庐山茶文化的魅力</p>
-        <div class="tea-exp-grid" id="teaExps">
+        <div class="tea-cat-grid" id="teaExps">
             <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
             <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
             <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
@@ -37,12 +108,15 @@
     </div>
 </section>
 
-<!-- 茶叶商城 -->
+<!-- 茶叶伴手礼 -->
 <section class="section-padding">
     <div class="container">
-        <h2 class="section-title">🛍️ 茶叶伴手礼</h2>
-        <p class="section-desc">把庐山云雾茶带回家</p>
+        <h2 class="section-title"><i class="ph-thin ph-gift"></i> 茶叶伴手礼</h2>
+        <p class="section-desc">把庐山云雾茶带回家，茶饼/自采茶叶/礼品装</p>
         <div class="tea-prod-grid" id="teaProds">
+            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
             <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
             <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
             <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
@@ -56,19 +130,19 @@
 (async function(){
   // 加载茶叶品类
   try {
-    const types = await fetch('/api/tea/types?bnb_id=shanji').then(r=>r.json());
+    const types = await fetch('/api/tea/types?bnb_id={{ bnb.id }}').then(r=>r.json());
     if(types.success) renderTeaTypes(types.types);
   } catch(e){ console.error('茶叶加载失败:', e); }
 
-  // 加载茶园体验
+  // 加载消费项目（简餐/饮品/甜品/体验）
   try {
-    const exps = await fetch('/api/tea/experiences?bnb_id=shanji').then(r=>r.json());
-    if(exps.success) renderTeaExps(exps.experiences);
+    const exps = await fetch('/api/tea/experiences?bnb_id={{ bnb.id }}').then(r=>r.json());
+    if(exps.success) renderAllCategories(exps.experiences);
   } catch(e){ console.error('体验加载失败:', e); }
 
   // 加载茶叶商品
   try {
-    const prods = await fetch('/api/tea/products?bnb_id=shanji').then(r=>r.json());
+    const prods = await fetch('/api/tea/products?bnb_id={{ bnb.id }}').then(r=>r.json());
     if(prods.success) renderTeaProds(prods.products);
   } catch(e){ console.error('商品加载失败:', e); }
 })();
@@ -87,17 +161,28 @@ function renderTeaTypes(types) {
   `).join('');
 }
 
-function renderTeaExps(exps) {
-  const grid = document.getElementById('teaExps');
-  grid.innerHTML = exps.map(e => `
-    <div class="tea-exp-card">
-      <h3>${e.name}</h3>
-      <p class="price">¥${e.price} <span>/人</span></p>
-      <p><i class="ph-thin ph-clock"></i> ${e.duration||''}  |  <i class="ph-thin ph-users"></i> 最多${e.capacity||10}人</p>
-      <p>${e.description||''}</p>
-      ${e.includes ? `<div class="tea-includes">${e.includes.map(i=>'<span class="tag">'+i+'</span>').join(' ')}</div>` : ''}
-    </div>
-  `).join('');
+function renderAllCategories(exps) {
+  const categories = {
+    meal: { el: 'teaMeals', label: '简餐' },
+    drink: { el: 'teaDrinks', label: '饮品' },
+    dessert: { el: 'teaDesserts', label: '甜品' },
+    experience: { el: 'teaExps', label: '茶道体验' },
+  };
+  for(const [cat, cfg] of Object.entries(categories)) {
+    const items = exps.filter(e => e.category === cat);
+    const grid = document.getElementById(cfg.el);
+    if(!grid) continue;
+    if(!items.length) { grid.innerHTML = '<p class="empty-hint">暂无项目</p>'; continue; }
+    grid.innerHTML = items.map(e => `
+      <div class="tea-exp-card">
+        <h3>${e.name}</h3>
+        <p class="price">¥${e.price}${cat === 'experience' ? ' <span>/人</span>' : ''}</p>
+        ${e.duration ? `<p><i class="ph-thin ph-clock"></i> ${e.duration}${cat === 'experience' && e.capacity ? `  |  <i class="ph-thin ph-users"></i> 最多${e.capacity}人` : ''}</p>` : ''}
+        <p>${e.description||''}</p>
+        ${e.includes && e.includes.length ? `<div class="tea-includes">${e.includes.map(i=>'<span class="tag">'+i+'</span>').join(' ')}</div>` : ''}
+      </div>
+    `).join('');
+  }
 }
 
 function renderTeaProds(prods) {
