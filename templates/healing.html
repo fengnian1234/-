@@ -4,7 +4,7 @@
 {% set is_mp = request.args.get('mp') == '1' %}
 
 {% block content %}
-<section class="hero">
+<section class="hero hero--photo" style="background-image: url('{{ url_for('static', filename='img/exterior/donglinwai/疗愈置顶背景.jpg') }}'); background-position: center 55%">
     <div class="hero-overlay">
         <h1 class="hero-title"><i class="ph-thin ph-flower-lotus" style="font-size:2rem"></i> 疗愈空间</h1>
         <p class="hero-subtitle">东林寺旁 · 身心归处</p>
