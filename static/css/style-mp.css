@@ -226,6 +226,11 @@ body.mp-mode .review-author { font-size: 0.65rem; }
 body.mp-mode .review-slide { gap: 0.5rem; }
 body.mp-mode .carousel-nav { margin-top: 0.5rem; }
 
+/* ── 民宿环境 ── */
+body.mp-mode .env-gallery { gap: 0.5rem; margin-top: 0.8rem; }
+body.mp-mode .env-card { height: 120px; aspect-ratio: auto; border-radius: 10px; }
+body.mp-mode .env-card-label { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+
 /* ── FAQ ── */
 body.mp-mode .faq-q { font-size: 0.85rem; padding: 14px 12px; }
 body.mp-mode .faq-a { font-size: 0.78rem; padding: 12px; }
