@@ -4,21 +4,45 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 启动命令
 
-```bash
-# 启动开发服务器（从项目根目录执行）
-PYTHONUTF8=1 ~/python-embed/python.exe run.py
+**首选方式（跨设备通用，自动检测 Python 路径）：**
 
-# 单行快速启动（跳过启动横幅）
-PYTHONUTF8=1 ~/python-embed/python.exe -c "from app import app,init_app;init_app();app.run(host='0.0.0.0',port=5000,debug=True)"
+```bash
+# 启动开发服务器
+bash start.sh
 
 # 安装依赖
-~/python-embed/python.exe -m pip install <package>
+bash start.sh install
+```
+
+**手动备用方式（如需指定特定 Python）：**
+
+```bash
+# 嵌入式 Python（所有设备统一路径约定）
+PYTHONUTF8=1 ~/python-embed/python.exe run.py
+
+# 官方 Python 3.13（另一设备的路径示例）
+PYTHONUTF8=1 ~/AppData/Local/Programs/Python/Python313/python.exe run.py
+
+# 系统 Python
+PYTHONUTF8=1 python3 run.py
 
 # 停止所有 Python 进程
 taskkill //F //IM python.exe
 ```
 
-Python 是嵌入式发行版，位于 `~/python-embed/`（`~` = 当前用户主目录，跨设备通用）。**必须**设置 `PYTHONUTF8=1` 环境变量。如果 `.exe` 后缀不省略则用 `~/python-embed/python.exe`。
+`bash start.sh` 内部自动检测顺序：`~/python-embed/` → 系统 `python3` → 系统 `python`。**必须**设置 `PYTHONUTF8=1` 环境变量。
+
+### 多设备协作说明
+
+不同设备 Python 路径不同是正常现象。start.sh 已覆盖三种常见情况：
+
+| 场景 | Python 路径 | start.sh 是否自动发现 |
+|------|------------|:---:|
+| 嵌入式发行版 | `~/python-embed/python.exe` | ✅ |
+| 官方安装 (3.13) | `~/AppData/Local/Programs/Python/Python313/python.exe` | ✅ (via `python3`) |
+| 系统包管理器 | `/usr/bin/python3` | ✅ (via `python3`) |
+
+**新增设备只需确保 Python 可达即可协作，无需修改任何文件。**
 
 ## 工作流规范
 

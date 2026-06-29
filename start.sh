@@ -1,14 +1,32 @@
 #!/usr/bin/env bash
-# 跨设备通用启动脚本 — 自动检测嵌入式 Python 路径
+# 跨设备通用启动脚本 — 自动检测 Python 路径
 set -e
 
 cd "$(dirname "$0")"
 
-# 自动检测 Python：优先使用 ~/python-embed，fallback 到系统 python
+# 自动检测 Python，按优先级：
+#   1. ~/python-embed/         嵌入式发行版（项目标准）
+#   2. ~/AppData/Local/Programs/Python/Python3*/  官方安装（3.10~3.13）
+#   3. python3                 系统 PATH
+#   4. python                  系统 PATH
+
 if [ -f "$HOME/python-embed/python.exe" ]; then
     PYTHON="$HOME/python-embed/python.exe"
 elif [ -f "$HOME/python-embed/python" ]; then
     PYTHON="$HOME/python-embed/python"
+elif [ -d "$HOME/AppData/Local/Programs/Python" ]; then
+    # 找最新版本的官方 Python（按版本号降序）
+    PYTHON=$(ls -d "$HOME/AppData/Local/Programs/Python/Python3"* 2>/dev/null | sort -Vr | head -1)
+    if [ -n "$PYTHON" ] && [ -f "$PYTHON/python.exe" ]; then
+        PYTHON="$PYTHON/python.exe"
+    elif command -v python3 &>/dev/null; then
+        PYTHON=python3
+    elif command -v python &>/dev/null; then
+        PYTHON=python
+    else
+        echo "错误: 找不到 Python。请将嵌入式 Python 放到 ~/python-embed/ 或安装系统 Python。"
+        exit 1
+    fi
 elif command -v python3 &>/dev/null; then
     PYTHON=python3
 elif command -v python &>/dev/null; then
