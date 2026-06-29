@@ -3223,6 +3223,7 @@ h4 { font-size: 1.05rem; }
     border: 1px solid var(--color-border);
     box-shadow: 0 2px 12px rgba(0,0,0,0.04);
     max-width: 600px;
+    margin: 0 auto;
 }
 .reserve-field { margin-bottom: 20px; }
 .reserve-field-row { display: flex; gap: 16px; margin-bottom: 20px; }
@@ -3344,6 +3345,7 @@ h4 { font-size: 1.05rem; }
     border: 1px solid var(--color-border);
     text-align: center;
     max-width: 500px;
+    margin: 0 auto;
 }
 .reservation-code-display {
     background: var(--color-primary-dark);
@@ -3384,7 +3386,7 @@ h4 { font-size: 1.05rem; }
 .checkin-error { min-height: 18px; }
 
 /* ── 锁状态遮罩 ── */
-.lock-overlay-wrapper { position: relative; }
+.lock-overlay-wrapper { position: relative; max-width: 600px; margin: 0 auto; }
 .lock-overlay {
     width: 100%;
     padding: 60px 20px;
@@ -3394,6 +3396,7 @@ h4 { font-size: 1.05rem; }
     border-radius: 16px;
     border: 1px dashed var(--color-border);
     margin: 24px 0;
+    box-sizing: border-box;
 }
 .lock-message p { margin: 0; }
 
