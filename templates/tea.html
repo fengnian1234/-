@@ -568,12 +568,8 @@ async function loadQueueInfo(code) {
       el.innerHTML = `
         <div class="queue-row">
           <div class="queue-item">
-            <span class="queue-num">${d.date_position}<small>/${d.date_total}</small></span>
-            <span class="queue-label">今日排队</span>
-          </div>
-          <div class="queue-item">
             <span class="queue-num">${d.slot_position}<small>/${d.slot_total}</small></span>
-            <span class="queue-label">该时段内</span>
+            <span class="queue-label">该时段排队</span>
           </div>
           <div class="queue-item queue-item--wide">
             <span class="queue-num"><i class="ph-thin ph-clock"></i> ${d.estimated_time}</span>

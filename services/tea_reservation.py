@@ -368,8 +368,6 @@ def get_queue_info(code, bnb_id=None):
         return {
             "success": True,
             "queue": {
-                "date_position": date_position,
-                "date_total": date_total,
                 "slot_position": slot_position,
                 "slot_total": slot_total,
                 "estimated_time": estimated_time,
