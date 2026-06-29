@@ -27,24 +27,18 @@ def _today_str():
 
 
 def _generate_reservation_code():
-    """生成6位预约核验码（大写字母+数字，碰撞重试10次）"""
-    chars = string.ascii_uppercase + string.digits
+    """生成6位数字预约核验码（碰撞重试20次，百万分之一的碰撞概率绰绰有余）"""
     db = SessionLocal()
     try:
-        for _ in range(10):
-            code = ''.join(random.choices(chars, k=6))
+        for _ in range(20):
+            code = ''.join(random.choices(string.digits, k=6))
             if not db.query(TeaReservation).filter(
                 TeaReservation.reservation_code == code
             ).first():
                 return code
-        # 10次全碰撞，加一位
-        for _ in range(10):
-            code = ''.join(random.choices(chars, k=7))
-            if not db.query(TeaReservation).filter(
-                TeaReservation.reservation_code == code
-            ).first():
-                return code
-        return ''.join(random.choices(chars, k=8))
+        # 极端兜底：用时间戳后6位
+        import time
+        return str(int(time.time() * 1000))[-6:]
     finally:
         db.close()
 

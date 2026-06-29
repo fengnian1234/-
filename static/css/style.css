@@ -3446,6 +3446,49 @@ h4 { font-size: 1.05rem; }
 }
 .tea-hero-logo:hover { transform: scale(1.05); }
 
+/* ── Debug 验收切换栏 ── */
+.debug-toggle-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--color-white);
+    border: 1px dashed var(--color-border);
+    border-radius: 12px;
+    padding: 12px 18px;
+    max-width: 600px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+.debug-label {
+    font-size: 0.8rem;
+    color: var(--color-text-lighter);
+    margin-right: 6px;
+    white-space: nowrap;
+}
+.debug-toggle-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.debug-toggle-btn.active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+.debug-reset-link {
+    font-size: 0.78rem;
+    color: var(--color-text-lighter);
+    margin-left: auto;
+    text-decoration: none;
+    border-bottom: 1px dashed var(--color-border);
+}
+.debug-reset-link:hover { color: var(--color-danger); }
+
 /* ── 响应式 ── */
 @media (max-width: 600px) {
     .tea-hero-logo { width: 60px !important; height: 60px !important; }

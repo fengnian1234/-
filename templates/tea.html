@@ -43,6 +43,18 @@
     </div>
 </section>
 
+<!-- ═══════════════ debug 验收模式切换栏（仅 ?debug=1 可见） ═══════════════ -->
+<section class="section-padding" id="debugToggle" style="display:none;padding-bottom:0">
+    <div class="container">
+        <div class="debug-toggle-bar">
+            <span class="debug-label"><i class="ph-thin ph-bug"></i> 验收模式</span>
+            <button class="debug-toggle-btn active" id="debugBtnForm" onclick="switchDebugState('form')">📋 预约表单</button>
+            <button class="debug-toggle-btn" id="debugBtnResult" onclick="switchDebugState('result')">🎫 预约结果</button>
+            <a href="?debug=1&reset=1" class="debug-reset-link">清空状态</a>
+        </div>
+    </div>
+</section>
+
 <!-- ═══════════════════════ 区块A：菜单展示 ═══════════════════════ -->
 
 <!-- 简餐 -->
@@ -142,18 +154,6 @@
                 <div class="time-slot-grid" id="timeSlots"><p class="empty-hint">请先选择日期</p></div>
             </div>
 
-            <!-- 联系信息（选填） -->
-            <div class="reserve-field-row">
-                <div class="reserve-field flex-1">
-                    <label class="reserve-label">姓名 <span class="reserve-hint">（选填）</span></label>
-                    <input type="text" id="reserveName" class="reserve-input" placeholder="您的姓名" maxlength="20">
-                </div>
-                <div class="reserve-field flex-1">
-                    <label class="reserve-label">手机号 <span class="reserve-hint">（选填）</span></label>
-                    <input type="tel" id="reservePhone" class="reserve-input" placeholder="11位手机号" maxlength="11">
-                </div>
-            </div>
-
             <button class="btn btn-primary reserve-submit" id="reserveSubmit" onclick="submitReservation()">
                 <i class="ph-thin ph-check-circle"></i> 确认预约
             </button>
@@ -225,6 +225,7 @@
 // ══════════════════════════════════════════════════════════
 //  全局状态
 // ══════════════════════════════════════════════════════════
+const STORAGE_KEY = 'tea_reservation_{{ bnb.id }}';
 let _allExperiences = [];
 let _selectedDate = '';
 let _selectedTime = '';
@@ -234,12 +235,51 @@ let _orderUnlocked = false;
 let _cart = [];
 let _cartSeq = 0;
 let _currentOrderId = null;
+let _debugMode = false;        // ?debug=1 验收模式
+let _pageState = 'form';       // 'form' | 'result'
 
 // ══════════════════════════════════════════════════════════
 //  工具函数
 // ══════════════════════════════════════════════════════════
 function isAlcoholAvailable() { return new Date().getHours() >= 18; }
 function fmtPrice(p) { return '¥' + Number(p).toFixed(0); }
+
+// ══════════════════════════════════════════════════════════
+//  页面初始化 —— 根据 URL 参数和 localStorage 决定状态
+// ══════════════════════════════════════════════════════════
+(function initPage(){
+  const params = new URLSearchParams(location.search);
+
+  // ?reset=1 清除预约状态
+  if(params.get('reset') === '1') {
+    localStorage.removeItem(STORAGE_KEY);
+    // 去掉 URL 参数，干净展示表单
+    history.replaceState(null, '', location.pathname);
+    _pageState = 'form';
+  } else {
+    // 检查 localStorage 是否有有效预约
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved) {
+      try {
+        const res = JSON.parse(saved);
+        // 只对今天及未来的预约恢复状态
+        if(res.reservation_date >= new Date().toISOString().slice(0,10)) {
+          _reservationCode = res.reservation_code;
+          _orderUnlocked = res.ordering_unlocked || false;
+          _pageState = 'result';
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      } catch(e) { localStorage.removeItem(STORAGE_KEY); }
+    }
+  }
+
+  // ?debug=1 验收模式：显示状态切换栏
+  if(params.get('debug') === '1') {
+    _debugMode = true;
+    document.getElementById('debugToggle').style.display = '';
+  }
+})();
 
 // ══════════════════════════════════════════════════════════
 //  加载菜单数据
@@ -262,6 +302,12 @@ function fmtPrice(p) { return '¥' + Number(p).toFixed(0); }
 
   // 预约日期
   loadDates();
+
+  // 根据初始状态显示对应视图
+  if(_pageState === 'result') {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(saved) showReservationResult(saved);
+  }
 })();
 
 // ══════════════════════════════════════════════════════════
@@ -404,8 +450,6 @@ function selectGuestCount(n) {
 async function submitReservation() {
   const errEl = document.getElementById('reserveError');
   errEl.textContent = '';
-  const name = document.getElementById('reserveName').value.trim() || '访客';
-  const phone = document.getElementById('reservePhone').value.trim() || '00000000000';
   if(!_selectedDate) { errEl.textContent = '请选择预约日期'; return; }
   if(!_selectedTime) { errEl.textContent = '请选择到店时间'; return; }
 
@@ -417,7 +461,6 @@ async function submitReservation() {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        guest_name: name, guest_phone: phone,
         guest_count: _selectedCount,
         reservation_date: _selectedDate,
         reservation_time: _selectedTime,
@@ -425,8 +468,9 @@ async function submitReservation() {
       }),
     }).then(r=>r.json());
     if(r.success) {
-      _reservationCode = r.reservation.reservation_code;
-      showReservationResult(r.reservation);
+      // 保存到 localStorage，刷新页面自动展示结果
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(r.reservation));
+      location.reload();
     } else {
       errEl.textContent = r.error || '预约失败';
     }
@@ -440,7 +484,22 @@ async function submitReservation() {
 //  区块C：预约结果显示
 // ══════════════════════════════════════════════════════════
 function showReservationResult(res) {
+  _pageState = 'result';
+  _reservationCode = res.reservation_code;
+
+  // 切换视图：隐藏表单，显示结果
+  document.getElementById('reservationForm').style.display = 'none';
   document.getElementById('reservationResult').style.display = '';
+  updateDebugToggle();
+
+  // 更新解锁状态
+  if(res.ordering_unlocked) {
+    _orderUnlocked = true;
+    document.getElementById('orderLockOverlay').style.display = 'none';
+    document.getElementById('teaFab').style.display = '';
+    renderAllCategories(_allExperiences);
+  }
+
   document.getElementById('reserveResultCard').innerHTML = `
     <div class="reservation-code-display">${res.reservation_code}</div>
     <p class="reservation-code-hint">到店时请出示此预约码或二维码给工作人员核验</p>
@@ -460,10 +519,10 @@ function showReservationResult(res) {
       </div>
       <div class="reservation-detail-item">
         <span class="rd-label">状态</span>
-        <span class="rd-value" id="reserveStatus">🔒 待核验</span>
+        <span class="rd-value" id="reserveStatus">${res.ordering_unlocked ? '🔓 已核验 · 可点单' : '🔒 待核验'}</span>
       </div>
     </div>
-    <p class="reservation-checkin-hint">核验后即可解锁点单功能，请在下方输入预约码核验</p>
+    <button class="btn btn-sm" onclick="clearReservation()" style="margin-top:16px;padding:8px 24px;border-radius:20px;background:var(--color-bg);border:1.5px solid var(--color-border);color:var(--color-text);cursor:pointer;font-size:0.85rem"><i class="ph-thin ph-arrow-left"></i> 重新预约</button>
   `;
   // 生成二维码
   setTimeout(() => {
@@ -477,8 +536,54 @@ function showReservationResult(res) {
       });
     }
   }, 100);
-  // 滚动到结果区
   document.getElementById('reservationResult').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── 清除预约，回到表单 ──
+function clearReservation() {
+  localStorage.removeItem(STORAGE_KEY);
+  _reservationCode = '';
+  _orderUnlocked = false;
+  _pageState = 'form';
+  document.getElementById('reservationForm').style.display = '';
+  document.getElementById('reservationResult').style.display = 'none';
+  document.getElementById('orderLockOverlay').style.display = '';
+  document.getElementById('teaFab').style.display = 'none';
+  renderAllCategories(_allExperiences);
+  updateDebugToggle();
+  document.getElementById('reservationForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── debug 模式：在表单和结果间切换 ──
+function switchDebugState(state) {
+  if(state === 'form') {
+    document.getElementById('reservationForm').style.display = '';
+    document.getElementById('reservationResult').style.display = 'none';
+  } else {
+    // 有真实预约用真实数据，否则用模拟数据
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved) {
+      showReservationResult(JSON.parse(saved));
+    } else {
+      showReservationResult({
+        reservation_code: '123456',
+        reservation_date: new Date().toISOString().slice(0,10),
+        reservation_time: '15:30',
+        guest_count: 2,
+        status: 'pending',
+        ordering_unlocked: false,
+      });
+    }
+  }
+  updateDebugToggle();
+}
+
+function updateDebugToggle() {
+  const formBtn = document.getElementById('debugBtnForm');
+  const resultBtn = document.getElementById('debugBtnResult');
+  if(!formBtn || !resultBtn) return;
+  formBtn.classList.toggle('active', _pageState === 'form');
+  resultBtn.classList.toggle('active', _pageState === 'result');
 }
 
 // ══════════════════════════════════════════════════════════
