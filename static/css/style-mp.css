@@ -567,3 +567,51 @@ body.mp-mode .page-header { display: none; }
 [data-theme="dark"] body.mp-mode .room-original-price { color: var(--color-text-lighter); }
 [data-theme="dark"] body.mp-mode .room-remaining.ok { color: var(--color-primary-light); }
 [data-theme="dark"] body.mp-mode .room-remaining.low { color: #d89080; }
+
+/* ══════════════════════════════════════════════════════════
+   茶场预约模块 — mp-mode 精简
+   ══════════════════════════════════════════════════════════ */
+
+/* 隐藏顶部 CTA 按钮（小程序里按钮占空间，页面短无需跳转） */
+body.mp-mode .venue-cta { display: none; }
+
+/* 场地信息卡片缩窄 */
+body.mp-mode .venue-info-card { padding: 16px 12px; }
+body.mp-mode .venue-info-row { gap: 8px; flex-wrap: wrap; }
+body.mp-mode .venue-info-item { flex: 1 1 45%; min-width: 0; }
+body.mp-mode .venue-info-item p { font-size: 0.78rem; line-height: 1.5; margin: 2px 0; }
+body.mp-mode .venue-label { font-size: 0.78rem; }
+
+/* 预约卡片缩窄 */
+body.mp-mode .reserve-card { padding: 18px 14px; border-radius: 12px; }
+body.mp-mode .reserve-field { margin-bottom: 12px; }
+body.mp-mode .reserve-label { font-size: 0.78rem; margin-bottom: 6px; }
+
+/* 人数选择器 — 变小 */
+body.mp-mode .guest-count-card { padding: 12px 8px; }
+body.mp-mode .guest-count-card .count-icon { font-size: 1.5rem; }
+body.mp-mode .guest-count-card .count-label { font-size: 0.85rem; }
+
+/* 日期 chip 更紧凑 */
+body.mp-mode .date-chip { padding: 6px 10px; min-width: 50px; border-radius: 8px; }
+body.mp-mode .date-chip-label { font-size: 0.75rem; }
+body.mp-mode .date-chip-weekday { font-size: 0.65rem; }
+body.mp-mode .date-chip-date { font-size: 0.6rem; }
+
+/* 时间槽网格 — 变小变密 */
+body.mp-mode .time-slot-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+body.mp-mode .time-slot-chip { padding: 8px 4px; font-size: 0.78rem; border-radius: 8px; }
+
+/* 预约按钮 */
+body.mp-mode .reserve-submit { padding: 10px; font-size: 0.9rem; border-radius: 10px; }
+
+/* 预约结果卡片 */
+body.mp-mode .reserve-result-card { padding: 18px 14px; }
+body.mp-mode .reservation-code-display { font-size: 1.4rem; letter-spacing: 0.2em; padding: 14px; }
+body.mp-mode .reservation-detail-grid { gap: 8px; }
+body.mp-mode .reservation-detail-item { padding: 8px 12px; }
+body.mp-mode .rd-value { font-size: 0.85rem; }
+
+/* 排队信息 */
+body.mp-mode .queue-info { padding: 12px 14px; }
+body.mp-mode .queue-num { font-size: 1.1rem; }
