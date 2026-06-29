@@ -1155,8 +1155,9 @@ def api_tea_reservation_book():
 
 
 @app.route("/api/tea/reservation/checkin", methods=["POST"])
+@_require_staff_auth
 def api_tea_reservation_checkin():
-    """核验预约码，解锁点单功能（山纪专属）"""
+    """核验预约码，解锁点单功能（员工操作，山纪专属）"""
     from services.tea_reservation import check_in_reservation
     bnb_id = request.args.get("bnb_id")  # None → 服务层默认 shanji
     data = request.get_json(silent=True) or {}

@@ -177,13 +177,9 @@
         <div class="lock-message">
             <i class="ph-thin ph-lock-key" style="font-size:2.5rem;display:block;margin-bottom:12px;opacity:0.5"></i>
             <p style="font-weight:600;margin-bottom:4px">点单功能已锁定</p>
-            <p style="font-size:0.85rem;color:var(--color-text-lighter)">请先核验预约码解锁后即可点单</p>
-            <div class="checkin-inline" style="margin-top:16px">
-                <input type="text" id="checkinCodeInput" class="reserve-input" placeholder="输入6位预约码" maxlength="6" style="width:160px;text-align:center;text-transform:uppercase;font-size:1.1rem;letter-spacing:0.2em">
-                <button class="btn btn-sm btn-primary" onclick="doCheckin()" style="margin-left:8px">核验解锁</button>
-            </div>
-            <p class="checkin-error" id="checkinError" style="margin-top:8px;font-size:0.8rem;color:var(--color-danger)"></p>
-            <p class="checkin-ok" id="checkinOk" style="margin-top:8px;font-size:0.85rem;color:var(--color-success);display:none"></p>
+            <p style="font-size:0.85rem;color:var(--color-text-lighter)">到店后请向工作人员出示预约码或二维码，由工作人员核验</p>
+            <button class="btn btn-sm" onclick="checkUnlockStatus()" style="margin-top:14px;padding:8px 24px;border-radius:20px;background:var(--color-bg);border:1.5px solid var(--color-border);color:var(--color-text);cursor:pointer;font-size:0.85rem"><i class="ph-thin ph-arrows-clockwise"></i> 已到店，检查核验状态</button>
+            <p class="checkin-ok" id="checkinOk" style="margin-top:12px;font-size:0.9rem;color:var(--color-text-lighter);display:none"></p>
         </div>
     </div>
 </div>
@@ -482,45 +478,29 @@ function showReservationResult(res) {
   }, 100);
   // 滚动到结果区
   document.getElementById('reservationResult').scrollIntoView({ behavior: 'smooth' });
-  // 预填核验码
-  document.getElementById('checkinCodeInput').value = res.reservation_code;
 }
 
 // ══════════════════════════════════════════════════════════
-//  区块D：核验解锁 + 点单购物车
+//  区块D：到店后刷新核验状态（核验由员工操作）
 // ══════════════════════════════════════════════════════════
-async function doCheckin() {
-  const errEl = document.getElementById('checkinError');
+async function checkUnlockStatus() {
+  if(!_reservationCode) return;
   const okEl = document.getElementById('checkinOk');
-  errEl.textContent = ''; okEl.style.display = 'none';
-  const code = document.getElementById('checkinCodeInput').value.trim().toUpperCase();
-  if(!code || code.length < 6) { errEl.textContent = '请输入6位预约码'; return; }
-
   try {
-    const r = await fetch('/api/tea/reservation/checkin', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ reservation_code: code }),
-    }).then(r=>r.json());
-    if(r.success) {
+    const r = await fetch(`/api/tea/reservation/status?code=${_reservationCode}`).then(r=>r.json());
+    if(r.success && r.reservation && r.reservation.ordering_unlocked) {
       _orderUnlocked = true;
-      _reservationCode = code;
-      // 隐藏遮罩
       document.getElementById('orderLockOverlay').style.display = 'none';
       document.getElementById('teaFab').style.display = '';
-      // 重新渲染菜单（显示点单按钮）
       renderAllCategories(_allExperiences);
-      // 更新结果区状态
       const stEl = document.getElementById('reserveStatus');
       if(stEl) stEl.innerHTML = '🔓 已核验 · 可点单';
-      okEl.style.display = ''; okEl.textContent = r.message || '核验成功，请开始点单！';
-      document.getElementById('reservationResult').scrollIntoView({ behavior: 'smooth' });
+      okEl.style.display = ''; okEl.textContent = '核验成功，请开始点单！';
     } else {
-      errEl.textContent = r.error || '核验失败';
+      okEl.style.display = ''; okEl.textContent = '尚未核验，请先到店由工作人员核验';
+      okEl.style.color = 'var(--color-text-lighter)';
     }
-  } catch(e) {
-    errEl.textContent = '网络错误，请重试';
-  }
+  } catch(e) {}
 }
 
 // ── 购物车逻辑 ──
@@ -651,9 +631,6 @@ setInterval(() => {
   }
 }, 60000);
 
-// ── 回车键核验 ──
-document.getElementById('checkinCodeInput').addEventListener('keydown', function(e) {
-  if(e.key === 'Enter') doCheckin();
-});
+// 核验由员工在 staff 页面操作，客人端不提供自助核验
 </script>
 {% endblock %}
