@@ -15,7 +15,7 @@ import requests
 
 from models import SessionLocal, PlatformMention
 from services.logger import info, warning, debug
-from config import MONITOR_PLATFORMS
+from config import MONITOR_PLATFORMS, BNB_CONFIGS
 
 # 确保 subprocess 能找到 opencli（npm 全局安装路径）
 _NPM_BIN = os.path.expandvars(r"%APPDATA%\npm")
@@ -396,7 +396,6 @@ def _search_platform(platform: str, query: str, max_results: int = 5, bnb_id: st
     """
     config = PLATFORM_SEARCH_CONFIG.get(platform, {"type": "websearch"})
     if config.get("query_template"):
-        from config import BNB_CONFIGS
         cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
         query = config["query_template"].replace("{short_name}", cfg["short_name"]).replace("{name}", cfg["name"])
     elif config.get("query_override"):
