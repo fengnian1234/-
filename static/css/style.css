@@ -689,20 +689,17 @@ h4 { font-size: 1.05rem; }
 [data-theme="dark"] .hero--photo {
     background-color: color-mix(in srgb, var(--color-primary-dark) 30%, black);
 }
-/* 半透明色罩 — 底部加深保证文字可读，顶部融入主题色 */
+/* 半透明色罩 — 底部微微加深保证白色文字可读，中上部保持照片原色 */
 .hero--photo::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: 1;
-    background:
-        radial-gradient(ellipse at 50% 15%, var(--bnb-color, var(--color-primary)) 0%, transparent 55%),
-        linear-gradient(180deg,
-            rgba(0,0,0,0.15) 0%,
-            rgba(0,0,0,0.02) 30%,
-            rgba(0,0,0,0.30) 80%,
-            rgba(0,0,0,0.45) 100%);
-    opacity: 0.92;
+    background: linear-gradient(180deg,
+            transparent 0%,
+            transparent 55%,
+            rgba(0,0,0,0.20) 80%,
+            rgba(0,0,0,0.38) 100%);
 }
 /* 保留山形剪影，但降低高度适配照片 */
 .hero--photo::after {
