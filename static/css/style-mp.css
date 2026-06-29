@@ -586,7 +586,8 @@ body.mp-mode .reserve-card { padding: 18px 14px; border-radius: 12px; }
 body.mp-mode .reserve-field { margin-bottom: 12px; }
 body.mp-mode .reserve-label { font-size: 0.78rem; margin-bottom: 6px; }
 
-/* 人数选择器 — 变小 */
+/* 人数选择器 — 变小 + 保持同行 */
+body.mp-mode .guest-count-selector { flex-direction: row !important; }
 body.mp-mode .guest-count-card { padding: 12px 8px; }
 body.mp-mode .guest-count-card .count-icon { font-size: 1.5rem; }
 body.mp-mode .guest-count-card .count-label { font-size: 0.85rem; }
