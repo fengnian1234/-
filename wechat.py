@@ -595,7 +595,8 @@ def _tea_or_fallback(bnb_id="guishu"):
     cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
     return (
         f"· 此山茶场是「{cfg['short_name']}」的特色服务哦～\n\n"
-        "山纪此山茶场提供简餐、饮品、甜品、采茶制茶体验及茶叶伴手礼。\n"
+        "山纪此山茶场提供简餐、饮品、甜品、晚场酒水(18:00后)及晚场演出。\n"
+        "预约制入场，单人/双人可选，提前7天预约。\n"
         f"如需了解更多，请通过小程序切换到山纪民宿，或直接搜索「{cfg['short_name']}」预订～"
     )
 

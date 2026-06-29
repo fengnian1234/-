@@ -739,6 +739,46 @@ class TeaProduct(Base):
 
 
 # ══════════════════════════════════════════════════════════
+#  此山茶场预约（云上·山纪专属）
+# ══════════════════════════════════════════════════════════
+class TeaReservation(Base):
+    """此山茶场预约记录"""
+    __tablename__ = "tea_reservations"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="shanji", index=True)
+    openid = Column(String(100), nullable=False, index=True)
+    guest_name = Column(String(50), nullable=False, comment="客人姓名")
+    guest_phone = Column(String(20), nullable=False, comment="联系电话")
+    guest_count = Column(Integer, default=1, comment="人数: 1=单人, 2=双人")
+    reservation_date = Column(String(20), nullable=False, comment="预约日期 YYYY-MM-DD")
+    reservation_time = Column(String(10), nullable=False, comment="到店时间 HH:MM")
+    reservation_code = Column(String(6), unique=True, comment="6位预约核验码")
+    status = Column(String(20), default="pending", comment="pending/checked_in/completed/cancelled")
+    ordering_unlocked = Column(Boolean, default=False, comment="点单功能是否已解锁")
+    checked_in_at = Column(DateTime, comment="核验到店时间")
+    note = Column(String(200), comment="备注")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "bnb_id": self.bnb_id,
+            "guest_name": self.guest_name,
+            "guest_phone": self.guest_phone,
+            "guest_count": self.guest_count,
+            "reservation_date": self.reservation_date,
+            "reservation_time": self.reservation_time,
+            "reservation_code": self.reservation_code,
+            "status": self.status,
+            "ordering_unlocked": self.ordering_unlocked,
+            "checked_in_at": self.checked_in_at.strftime("%Y-%m-%d %H:%M") if self.checked_in_at else None,
+            "note": self.note,
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M") if self.created_at else None,
+        }
+
+
+# ══════════════════════════════════════════════════════════
 #  疗愈模块（云上·东林外专属）
 # ══════════════════════════════════════════════════════════
 class HealingCourse(Base):
@@ -905,6 +945,7 @@ def run_migrations():
     index_migrations = {
         "bookings": [("openid", "idx_bookings_openid")],
         "message_logs": [("openid", "idx_message_logs_openid"), ("bnb_id", "idx_message_logs_bnb_id")],
+        "tea_reservations": [("openid", "idx_tea_resv_openid"), ("reservation_code", "idx_tea_resv_code")],
     }
 
     with engine.connect() as conn:

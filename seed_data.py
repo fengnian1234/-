@@ -1385,16 +1385,26 @@ def seed_tea(bnb_id="shanji"):
             TeaExperience(bnb_id=bnb_id, category="dessert", name="桂花酒酿圆子", description="庐山桂花+手工糯米圆子，甜糯温暖，经典江西甜品",
                           duration="约10分钟", price=26, capacity=0,
                           includes=["庐山桂花", "手工糯米圆子", "酒酿"], sort_order=10),
-            # 茶道体验 (experience)
-            TeaExperience(bnb_id=bnb_id, category="experience", name="晨雾采茶体验", description="清晨跟随茶农上山，在晨雾中亲手采摘嫩芽，感受茶山清晨的宁静",
-                          duration="2小时", price=128, capacity=10,
-                          includes=["采茶竹篓", "茶农指导", "鲜制云雾茶一杯"], sort_order=11),
-            TeaExperience(bnb_id=bnb_id, category="experience", name="手工制茶工坊", description="在制茶师傅指导下，亲手完成杀青、揉捻、干燥等工序，制作属于自己的茶",
-                          duration="3小时", price=268, capacity=6,
-                          includes=["茶叶原料", "制茶工具", "自制茶叶50g带回家"], sort_order=12),
-            TeaExperience(bnb_id=bnb_id, category="experience", name="茶道品鉴课", description="学习盖碗、紫砂壶冲泡技法，品鉴三款不同年份的庐山茶",
-                          duration="1.5小时", price=168, capacity=8,
-                          includes=["三款茶品", "茶点", "茶道器具使用"], sort_order=13),
+            # 晚场酒水 (alcohol) — 18:00后才可购买
+            TeaExperience(bnb_id=bnb_id, category="alcohol", name="庐山云雾精酿", description="此山茶场联名精酿啤酒，云雾茶花入酿，清爽回甘",
+                          duration="即刻出杯", price=38, capacity=0,
+                          includes=["云雾茶花", "精酿啤酒"], sort_order=11),
+            TeaExperience(bnb_id=bnb_id, category="alcohol", name="青梅煮酒", description="庐山青梅+米酒温煮，酸甜暖胃，配茶更佳",
+                          duration="约10分钟", price=48, capacity=0,
+                          includes=["庐山青梅", "手工米酒"], sort_order=12),
+            TeaExperience(bnb_id=bnb_id, category="alcohol", name="桂花米酿", description="庐山桂花酿制米酒，清甜不腻，冰镇更佳",
+                          duration="即刻出杯", price=32, capacity=0,
+                          includes=["庐山桂花", "糯米酒"], sort_order=13),
+            TeaExperience(bnb_id=bnb_id, category="alcohol", name="特调茶酒", description="云雾茶+金酒+柠檬，茶香鸡尾酒，晚场限定",
+                          duration="即刻出杯", price=58, capacity=0,
+                          includes=["云雾茶", "金酒", "柠檬"], sort_order=14),
+            # 晚场演出 (performance)
+            TeaExperience(bnb_id=bnb_id, category="performance", name="山间音乐会", description="晚场民谣弹唱+手碟即兴，庭院Live，山风伴奏",
+                          duration="约45分钟/场", price=68, capacity=30,
+                          includes=["民谣弹唱", "手碟即兴", "庭院坐席"], sort_order=15),
+            TeaExperience(bnb_id=bnb_id, category="performance", name="茶山露天电影", description="星空下的露天电影放映，配茶饮一杯+小食，山夜独好",
+                          duration="约2小时", price=38, capacity=50,
+                          includes=["露天放映", "茶饮一杯", "小食拼盘"], sort_order=16),
         ]
         db.add_all(exps)
 

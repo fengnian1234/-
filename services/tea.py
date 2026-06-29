@@ -67,7 +67,7 @@ def format_tea_text(bnb_id=None):
     # 消费项目按分类
     exps = get_tea_experiences(bnb_id=bnb_id)
     if exps:
-        cat_labels = {"meal": "简餐", "drink": "饮品", "dessert": "甜品", "experience": "茶道体验"}
+        cat_labels = {"meal": "简餐", "drink": "饮品", "dessert": "甜品", "alcohol": "晚场酒水(18:00后)", "performance": "晚场演出"}
         by_cat = {}
         for e in exps:
             by_cat.setdefault(e.get("category", "experience"), []).append(e)

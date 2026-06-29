@@ -1116,6 +1116,73 @@ def api_tea_products():
     bnb_id = request.args.get("bnb_id", get_current_bnb_id())
     return jsonify({"success": True, "products": get_tea_products(bnb_id=bnb_id)})
 
+
+# ══════════════════════════════════════════════════════════
+#  此山茶场预约 API（云上·山纪专属）
+# ══════════════════════════════════════════════════════════
+
+@app.route("/api/tea/reservation/dates")
+def api_tea_reservation_dates():
+    """获取可预约日期列表（7天窗口）"""
+    from services.tea_reservation import get_available_dates
+    bnb_id = request.args.get("bnb_id", get_current_bnb_id())
+    return jsonify({"success": True, "dates": get_available_dates(bnb_id=bnb_id)})
+
+
+@app.route("/api/tea/reservation/slots")
+def api_tea_reservation_slots():
+    """获取指定日期的可用时间槽"""
+    from services.tea_reservation import get_available_slots
+    bnb_id = request.args.get("bnb_id", get_current_bnb_id())
+    date_str = request.args.get("date", datetime.now().strftime("%Y-%m-%d"))
+    result = get_available_slots(date_str, bnb_id=bnb_id)
+    if "error" in result:
+        return jsonify({"success": False, "error": result["error"]}), 400
+    return jsonify({"success": True, **result})
+
+
+@app.route("/api/tea/reservation/book", methods=["POST"])
+def api_tea_reservation_book():
+    """创建茶场预约（山纪专属）"""
+    from services.tea_reservation import create_reservation
+    bnb_id = request.args.get("bnb_id")  # None → 服务层默认 shanji
+    data = request.get_json(silent=True) or {}
+    data["openid"] = data.get("openid", "web_user")
+    result = create_reservation(data, bnb_id=bnb_id)
+    if "error" in result:
+        return jsonify({"success": False, "error": result["error"]}), 400
+    return jsonify(result)
+
+
+@app.route("/api/tea/reservation/checkin", methods=["POST"])
+def api_tea_reservation_checkin():
+    """核验预约码，解锁点单功能（山纪专属）"""
+    from services.tea_reservation import check_in_reservation
+    bnb_id = request.args.get("bnb_id")  # None → 服务层默认 shanji
+    data = request.get_json(silent=True) or {}
+    reservation_code = data.get("reservation_code", "").strip().upper()
+    if not reservation_code:
+        return jsonify({"success": False, "error": "请输入预约码"}), 400
+    result = check_in_reservation(reservation_code, bnb_id=bnb_id)
+    if "error" in result:
+        return jsonify({"success": False, "error": result["error"]}), 400
+    return jsonify(result)
+
+
+@app.route("/api/tea/reservation/status")
+def api_tea_reservation_status():
+    """查询预约状态和点单解锁状态"""
+    from services.tea_reservation import get_reservation_by_code
+    bnb_id = request.args.get("bnb_id", get_current_bnb_id())
+    code = request.args.get("code", "").strip().upper()
+    if not code:
+        return jsonify({"success": False, "error": "缺少预约码"}), 400
+    result = get_reservation_by_code(code, bnb_id=bnb_id)
+    if not result:
+        return jsonify({"success": False, "error": "预约码无效"}), 404
+    return jsonify({"success": True, "reservation": result})
+
+
 # ══════════════════════════════════════════════════════════
 #  疗愈模块 API（云上·东林外）
 # ══════════════════════════════════════════════════════════

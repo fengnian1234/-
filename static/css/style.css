@@ -3212,6 +3212,236 @@ h4 { font-size: 1.05rem; }
 }
 
 /* ══════════════════════════════════════════════════════════
+   此山茶场预约+点单组件
+   ══════════════════════════════════════════════════════════ */
+
+/* ── 预约卡片 ── */
+.reserve-card {
+    background: var(--color-white);
+    border-radius: 16px;
+    padding: 32px 28px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    max-width: 600px;
+}
+.reserve-field { margin-bottom: 20px; }
+.reserve-field-row { display: flex; gap: 16px; margin-bottom: 20px; }
+.reserve-field-row .flex-1 { flex: 1; margin-bottom: 0; }
+.reserve-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 8px;
+}
+.reserve-hint { font-weight: 400; font-size: 0.78rem; color: var(--color-text-lighter); }
+.reserve-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    background: var(--color-bg);
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+.reserve-input:focus { border-color: var(--color-primary); }
+.reserve-submit { width: 100%; margin-top: 8px; }
+.reserve-error { color: var(--color-danger); font-size: 0.85rem; margin-top: 8px; text-align: center; min-height: 20px; }
+
+/* ── 人数选择卡片 ── */
+.guest-count-selector { display: flex; gap: 16px; }
+.guest-count-card {
+    flex: 1;
+    padding: 20px 16px;
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--color-bg);
+}
+.guest-count-card:hover { border-color: color-mix(in srgb, var(--color-primary) 50%, transparent); }
+.guest-count-card.selected {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+.guest-count-card .count-icon { font-size: 2rem; color: var(--color-primary); display: block; margin-bottom: 4px; }
+.guest-count-card .count-label { font-weight: 600; font-size: 1rem; }
+
+/* ── 日期横向滚动条 ── */
+.date-chip-strip {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 4px 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.date-chip-strip::-webkit-scrollbar { display: none; }
+.date-chip {
+    flex: 0 0 auto;
+    padding: 10px 18px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    white-space: nowrap;
+    background: var(--color-bg);
+    transition: all 0.2s;
+    min-width: 72px;
+}
+.date-chip:hover { border-color: color-mix(in srgb, var(--color-primary) 50%, transparent); }
+.date-chip.selected {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: #fff;
+}
+.date-chip.selected .date-chip-label,
+.date-chip.selected .date-chip-weekday,
+.date-chip.selected .date-chip-date { color: #fff; }
+.date-chip-label { display: block; font-weight: 600; font-size: 0.9rem; }
+.date-chip-weekday { display: block; font-size: 0.75rem; color: var(--color-text-light); }
+.date-chip-date { display: block; font-size: 0.7rem; color: var(--color-text-lighter); margin-top: 2px; }
+
+/* ── 时间槽选择器 ── */
+.time-slot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+}
+.time-slot-chip {
+    padding: 10px 8px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: var(--color-bg);
+    transition: all 0.2s;
+}
+.time-slot-chip:hover { border-color: color-mix(in srgb, var(--color-primary) 50%, transparent); }
+.time-slot-chip.selected {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    color: var(--color-primary-dark);
+}
+.time-slot-chip.unavailable {
+    opacity: 0.35;
+    cursor: not-allowed;
+    background: var(--color-bg-light);
+}
+.slot-period { display: block; font-size: 0.7rem; color: var(--color-text-lighter); margin-top: 2px; }
+
+/* ── 预约结果卡片 ── */
+.reserve-result-card {
+    background: var(--color-white);
+    border-radius: 16px;
+    padding: 32px 28px;
+    border: 1px solid var(--color-border);
+    text-align: center;
+    max-width: 500px;
+}
+.reservation-code-display {
+    background: var(--color-primary-dark);
+    color: #fff;
+    font-size: 2.2rem;
+    letter-spacing: 0.3em;
+    text-align: center;
+    padding: 20px;
+    border-radius: 12px;
+    font-family: "SF Mono", "Cascadia Code", "Consolas", monospace;
+    font-weight: 700;
+}
+.reservation-code-hint {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    margin: 12px 0 20px;
+}
+.reservation-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+    text-align: left;
+}
+.reservation-detail-item {
+    background: var(--color-bg);
+    padding: 12px 16px;
+    border-radius: 10px;
+}
+.rd-label { display: block; font-size: 0.75rem; color: var(--color-text-lighter); margin-bottom: 4px; }
+.rd-value { display: block; font-size: 0.95rem; font-weight: 600; }
+.reservation-checkin-hint {
+    font-size: 0.8rem;
+    color: var(--color-text-lighter);
+    margin-top: 12px;
+}
+.checkin-inline { display: flex; align-items: center; justify-content: center; }
+.checkin-error { min-height: 18px; }
+
+/* ── 锁状态遮罩 ── */
+.lock-overlay-wrapper { position: relative; }
+.lock-overlay {
+    width: 100%;
+    padding: 60px 20px;
+    text-align: center;
+    background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+    backdrop-filter: blur(6px);
+    border-radius: 16px;
+    border: 1px dashed var(--color-border);
+    margin: 24px 0;
+}
+.lock-message p { margin: 0; }
+
+/* ── 酒水时间遮罩 ── */
+.alcohol-locked { position: relative; opacity: 0.6; pointer-events: none; }
+.alcohol-locked-tag {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-bg);
+    color: var(--color-text-lighter);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 2;
+    border: 1px solid var(--color-border);
+}
+
+/* ── 茶场点单按钮 ── */
+.btn-order-tea {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    border: 1.5px solid var(--color-primary);
+    background: transparent;
+    color: var(--color-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-order-tea:hover {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+/* ── 响应式 ── */
+@media (max-width: 600px) {
+    .guest-count-selector { flex-direction: column; }
+    .reserve-field-row { flex-direction: column; }
+    .time-slot-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+    .reservation-code-display { font-size: 1.5rem; letter-spacing: 0.2em; }
+    .reservation-detail-grid { grid-template-columns: 1fr; }
+}
+
+/* ══════════════════════════════════════════════════════════
    疗愈板块（云上·东林外）
    ══════════════════════════════════════════════════════════ */
 .healing-category {

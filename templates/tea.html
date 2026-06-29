@@ -7,11 +7,11 @@
     <div class="hero-overlay">
         <h1 class="hero-title"><i class="ph-thin ph-storefront" style="font-size:2rem"></i> 此山茶场</h1>
         <p class="hero-subtitle">庐山索道旁，一方茶香庭院</p>
-        <p class="hero-desc">简餐 · 饮品 · 甜品 · 采茶制茶体验 · 茶叶伴手礼</p>
+        <p class="hero-desc">简餐 · 饮品 · 甜品 · 晚场酒水 · 晚场演出</p>
     </div>
 </section>
 
-<!-- 营业时间与预约规则 -->
+<!-- ── 营业时间与预约规则 ── -->
 <section class="section-padding">
     <div class="container">
         <div class="venue-info-card">
@@ -26,32 +26,30 @@
                 <div class="venue-info-item">
                     <i class="ph-thin ph-calendar-check"></i>
                     <span class="venue-label">预约制入场</span>
-                    <p>凭预约码或二维码核验</p>
-                    <p>验证后方可进入服务区与拍照打卡区</p>
-                    <p class="venue-note">请提前预约，恕不接待非预约访客</p>
+                    <p>单人/双人可选 · 提前7天</p>
+                    <p>凭预约码核验后解锁点单</p>
+                    <p class="venue-note">每日0点开放最新一天预约</p>
                 </div>
                 <div class="venue-info-item">
-                    <i class="ph-thin ph-storefront"></i>
+                    <i class="ph-thin ph-wine"></i>
                     <span class="venue-label">服务项目</span>
                     <p>简餐 · 饮品 · 甜品</p>
-                    <p>茶饼 · 自采茶叶</p>
-                    <p class="venue-note">茶道体验需提前1天预约</p>
+                    <p>晚场酒水 · 晚场演出</p>
+                    <p class="venue-note">酒水 18:00 后开放购买</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
+<!-- ═══════════════════════ 区块A：菜单展示 ═══════════════════════ -->
+
 <!-- 简餐 -->
 <section class="section-padding">
     <div class="container">
         <h2 class="section-title"><i class="ph-thin ph-bowl-food"></i> 简餐</h2>
         <p class="section-desc">山泉煮面，茶香入饭，庐山本味</p>
-        <div class="tea-cat-grid" id="teaMeals">
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-        </div>
+        <div class="tea-cat-grid" id="teaMeals"><p class="empty-hint">加载中...</p></div>
     </div>
 </section>
 
@@ -60,12 +58,7 @@
     <div class="container">
         <h2 class="section-title"><i class="ph-thin ph-coffee"></i> 饮品</h2>
         <p class="section-desc">云雾冷萃，手冲对饮，山中一壶茶</p>
-        <div class="tea-cat-grid" id="teaDrinks">
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-        </div>
+        <div class="tea-cat-grid" id="teaDrinks"><p class="empty-hint">加载中...</p></div>
     </div>
 </section>
 
@@ -74,11 +67,25 @@
     <div class="container">
         <h2 class="section-title"><i class="ph-thin ph-cake"></i> 甜品</h2>
         <p class="section-desc">茶冻凝香，桂花酿酒，一口江南</p>
-        <div class="tea-cat-grid" id="teaDesserts">
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-        </div>
+        <div class="tea-cat-grid" id="teaDesserts"><p class="empty-hint">加载中...</p></div>
+    </div>
+</section>
+
+<!-- 晚场酒水（时间管控） -->
+<section class="section-padding" id="alcoholSection">
+    <div class="container">
+        <h2 class="section-title"><i class="ph-thin ph-wine"></i> 晚场酒水</h2>
+        <p class="section-desc">18:00 后开放购买，茶酒微醺山夜</p>
+        <div class="tea-cat-grid" id="teaAlcohols"><p class="empty-hint">加载中...</p></div>
+    </div>
+</section>
+
+<!-- 晚场演出 -->
+<section class="section-padding">
+    <div class="container">
+        <h2 class="section-title"><i class="ph-thin ph-music-notes"></i> 晚场演出</h2>
+        <p class="section-desc">民谣弹唱 · 露天电影 · 山夜最好的伴奏</p>
+        <div class="tea-cat-grid" id="teaPerformances"><p class="empty-hint">加载中...</p></div>
     </div>
 </section>
 
@@ -87,24 +94,7 @@
     <div class="container">
         <h2 class="section-title"><i class="ph-thin ph-seedling"></i> 茶叶品类</h2>
         <p class="section-desc">庐山云雾带海拔800米以上，芽叶肥壮、白毫显露</p>
-        <div class="tea-type-grid" id="teaTypes">
-            <div class="tea-type-card skeleton-pulse"><div class="tea-type-img">🍃</div><h3>加载中...</h3><p></p></div>
-            <div class="tea-type-card skeleton-pulse"><div class="tea-type-img">🍂</div><h3>加载中...</h3><p></p></div>
-            <div class="tea-type-card skeleton-pulse"><div class="tea-type-img"><i class="ph-thin ph-flower"></i></div><h3>加载中...</h3><p></p></div>
-        </div>
-    </div>
-</section>
-
-<!-- 茶道体验 -->
-<section class="section-padding">
-    <div class="container">
-        <h2 class="section-title"><i class="ph-thin ph-heart-straight"></i> 茶道体验</h2>
-        <p class="section-desc">亲手采茶制茶，感受庐山茶文化的魅力</p>
-        <div class="tea-cat-grid" id="teaExps">
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-exp-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-        </div>
+        <div class="tea-type-grid" id="teaTypes"><p class="empty-hint">加载中...</p></div>
     </div>
 </section>
 
@@ -113,43 +103,174 @@
     <div class="container">
         <h2 class="section-title"><i class="ph-thin ph-gift"></i> 茶叶伴手礼</h2>
         <p class="section-desc">把庐山云雾茶带回家，茶饼/自采茶叶/礼品装</p>
-        <div class="tea-prod-grid" id="teaProds">
-            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
-            <div class="tea-prod-card skeleton-pulse"><h3>加载中...</h3><p class="price"></p><p></p></div>
+        <div class="tea-prod-grid" id="teaProds"><p class="empty-hint">加载中...</p></div>
+    </div>
+</section>
+
+<!-- ═══════════════════════ 区块B：预约表单 ═══════════════════════ -->
+<section class="section-padding" id="reservationForm">
+    <div class="container">
+        <h2 class="section-title"><i class="ph-thin ph-calendar-check"></i> 预约入场</h2>
+        <p class="section-desc">提前预约，到店核验后解锁点单功能</p>
+
+        <div class="reserve-card" id="reserveCard">
+            <!-- 人数选择 -->
+            <div class="reserve-field">
+                <label class="reserve-label">人数</label>
+                <div class="guest-count-selector" id="guestCountSelector">
+                    <div class="guest-count-card selected" data-count="1" onclick="selectGuestCount(1)">
+                        <span class="count-icon"><i class="ph-thin ph-user"></i></span>
+                        <span class="count-label">单人</span>
+                    </div>
+                    <div class="guest-count-card" data-count="2" onclick="selectGuestCount(2)">
+                        <span class="count-icon"><i class="ph-thin ph-users"></i></span>
+                        <span class="count-label">双人</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 日期选择 -->
+            <div class="reserve-field">
+                <label class="reserve-label">日期 <span class="reserve-hint">（可提前7天预约）</span></label>
+                <div class="date-chip-strip" id="dateChips"><p class="empty-hint">加载日期中...</p></div>
+            </div>
+
+            <!-- 时间选择 -->
+            <div class="reserve-field">
+                <label class="reserve-label">到店时间</label>
+                <div class="time-slot-grid" id="timeSlots"><p class="empty-hint">请先选择日期</p></div>
+            </div>
+
+            <!-- 联系信息 -->
+            <div class="reserve-field-row">
+                <div class="reserve-field flex-1">
+                    <label class="reserve-label">姓名</label>
+                    <input type="text" id="reserveName" class="reserve-input" placeholder="您的姓名" maxlength="20">
+                </div>
+                <div class="reserve-field flex-1">
+                    <label class="reserve-label">手机号</label>
+                    <input type="tel" id="reservePhone" class="reserve-input" placeholder="11位手机号" maxlength="11">
+                </div>
+            </div>
+
+            <button class="btn btn-primary reserve-submit" id="reserveSubmit" onclick="submitReservation()">
+                <i class="ph-thin ph-check-circle"></i> 确认预约
+            </button>
+            <p class="reserve-error" id="reserveError"></p>
         </div>
     </div>
 </section>
+
+<!-- ═══════════════════════ 区块C：预约结果 ═══════════════════════ -->
+<section class="section-padding" id="reservationResult" style="display:none">
+    <div class="container">
+        <h2 class="section-title"><i class="ph-thin ph-ticket"></i> 预约成功</h2>
+        <div class="reserve-result-card" id="reserveResultCard">
+            <!-- 动态填充 -->
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════ 区块D：点单购物车 ═══════════════════════ -->
+<div class="lock-overlay-wrapper" id="orderLockWrapper">
+    <div class="lock-overlay" id="orderLockOverlay">
+        <div class="lock-message">
+            <i class="ph-thin ph-lock-key" style="font-size:2.5rem;display:block;margin-bottom:12px;opacity:0.5"></i>
+            <p style="font-weight:600;margin-bottom:4px">点单功能已锁定</p>
+            <p style="font-size:0.85rem;color:var(--color-text-lighter)">请先核验预约码解锁后即可点单</p>
+            <div class="checkin-inline" style="margin-top:16px">
+                <input type="text" id="checkinCodeInput" class="reserve-input" placeholder="输入6位预约码" maxlength="6" style="width:160px;text-align:center;text-transform:uppercase;font-size:1.1rem;letter-spacing:0.2em">
+                <button class="btn btn-sm btn-primary" onclick="doCheckin()" style="margin-left:8px">核验解锁</button>
+            </div>
+            <p class="checkin-error" id="checkinError" style="margin-top:8px;font-size:0.8rem;color:var(--color-danger)"></p>
+            <p class="checkin-ok" id="checkinOk" style="margin-top:8px;font-size:0.85rem;color:var(--color-success);display:none"></p>
+        </div>
+    </div>
+</div>
+
+<!-- FAB 购物车按钮 -->
+<button class="fab" id="teaFab" onclick="toggleOrderPanel()" style="display:none">
+    <i class="ph-thin ph-shopping-cart"></i>
+    <span class="fab-badge" id="teaFabBadge">0</span>
+</button>
+
+<!-- 底部购物车面板 -->
+<div class="order-panel" id="teaOrderPanel">
+    <div class="order-panel-header">
+        <h3>已选项目</h3>
+        <button class="order-panel-close" onclick="toggleOrderPanel()"><i class="ph-thin ph-x"></i></button>
+    </div>
+    <div class="order-panel-body" id="teaOrderItems">
+        <p class="empty-hint">购物车是空的</p>
+    </div>
+    <div class="order-panel-footer" id="teaOrderFooter">
+        <div class="order-total">
+            <span>合计</span>
+            <span class="order-total-price" id="teaOrderTotal">¥0</span>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="submitTeaOrder()" id="teaOrderSubmit">提交订单</button>
+    </div>
+    <!-- 支付页 -->
+    <div class="pay-page" id="teaPayPage" style="display:none">
+        <div class="pay-header"><i class="ph-thin ph-check-circle" style="color:var(--color-success);font-size:3rem"></i></div>
+        <div class="pay-amount" id="teaPayAmount">¥0</div>
+        <p class="pay-desc">模拟微信支付</p>
+        <button class="btn btn-primary pay-btn" onclick="confirmTeaPay()">确认支付</button>
+        <button class="btn btn-ghost" onclick="cancelTeaPay()" style="margin-top:8px">返回购物车</button>
+    </div>
+</div>
 {% endblock %}
+
 
 {% block extra_scripts %}
 <script>
+// ══════════════════════════════════════════════════════════
+//  全局状态
+// ══════════════════════════════════════════════════════════
+let _allExperiences = [];
+let _selectedDate = '';
+let _selectedTime = '';
+let _selectedCount = 1;
+let _reservationCode = '';
+let _orderUnlocked = false;
+let _cart = [];
+let _cartSeq = 0;
+let _currentOrderId = null;
+
+// ══════════════════════════════════════════════════════════
+//  工具函数
+// ══════════════════════════════════════════════════════════
+function isAlcoholAvailable() { return new Date().getHours() >= 18; }
+function fmtPrice(p) { return '¥' + Number(p).toFixed(0); }
+
+// ══════════════════════════════════════════════════════════
+//  加载菜单数据
+// ══════════════════════════════════════════════════════════
 (async function(){
-  // 加载茶叶品类
   try {
     const types = await fetch('/api/tea/types?bnb_id={{ bnb.id }}').then(r=>r.json());
     if(types.success) renderTeaTypes(types.types);
   } catch(e){ console.error('茶叶加载失败:', e); }
 
-  // 加载消费项目（简餐/饮品/甜品/体验）
   try {
     const exps = await fetch('/api/tea/experiences?bnb_id={{ bnb.id }}').then(r=>r.json());
-    if(exps.success) renderAllCategories(exps.experiences);
-  } catch(e){ console.error('体验加载失败:', e); }
+    if(exps.success) { _allExperiences = exps.experiences; renderAllCategories(exps.experiences); }
+  } catch(e){ console.error('菜单加载失败:', e); }
 
-  // 加载茶叶商品
   try {
     const prods = await fetch('/api/tea/products?bnb_id={{ bnb.id }}').then(r=>r.json());
     if(prods.success) renderTeaProds(prods.products);
   } catch(e){ console.error('商品加载失败:', e); }
+
+  // 预约日期
+  loadDates();
 })();
 
+// ══════════════════════════════════════════════════════════
+//  渲染函数
+// ══════════════════════════════════════════════════════════
 function renderTeaTypes(types) {
-  const grid = document.getElementById('teaTypes');
-  grid.innerHTML = types.map(t => `
+  document.getElementById('teaTypes').innerHTML = types.map(t => `
     <div class="tea-type-card">
       <div class="tea-type-img">🍃</div>
       <h3>${t.name}</h3>
@@ -162,40 +283,365 @@ function renderTeaTypes(types) {
 }
 
 function renderAllCategories(exps) {
-  const categories = {
+  const cats = {
     meal: { el: 'teaMeals', label: '简餐' },
     drink: { el: 'teaDrinks', label: '饮品' },
     dessert: { el: 'teaDesserts', label: '甜品' },
-    experience: { el: 'teaExps', label: '茶道体验' },
+    alcohol: { el: 'teaAlcohols', label: '酒水' },
+    performance: { el: 'teaPerformances', label: '演出' },
   };
-  for(const [cat, cfg] of Object.entries(categories)) {
+  const alcOk = isAlcoholAvailable();
+
+  for(const [cat, cfg] of Object.entries(cats)) {
     const items = exps.filter(e => e.category === cat);
     const grid = document.getElementById(cfg.el);
     if(!grid) continue;
     if(!items.length) { grid.innerHTML = '<p class="empty-hint">暂无项目</p>'; continue; }
-    grid.innerHTML = items.map(e => `
-      <div class="tea-exp-card">
-        <h3>${e.name}</h3>
-        <p class="price">¥${e.price}${cat === 'experience' ? ' <span>/人</span>' : ''}</p>
-        ${e.duration ? `<p><i class="ph-thin ph-clock"></i> ${e.duration}${cat === 'experience' && e.capacity ? `  |  <i class="ph-thin ph-users"></i> 最多${e.capacity}人` : ''}</p>` : ''}
-        <p>${e.description||''}</p>
-        ${e.includes && e.includes.length ? `<div class="tea-includes">${e.includes.map(i=>'<span class="tag">'+i+'</span>').join(' ')}</div>` : ''}
-      </div>
-    `).join('');
+
+    const isAlcohol = cat === 'alcohol';
+    const canOrder = !isAlcohol || alcOk;
+
+    grid.innerHTML = items.map(e => {
+      let cardClass = 'tea-exp-card';
+      let overlayHtml = '';
+      if(isAlcohol && !alcOk) {
+        cardClass += ' alcohol-locked';
+        overlayHtml = '<div class="alcohol-locked-tag">18:00 后开放</div>';
+      }
+      const orderBtn = _orderUnlocked && canOrder
+        ? `<button class="btn btn-sm btn-order-tea" onclick="addToTeaCart('${e.name.replace(/'/g, "\\'")}', ${e.price})">+ 点单</button>`
+        : '';
+      return `
+        <div class="${cardClass}">
+          ${overlayHtml}
+          <h3>${e.name}</h3>
+          <p class="price">${fmtPrice(e.price)}${e.category === 'performance' ? ' <span>/人</span>' : ''}</p>
+          ${e.duration ? `<p><i class="ph-thin ph-clock"></i> ${e.duration}</p>` : ''}
+          <p>${e.description||''}</p>
+          ${e.includes && e.includes.length ? `<div class="tea-includes">${e.includes.map(i=>'<span class="tag">'+i+'</span>').join(' ')}</div>` : ''}
+          ${orderBtn}
+        </div>
+      `;
+    }).join('');
   }
 }
 
 function renderTeaProds(prods) {
-  const grid = document.getElementById('teaProds');
-  grid.innerHTML = prods.map(p => `
+  document.getElementById('teaProds').innerHTML = prods.map(p => `
     <div class="tea-prod-card">
       <h3>${p.name}</h3>
-      <p class="price">¥${p.price}</p>
+      <p class="price">${fmtPrice(p.price)}</p>
       <p class="tea-weight">${p.weight||''}</p>
       <p>${p.description||''}</p>
       ${p.stock > 0 ? '<span class="tag tag--success">有货</span>' : '<span class="tag tag--warning">暂时售罄</span>'}
     </div>
   `).join('');
 }
+
+// ══════════════════════════════════════════════════════════
+//  区块B：预约表单逻辑
+// ══════════════════════════════════════════════════════════
+let _allDates = [];
+
+async function loadDates() {
+  try {
+    const r = await fetch('/api/tea/reservation/dates?bnb_id={{ bnb.id }}').then(r=>r.json());
+    if(r.success) { _allDates = r.dates; renderDateChips(r.dates); }
+  } catch(e){ console.error('日期加载失败:', e); }
+}
+
+function renderDateChips(dates) {
+  const strip = document.getElementById('dateChips');
+  if(!dates.length) { strip.innerHTML = '<p class="empty-hint">暂无可用日期</p>'; return; }
+  strip.innerHTML = dates.map((d,i) => `
+    <div class="date-chip ${i===0?'selected':''}" data-date="${d.date}" onclick="selectDate('${d.date}', this)">
+      <span class="date-chip-label">${d.label}</span>
+      <span class="date-chip-weekday">${d.weekday}</span>
+      <span class="date-chip-date">${d.date.slice(5)}</span>
+    </div>
+  `).join('');
+  if(dates.length > 0) selectDate(dates[0].date, strip.querySelector('.date-chip'));
+}
+
+async function selectDate(dateStr, el) {
+  _selectedDate = dateStr;
+  document.querySelectorAll('#dateChips .date-chip').forEach(c=>c.classList.remove('selected'));
+  if(el) el.classList.add('selected');
+  // 加载时间槽
+  const grid = document.getElementById('timeSlots');
+  grid.innerHTML = '<p class="empty-hint">加载中...</p>';
+  try {
+    const r = await fetch(`/api/tea/reservation/slots?bnb_id={{ bnb.id }}&date=${dateStr}`).then(r=>r.json());
+    if(r.success) renderTimeSlots(r.slots);
+    else grid.innerHTML = `<p class="empty-hint">${r.error||'加载失败'}</p>`;
+  } catch(e){ grid.innerHTML = '<p class="empty-hint">加载失败</p>'; }
+}
+
+function renderTimeSlots(slots) {
+  const grid = document.getElementById('timeSlots');
+  if(!slots.length) { grid.innerHTML = '<p class="empty-hint">该日期暂无可选时段</p>'; return; }
+  _selectedTime = '';
+  grid.innerHTML = slots.map(s => {
+    let cls = 'time-slot-chip';
+    if(!s.available) cls += ' unavailable';
+    const onclick = s.available ? `onclick="selectTime('${s.time}', this)"` : '';
+    const title = s.reason ? `title="${s.reason}"` : '';
+    return `<div class="${cls}" data-time="${s.time}" ${onclick} ${title}>${s.label}<span class="slot-period">${s.period}</span></div>`;
+  }).join('');
+}
+
+function selectTime(time, el) {
+  _selectedTime = time;
+  document.querySelectorAll('#timeSlots .time-slot-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectGuestCount(n) {
+  _selectedCount = n;
+  document.querySelectorAll('#guestCountSelector .guest-count-card').forEach(c=>{
+    c.classList.toggle('selected', parseInt(c.dataset.count) === n);
+  });
+}
+
+async function submitReservation() {
+  const errEl = document.getElementById('reserveError');
+  errEl.textContent = '';
+  const name = document.getElementById('reserveName').value.trim();
+  const phone = document.getElementById('reservePhone').value.trim();
+  if(!name) { errEl.textContent = '请输入姓名'; return; }
+  if(!phone || phone.length < 10) { errEl.textContent = '请输入正确的手机号'; return; }
+  if(!_selectedDate) { errEl.textContent = '请选择预约日期'; return; }
+  if(!_selectedTime) { errEl.textContent = '请选择到店时间'; return; }
+
+  const btn = document.getElementById('reserveSubmit');
+  btn.disabled = true; btn.textContent = '提交中...';
+
+  try {
+    const r = await fetch('/api/tea/reservation/book', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        guest_name: name, guest_phone: phone,
+        guest_count: _selectedCount,
+        reservation_date: _selectedDate,
+        reservation_time: _selectedTime,
+        openid: 'web_user',
+      }),
+    }).then(r=>r.json());
+    if(r.success) {
+      _reservationCode = r.reservation.reservation_code;
+      showReservationResult(r.reservation);
+    } else {
+      errEl.textContent = r.error || '预约失败';
+    }
+  } catch(e) {
+    errEl.textContent = '网络错误，请重试';
+  }
+  btn.disabled = false; btn.innerHTML = '<i class="ph-thin ph-check-circle"></i> 确认预约';
+}
+
+// ══════════════════════════════════════════════════════════
+//  区块C：预约结果显示
+// ══════════════════════════════════════════════════════════
+function showReservationResult(res) {
+  document.getElementById('reservationResult').style.display = '';
+  document.getElementById('reserveResultCard').innerHTML = `
+    <div class="reservation-code-display">${res.reservation_code}</div>
+    <p class="reservation-code-hint">到店时请出示此预约码给工作人员核验</p>
+    <div class="reservation-detail-grid">
+      <div class="reservation-detail-item">
+        <span class="rd-label">日期</span>
+        <span class="rd-value">${res.reservation_date}</span>
+      </div>
+      <div class="reservation-detail-item">
+        <span class="rd-label">时间</span>
+        <span class="rd-value">${res.reservation_time}</span>
+      </div>
+      <div class="reservation-detail-item">
+        <span class="rd-label">人数</span>
+        <span class="rd-value">${res.guest_count === 2 ? '双人' : '单人'}</span>
+      </div>
+      <div class="reservation-detail-item">
+        <span class="rd-label">状态</span>
+        <span class="rd-value" id="reserveStatus">🔒 待核验</span>
+      </div>
+    </div>
+    <p class="reservation-checkin-hint">核验后即可解锁点单功能，请在下方输入预约码核验</p>
+  `;
+  // 滚动到结果区
+  document.getElementById('reservationResult').scrollIntoView({ behavior: 'smooth' });
+  // 预填核验码
+  document.getElementById('checkinCodeInput').value = res.reservation_code;
+}
+
+// ══════════════════════════════════════════════════════════
+//  区块D：核验解锁 + 点单购物车
+// ══════════════════════════════════════════════════════════
+async function doCheckin() {
+  const errEl = document.getElementById('checkinError');
+  const okEl = document.getElementById('checkinOk');
+  errEl.textContent = ''; okEl.style.display = 'none';
+  const code = document.getElementById('checkinCodeInput').value.trim().toUpperCase();
+  if(!code || code.length < 6) { errEl.textContent = '请输入6位预约码'; return; }
+
+  try {
+    const r = await fetch('/api/tea/reservation/checkin', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ reservation_code: code }),
+    }).then(r=>r.json());
+    if(r.success) {
+      _orderUnlocked = true;
+      _reservationCode = code;
+      // 隐藏遮罩
+      document.getElementById('orderLockOverlay').style.display = 'none';
+      document.getElementById('teaFab').style.display = '';
+      // 重新渲染菜单（显示点单按钮）
+      renderAllCategories(_allExperiences);
+      // 更新结果区状态
+      const stEl = document.getElementById('reserveStatus');
+      if(stEl) stEl.innerHTML = '🔓 已核验 · 可点单';
+      okEl.style.display = ''; okEl.textContent = r.message || '核验成功，请开始点单！';
+      document.getElementById('reservationResult').scrollIntoView({ behavior: 'smooth' });
+    } else {
+      errEl.textContent = r.error || '核验失败';
+    }
+  } catch(e) {
+    errEl.textContent = '网络错误，请重试';
+  }
+}
+
+// ── 购物车逻辑 ──
+function addToTeaCart(name, price) {
+  _cart.push({ seq: ++_cartSeq, id: 'tea_'+_cartSeq, name, price, quantity: 1 });
+  updateTeaCartUI();
+}
+
+function removeFromTeaCart(seq) {
+  _cart = _cart.filter(c => c.seq !== seq);
+  updateTeaCartUI();
+}
+
+function updateQty(seq, delta) {
+  const item = _cart.find(c => c.seq === seq);
+  if(!item) return;
+  item.quantity += delta;
+  if(item.quantity <= 0) { removeFromTeaCart(seq); return; }
+  updateTeaCartUI();
+}
+
+function updateTeaCartUI() {
+  const total = _cart.reduce((s,c) => s + c.price * c.quantity, 0);
+  const badge = document.getElementById('teaFabBadge');
+  const count = _cart.reduce((s,c) => s + c.quantity, 0);
+  badge.textContent = count;
+  badge.style.display = count > 0 ? '' : 'none';
+  document.getElementById('teaOrderTotal').textContent = '¥' + total;
+
+  const itemsEl = document.getElementById('teaOrderItems');
+  if(_cart.length === 0) {
+    itemsEl.innerHTML = '<p class="empty-hint">购物车是空的</p>';
+  } else {
+    itemsEl.innerHTML = _cart.map(c => `
+      <div class="order-item">
+        <div class="order-item-info">
+          <span class="order-item-name">${c.name}</span>
+          <span class="order-item-price">${fmtPrice(c.price)}</span>
+        </div>
+        <div class="qty-stepper">
+          <button class="qty-btn" onclick="updateQty(${c.seq}, -1)">−</button>
+          <span class="qty-val">${c.quantity}</span>
+          <button class="qty-btn" onclick="updateQty(${c.seq}, 1)">+</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function toggleOrderPanel() {
+  document.getElementById('teaOrderPanel').classList.toggle('open');
+}
+
+async function submitTeaOrder() {
+  if(_cart.length === 0) { alert('请先选择项目'); return; }
+  const btn = document.getElementById('teaOrderSubmit');
+  btn.disabled = true; btn.textContent = '提交中...';
+
+  const items = _cart.map(c => ({ menu_item_id: c.seq, name: c.name, quantity: c.quantity, price: c.price }));
+  const total = _cart.reduce((s,c) => s + c.price * c.quantity, 0);
+
+  try {
+    const r = await fetch('/api/order', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        openid: 'web_user',
+        items: items,
+        room_number: _reservationCode,
+        total_price: total,
+        remark: '此山茶场点单',
+      }),
+    }).then(r=>r.json());
+    if(r.success || r.order) {
+      _currentOrderId = r.order ? r.order.id : r.id;
+      // 切换到支付页
+      document.getElementById('teaPayAmount').textContent = '¥' + total;
+      document.getElementById('teaOrderItems').style.display = 'none';
+      document.getElementById('teaOrderFooter').style.display = 'none';
+      document.getElementById('teaPayPage').style.display = '';
+    } else {
+      alert(r.error || '下单失败');
+    }
+  } catch(e) {
+    alert('网络错误');
+  }
+  btn.disabled = false; btn.textContent = '提交订单';
+}
+
+async function confirmTeaPay() {
+  if(!_currentOrderId) return;
+  try {
+    const r = await fetch('/api/order/pay', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ order_id: _currentOrderId }),
+    }).then(r=>r.json());
+    if(r.success) {
+      // 清空购物车
+      _cart = [];
+      _currentOrderId = null;
+      updateTeaCartUI();
+      // 恢复面板
+      document.getElementById('teaOrderItems').style.display = '';
+      document.getElementById('teaOrderFooter').style.display = '';
+      document.getElementById('teaPayPage').style.display = 'none';
+      document.getElementById('teaOrderPanel').classList.remove('open');
+      alert('支付成功！感谢您的惠顾～');
+    } else {
+      alert(r.error || '支付失败');
+    }
+  } catch(e) { alert('网络错误'); }
+}
+
+function cancelTeaPay() {
+  document.getElementById('teaOrderItems').style.display = '';
+  document.getElementById('teaOrderFooter').style.display = '';
+  document.getElementById('teaPayPage').style.display = 'none';
+}
+
+// ── 定时检查酒水开放（每分钟刷新） ──
+setInterval(() => {
+  if(_allExperiences.length && !_orderUnlocked) {
+    // 还没解锁，不刷新
+  } else if(_allExperiences.length && isAlcoholAvailable()) {
+    const alcSection = document.querySelectorAll('.alcohol-locked');
+    if(alcSection.length) renderAllCategories(_allExperiences);
+  }
+}, 60000);
+
+// ── 回车键核验 ──
+document.getElementById('checkinCodeInput').addEventListener('keydown', function(e) {
+  if(e.key === 'Enter') doCheckin();
+});
 </script>
 {% endblock %}
