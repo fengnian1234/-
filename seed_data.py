@@ -518,7 +518,7 @@ def _seed_shanji_menu(db):
         MenuItem(bnb_id="shanji", category_id=c1, name="江西拌粉", price=22, description="地道江西米粉，住客早餐好评率最高", sort_order=5),
         MenuItem(bnb_id="shanji", category_id=c2, name="茶道品鉴体验", price=128, description="茶艺师一对一，品鉴三款云雾茶，60分钟", is_recommended=True, sort_order=1),
         MenuItem(bnb_id="shanji", category_id=c2, name="茶园采茶体验", price=168, description="前往山纪茶园亲手采茶+制茶，90分钟，含茶礼", sort_order=2),
-        MenuItem(bnb_id="shanji", category_id=c2, name="茶点拼盘", price=48, description="庐山茶饼+桂花糕+核桃酥，配一壶茶", sort_order=3),
+        MenuItem(bnb_id="shanji", category_id=c2, name="茶点拼盘", price=48, description="桂花糕+核桃酥+绿豆糕，配一壶茶", sort_order=3),
     ]
     db.add_all(items)
     info("   山纪 3类14款菜单 已填充")
@@ -600,7 +600,7 @@ def seed_services(db, bnb_id="guishu"):
         QuickService(name="雨伞/雨衣租借", description="庐山多雨，免费借用雨伞或一次性雨衣，退房归还即可", icon="🌂", category="frontdesk", estimated_time="即刻领取", sort_order=15),
         QuickService(name="充电宝租借", description="前台扫码借取，全山通用归还点，支持主流品牌", icon="🔋", category="frontdesk", estimated_time="即刻领取", sort_order=16),
         QuickService(name="医药箱/急救包", description="创可贴/晕车药/退烧药/藿香正气水/碘伏棉签等常用药品", icon="💊", category="frontdesk", estimated_time="即刻取用", sort_order=17),
-        QuickService(name="特产代购", description="庐山茶饼/石鱼干/云雾茶等特产，按进价代购不加价", icon="🎁", category="frontdesk", estimated_time="次日可取", sort_order=18),
+        QuickService(name="特产代购", description="石鱼干/云雾茶等特产，按进价代购不加价", icon="🎁", category="frontdesk", estimated_time="次日可取", sort_order=18),
 
         # 设施维修 (sort_order 19-21)
         QuickService(name="设施报修", description="房间设施故障报修处理", icon="🔧", category="maintenance", estimated_time="尽快处理", sort_order=19),
@@ -743,11 +743,11 @@ def seed_travel_routes(db, bnb_id="guishu"):
             spots=[
                 {"name": "如琴湖环湖", "description": "绕湖一周约1小时，湖光山色尽收眼底。清晨或傍晚光线最佳"},
                 {"name": "花径公园", "description": "白居易诗碑所在地，四季花木扶疏。免费开放"},
-                {"name": "牯岭正街", "description": "逛小店、喝见山茶/庐小仙、买庐山茶饼伴手礼。正街上还有1元公交可以坐"},
+                {"name": "牯岭正街", "description": "逛小店、喝见山茶/庐小仙、买当地特产伴手礼。正街上还有1元公交可以坐"},
                 {"name": "街心公园", "description": "牯岭镇中心的小公园，傍晚坐在这里看山景发呆，超惬意"},
                 {"name": "小天池看日落（可选）", "description": "从正街步行可达，日落时分金色阳光洒满山峦，手机也能拍出大片"},
             ],
-            tips="非常适合到达当天或离开前半天的安排。不用赶景点，走哪算哪。正街上的庐山茶饼10元一盒（桂花味推荐），买回去送人很好。傍晚在街心公园的长椅上坐着看山，是庐山最好的打开方式。",
+            tips="非常适合到达当天或离开前半天的安排。不用赶景点，走哪算哪。正街上有各种特产店可以买伴手礼。傍晚在街心公园的长椅上坐着看山，是庐山最好的打开方式。",
             map_link="https://uri.amap.com/marker?position=115.9797,29.5568&name=牯岭镇",
             sort_order=5,
         ),
@@ -840,7 +840,7 @@ def _seed_common_shanji_routes(db):
                 {"name": "山纪花园庭院", "description": "300平户外庭院，喝咖啡看书，享受无人打扰的清晨"},
                 {"name": "云上茶吧", "description": "品鉴庐山云雾茶，体验茶道文化"},
                 {"name": "如琴湖环湖", "description": "绕湖一周约1小时，湖光山色尽收眼底"},
-                {"name": "牯岭正街", "description": "逛小店、喝庐小仙、买庐山茶饼伴手礼"},
+                {"name": "牯岭正街", "description": "逛小店、喝庐小仙、买当地特产伴手礼"},
                 {"name": "街心公园看日落", "description": "傍晚坐在这里看山景发呆"},
             ],
             tips="山纪提供茶道体验+手工课程，不出民宿也能享受充实的一天。正街步行8分钟，吃饭逛街超方便。",
@@ -1043,25 +1043,18 @@ def seed_food_recommends(db, bnb_id="guishu"):
                 "\U0001f4a1 人均三四十，是牯岭街最暖胃的存在。1450赞合集将其与“璐姑娘”并列推荐（石鸡、土豆好吃）。建议爬山前来一碗补充体力～"
             ),
         ),
+        # ── 茶园雅院 ────────────────────────────────
         FoodRecommend(
-            name="庐山茶饼·伴手礼",
-            category="伴手礼/小吃",
-            description="庐山特产茶饼，桂花味最受欢迎。363赞XHS笔记“好吃的嘞”，2518赞合集收录。酥脆香甜10元一盒，送人自吃两相宜",
-            address="牯岭镇正街多家店铺有售",
-            map_link="",
-            price_range="约 ¥10/盒",
-            must_try="桂花茶饼、云雾茶饼、九江糍粑",
+            name="人情味茶园雅院",
+            category="茶文化体验",
+            description="庐山脚下茶园雅院，人均约¥69。茶园采摘+制茶体验+农家菜，主打原生态茶旅融合体验",
+            address="庐山市庐山风景名胜区附近约5.2km",
+            map_link="https://uri.amap.com/search?keyword=人情味茶园雅院",
+            price_range="人均 ¥69",
+            must_try="茶园采茶体验、农家土菜、自制茶点",
             sort_order=6,
-            tags=["#伴手礼", "#桂花味", "#10元一盒", "#XHS爆款"],
-            images=["/static/img/food/chabing_01.jpg"],
-            detail_content=(
-                "\U0001f36a 来庐山必带的伴手礼！正街上很多店都有卖，363赞XHS博主说“好吃的嘞”。\n\n"
-                "\U0001f338 **桂花茶饼**— 用云雾茶汁和面，撒上桂花，酥脆中带着淡淡茶香和桂花甜。掰开层次分明，配茶一绝。\n\n"
-                "\U0001f375 **云雾茶饼**— 茶味更浓，喜欢茶香的首选这个。\n\n"
-                "\U0001f361 **九江糍粑**— 软糯拉丝，裹上芝麻花生粉，香甜不腻。\n\n"
-                "\U0001f4b0 10元一盒，买5送1，买10送3。建议多买几盒回去送同事朋友。\n\n"
-                "\U0001f4a1 正街上的价格都差不多，没必要特意比价。别在景区门口买，比镇上贵一倍。"
-            ),
+            tags=["#茶园", "#采茶体验", "#农家菜", "#茶旅融合"],
+            images=["/static/img/food/default.jpg"],
         ),
         # ── 特色饮品店 ────────────────────────────────
         FoodRecommend(
@@ -1146,10 +1139,11 @@ def _seed_shanji_foods(db):
             map_link="https://uri.amap.com/marker?position=115.9805,29.5572&name=利民煨汤馆",
             price_range="人均 ¥26-45", must_try="茶树菇排骨汤、山药土鸡汤、南昌拌粉",
             images=["/static/img/food/limin_01.jpg"], is_recommended=True, sort_order=5),
-        FoodRecommend(bnb_id="shanji", name="庐山茶饼·伴手礼", category="伴手礼/小吃",
-            description="桂花茶饼10元一盒，送人自吃两相宜", address="牯岭镇正街多家店铺有售",
-            price_range="约 ¥10/盒", must_try="桂花茶饼、云雾茶饼、九江糍粑",
-            images=["/static/img/food/chabing_01.jpg"], sort_order=6),
+        FoodRecommend(bnb_id="shanji", name="人情味茶园雅院", category="茶文化体验",
+            description="庐山脚下茶园雅院，人均约¥69。茶园采摘+制茶体验+农家菜，主打原生态茶旅融合体验",
+            address="庐山市庐山风景名胜区附近约5.2km",
+            price_range="人均 ¥69", must_try="茶园采茶体验、农家土菜、自制茶点",
+            images=["/static/img/food/default.jpg"], sort_order=6),
         FoodRecommend(bnb_id="shanji", name="庐小仙", category="茶饮",
             description="庐山鲜果茶饮！桃香云雾茶+史努比联名杯，必打卡", address="牯岭镇合面街",
             map_link="https://uri.amap.com/marker?position=115.9800,29.5570&name=庐小仙",
