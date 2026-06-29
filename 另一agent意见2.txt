@@ -1,0 +1,49 @@
+确认了。三个 Agent 的交叉审阅结果汇总如下：
+     
+  ---
+  🔴 严重 Bug × 2
+     
+  Bug 1：AI 系统提示词 {BNB_INFO} 永不被替换
+     
+  文件 services/ai.py
+
+  f-string 内 {{BNB_INFO}} 渲染为单花括号 {BNB_INFO}，但 .replace("{{BNB_INFO}}", info) 查找的是双花括号字面量——永远匹配不到。
+
+  源码: {{BNB_INFO}}              → f-string渲染后: {BNB_INFO}
+  .replace("{{BNB_INFO}}", info) → 查找 "{{" (两个花括号) → ❌ 找不到
+
+  后果：AI 收到的是包含字面占位符 {BNB_INFO} 的提示词，民宿基本信息（房型/地址/电话/设施）永不注入，影响所有 4 个对话模式。
+
+  修复：.replace("{{BNB_INFO}}", info) → .replace("{BNB_INFO}", info)（4 处，line 912-919）
+
+  ---
+  Bug 2：MessageLog 模型缺 message_type 列
+
+  模型 (models.py:426-434)：只有 id、openid、content、reply、created_at，没有 message_type。
+
+  但代码 3 处使用了它：
+
+  ┌───────────────┬──────────────────────────────────────┬──────────────────────────┐
+  │     位置      │                 代码                 │           后果           │
+  ├───────────────┼──────────────────────────────────────┼──────────────────────────┤
+  │ ai.py:663     │ MessageLog(..., message_type=role)   │ SQLAlchemy 报 TypeError  │
+  ├───────────────┼──────────────────────────────────────┼──────────────────────────┤
+  │ ai.py:683     │ log.message_type in ('user', 'text') │ None in (...) 永为 False │
+  ├───────────────┼──────────────────────────────────────┼──────────────────────────┤
+  │ wechat.py:497 │ MessageLog(message_type="text", ...) │ SQLAlchemy 报 TypeError  │
+  └───────────────┴──────────────────────────────────────┴──────────────────────────┘
+
+  后果：对话日志记录崩溃（虽然被 try/except 兜住了），对话历史无法从 DB 恢复。
+
+  修复：在 MessageLog 模型加 message_type = Column(String(20), default="text")，或者删除 3 处无效引用（如果当前不需要这个字段的话）。
+
+  ---
+  🟡 中等问题 × 2
+
+  问题 3：_guard_service 链不传 bnb_id
+
+  wechat.py:72-97 的 _guard_service/_guard_service_capture 在创建快捷服务请求时不传 bnb_id。山纪/东林外的客人触发"打扫""叫醒"等关键词时，服务请求会丢失民宿标识。
+
+  问题 4：TeaType.to_dict() 键名拼写
+
+  models.py:648："bnbs_id": self.bnb_id 应为 "bnb_id"。前端按 "bnb_id" 取值会拿不到。

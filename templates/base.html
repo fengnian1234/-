@@ -17,6 +17,7 @@
     (function(){var p=new URLSearchParams(location.search);var s=p.get('season');if(!s){var m=new Date().getMonth()+1;s=m>=3&&m<=5?'spring':m>=6&&m<=8?'summer':m>=9&&m<=11?'autumn':'winter';}document.documentElement.setAttribute('data-season',s);})();
     </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
     {% if request.args.get('mp') == '1' %}<link rel="stylesheet" href="{{ url_for('static', filename='css/style-mp.css') }}">{% endif %}
     {% block extra_head %}{% endblock %}
 </head>
@@ -25,14 +26,14 @@
     <header class="header">
         <div class="header-inner">
             <div class="logo" onclick="document.getElementById('bnbDropdown').classList.toggle('open')" style="cursor:pointer">
-                <span class="logo-icon">🏔️</span>
+                <i class="ri-landscape-line logo-icon"></i>
                 <span class="logo-text">{{ bnb.short_name }} <small style="font-size:0.6em;opacity:.6">▾</small></span>
             </div>
             <!-- BnB 下拉切换 -->
             <div class="bnb-dropdown" id="bnbDropdown">
-                <a href="/gs/" class="bnb-dropdown-item {% if bnb_id == 'guishu' %}active{% endif %}">🏡 云上·归墅<span>经典山居</span></a>
-                <a href="/sj/" class="bnb-dropdown-item {% if bnb_id == 'shanji' %}active{% endif %}">🍵 云上·山纪<span>茶园体验</span></a>
-                <a href="/dlw/" class="bnb-dropdown-item {% if bnb_id == 'donglinwai' %}active{% endif %}">🧘 云上·东林外<span>身心疗愈</span></a>
+                <a href="/gs/" class="bnb-dropdown-item {% if bnb_id == 'guishu' %}active{% endif %}"><i class="ri-home-line"></i> 云上·归墅<span>经典山居</span></a>
+                <a href="/sj/" class="bnb-dropdown-item {% if bnb_id == 'shanji' %}active{% endif %}"><i class="ri-cup-line"></i> 云上·山纪<span>茶园体验</span></a>
+                <a href="/dlw/" class="bnb-dropdown-item {% if bnb_id == 'donglinwai' %}active{% endif %}"><i class="ri-mental-health-line"></i> 云上·东林外<span>身心疗愈</span></a>
             </div>
             <nav class="nav-links">
                 {% set bp = bnb_prefix %}
@@ -41,11 +42,11 @@
                 <a href="{{ bp }}/menu" class="{% if '/menu' in path %}active{% endif %}">点餐</a>
                 <a href="{{ bp }}/travel" class="{% if '/travel' in path %}active{% endif %}">攻略</a>
                 <a href="{{ bp }}/services" class="{% if '/services' in path %}active{% endif %}">服务</a>
-                {% if bnb_id == 'shanji' %}<a href="{{ bp }}/tea" class="nav-feature {% if '/tea' in path %}active{% endif %}">🍵 茶园</a>{% endif %}
-                {% if bnb_id == 'donglinwai' %}<a href="{{ bp }}/healing" class="nav-feature {% if '/healing' in path %}active{% endif %}">🧘 疗愈</a>{% endif %}
+                {% if bnb_id == 'shanji' %}<a href="{{ bp }}/tea" class="nav-feature {% if '/tea' in path %}active{% endif %}"><i class="ri-cup-line"></i> 茶园</a>{% endif %}
+                {% if bnb_id == 'donglinwai' %}<a href="{{ bp }}/healing" class="nav-feature {% if '/healing' in path %}active{% endif %}"><i class="ri-mental-health-line"></i> 疗愈</a>{% endif %}
             </nav>
             <button id="theme-toggle" class="theme-toggle" aria-label="切换深色/浅色模式" title="切换深色/浅色模式">
-                <span class="theme-toggle-icon">🌙</span>
+                <i class="ri-moon-line theme-toggle-icon"></i>
             </button>
         </div>
     </header>
@@ -59,10 +60,10 @@
     <footer class="footer">
         <div class="footer-inner">
             <p class="footer-poem" data-summer="云无心以出岫，鸟倦飞而知还" data-autumn="山山唯落晖，树树皆秋色" data-winter="庐山雪霁处，疑是玉京来">云无心以出岫，鸟倦飞而知还</p>
-            <p>🏔️ {{ bnb.name }} · {{ bnb.tagline }}</p>
-            <p>📍 {{ bnb.address }}</p>
-            <p>📞 {{ bnb.phone }}</p>
-            <p class="footer-winter">❄️ 冬日庐山银装素裹，雾凇云海雪景被誉为"江南雪乡"——雪后初晴最是出片</p>
+            <p><i class="ri-landscape-line"></i> {{ bnb.name }} · {{ bnb.tagline }}</p>
+            <p><i class="ri-map-pin-line"></i> {{ bnb.address }}</p>
+            <p><i class="ri-phone-line"></i> {{ bnb.phone }}</p>
+            <p class="footer-winter"><i class="ri-snowflake-line"></i> 冬日庐山银装素裹，雾凇云海雪景被誉为"江南雪乡"——雪后初晴最是出片</p>
             <p class="footer-copy">© 2026 {{ bnb.name }} YunShang Impression</p>
         </div>
     </footer>
@@ -78,24 +79,23 @@
     })();
     (function(){
         var icon=document.querySelector('.theme-toggle-icon');
-        if(icon)icon.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';
+        if(icon)icon.className=document.documentElement.getAttribute('data-theme')==='dark'?'ri-sun-line theme-toggle-icon':'ri-moon-line theme-toggle-icon';
     })();
     document.getElementById('theme-toggle').addEventListener('click',function(){
         var c=document.documentElement.getAttribute('data-theme');
         var n=c==='dark'?'light':'dark';
         document.documentElement.setAttribute('data-theme',n);
         localStorage.setItem('theme',n);
-        document.querySelector('.theme-toggle-icon').textContent=n==='dark'?'☀️':'🌙';
+        document.querySelector('.theme-toggle-icon').className=n==='dark'?'ri-sun-line theme-toggle-icon':'ri-moon-line theme-toggle-icon';
     });
     // 接收模拟器 postMessage 主题同步（小程序模拟器内嵌时使用）
     window.addEventListener('message',function(e){
-        // 仅接受同源消息
         if(e.origin !== window.location.origin) return;
         if(e.data&&e.data.type==='setTheme'&&e.data.theme){
             document.documentElement.setAttribute('data-theme',e.data.theme);
             localStorage.setItem('theme',e.data.theme);
             var icon=document.querySelector('.theme-toggle-icon');
-            if(icon)icon.textContent=e.data.theme==='dark'?'☀️':'🌙';
+            if(icon)icon.className=e.data.theme==='dark'?'ri-sun-line theme-toggle-icon':'ri-moon-line theme-toggle-icon';
         }
     });
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(e){
@@ -103,7 +103,7 @@
             var n=e.matches?'dark':'light';
             document.documentElement.setAttribute('data-theme',n);
             var icon=document.querySelector('.theme-toggle-icon');
-            if(icon)icon.textContent=n==='dark'?'☀️':'🌙';
+            if(icon)icon.className=n==='dark'?'ri-sun-line theme-toggle-icon':'ri-moon-line theme-toggle-icon';
         }
     });
     // BnB 下拉：点击其他地方关闭

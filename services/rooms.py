@@ -54,20 +54,20 @@ def format_rooms_text(bnb_id=None):
 
     from config import BNB_CONFIGS
     name = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])["short_name"]
-    lines = [f"🛏️ *{name} · 房型展示*\n"]
+    lines = [f"· *{name} · 房型展示*\n"]
     for i, room in enumerate(rooms, 1):
-        view_icon = {"山景": "🏔️", "云海": "☁️", "竹林": "🎋"}.get(room["view_type"], "🏡")
+        view_icon = {"山景": "·", "云海": "☁️", "竹林": "🎋"}.get(room["view_type"], "·")
         lines.append(
             f"{view_icon} *{room['name']}*\n"
-            f"  💰 ¥{room['price']}/晚  "
+            f"  · ¥{room['price']}/晚  "
             f"{' (原价 ¥'+str(room['original_price'])+')' if room.get('original_price') else ''}\n"
             f"  👤 {room['capacity']}人  |  {room['bed_type']}  |  {room.get('area', '')}\n"
             f"  📝 {room['description'][:80]}...\n"
             f"  ➡️ 回复「房间{room['id']}」查看图文详情\n"
         )
     lines.append("─" * 30)
-    lines.append("💡 回复「预订」获取预订联系方式")
-    lines.append("💡 回复「房间图片」查看所有房间图片")
+    lines.append("▸ 提示： 回复「预订」获取预订联系方式")
+    lines.append("▸ 提示： 回复「房间图片」查看所有房间图片")
     return "\n".join(lines)
 
 
@@ -81,15 +81,15 @@ def format_room_detail_text(room_id: int, bnb_id=None):
     amenities_text = "、".join(room.get("amenities", []))
 
     lines = [
-        f"🏡 *{room['name']}* 详情\n",
-        f"💰 价格：¥{room['price']}/晚",
+        f"· *{room['name']}* 详情\n",
+        f"· 价格：¥{room['price']}/晚",
         f"📐 面积：{room.get('area', '详询客服')}",
-        f"🛏️ 床型：{room.get('bed_type', '详询客服')}",
+        f"· 床型：{room.get('bed_type', '详询客服')}",
         f"👤 可住：{room['capacity']}人",
         f"🌅 景观：{room.get('view_type', '')}",
         f"✨ 设施：{amenities_text}",
         f"\n📝 {room['description']}",
-        f"\n📞 预订咨询：请回复「预订」获取联系方式",
+        f"\n☎ 预订咨询：请回复「预订」获取联系方式",
         f"🖼️ 查看房间图片：{get_image_url(room)}",
     ]
     return "\n".join(lines)
@@ -136,5 +136,5 @@ def format_rooms_with_images(bnb_id=None):
         lines.append(f"*{room['name']}* ({room.get('view_type', '')})")
         lines.append(f"  {img_text}\n")
 
-    lines.append("💡 回复「房间+编号」如「房间1」查看详细图文")
+    lines.append("▸ 提示： 回复「房间+编号」如「房间1」查看详细图文")
     return "\n".join(lines)

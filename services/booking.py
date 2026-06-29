@@ -316,8 +316,8 @@ def format_booking_platforms_text(bnb_id="guishu") -> str:
     cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
     platforms = BOOKING_PLATFORMS_BY_BNB.get(bnb_id, BOOKING_PLATFORMS_BY_BNB["guishu"])
     lines = [
-        f"🏨 *预订{cfg['name']}*\n",
-        f"📍 {cfg['address']}\n",
+        f"· *预订{cfg['name']}*\n",
+        f"· {cfg['address']}\n",
         "本民宿已接入以下主流预订平台，\n点击链接即可跳转预订：\n",
     ]
 
@@ -328,7 +328,7 @@ def format_booking_platforms_text(bnb_id="guishu") -> str:
         )
 
     lines.append("")
-    lines.append("💡 *温馨提示*")
+    lines.append("▸ 提示： *温馨提示*")
     lines.append("  · 不同平台价格和优惠可能不同，建议多平台比价")
     lines.append("  · 预订成功后，请在公众号内回复「绑定预订」")
     lines.append("    解锁专属AI管家～预订前也能免费使用旅行顾问哦～")

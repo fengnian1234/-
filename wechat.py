@@ -39,10 +39,10 @@ def _require_booking_reply(bnb_id: str = "guishu") -> str:
     """未预订用户尝试使用住店服务时的统一回复"""
     cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
     return (
-        "🎐 这是入住后才能使用的服务哦～\n\n"
+        "· 这是入住后才能使用的服务哦～\n\n"
         "您目前还没有确认的预订记录。\n\n"
-        f"🏨 预订方式：携程/美团/飞猪/大众点评搜索「{cfg['short_name']}」\n"
-        "💡 预订后回复「绑定预订」，联系前台确认即可解锁全部住店服务\n\n"
+        f"· 预订方式：携程/美团/飞猪/大众点评搜索「{cfg['short_name']}」\n"
+        "▸ 提示： 预订后回复「绑定预订」，联系前台确认即可解锁全部住店服务\n\n"
         "不过在预订之前，您可以：\n"
         "  · 直接问我任何庐山旅游问题\n"
         "  · 回复「1」查看房型\n"
@@ -57,16 +57,16 @@ def _require_check_in_reply(openid: str, bnb_id: str = "guishu") -> str:
     booking = get_booking_by_openid(openid, bnb_id=bnb_id)
     check_in = booking.get('check_in_date', '待确认') if booking else '待确认'
     return (
-        f"🎐 这些服务需要您到店入住后才能使用哦～\n\n"
-        f"📅 您的入住日期：{check_in}\n"
-        f"🛎️ 期待您入住后再为您安排！\n\n"
+        f"· 这些服务需要您到店入住后才能使用哦～\n\n"
+        f"· 您的入住日期：{check_in}\n"
+        f"· 期待您入住后再为您安排！\n\n"
         f"在到店之前，您可以：\n"
         f"  · 了解房型设施和房间详情\n"
         f"  · 规划庐山游玩路线\n"
         f"  · 查看周边美食推荐\n"
         f"  · 告知到店偏好（交通方式、预计到达时间等）\n"
         f"  · 回复「4」查看全部服务菜单提前了解\n\n"
-        f"💡 有任何问题随时问我～"
+        f"▸ 提示： 有任何问题随时问我～"
     )
 
 
@@ -157,7 +157,7 @@ def build_keyword_routes(bnb_id="guishu"):
         (r"^(地图|位置|导航|在哪|怎么走|地址)$",
          lambda msg, m: format_location_text(bnb_id=bnb_id)),
         (r"^美食(.+)$",
-         lambda msg, m: f"🍜 关于「{m.group(1)}」类美食，回复「周边美食」查看完整美食指南～\n\n💡 回复「美食+编号」如「美食7」查看饮品店详情～"),
+         lambda msg, m: f"🍜 关于「{m.group(1)}」类美食，回复「周边美食」查看完整美食指南～\n\n▸ 提示： 回复「美食+编号」如「美食7」查看饮品店详情～"),
 
         # ── 快捷服务相关（要求2：通知员工，需预订后才能使用）─
         (r"^(服务|快捷|4)$",
@@ -175,7 +175,7 @@ def build_keyword_routes(bnb_id="guishu"):
         (r"^(退房|离店|退宿)$",
          lambda msg, m: _guard_service("退房", bnb_id=bnb_id)(msg, m)),
         (r"^(加床|加被|婴儿床|儿童床)$",
-         lambda msg, m: "🛏️ 温馨提示：本民宿所有房型不可加床，不提供婴儿床。\n\n如需额外被褥枕头，可回复「补充用品」或「人工」联系前台～"),
+         lambda msg, m: "· 温馨提示：本民宿所有房型不可加床，不提供婴儿床。\n\n如需额外被褥枕头，可回复「补充用品」或「人工」联系前台～"),
         (r"^(送餐|送饭)$",
          lambda msg, m: _guard_service("送餐", bnb_id=bnb_id)(msg, m)),
         (r"^(wifi|WiFi|无线|网络)$",
@@ -228,26 +228,26 @@ def handle_bind_booking(msg) -> str:
         booking = get_booking_by_openid(openid, bnb_id=bnb_id)
         room_code = booking.get("room_code", "") if booking else ""
         lines = [
-            "✅ 您的专属AI管家已就绪～",
+            "[✓] 您的专属AI管家已就绪～",
             "",
             "有什么可以帮您的吗？可以直接向我提问哦！",
         ]
         if room_code:
             lines.append("")
-            lines.append(f"🔑 房间共享码：{room_code}")
-            lines.append(f"💡 同住人回复「绑定房间 {room_code}」即可共享管家全部功能～")
+            lines.append(f"· 房间共享码：{room_code}")
+            lines.append(f"▸ 提示： 同住人回复「绑定房间 {room_code}」即可共享管家全部功能～")
             lines.append("   您可以回复「房间码」随时查看已绑定的同住人")
         return "\n".join(lines)
 
     return (
-        "🔗 *绑定预订*\n\n"
+        "· *绑定预订*\n\n"
         "请在以下平台预订后，联系前台确认预订即可解锁专属AI管家：\n\n"
-        "🏨 携程 | 🏠 美团 | ✈️ 飞猪 | ⭐ 大众点评\n"
+        "· 携程 | · 美团 | · 飞猪 | ★ 大众点评\n"
         f"  搜索「{cfg['short_name']}」\n\n"
-        "💡 前台确认预订后，专属AI管家自动解锁\n"
-        "💡 现在就可以免费使用旅行顾问～直接问我庐山攻略\n"
-        "💡 回复「预订」查看各平台预订链接\n"
-        "💡 回复「人工」联系前台确认绑定"
+        "▸ 提示： 前台确认预订后，专属AI管家自动解锁\n"
+        "▸ 提示： 现在就可以免费使用旅行顾问～直接问我庐山攻略\n"
+        "▸ 提示： 回复「预订」查看各平台预订链接\n"
+        "▸ 提示： 回复「人工」联系前台确认绑定"
     )
 
 
@@ -258,20 +258,20 @@ def handle_bind_room_code(msg, room_code: str) -> str:
 
     if result["success"]:
         return (
-            f"🔑 {result['message']}\n\n"
-            f"🏠 房型：{result['booking'].get('room_type', '未知')}\n"
-            f"📅 入住：{result['booking'].get('check_in_date', '')}\n"
-            f"🛎️ 现在可以使用全部管家服务啦～\n\n"
-            f"💡 回复「帮助」查看功能列表"
+            f"· {result['message']}\n\n"
+            f"· 房型：{result['booking'].get('room_type', '未知')}\n"
+            f"· 入住：{result['booking'].get('check_in_date', '')}\n"
+            f"· 现在可以使用全部管家服务啦～\n\n"
+            f"▸ 提示： 回复「帮助」查看功能列表"
         )
     else:
         return (
-            f"❌ {result['message']}\n\n"
-            f"💡 请确认：\n"
+            f"· {result['message']}\n\n"
+            f"▸ 提示： 请确认：\n"
             f"  · 房间码输入正确（6位字母数字）\n"
             f"  · 预订仍然有效\n"
             f"  · 码区分大小写？不区分，直接输入即可\n\n"
-            f"📞 如有疑问，联系前台：{BNB_PHONE}"
+            f"☎ 如有疑问，联系前台：{BNB_PHONE}"
         )
 
 
@@ -282,7 +282,7 @@ def handle_show_room_code(msg) -> str:
     from bnb_context import get_current_bnb_id
     booking = get_booking_by_openid(openid, bnb_id=get_current_bnb_id())
     if not booking:
-        return "您还没有有效预订，无法生成房间共享码。\n\n💡 预订后回复「绑定预订」解锁 AI 管家～"
+        return "您还没有有效预订，无法生成房间共享码。\n\n▸ 提示： 预订后回复「绑定预订」解锁 AI 管家～"
 
     room_code = booking.get("room_code", "")
     if not room_code:
@@ -290,19 +290,19 @@ def handle_show_room_code(msg) -> str:
 
     guests = get_room_guests(room_code)
     lines = [
-        "🔑 您的房间共享码",
+        "· 您的房间共享码",
         "",
         f"房间码：{room_code}",
         f"房型：{booking.get('room_type', '')}",
         f"入住：{booking.get('check_in_date', '')}",
         "",
-        f"👥 已绑定 {len(guests)} 人：",
+        f"· 已绑定 {len(guests)} 人：",
     ]
     for g in guests:
         lines.append(f"  · {g.get('guest_name', '未知')} ({g.get('relation', '同住')})")
 
     lines.append("")
-    lines.append("💡 同住人回复「绑定房间 " + room_code + "」即可共享 AI 管家～")
+    lines.append("▸ 提示： 同住人回复「绑定房间 " + room_code + "」即可共享 AI 管家～")
     return "\n".join(lines)
 
 
@@ -316,13 +316,13 @@ def handle_order_flow(msg, m) -> str:
     """处理点餐下单"""
     items_text = m.group(2).strip()
     return (
-        "☕ *点餐下单*\n\n"
+        "· *点餐下单*\n\n"
         f"您想点：{items_text}\n\n"
         "请点击下方链接进入点餐页面\n"
         "选择菜品后可直接微信支付 💳\n\n"
-        f"📱 点餐页面：{_get_menu_url()}\n\n"
-        "💡 回复「菜单」查看完整菜单\n"
-        "💡 回复「推荐」查看今日推荐"
+        f"· 点餐页面：{_get_menu_url()}\n\n"
+        "▸ 提示： 回复「菜单」查看完整菜单\n"
+        "▸ 提示： 回复「推荐」查看今日推荐"
     )
 
 
@@ -366,18 +366,18 @@ def handle_extend_stay(msg, bnb_id: str = "guishu") -> str:
     if updated:
         new_date = updated.get('check_out_date', '待确认')
         return (
-            f"🏨 续住已确认！\n\n"
-            f"📅 退房日期已延长至：{new_date}\n"
-            f"🛎️ 续住期间所有管家服务照常使用～\n\n"
-            f"💡 如需续住多天，请直接告知或联系前台调整\n"
-            f"📞 前台电话：{phone}"
+            f"· 续住已确认！\n\n"
+            f"· 退房日期已延长至：{new_date}\n"
+            f"· 续住期间所有管家服务照常使用～\n\n"
+            f"▸ 提示： 如需续住多天，请直接告知或联系前台调整\n"
+            f"☎ 前台电话：{phone}"
         )
     else:
         return (
-            f"🏨 续住请求已收到！\n\n"
-            f"📅 已通知前台为您办理续住手续\n"
-            f"💡 默认为您延长1天，如需续住多天请告知前台\n\n"
-            f"📞 前台电话：{phone}\n\n"
+            f"· 续住请求已收到！\n\n"
+            f"· 已通知前台为您办理续住手续\n"
+            f"▸ 提示： 默认为您延长1天，如需续住多天请告知前台\n\n"
+            f"☎ 前台电话：{phone}\n\n"
             f"当前管家服务不受影响，请放心～"
         )
 
@@ -388,7 +388,7 @@ def format_wifi_info(bnb_id: str = "guishu") -> str:
     ssid = cfg.get("wifi_ssid", cfg.get("short_name", "云上·归墅"))
     pwd = cfg.get("wifi_password", "yunshang888")
     return (
-        "📶 *WiFi 信息*\n\n"
+        "· *WiFi 信息*\n\n"
         f"网络名称：{ssid}\n"
         f"密码：{pwd}\n\n"
         "连接后即可畅享高速网络～"
@@ -399,14 +399,14 @@ def format_greeting(bnb_id="guishu") -> str:
     from bnb_context import get_bnb_config
     cfg = get_bnb_config(bnb_id)
     return (
-        f"您好呀！👋 欢迎来到{cfg['name']}～\n\n"
+        f"您好呀！· 欢迎来到{cfg['name']}～\n\n"
         "我是您的智能管家，有什么可以帮您的吗？\n"
         "您可以回复以下数字快速查询：\n"
         "【1】房型展示  【2】咖啡简餐\n"
         "【3】游玩攻略  【4】快捷服务\n"
         "【5】在线咨询\n\n"
-        "💡 预订请通过携程/美团/飞猪/大众点评\n"
-        "🎐 预订确认后解锁专属AI管家～预订前也能免费使用旅行顾问哦～"
+        "▸ 提示： 预订请通过携程/美团/飞猪/大众点评\n"
+        "· 预订确认后解锁专属AI管家～预订前也能免费使用旅行顾问哦～"
     )
 
 
@@ -416,9 +416,9 @@ def handle_human_service(bnb_id: str = "guishu") -> str:
     if is_human_service_time():
         phone = cfg.get("phone", BNB_PHONE)
         return (
-            "正在为您转接人工客服... 👩‍💼\n\n"
-            f"☎️ 也可直接拨打前台电话：{phone}\n"
-            "🕐 人工客服在线时间：8:00 - 22:00\n\n"
+            "正在为您转接人工客服... ·\n\n"
+            f"☎ 也可直接拨打前台电话：{phone}\n"
+            "· 人工客服在线时间：8:00 - 22:00\n\n"
             "请稍候，客服马上为您服务～"
         )
     else:
@@ -427,13 +427,13 @@ def handle_human_service(bnb_id: str = "guishu") -> str:
 
 def format_review_links(bnb_id="guishu") -> str:
     """格式化各平台好评链接（要求4）"""
-    lines = ["⭐ *各平台评价入口*\n"]
+    lines = ["★ *各平台评价入口*\n"]
     platforms = get_platform_review_links(bnb_id=bnb_id)
     for key, info in platforms.items():
         lines.append(f"{info['icon']} *{info['name']}*")
         lines.append(f"  {info['review_url']}\n")
 
-    lines.append("💡 您的每一条评价都是对我们最大的鼓励～🙏")
+    lines.append("▸ 提示： 您的每一条评价都是对我们最大的鼓励～·")
     return "\n".join(lines)
 
 
@@ -462,16 +462,16 @@ def _welcome_for_bnb(bnb_id="guishu"):
     from bnb_context import get_bnb_config
     cfg = get_bnb_config(bnb_id)
     return (
-        f"🏔️ 欢迎来到{cfg['name']}！\n\n"
+        f"· 欢迎来到{cfg['name']}！\n\n"
         f"{cfg.get('description', '')}\n\n"
         "回复以下数字或关键词探索：\n"
-        "【1】🛏️ 房型展示\n"
-        "【2】☕ 咖啡简餐\n"
-        "【3】🗺️ 游玩攻略\n"
-        "【4】🛎️ 快捷服务\n"
-        "【5】💬 在线咨询\n\n"
-        f"🏨 预订请通过携程/美团/飞猪/大众点评搜索「{cfg['short_name']}」\n"
-        "🎐 预订前免费旅行顾问 · 预订后解锁专属AI管家～"
+        "【1】· 房型展示\n"
+        "【2】· 咖啡简餐\n"
+        "【3】· 游玩攻略\n"
+        "【4】· 快捷服务\n"
+        "【5】· 在线咨询\n\n"
+        f"· 预订请通过携程/美团/飞猪/大众点评搜索「{cfg['short_name']}」\n"
+        "· 预订前免费旅行顾问 · 预订后解锁专属AI管家～"
     )
 
 
@@ -534,7 +534,7 @@ def handle_wechat_message(msg, bnb_id="guishu"):
     warning("wechat.fallback", extra={"openid": openid, "content": content[:60]})
     # 3. 兜底回复
     return (
-        "我收到了您的消息～ 💬\n\n"
+        "我收到了您的消息～ ·\n\n"
         "如需帮助，可以：\n"
         "  · 回复数字 1-5 使用快捷功能\n"
         "  · 回复「人工」转接人工客服\n"
@@ -594,7 +594,7 @@ def _tea_or_fallback(bnb_id="guishu"):
         return format_tea_text(bnb_id=bnb_id)
     cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
     return (
-        f"🍵 茶园体验是「{cfg['short_name']}」的特色服务哦～\n\n"
+        f"· 茶园体验是「{cfg['short_name']}」的特色服务哦～\n\n"
         "山纪民宿坐拥庐山茶园，提供采茶、制茶、品茶等体验。\n"
         f"如需了解更多，请通过小程序切换到山纪民宿，或直接搜索「{cfg['short_name']}」预订～"
     )
@@ -607,7 +607,7 @@ def _healing_or_fallback(bnb_id="guishu"):
         return format_healing_text(bnb_id=bnb_id)
     cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
     return (
-        f"🧘 疗愈体验是「{cfg['short_name']}」的特色服务哦～\n\n"
+        f"· 疗愈体验是「{cfg['short_name']}」的特色服务哦～\n\n"
         "东林外民宿紧邻东林寺，提供瑜伽、禅修、SPA等身心疗愈项目。\n"
         f"如需了解更多，请通过小程序切换到东林外民宿，或直接搜索「{cfg['short_name']}」预订～"
     )

@@ -47,7 +47,7 @@ def format_services_text(bnb_id=None):
 
     from config import BNB_CONFIGS
     name = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])["short_name"]
-    lines = [f"🛎️ *{name} · 快捷服务*\n"]
+    lines = [f"· *{name} · 快捷服务*\n"]
 
     categories = {}
     for svc in services:
@@ -59,7 +59,7 @@ def format_services_text(bnb_id=None):
     cat_labels = {
         "housekeeping": "🧹 客房服务",
         "maintenance": "🔧 设施维修",
-        "frontdesk": "🏨 前台服务",
+        "frontdesk": "· 前台服务",
         "other": "📦 其他服务",
     }
 
@@ -71,12 +71,12 @@ def format_services_text(bnb_id=None):
             lines.append(
                 f"  {icon} *{item['name']}*\n"
                 f"     {item.get('description', '')}\n"
-                f"     ⏱️ {item.get('estimated_time', '')}\n"
+                f"     · {item.get('estimated_time', '')}\n"
             )
         lines.append("")
 
     lines.append("─" * 30)
-    lines.append("💡 *如何使用快捷服务？*")
+    lines.append("▸ 提示： *如何使用快捷服务？*")
     lines.append("  · 回复「服务+名称」如「服务续住」")
     lines.append("  · 回复「打扫」「续住」「维修」「叫醒」直接呼叫")
     lines.append("  · 也可直接拨打前台电话联系")
@@ -114,11 +114,11 @@ def handle_service_request(service_name: str, openid: str = "",
     except Exception:
         debug("服务请求通知创建失败（不影响主流程）")
 
-    icon = matched.get("icon", "✅")
+    icon = matched.get("icon", "[✓]")
     return (
         f"{icon} *{matched['name']}* 已收到您的请求！\n\n"
         f"📝 {matched.get('description', '')}\n"
-        f"⏱️ 预计处理时间：{matched.get('estimated_time', '尽快处理')}\n\n"
-        f"✅ 已通知工作人员，请稍候～\n"
-        f"如有紧急需求，请拨打前台电话 ☎️"
+        f"· 预计处理时间：{matched.get('estimated_time', '尽快处理')}\n\n"
+        f"[✓] 已通知工作人员，请稍候～\n"
+        f"如有紧急需求，请拨打前台电话 ☎"
     )

@@ -216,10 +216,10 @@ def create_appointment(data, bnb_id=None):
                 f"预约成功！\n"
                 f"📋 {course.name}\n"
                 f"⏰ {date_str} {time_str}（{tier.get('duration')}）\n"
-                f"💰 ¥{tier.get('price')}\n"
+                f"· ¥{tier.get('price')}\n"
                 f"👤 {guest_name}\n"
-                f"📞 {guest_phone}\n\n"
-                f"🧘‍♀️ 琼儿老师将在约定时间等候您的到来～"
+                f"☎ {guest_phone}\n\n"
+                f"· 琼儿老师将在约定时间等候您的到来～"
             ),
         }
     except Exception as e:
@@ -246,7 +246,7 @@ def confirm_payment(appointment_id, bnb_id=None):
         appt.pay_status = "paid"
         appt.status = "paid"
         db.commit()
-        return {"success": True, "message": "支付成功！🧘‍♀️ 琼儿老师将在约定时间等候您～"}
+        return {"success": True, "message": "支付成功！· 琼儿老师将在约定时间等候您～"}
     except Exception as e:
         db.rollback()
         log_error("healing.confirm_payment", str(e), exc_info=True)
@@ -310,7 +310,7 @@ def format_healing_text(bnb_id=None):
     cfg = get_bnb_config(bnb_id)
     categories = get_healing_categories(bnb_id=bnb_id)
 
-    lines = [f"🧘 *{cfg['short_name']} · 疗愈空间*\n"]
+    lines = [f"· *{cfg['short_name']} · 疗愈空间*\n"]
     lines.append("所有项目均由琼儿老师一对一服务\n")
 
     for cat in categories:
@@ -331,7 +331,7 @@ def format_healing_text(bnb_id=None):
                 lines.append(f"    {c['description'][:80]}")
         lines.append("")
 
-    lines.append(f"📍 {cfg['short_name']} | 庐山·东林寺旁")
-    lines.append("📞 回复「预订」或联系前台预约")
-    lines.append("💡 回复「疗愈」查看更多详情")
+    lines.append(f"· {cfg['short_name']} | 庐山·东林寺旁")
+    lines.append("☎ 回复「预订」或联系前台预约")
+    lines.append("▸ 提示： 回复「疗愈」查看更多详情")
     return "\n".join(lines)

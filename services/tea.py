@@ -57,7 +57,7 @@ def format_tea_text(bnb_id=None):
     bnb_id = _get_bnb_id(bnb_id)
     from bnb_context import get_bnb_config
     cfg = get_bnb_config(bnb_id)
-    lines = [f"🍵 *{cfg['short_name']} · 茶园体验*\n"]
+    lines = [f"· *{cfg['short_name']} · 茶园体验*\n"]
 
     types = get_tea_types(bnb_id=bnb_id)
     if types:
@@ -75,10 +75,10 @@ def format_tea_text(bnb_id=None):
         lines.append("🧑‍🌾 *茶园体验*")
         for e in exps:
             lines.append(f"  {e['name']}  ¥{e['price']}")
-            lines.append(f"    ⏱️ {e['duration']}  |  👥 {e['capacity']}人")
+            lines.append(f"    · {e['duration']}  |  · {e['capacity']}人")
             if e.get('description'):
                 lines.append(f"    {e['description'][:60]}")
         lines.append("")
 
-    lines.append("💡 回复「茶园」查看更多茶文化内容")
+    lines.append("▸ 提示： 回复「茶园」查看更多茶文化内容")
     return "\n".join(lines)

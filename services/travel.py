@@ -93,13 +93,13 @@ def format_routes_text(bnb_id=None):
     if not routes:
         return "暂无游玩路线信息，请咨询前台获取最新攻略～"
 
-    lines = ["🗺️ *庐山游玩攻略*\n"]
+    lines = ["· *庐山游玩攻略*\n"]
 
     # 民宿位置
     from config import BNB_CONFIGS
     bnb_cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
-    lines.append(f"📍 *{bnb_cfg['short_name']}* 位于 {bnb_cfg['address']}")
-    lines.append(f"  🗺️ 查看地图：{generate_amap_link(bnb_cfg['name'], bnb_cfg['latitude'], bnb_cfg['longitude'])}")
+    lines.append(f"· *{bnb_cfg['short_name']}* 位于 {bnb_cfg['address']}")
+    lines.append(f"  · 查看地图：{generate_amap_link(bnb_cfg['name'], bnb_cfg['latitude'], bnb_cfg['longitude'])}")
     lines.append("")
 
     # 推荐路线
@@ -107,19 +107,19 @@ def format_routes_text(bnb_id=None):
     others = [r for r in routes if not r.get("is_recommended")]
 
     if recommended:
-        lines.append("⭐ *精选推荐路线*\n")
+        lines.append("★ *精选推荐路线*\n")
         for route in recommended:
             lines.append(format_route_summary(route))
 
     if others:
-        lines.append("🗺️ *更多路线*\n")
+        lines.append("· *更多路线*\n")
         for route in others:
             lines.append(format_route_summary(route))
 
     lines.append("─" * 30)
-    lines.append("💡 回复「路线+编号」如「路线1」查看详细攻略")
-    lines.append("💡 回复「美食」查看周边美食推荐")
-    lines.append("💡 回复「地图」查看民宿位置导航")
+    lines.append("▸ 提示： 回复「路线+编号」如「路线1」查看详细攻略")
+    lines.append("▸ 提示： 回复「美食」查看周边美食推荐")
+    lines.append("▸ 提示： 回复「地图」查看民宿位置导航")
     return "\n".join(lines)
 
 
@@ -129,9 +129,9 @@ def format_route_summary(route: dict) -> str:
     diff = difficulty_icon.get(route.get("difficulty", "easy"), "🟢")
     return (
         f"*{route['name']}*\n"
-        f"  ⏱️ {route.get('duration', '')}  |  {diff} {route.get('difficulty', '')}\n"
+        f"  · {route.get('duration', '')}  |  {diff} {route.get('difficulty', '')}\n"
         f"  📝 {route.get('description', '')[:80]}\n"
-        f"  🗺️ {route.get('map_link', '')}\n\n"
+        f"  · {route.get('map_link', '')}\n\n"
     )
 
 
@@ -146,8 +146,8 @@ def format_route_detail_text(route_id: int, bnb_id=None):
     diff = difficulty_icon.get(route.get("difficulty", "easy"), "轻松")
 
     lines = [
-        f"🗺️ *{route['name']}* 详细攻略\n",
-        f"⏱️ 建议时长：{route.get('duration', '')}",
+        f"· *{route['name']}* 详细攻略\n",
+        f"· 建议时长：{route.get('duration', '')}",
         f"💪 难度：{diff}",
         f"\n📝 {route.get('description', '')}\n",
     ]
@@ -163,11 +163,11 @@ def format_route_detail_text(route_id: int, bnb_id=None):
                 lines.append(f"     {spot_desc[:60]}")
 
     if route.get("tips"):
-        lines.append(f"\n💡 *小贴士*")
+        lines.append(f"\n▸ 提示： *小贴士*")
         lines.append(f"  {route['tips']}")
 
     if route.get("map_link"):
-        lines.append(f"\n🗺️ *导航路线*")
+        lines.append(f"\n· *导航路线*")
         lines.append(f"  {route['map_link']}")
 
     return "\n".join(lines)
@@ -193,17 +193,17 @@ def format_food_text(bnb_id=None):
         lines.append(f"*{cat}*")
         for item in items:
             lines.append(
-                f"  🏠 {item['name']}\n"
-                f"  💰 人均：{item.get('price_range', '详询')}\n"
+                f"  · {item['name']}\n"
+                f"  · 人均：{item.get('price_range', '详询')}\n"
                 f"  📝 {item.get('description', '')[:60]}\n"
                 f"  🥢 必点：{item.get('must_try', '')}\n"
-                f"  📍 {item.get('address', '')}\n"
-                f"  🗺️ {item.get('map_link', '')}\n"
+                f"  · {item.get('address', '')}\n"
+                f"  · {item.get('map_link', '')}\n"
             )
         lines.append("")
 
-    lines.append("💡 回复「美食+类别」如「美食赣菜」筛选类别")
-    lines.append("💡 回复「美食+编号」如「美食1」查看详细图文攻略")
+    lines.append("▸ 提示： 回复「美食+类别」如「美食赣菜」筛选类别")
+    lines.append("▸ 提示： 回复「美食+编号」如「美食1」查看详细图文攻略")
     return "\n".join(lines)
 
 
@@ -217,7 +217,7 @@ def format_food_detail_text(food_id: int, bnb_id=None):
     lines = [
         f"🍜 *{food['name']}* 详细攻略\n",
         f"🏷️ 类别：{food.get('category', '')}",
-        f"💰 {food.get('price_range', '')}",
+        f"· {food.get('price_range', '')}",
     ]
 
     tags = food.get("tags", [])
@@ -228,12 +228,12 @@ def format_food_detail_text(food_id: int, bnb_id=None):
         lines.append(f"\n{food['detail_content']}")
 
     lines.append(f"\n🥢 *必点*：{food.get('must_try', '')}")
-    lines.append(f"📍 {food.get('address', '')}")
+    lines.append(f"· {food.get('address', '')}")
 
     if food.get("map_link"):
-        lines.append(f"🗺️ 导航：{food['map_link']}")
+        lines.append(f"· 导航：{food['map_link']}")
 
-    lines.append(f"\n💡 回复「美食」查看全部推荐")
+    lines.append(f"\n▸ 提示： 回复「美食」查看全部推荐")
     return "\n".join(lines)
 
 
@@ -249,15 +249,15 @@ def format_location_text(bnb_id="guishu"):
 
     amap_link = generate_amap_link(name, lat, lng)
 
-    return f"""📍 *{name} · 位置导航*
+    return f"""· *{name} · 位置导航*
 
-🏠 地址：{address}
-📞 电话：{phone}
+· 地址：{address}
+☎ 电话：{phone}
 
-🗺️ *点击导航*
+· *点击导航*
   · 高德地图：{amap_link}
 
-🚗 *交通指南*
+· *交通指南*
   · 自驾：导航至「庐山牯岭镇」
   · 高铁：至「九江站」或「庐山站」，转乘上山巴士
   · 飞机：至「南昌昌北机场」或「九江庐山机场」，转乘上山
@@ -266,5 +266,5 @@ def format_location_text(bnb_id="guishu"):
   · 庐山北门换乘中心 → 景区观光车 → 牯岭镇
   · 索道：庐山交通索道（推荐，10分钟上山）
 
-💡 到达牯岭镇后，沿正街前行约500米即到{cfg['short_name']}～
+▸ 提示： 到达牯岭镇后，沿正街前行约500米即到{cfg['short_name']}～
     """

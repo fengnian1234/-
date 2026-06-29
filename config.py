@@ -128,10 +128,10 @@ def _make_booking_platforms(bnb_name: str) -> dict:
     from urllib.parse import quote
     q = quote(bnb_name)
     return {
-        "携程": {"name": "携程旅行", "url": f"https://hotels.ctrip.com/hotel/search?keyword={q}", "icon": "🏨", "color": "#2577e3"},
-        "美团": {"name": "美团民宿", "url": f"https://hotel.meituan.com/search?keyword={q}", "icon": "🏠", "color": "#ffc300"},
-        "飞猪": {"name": "飞猪旅行", "url": f"https://www.fliggy.com/search?keyword={q}", "icon": "✈️", "color": "#ff5a00"},
-        "大众点评": {"name": "大众点评", "url": f"https://www.dianping.com/search/keyword/{q}", "icon": "⭐", "color": "#ffc300"},
+        "携程": {"name": "携程旅行", "url": f"https://hotels.ctrip.com/hotel/search?keyword={q}", "icon": "·", "color": "#2577e3"},
+        "美团": {"name": "美团民宿", "url": f"https://hotel.meituan.com/search?keyword={q}", "icon": "·", "color": "#ffc300"},
+        "飞猪": {"name": "飞猪旅行", "url": f"https://www.fliggy.com/search?keyword={q}", "icon": "·", "color": "#ff5a00"},
+        "大众点评": {"name": "大众点评", "url": f"https://www.dianping.com/search/keyword/{q}", "icon": "★", "color": "#ffc300"},
     }
 
 BOOKING_PLATFORMS = _make_booking_platforms("云上归墅")
@@ -144,12 +144,12 @@ def _make_review_platforms(bnb_name: str) -> dict:
     from urllib.parse import quote
     q = quote(bnb_name)
     return {
-        "携程": {"name": "携程旅行", "review_url": f"https://hotels.ctrip.com/hotel/dianping/{q}", "icon": "🏨"},
-        "美团": {"name": "美团", "review_url": f"https://hotel.meituan.com/dianping/{q}", "icon": "🏠"},
-        "飞猪": {"name": "飞猪旅行", "review_url": f"https://www.fliggy.com/review/{q}", "icon": "✈️"},
-        "大众点评": {"name": "大众点评", "review_url": f"https://www.dianping.com/shop/{q}/review", "icon": "⭐"},
-        "小红书": {"name": "小红书", "review_url": f"https://www.xiaohongshu.com/search_result?keyword={q}", "icon": "📕"},
-        "抖音": {"name": "抖音", "review_url": f"https://www.douyin.com/search/{q}", "icon": "🎵"},
+        "携程": {"name": "携程旅行", "review_url": f"https://hotels.ctrip.com/hotel/dianping/{q}", "icon": "·"},
+        "美团": {"name": "美团", "review_url": f"https://hotel.meituan.com/dianping/{q}", "icon": "·"},
+        "飞猪": {"name": "飞猪旅行", "review_url": f"https://www.fliggy.com/review/{q}", "icon": "·"},
+        "大众点评": {"name": "大众点评", "review_url": f"https://www.dianping.com/shop/{q}/review", "icon": "★"},
+        "小红书": {"name": "小红书", "review_url": f"https://www.xiaohongshu.com/search_result?keyword={q}", "icon": "·"},
+        "抖音": {"name": "抖音", "review_url": f"https://www.douyin.com/search/{q}", "icon": "·"},
     }
 
 REVIEW_PLATFORMS = _make_review_platforms("云上归墅")
@@ -169,17 +169,17 @@ MONITOR_KEYWORDS_BY_BNB = {
 MONITOR_KEYWORDS = MONITOR_KEYWORDS_BY_BNB["guishu"]
 # ── 客服配置 ─────────────────────────────────────────────
 HUMAN_SERVICE_OPEN_HOURS = (8, 22)
-AUTO_REPLY_NIGHT = "夜深了🌙，{short_name}已进入梦乡。您的问题我们会在明早8点后第一时间回复，感谢您的理解～"
-WELCOME_MESSAGE = """🏔️ 欢迎来到{short_name}！
+AUTO_REPLY_NIGHT = "夜深了·，{short_name}已进入梦乡。您的问题我们会在明早8点后第一时间回复，感谢您的理解～"
+WELCOME_MESSAGE = """· 欢迎来到{short_name}！
 
 {address}，云雾深处的静谧之所。
 
 回复以下数字或关键词探索：
-【1】🛏️ 房型展示
-【2】☕ 咖啡简餐
-【3】🗺️ 游玩攻略
-【4】🛎️ 快捷服务
-【5】💬 在线咨询
+【1】· 房型展示
+【2】· 咖啡简餐
+【3】· 游玩攻略
+【4】· 快捷服务
+【5】· 在线咨询
 
-🏨 预订请通过携程/美团/飞猪/大众点评搜索「{short_name}」
-🎐 预订前免费旅行顾问 · 预订后解锁专属AI管家～"""
+· 预订请通过携程/美团/飞猪/大众点评搜索「{short_name}」
+· 预订前免费旅行顾问 · 预订后解锁专属AI管家～"""

@@ -101,11 +101,11 @@ def get_order_status(order_id: int, bnb_id=None):
 
 STATUS_LABELS = {
     "pending": "⏳ 待确认",
-    "confirmed": "✅ 已确认",
-    "preparing": "👨‍🍳 制作中",
+    "confirmed": "[✓] 已确认",
+    "preparing": "· 制作中",
     "delivered": "🚀 已送达",
     "completed": "✔️ 已完成",
-    "cancelled": "❌ 已取消",
+    "cancelled": "· 已取消",
 }
 
 
@@ -118,13 +118,13 @@ def format_menu_text(bnb_id=None):
 
     from config import BNB_CONFIGS
     name = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])["short_name"]
-    lines = [f"☕ *{name} · 咖啡简餐*\n"]
+    lines = [f"· *{name} · 咖啡简餐*\n"]
     lines.append("本民宿不提供正餐，以下为咖啡、茶饮与简餐～\n")
 
     # 先展示推荐
     recommended = get_recommended_items(bnb_id=bnb_id)
     if recommended:
-        lines.append("⭐ *今日推荐*\n")
+        lines.append("★ *今日推荐*\n")
         for item in recommended:
             lines.append(f"  {item['name']}  ¥{item['price']}")
             if item.get("description"):
@@ -136,7 +136,7 @@ def format_menu_text(bnb_id=None):
         items = cat.get("items", [])
         if not items:
             continue
-        icon = cat.get("icon", "☕")
+        icon = cat.get("icon", "·")
         lines.append(f"{icon} *{cat['name']}*")
         for item in items[:6]:
             lines.append(f"  {item['name']}  ¥{item['price']}")
@@ -161,7 +161,7 @@ def format_recommended_text(bnb_id=None):
     if not items:
         return "暂无推荐菜品～"
 
-    lines = ["⭐ *主厨推荐*\n"]
+    lines = ["★ *主厨推荐*\n"]
     for item in items:
         lines.append(f"*{item['name']}*  ¥{item['price']}")
         lines.append(f"  {item.get('description', '')}")
@@ -169,7 +169,7 @@ def format_recommended_text(bnb_id=None):
             lines.append(f"  🖼️ {item['image']}")
         lines.append("")
 
-    lines.append("💡 回复「下单+编号」即可点餐")
+    lines.append("▸ 提示： 回复「下单+编号」即可点餐")
     return "\n".join(lines)
 
 
@@ -183,7 +183,7 @@ def format_order_status_text(openid: str, bnb_id=None):
     lines = ["📋 *我的订单*\n"]
     for order in orders[:5]:
         status_label = STATUS_LABELS.get(order["status"], order["status"])
-        pay_label = "✅ 已支付" if order.get("pay_status") == "paid" else "⏳ 待支付"
+        pay_label = "[✓] 已支付" if order.get("pay_status") == "paid" else "⏳ 待支付"
         items_text = "、".join(
             f"{item['name']}×{item['quantity']}"
             for item in order.get("items", [])
@@ -191,9 +191,9 @@ def format_order_status_text(openid: str, bnb_id=None):
         lines.append(
             f"🔢 订单#{order['id']}\n"
             f"  📦 {items_text}\n"
-            f"  💰 ¥{order['total_price']}  |  {pay_label}\n"
+            f"  · ¥{order['total_price']}  |  {pay_label}\n"
             f"  📮 {status_label}\n"
-            f"  🕐 {order['created_at']}\n"
+            f"  · {order['created_at']}\n"
         )
     return "\n".join(lines)
 

@@ -8,11 +8,11 @@ from bnb_context import get_service_bnb_id as _get_bnb_id
 
 
 PLATFORMS = {
-    "ctrip":     {"name": "携程",     "icon": "🏨", "color": "#2577e3", "fee_rate": 0.12},
-    "meituan":   {"name": "美团民宿", "icon": "🏠", "color": "#ffc300", "fee_rate": 0.10},
-    "fliggy":    {"name": "飞猪",     "icon": "✈️", "color": "#ff5a00", "fee_rate": 0.10},
-    "dianping":  {"name": "大众点评", "icon": "⭐", "color": "#ffc300", "fee_rate": 0.08},
-    "direct":    {"name": "直接预订", "icon": "📞", "color": "#5b8c5a", "fee_rate": 0.00},
+    "ctrip":     {"name": "携程",     "icon": "·", "color": "#2577e3", "fee_rate": 0.12},
+    "meituan":   {"name": "美团民宿", "icon": "·", "color": "#ffc300", "fee_rate": 0.10},
+    "fliggy":    {"name": "飞猪",     "icon": "·", "color": "#ff5a00", "fee_rate": 0.10},
+    "dianping":  {"name": "大众点评", "icon": "★", "color": "#ffc300", "fee_rate": 0.08},
+    "direct":    {"name": "直接预订", "icon": "☎", "color": "#5b8c5a", "fee_rate": 0.00},
     "xiaohongshu":{"name":"小红书",   "icon": "📕", "color": "#ff2442", "fee_rate": 0.00},
     "douyin":    {"name": "抖音",     "icon": "🎵", "color": "#010101", "fee_rate": 0.00},
 }

@@ -298,7 +298,7 @@ body {
     font-weight: 340;
     color: var(--color-text);
     background: var(--color-bg);
-    line-height: 2.0;
+    line-height: 1.75;
     letter-spacing: 0.01em;
     min-height: 100vh;
     display: flex;
@@ -357,7 +357,7 @@ img {
 
 /* ── 排版 ─────────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-weight: 600;
     line-height: 1.4;
     color: var(--color-text);
@@ -448,7 +448,7 @@ h4 { font-size: 1.05rem; }
 }
 
 .logo-text {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--color-primary-dark);
@@ -658,7 +658,7 @@ h4 { font-size: 1.05rem; }
 .skeleton-pulse * { visibility: hidden; }
 
 .hero-title {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-size: 2.6rem;
     font-weight: 700;
     color: var(--color-white);
@@ -736,11 +736,11 @@ h4 { font-size: 1.05rem; }
     overflow: hidden;
     aspect-ratio: 4/3;
     cursor: pointer;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-sm);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     background: var(--color-bg-light);
 }
-.env-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+.env-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 .env-card img {
     width: 100%;
     height: 100%;
@@ -777,7 +777,7 @@ h4 { font-size: 1.05rem; }
     color: rgba(255, 255, 255, 0.85);
     letter-spacing: 0.1em;
     margin-bottom: 0.5rem;
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
 }
 
 .hero-desc {
@@ -792,7 +792,7 @@ h4 { font-size: 1.05rem; }
     color: rgba(255, 255, 255, 0.85);
     opacity: 1;
     margin-top: 0.5rem;
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     letter-spacing: 0.05em;
 }
 
@@ -3599,7 +3599,7 @@ h4 { font-size: 1.05rem; }
     left: 0;
     background: var(--color-white);
     border-radius: 14px;
-    box-shadow: 0 8px 36px rgba(0,0,0,0.16), 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow: var(--shadow-lg);
     min-width: 240px;
     z-index: 100;
     overflow: hidden;
@@ -3646,3 +3646,104 @@ h4 { font-size: 1.05rem; }
         grid-template-columns: 1fr;
     }
 }
+
+/* ═══════════════════════════════════════════════════════
+   新中式极简组件系统
+   ═══════════════════════════════════════════════════════ */
+
+/* ── 统合 Pill/Tag 组件 ──────────────────────────────── */
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0.25rem 0.75rem;
+    border-radius: 24px;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.pill i { font-size: 0.85em; }
+.pill--primary { background: var(--color-primary); color: var(--color-white); }
+.pill--success { background: var(--color-success); color: var(--color-white); }
+.pill--warning { background: var(--color-warning); color: var(--color-white); }
+.pill--danger  { background: var(--color-danger); color: var(--color-white); }
+.pill--muted   { background: var(--color-bg-light); color: var(--color-text); }
+.pill--accent  { background: var(--color-accent); color: var(--color-white); }
+
+/* ── 数量步进器 ──────────────────────────────────────── */
+.qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.qty-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-white);
+    color: var(--color-text);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+    font-family: var(--font-sans);
+    line-height: 1;
+    padding: 0;
+}
+.qty-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+.qty-btn:active { transform: scale(0.95); }
+.qty-val {
+    font-size: 1rem;
+    font-weight: 600;
+    min-width: 24px;
+    text-align: center;
+    color: var(--color-text);
+}
+
+/* ── 悬浮胶囊按钮组 ──────────────────────────────────── */
+.float-capsule-group {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 50;
+}
+.float-capsule {
+    padding: 0.6rem 1.8rem;
+    border-radius: 28px;
+    background: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: var(--font-sans);
+    text-decoration: none;
+    white-space: nowrap;
+}
+.float-capsule:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+.float-capsule i { font-size: 1.1em; }
+
+/* ── 图标辅助类 ──────────────────────────────────────── */
+.icon-lg { font-size: 2rem !important; }
+.icon-xl { font-size: 3rem !important; }
+.icon-inline { vertical-align: -0.125em; }
