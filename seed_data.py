@@ -1046,15 +1046,26 @@ def seed_food_recommends(db, bnb_id="guishu"):
         # ── 茶园雅院 ────────────────────────────────
         FoodRecommend(
             name="人情味茶园雅院",
-            category="茶文化体验",
-            description="庐山脚下茶园雅院，人均约¥69。茶园采摘+制茶体验+农家菜，主打原生态茶旅融合体验",
+            category="本地特色",
+            description="庐山索道旁藏匿于绿意庭院中的宝藏餐厅，仿佛置身世外桃源。油焖庐山竹笋、茶香鸭、芥末虾球好评如潮",
             address="庐山市牯岭镇慧远路庐山索道东北110米",
             map_link="https://uri.amap.com/marker?position=115.978075,29.572595&name=人情味茶园雅院",
             price_range="人均 ¥69",
-            must_try="茶园采茶体验、农家土菜、自制茶点",
+            must_try="油焖庐山竹笋、人情味茶香鸭、芥末虾球",
             sort_order=6,
-            tags=["#茶园", "#采茶体验", "#农家菜", "#茶旅融合", "#索道旁"],
+            tags=["#茶园", "#索道旁", "#竹笋", "#茶香鸭", "#庐山美食"],
             images=["/static/img/food/renchawei_01.jpg", "/static/img/food/renchawei_02.jpg"],
+            detail_content=(
+                "\U0001f31f **入仙境\U0001f33f在庐山茶园深处吃了顿饭…**\n\n"
+                "✨【人情味•茶园雅院】探店记✨\n\n"
+                "你是否厌倦了城市的喧嚣，渴望在忙碌中找到一处静谧之地？来吧！这里有一处藏匿于庐山上的小院餐厅，绝对能让你流连忘返！\n\n"
+                "\U0001f4cd **位置**：位于庐山牯岭镇索道北面110米。从索道下来步行只需几分钟，就能看到一个充满绿意的庭院，仿佛置身世外桃源。\n\n"
+                "⏰ **营业时间**：每天11:00-21:00。无论你是想来一顿悠闲的午餐还是温馨的晚餐，这里都能满足你的需求。\n\n"
+                "\U0001f37d️ **推荐菜品**：\n"
+                "• 油焖庐山竹笋：新鲜采摘的竹笋，经过大厨的精心烹饪，每一口都是大自然的味道。\n"
+                "• 人情味茶香鸭：这道菜将茶叶的清香与鸭肉完美融合，让人回味无穷。\n"
+                "• 芥末虾球：虾肉鲜嫩，搭配微微刺激的芥末酱，口感层次丰富。"
+            ),
         ),
         # ── 特色饮品店 ────────────────────────────────
         FoodRecommend(
@@ -1139,11 +1150,12 @@ def _seed_shanji_foods(db):
             map_link="https://uri.amap.com/marker?position=115.9805,29.5572&name=利民煨汤馆",
             price_range="人均 ¥26-45", must_try="茶树菇排骨汤、山药土鸡汤、南昌拌粉",
             images=["/static/img/food/limin_01.jpg"], is_recommended=True, sort_order=5),
-        FoodRecommend(bnb_id="shanji", name="人情味茶园雅院", category="茶文化体验",
-            description="牯岭镇慧远路索道旁，茶园里的农家小院。采茶+品茶+农家菜，人均约¥69",
+        FoodRecommend(bnb_id="shanji", name="人情味茶园雅院", category="本地特色",
+            description="庐山索道旁藏匿于绿意庭院中的宝藏餐厅，油焖竹笋、茶香鸭、芥末虾球好评如潮",
             address="庐山市牯岭镇慧远路庐山索道东北110米",
-            price_range="人均 ¥69", must_try="茶园采茶体验、农家土菜、自制茶点",
-            images=["/static/img/food/renchawei_01.jpg", "/static/img/food/renchawei_02.jpg"], sort_order=6),
+            price_range="人均 ¥69", must_try="油焖庐山竹笋、人情味茶香鸭、芥末虾球",
+            images=["/static/img/food/renchawei_01.jpg", "/static/img/food/renchawei_02.jpg"], sort_order=6,
+            tags=["#茶园", "#索道旁", "#竹笋", "#茶香鸭", "#庐山美食"]),
         FoodRecommend(bnb_id="shanji", name="庐小仙", category="茶饮",
             description="庐山鲜果茶饮！桃香云雾茶+史努比联名杯，必打卡", address="牯岭镇合面街",
             map_link="https://uri.amap.com/marker?position=115.9800,29.5570&name=庐小仙",
