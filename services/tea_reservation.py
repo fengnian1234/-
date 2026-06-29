@@ -314,3 +314,67 @@ def get_reservation_by_code(code, bnb_id=None):
         return reservation.to_dict() if reservation else None
     finally:
         db.close()
+
+
+def get_queue_info(code, bnb_id=None):
+    """获取预约排队信息：排序位置、前方人数、同时段人数、预计时间（粗略）"""
+    bnb_id = _get_bnb_id(bnb_id)
+    code = (code or "").strip()
+    if len(code) < 6:
+        return {"error": "无效的预约码"}
+
+    db = SessionLocal()
+    try:
+        reservation = db.query(TeaReservation).filter(
+            TeaReservation.reservation_code == code,
+            TeaReservation.bnb_id == bnb_id,
+        ).first()
+        if not reservation:
+            return {"error": "预约码无效"}
+
+        res_date = reservation.reservation_date
+        res_time = reservation.reservation_time
+        res_created = reservation.created_at
+
+        # 当天所有有效预约（pending + checked_in），按创建时间排序
+        day_reservations = db.query(TeaReservation).filter(
+            TeaReservation.bnb_id == bnb_id,
+            TeaReservation.reservation_date == res_date,
+            TeaReservation.status.in_(["pending", "checked_in"]),
+        ).order_by(TeaReservation.created_at.asc()).all()
+
+        # 排队位置（1-based）
+        date_position = sum(1 for r in day_reservations if r.created_at < res_created) + 1
+        date_total = len(day_reservations)
+
+        # 同时段预约数
+        same_slot = [r for r in day_reservations if r.reservation_time == res_time]
+        slot_position = sum(1 for r in same_slot if r.created_at < res_created) + 1
+        slot_total = len(same_slot)
+
+        # 预计时间：该时段前方每组约 30 分钟（粗略估算，后续可接入实际翻台数据）
+        ahead_in_slot = slot_position - 1
+        if ahead_in_slot > 0:
+            h, m = map(int, res_time.split(":"))
+            est_minutes = h * 60 + m + ahead_in_slot * 30
+            est_h = est_minutes // 60
+            est_m = est_minutes % 60
+            estimated_time = f"{est_h:02d}:{est_m:02d}"
+            estimate_note = f"该时段前方有 {ahead_in_slot} 组客人，预计 {estimated_time} 左右可入座"
+        else:
+            estimated_time = res_time
+            estimate_note = "您是此时段第一组客人，可按预约时间准时入座"
+
+        return {
+            "success": True,
+            "queue": {
+                "date_position": date_position,
+                "date_total": date_total,
+                "slot_position": slot_position,
+                "slot_total": slot_total,
+                "estimated_time": estimated_time,
+                "estimate_note": estimate_note,
+            },
+        }
+    finally:
+        db.close()

@@ -535,6 +535,9 @@ function showReservationResult(res) {
         <span class="rd-value" id="reserveStatus">${res.ordering_unlocked ? '🔓 已核验 · 可点单' : '🔒 待核验'}</span>
       </div>
     </div>
+    <div class="queue-info" id="queueInfo">
+      <p class="queue-loading"><i class="ph-thin ph-clock-countdown"></i> 加载排队信息...</p>
+    </div>
     <button class="btn btn-sm" onclick="clearReservation()" style="margin-top:16px;padding:8px 24px;border-radius:20px;background:var(--color-bg);border:1.5px solid var(--color-border);color:var(--color-text);cursor:pointer;font-size:0.85rem"><i class="ph-thin ph-arrow-left"></i> 重新预约</button>
   `;
   // 生成二维码
@@ -550,6 +553,41 @@ function showReservationResult(res) {
     }
   }, 100);
   document.getElementById('reservationResult').scrollIntoView({ behavior: 'smooth' });
+
+  // 异步加载排队信息
+  loadQueueInfo(res.reservation_code);
+}
+
+async function loadQueueInfo(code) {
+  const el = document.getElementById('queueInfo');
+  if(!el) return;
+  try {
+    const q = await fetch(`/api/tea/reservation/queue?code=${code}`).then(r=>r.json());
+    if(q.success && q.queue) {
+      const d = q.queue;
+      el.innerHTML = `
+        <div class="queue-row">
+          <div class="queue-item">
+            <span class="queue-num">${d.date_position}<small>/${d.date_total}</small></span>
+            <span class="queue-label">今日排队</span>
+          </div>
+          <div class="queue-item">
+            <span class="queue-num">${d.slot_position}<small>/${d.slot_total}</small></span>
+            <span class="queue-label">该时段内</span>
+          </div>
+          <div class="queue-item queue-item--wide">
+            <span class="queue-num"><i class="ph-thin ph-clock"></i> ${d.estimated_time}</span>
+            <span class="queue-label">预计入座</span>
+          </div>
+        </div>
+        <p class="queue-note">${d.estimate_note}</p>
+      `;
+    } else {
+      el.innerHTML = '<p class="queue-loading">排队信息暂无</p>';
+    }
+  } catch(e) {
+    el.innerHTML = '<p class="queue-loading">排队信息加载失败</p>';
+  }
 }
 
 // ── 清除预约，回到表单 ──

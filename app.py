@@ -1184,6 +1184,20 @@ def api_tea_reservation_status():
     return jsonify({"success": True, "reservation": result})
 
 
+@app.route("/api/tea/reservation/queue")
+def api_tea_reservation_queue():
+    """查询预约排队信息：排序位置、前方人数、同时段人数、预计时间"""
+    from services.tea_reservation import get_queue_info
+    bnb_id = request.args.get("bnb_id")
+    code = request.args.get("code", "").strip()
+    if not code:
+        return jsonify({"success": False, "error": "缺少预约码"}), 400
+    result = get_queue_info(code, bnb_id=bnb_id)
+    if "error" in result:
+        return jsonify({"success": False, "error": result["error"]}), 404
+    return jsonify(result)
+
+
 # ══════════════════════════════════════════════════════════
 #  疗愈模块 API（云上·东林外）
 # ══════════════════════════════════════════════════════════
