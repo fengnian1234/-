@@ -597,12 +597,7 @@ h4 { font-size: 1.05rem; }
     height: 65vh;
     min-height: 360px;
     max-height: 560px;
-    background:
-        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(142,184,201,0.7) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 70% at 20% 70%, rgba(122,171,142,0.5) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(200,150,106,0.35) 0%, transparent 50%),
-        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(180,210,190,0.4) 0%, transparent 55%),
-        linear-gradient(175deg, var(--color-primary-dark) 0%, var(--color-primary) 40%, var(--color-primary-light) 100%);
+    background: linear-gradient(175deg, color-mix(in srgb, var(--color-primary) 18%, var(--color-bg)) 0%, var(--color-bg) 50%, color-mix(in srgb, var(--color-mist) 40%, var(--color-bg)) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -678,12 +673,7 @@ h4 { font-size: 1.05rem; }
 }
 
 [data-theme="dark"] .hero {
-    background:
-        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(42,56,45,0.9) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 70% at 20% 70%, rgba(35,50,40,0.6) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(55,40,28,0.4) 0%, transparent 50%),
-        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(65,55,40,0.3) 0%, transparent 55%),
-        linear-gradient(175deg, #141a15 0%, #1a241e 40%, #242e26 100%);
+    background: linear-gradient(175deg, color-mix(in srgb, var(--color-primary) 12%, var(--color-bg)) 0%, var(--color-bg) 50%, color-mix(in srgb, var(--color-mist) 25%, var(--color-bg)) 100%);
 }
 [data-theme="dark"] .hero::after {
     background: var(--color-bg);
@@ -806,41 +796,18 @@ h4 { font-size: 1.05rem; }
     letter-spacing: 0.05em;
 }
 
-/* BnB Hero — 变量驱动，与基础hero保持一致 */
+/* BnB / 季节 Hero — 统一柔和渐变，避免色块突变 */
 [data-bnb="shanji"] .hero:not(.hero--photo),
-[data-bnb="donglinwai"] .hero:not(.hero--photo) {
-    background:
-        radial-gradient(ellipse 80% 60% at 60% 0%, color-mix(in srgb, var(--color-sky) 70%, transparent) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 70% at 20% 70%, color-mix(in srgb, var(--color-primary-light) 50%, transparent) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 90%, color-mix(in srgb, var(--color-accent) 35%, transparent) 0%, transparent 50%),
-        radial-gradient(ellipse 70% 50% at 10% 20%, color-mix(in srgb, var(--color-primary-light) 40%, transparent) 0%, transparent 55%),
-        linear-gradient(175deg, var(--color-primary-dark) 0%, var(--color-primary) 40%, var(--color-primary-light) 100%);
-}
-[data-bnb="shanji"][data-theme="dark"] .hero:not(.hero--photo),
-[data-bnb="donglinwai"][data-theme="dark"] .hero:not(.hero--photo) {
-    background:
-        radial-gradient(ellipse 80% 60% at 60% 0%, color-mix(in srgb, var(--color-primary-dark) 50%, black) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 70% at 20% 70%, color-mix(in srgb, var(--color-primary-dark) 35%, black) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 90%, color-mix(in srgb, var(--color-accent) 25%, black) 0%, transparent 50%),
-        radial-gradient(ellipse 70% 50% at 10% 20%, color-mix(in srgb, var(--color-primary) 30%, black) 0%, transparent 55%),
-        linear-gradient(175deg, var(--color-bg) 0%, var(--color-bg-light) 40%, var(--color-bg-dark) 100%);
-}
-
-/* 季节 Hero — 变量驱动 */
+[data-bnb="donglinwai"] .hero:not(.hero--photo),
 [data-season="winter"] .hero,
 [data-season="autumn"] .hero {
-    background:
-        radial-gradient(ellipse 80% 60% at 60% 0%, color-mix(in srgb, var(--color-sky) 80%, transparent) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 70% at 20% 70%, color-mix(in srgb, var(--color-primary-light) 55%, transparent) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 90%, color-mix(in srgb, var(--color-accent) 35%, transparent) 0%, transparent 50%),
-        linear-gradient(175deg, var(--color-primary-dark) 0%, var(--color-primary) 40%, var(--color-primary-light) 100%);
+    background: linear-gradient(175deg, color-mix(in srgb, var(--color-primary) 18%, var(--color-bg)) 0%, var(--color-bg) 50%, color-mix(in srgb, var(--color-mist) 40%, var(--color-bg)) 100%);
 }
+[data-bnb="shanji"][data-theme="dark"] .hero:not(.hero--photo),
+[data-bnb="donglinwai"][data-theme="dark"] .hero:not(.hero--photo),
 [data-season="winter"][data-theme="dark"] .hero,
 [data-season="autumn"][data-theme="dark"] .hero {
-    background:
-        radial-gradient(ellipse 80% 60% at 60% 0%, color-mix(in srgb, var(--color-primary-dark) 50%, black) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 70% at 20% 70%, color-mix(in srgb, var(--color-primary-dark) 35%, black) 0%, transparent 60%),
-        linear-gradient(175deg, var(--color-bg) 0%, var(--color-bg-light) 40%, var(--color-bg-dark) 100%);
+    background: linear-gradient(175deg, color-mix(in srgb, var(--color-primary) 12%, var(--color-bg)) 0%, var(--color-bg) 50%, color-mix(in srgb, var(--color-mist) 25%, var(--color-bg)) 100%);
 }
 
 /* ── 快捷入口 ─────────────────────────────────────────── */
