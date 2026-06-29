@@ -6,36 +6,47 @@
 
 /* ── CSS 变量 ─────────────────────────────────────────── */
 :root {
-    --color-primary: #4a7c59;        /* 竹青 — 雨后新竹 */
-    --color-primary-light: #6b9b7e;  /* 嫩绿 — 春山新叶 */
-    --color-primary-dark: #3b5e47;   /* 深林 — 远山含黛 */
-    --color-accent: #c8966a;         /* 暖木 — 山间木屋 */
-    --color-accent-light: #dbb88a;   /* 浅木 — 午后暖阳 */
-    --color-sky: #8eb8c9;            /* 山岚 — 远山天光 */
-    --color-mist: #d4e5d8;           /* 晨雾 — 山谷薄雾 */
-    --color-bg: #f5f9f4;             /* 晨雾白 — 带一丝山间绿意 */
-    --color-bg-light: #edf4ea;       /* 云白 — 飘浮的云 */
-    --color-bg-dark: #dce8d8;        /* 雾影 — 云层下的暗部 */
-    --color-text: #2a3328;           /* 深黛 — 远山的颜色 */
-    --color-text-light: #5a6558;     /* 青灰 — 山石的质感 */
-    --color-text-lighter: #8a9586;   /* 薄雾 — 远处的山 */
-    --color-white: #fffefb;          /* 云尖白 */
-    --color-border: #d8e0d4;         /* 雾边 */
-    --color-shadow: rgba(74, 100, 58, 0.06);
-    --color-shadow-hover: rgba(74, 100, 58, 0.12);
+    /* 品牌色（各 BnB 保持独立） */
+    --color-primary: #4a7c59;        /* 竹青 — 归墅 */
+    --color-primary-light: #6b9b7e;  /* 嫩绿 */
+    --color-primary-dark: #3b5e47;   /* 深林 */
+    --color-accent: #c8966a;         /* 暖木 */
+    --color-accent-light: #dbb88a;   /* 浅木 */
+    --color-sky: #8eb8c9;            /* 山岚 */
+    --color-mist: #d4e5d8;           /* 晨雾 */
+    /* 中性色（所有 BnB 统一 — 新中式极简·禅意茶室） */
+    --color-bg: #F8F5F1;             /* 暖米白 — 纸张棉麻质感 */
+    --color-bg-light: #F0EBE1;       /* 淡卡其 — 标签/辅助底色 */
+    --color-bg-dark: #E8E3D8;        /* 暖灰米 — 深色背景区 */
+    --color-text: #2D2A26;           /* 深碳黑 — 主文字（非纯黑） */
+    --color-text-light: #8C8C8C;     /* 中灰 — 辅助信息 */
+    --color-text-lighter: #B0ADA6;   /* 暖浅灰 — 占位/禁用 */
+    --color-white: #FAF9F6;          /* 哑光白 — 卡片表面 */
+    --color-border: #E0DCD5;         /* 暖灰边 — 分割线 */
+    --color-shadow: rgba(0, 0, 0, 0.04);
+    --color-shadow-hover: rgba(0, 0, 0, 0.06);
     --color-success: #5b8c5a;
     --color-warning: #c9954a;
     --color-danger: #c4554a;
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 18px;
-    --radius-xl: 18px;
+    /* 圆角（新中式大圆角体系） */
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    /* 间距 */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    /* 字体 */
     --font-serif: "Noto Serif SC", "STSong", "Songti SC", "KaiTi", "SimSun", serif;
     --font-sans: system-ui, -apple-system, "PingFang SC", "Hiragino Sans GB",
                  "Noto Sans SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
-    --shadow-sm: 0 2px 8px var(--color-shadow);
-    --shadow-md: 0 6px 20px var(--color-shadow-hover);
-    --shadow-lg: 0 12px 32px var(--color-shadow-hover);
+    --shadow-sm: 0 1px 4px var(--color-shadow);
+    --shadow-md: 0 4px 12px var(--color-shadow-hover);
+    --shadow-lg: 0 8px 24px var(--color-shadow-hover);
     --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --max-width: 720px;
 }
@@ -49,16 +60,17 @@
     --color-accent-light: #d8b878;   /* 浅茶金 — 白茶浅韵 */
     --color-sky: #c4b898;            /* 茶烟 — 茶香氤氲 */
     --color-mist: #e8dcc0;           /* 茶沫 — 茶汤浮沫 */
-    --color-bg: #faf7f0;             /* 宣纸 — 古籍书页 */
-    --color-bg-light: #f3efe2;       /* 米浆 — 手工宣纸 */
-    --color-bg-dark: #e6e0cb;        /* 竹帘 — 茶室遮光 */
-    --color-text: #3a2e1a;           /* 茶墨 — 墨入茶汤 */
-    --color-text-light: #6b5540;     /* 檀木 — 紫檀家具 */
-    --color-text-lighter: #9a8870;   /* 砂陶 — 紫砂壶身 */
-    --color-white: #fffdf8;          /* 暖白 — 热茶蒸汽 */
-    --color-border: #e0d8b8;         /* 麻绳 — 茶包挂线 */
-    --color-shadow: rgba(139,105,20,0.06);
-    --color-shadow-hover: rgba(139,105,20,0.12);
+    /* 中性色统一 */
+    --color-bg: #F8F5F1;
+    --color-bg-light: #F0EBE1;
+    --color-bg-dark: #E8E3D8;
+    --color-text: #2D2A26;
+    --color-text-light: #8C8C8C;
+    --color-text-lighter: #B0ADA6;
+    --color-white: #FAF9F6;
+    --color-border: #E0DCD5;
+    --color-shadow: rgba(0, 0, 0, 0.04);
+    --color-shadow-hover: rgba(0, 0, 0, 0.06);
     --color-success: #5b8c4a;
     --color-warning: #b88830;
     --color-danger: #c4554a;
@@ -73,16 +85,17 @@
     --color-accent-light: #c0b098;   /* 线香 — 檀香轻烟 */
     --color-sky: #b0c0d8;            /* 远寺 — 天边古刹 */
     --color-mist: #dce4ec;           /* 晨雾 — 山中薄雾 */
-    --color-bg: #f5f7fa;             /* 清心 — 明镜止水 */
-    --color-bg-light: #eef1f6;       /* 素笺 — 抄经白纸 */
-    --color-bg-dark: #e0e4ec;        /* 石阶 — 苔痕上阶 */
-    --color-text: #2a2e38;           /* 经文 — 墨写经卷 */
-    --color-text-light: #5a6070;     /* 青石 — 石板古道 */
-    --color-text-lighter: #8a9098;   /* 远山 — 天际线色 */
-    --color-white: #fcfdfe;          /* 净白 — 莲花花瓣 */
-    --color-border: #d4dae4;         /* 素墙 — 禅院围墙 */
-    --color-shadow: rgba(107,125,154,0.06);
-    --color-shadow-hover: rgba(107,125,154,0.12);
+    /* 中性色统一 */
+    --color-bg: #F8F5F1;
+    --color-bg-light: #F0EBE1;
+    --color-bg-dark: #E8E3D8;
+    --color-text: #2D2A26;
+    --color-text-light: #8C8C8C;
+    --color-text-lighter: #B0ADA6;
+    --color-white: #FAF9F6;
+    --color-border: #E0DCD5;
+    --color-shadow: rgba(0, 0, 0, 0.04);
+    --color-shadow-hover: rgba(0, 0, 0, 0.06);
     --color-success: #5a8a7a;        /* 菩提绿 */
     --color-warning: #c9954a;
     --color-danger: #c4554a;
@@ -97,14 +110,15 @@
     --color-accent-light: #dab080;
     --color-sky: #6a95a8;
     --color-mist: #2a3a2e;
-    --color-bg: #1a1f1b;
-    --color-bg-light: #1f2620;
-    --color-bg-dark: #252e26;
-    --color-text: #d8dfd4;
-    --color-text-light: #a0a898;
-    --color-text-lighter: #6a7268;
-    --color-white: #222722;
-    --color-border: #2e382f;
+    /* 中性色 — 暖调暗色基底 */
+    --color-bg: #1E1C1A;
+    --color-bg-light: #242220;
+    --color-bg-dark: #2A2824;
+    --color-text: #D8D5D0;
+    --color-text-light: #A09890;
+    --color-text-lighter: #6A6560;
+    --color-white: #242220;
+    --color-border: #2E2C28;
     --color-shadow: rgba(0, 0, 0, 0.35);
     --color-shadow-hover: rgba(0, 0, 0, 0.50);
     --color-success: #5c9c5a;
@@ -121,14 +135,14 @@
     --color-accent-light: #d4a868;
     --color-sky: #7a6a50;
     --color-mist: #383020;
-    --color-bg: #1f1c12;
-    --color-bg-light: #262218;
-    --color-bg-dark: #2a261c;
-    --color-text: #e8ddd0;
-    --color-text-light: #b0a898;
-    --color-text-lighter: #787060;
-    --color-white: #262218;
-    --color-border: #383020;
+    --color-bg: #1E1C1A;
+    --color-bg-light: #242220;
+    --color-bg-dark: #2A2824;
+    --color-text: #D8D5D0;
+    --color-text-light: #A09890;
+    --color-text-lighter: #6A6560;
+    --color-white: #242220;
+    --color-border: #2E2C28;
     --color-shadow: rgba(0, 0, 0, 0.35);
     --color-shadow-hover: rgba(0, 0, 0, 0.50);
     --color-success: #5c8c4a;
@@ -145,14 +159,14 @@
     --color-accent-light: #b8a890;
     --color-sky: #607080;
     --color-mist: #282830;
-    --color-bg: #1a1c20;
-    --color-bg-light: #1e2228;
-    --color-bg-dark: #242830;
-    --color-text: #d8dce0;
-    --color-text-light: #a0a8b8;
-    --color-text-lighter: #687078;
-    --color-white: #202428;
-    --color-border: #2a3038;
+    --color-bg: #1E1C1A;
+    --color-bg-light: #242220;
+    --color-bg-dark: #2A2824;
+    --color-text: #D8D5D0;
+    --color-text-light: #A09890;
+    --color-text-lighter: #6A6560;
+    --color-white: #242220;
+    --color-border: #2E2C28;
     --color-shadow: rgba(0, 0, 0, 0.35);
     --color-shadow-hover: rgba(0, 0, 0, 0.50);
     --color-success: #5a8a70;
@@ -169,16 +183,16 @@
     --color-accent-light: #d99a5a;   /* 浅橙 — 银杏叶 */
     --color-sky: #c4a882;            /* 稻金 — 秋日晴空 */
     --color-mist: #e8dcc8;           /* 薄暮 — 袅袅炊烟 */
-    --color-bg: #faf6ee;             /* 宣纸白 — 暖调基底 */
-    --color-bg-light: #f3ede0;       /* 米白 — 稻谷晒场 */
-    --color-bg-dark: #e6dcbf;        /* 枯草色 — 收割后的田野 */
-    --color-text: #3a2a18;           /* 墨棕 — 秋夜的颜色 */
-    --color-text-light: #6b5540;     /* 土棕 — 泥泞小路 */
-    --color-text-lighter: #9a8870;   /* 沙色 — 远山层林 */
-    --color-white: #fffdf8;          /* 暖白 */
-    --color-border: #ddd0b8;         /* 麻布边 */
-    --color-shadow: rgba(139, 94, 60, 0.06);
-    --color-shadow-hover: rgba(139, 94, 60, 0.12);
+    --color-bg: #F8F5F1;
+    --color-bg-light: #F0EBE1;
+    --color-bg-dark: #E8E3D8;
+    --color-text: #2D2A26;
+    --color-text-light: #8C8C8C;
+    --color-text-lighter: #B0ADA6;
+    --color-white: #FAF9F6;
+    --color-border: #E0DCD5;
+    --color-shadow: rgba(0, 0, 0, 0.04);
+    --color-shadow-hover: rgba(0, 0, 0, 0.06);
     --color-success: #6b8c4a;
     --color-warning: #c48230;
     --color-danger: #b85540;
@@ -191,14 +205,14 @@
     --color-accent-light: #dab070;
     --color-sky: #807060;
     --color-mist: #302820;
-    --color-bg: #1e1a15;
-    --color-bg-light: #242018;
-    --color-bg-dark: #2a241c;
-    --color-text: #e8ddd0;
-    --color-text-light: #b0a898;
-    --color-text-lighter: #787060;
-    --color-white: #262218;
-    --color-border: #383020;
+    --color-bg: #1E1C1A;
+    --color-bg-light: #242220;
+    --color-bg-dark: #2A2824;
+    --color-text: #D8D5D0;
+    --color-text-light: #A09890;
+    --color-text-lighter: #6A6560;
+    --color-white: #242220;
+    --color-border: #2E2C28;
     --color-shadow: rgba(0,0,0,0.35);
     --color-shadow-hover: rgba(0,0,0,0.50);
     --color-success: #5c8c4a;
@@ -215,16 +229,16 @@
     --color-accent-light: #d0886a;   /* 暖焰 — 壁炉火光 */
     --color-sky: #a0c0d8;            /* 晴空蓝 — 雪后初晴 */
     --color-mist: #dce8f0;           /* 霜白 — 清晨薄霜 */
-    --color-bg: #f4f8fb;             /* 雪白 — 初雪覆盖 */
-    --color-bg-light: #eaf0f6;       /* 冰白 — 雾凇挂枝 */
-    --color-bg-dark: #dce4ec;        /* 云灰 — 欲雪天空 */
-    --color-text: #2a3038;           /* 墨蓝 — 冬夜长空 */
-    --color-text-light: #506070;     /* 石青 — 冬日山岩 */
-    --color-text-lighter: #809098;   /* 雾灰 — 远山雪影 */
-    --color-white: #fcfdfe;          /* 纯白 — 新雪 */
-    --color-border: #d0dce4;         /* 冰棱边 */
-    --color-shadow: rgba(90, 122, 138, 0.06);
-    --color-shadow-hover: rgba(90, 122, 138, 0.12);
+    --color-bg: #F8F5F1;
+    --color-bg-light: #F0EBE1;
+    --color-bg-dark: #E8E3D8;
+    --color-text: #2D2A26;
+    --color-text-light: #8C8C8C;
+    --color-text-lighter: #B0ADA6;
+    --color-white: #FAF9F6;
+    --color-border: #E0DCD5;
+    --color-shadow: rgba(0, 0, 0, 0.04);
+    --color-shadow-hover: rgba(0, 0, 0, 0.06);
     --color-success: #5a8a7a;
     --color-warning: #b87040;
     --color-danger: #b85050;
@@ -237,14 +251,14 @@
     --color-accent-light: #d89878;
     --color-sky: #607888;
     --color-mist: #202830;
-    --color-bg: #181c20;
-    --color-bg-light: #1e2228;
-    --color-bg-dark: #242830;
-    --color-text: #d8e0e8;
-    --color-text-light: #a0a8b0;
-    --color-text-lighter: #687078;
-    --color-white: #202428;
-    --color-border: #2a3038;
+    --color-bg: #1E1C1A;
+    --color-bg-light: #242220;
+    --color-bg-dark: #2A2824;
+    --color-text: #D8D5D0;
+    --color-text-light: #A09890;
+    --color-text-lighter: #6A6560;
+    --color-white: #242220;
+    --color-border: #2E2C28;
     --color-shadow: rgba(0,0,0,0.35);
     --color-shadow-hover: rgba(0,0,0,0.50);
     --color-success: #5a8a70;
