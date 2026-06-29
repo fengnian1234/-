@@ -241,6 +241,19 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script>
 // ══════════════════════════════════════════════════════════
+//  mp-mode 精简：隐藏诗意描述，只保留必要信息
+// ══════════════════════════════════════════════════════════
+(function compactForMp(){
+  if(!location.search.includes('mp=1')) return;
+  // 隐藏所有 section-desc
+  document.querySelectorAll('.section-desc').forEach(el => el.style.display = 'none');
+  // 隐藏茶叶品类的品鉴/冲泡详情
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.tea-tasting, .tea-brew, .tea-origin, .tea-weight').forEach(el => el.style.display = 'none');
+  });
+})();
+
+// ══════════════════════════════════════════════════════════
 //  全局状态
 // ══════════════════════════════════════════════════════════
 const STORAGE_KEY = 'tea_reservation_{{ bnb.id }}';
