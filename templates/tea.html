@@ -443,7 +443,8 @@ function renderTimeSlots(slots) {
     if(!s.available) cls += ' unavailable';
     const onclick = s.available ? `onclick="selectTime('${s.time}', this)"` : '';
     const title = s.reason ? `title="${s.reason}"` : '';
-    return `<div class="${cls}" data-time="${s.time}" ${onclick} ${title}>${s.label}<span class="slot-period">${s.period}</span></div>`;
+    const cap = (s.used !== undefined) ? `<span class="slot-capacity">${s.used}/60人</span>` : '';
+    return `<div class="${cls}" data-time="${s.time}" ${onclick} ${title}>${s.label}<span class="slot-period">${s.period}</span>${cap}</div>`;
   }).join('');
 }
 
@@ -593,7 +594,18 @@ function clearReservation() {
   document.getElementById('confirmOverlay').style.display = '';
 }
 
-function confirmClearReservation() {
+async function confirmClearReservation() {
+  // 先调后端取消预约，释放时段名额
+  if(_reservationCode) {
+    try {
+      await fetch('/api/tea/reservation/cancel', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ reservation_code: _reservationCode }),
+      });
+    } catch(e) { /* 网络错误不阻塞前端清理 */ }
+  }
+
   localStorage.removeItem(STORAGE_KEY);
   _reservationCode = '';
   _orderUnlocked = false;

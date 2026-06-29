@@ -3336,6 +3336,7 @@ h4 { font-size: 1.05rem; }
     background: var(--color-bg-light);
 }
 .slot-period { display: block; font-size: 0.7rem; color: var(--color-text-lighter); margin-top: 2px; }
+.slot-capacity { display: block; font-size: 0.65rem; color: var(--color-text-lighter); margin-top: 1px; }
 
 /* ── 预约结果卡片 ── */
 .reserve-result-card {

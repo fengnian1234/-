@@ -1170,6 +1170,21 @@ def api_tea_reservation_checkin():
     return jsonify(result)
 
 
+@app.route("/api/tea/reservation/cancel", methods=["POST"])
+def api_tea_reservation_cancel():
+    """取消预约，释放时段名额"""
+    from services.tea_reservation import cancel_reservation
+    bnb_id = request.args.get("bnb_id")
+    data = request.get_json(silent=True) or {}
+    code = data.get("reservation_code", "").strip()
+    if not code:
+        return jsonify({"success": False, "error": "缺少预约码"}), 400
+    result = cancel_reservation(code, bnb_id=bnb_id)
+    if "error" in result:
+        return jsonify({"success": False, "error": result["error"]}), 400
+    return jsonify(result)
+
+
 @app.route("/api/tea/reservation/status")
 def api_tea_reservation_status():
     """查询预约状态和点单解锁状态"""

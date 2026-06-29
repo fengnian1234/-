@@ -101,17 +101,26 @@ def get_available_slots(date_str, bnb_id=None):
             h += 1
             m -= 60
 
-    # 查询当天已确认的预约（含 pending 和 checked_in 状态）
+    # 查询当天有效预约（pending + checked_in），按时段汇总已有人数
     db = SessionLocal()
     try:
-        booked = db.query(TeaReservation.reservation_time).filter(
+        booked = db.query(
+            TeaReservation.reservation_time,
+            TeaReservation.guest_count,
+        ).filter(
             TeaReservation.bnb_id == bnb_id,
             TeaReservation.reservation_date == date_str,
             TeaReservation.status.in_(["pending", "checked_in"]),
         ).all()
-        booked_times = {b[0] for b in booked}
     finally:
         db.close()
+
+    # 每个时段累计已预约人数
+    slot_guest_count = {}
+    for t, cnt in booked:
+        slot_guest_count[t] = slot_guest_count.get(t, 0) + cnt
+
+    MAX_CAPACITY = 60  # 每时段最多容纳 60 人
 
     is_today = (target_date == today)
     now = datetime.now()
@@ -119,10 +128,12 @@ def get_available_slots(date_str, bnb_id=None):
 
     slots = []
     for t in all_slots:
-        available = t not in booked_times
+        used = slot_guest_count.get(t, 0)
+        remaining = MAX_CAPACITY - used
+        available = remaining > 0
         reason = None
         if not available:
-            reason = "该时段已被预约"
+            reason = "该时段已约满"
         elif is_today and t < now_time:
             available = False
             reason = "该时段已过"
@@ -140,6 +151,8 @@ def get_available_slots(date_str, bnb_id=None):
             "period": period,
             "available": available,
             "reason": reason,
+            "used": used,
+            "remaining": remaining,
         })
 
     return {
@@ -312,6 +325,36 @@ def get_reservation_by_code(code, bnb_id=None):
             TeaReservation.bnb_id == bnb_id,
         ).first()
         return reservation.to_dict() if reservation else None
+    finally:
+        db.close()
+
+
+def cancel_reservation(code, bnb_id=None):
+    """取消预约，释放时段名额"""
+    bnb_id = _get_bnb_id(bnb_id)
+    code = (code or "").strip()
+    if len(code) < 6:
+        return {"error": "无效的预约码"}
+
+    db = SessionLocal()
+    try:
+        reservation = db.query(TeaReservation).filter(
+            TeaReservation.reservation_code == code,
+            TeaReservation.bnb_id == bnb_id,
+        ).first()
+        if not reservation:
+            return {"error": "预约码无效"}
+        if reservation.status == "cancelled":
+            return {"success": True, "reservation": reservation.to_dict(), "message": "该预约已取消"}
+        if reservation.status == "completed":
+            return {"error": "该预约已完成，无法取消"}
+
+        reservation.status = "cancelled"
+        db.commit()
+        return {"success": True, "reservation": reservation.to_dict(), "message": "预约已取消，时段名额已释放"}
+    except Exception as e:
+        db.rollback()
+        return {"error": f"取消失败：{e}"}
     finally:
         db.close()
 
