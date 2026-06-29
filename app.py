@@ -1185,6 +1185,21 @@ def api_tea_reservation_cancel():
     return jsonify(result)
 
 
+@app.route("/api/tea/reservation/complete", methods=["POST"])
+@_require_staff_auth
+def api_tea_reservation_complete():
+    """客人离店，释放座位（仅员工操作）"""
+    from services.tea_reservation import complete_reservation
+    data = request.get_json(silent=True) or {}
+    code = data.get("reservation_code", "").strip()
+    if not code:
+        return jsonify({"success": False, "error": "缺少预约码"}), 400
+    result = complete_reservation(code)
+    if "error" in result:
+        return jsonify({"success": False, "error": result["error"]}), 400
+    return jsonify(result)
+
+
 @app.route("/api/tea/reservation/status")
 def api_tea_reservation_status():
     """查询预约状态和点单解锁状态"""

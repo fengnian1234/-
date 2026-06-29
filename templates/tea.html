@@ -443,8 +443,17 @@ function renderTimeSlots(slots) {
     if(!s.available) cls += ' unavailable';
     const onclick = s.available ? `onclick="selectTime('${s.time}', this)"` : '';
     const title = s.reason ? `title="${s.reason}"` : '';
-    const cap = (s.used !== undefined) ? `<span class="slot-capacity">${s.used}/60人</span>` : '';
-    return `<div class="${cls}" data-time="${s.time}" ${onclick} ${title}>${s.label}<span class="slot-period">${s.period}</span>${cap}</div>`;
+    const seated = s.seated || 0;
+    const queued = s.queued || 0;
+    const seatsLeft = s.seats_left || 0;
+    let capHtml = '';
+    if(seated > 0 || queued > 0) {
+      capHtml = `<span class="slot-capacity">🪑${seated}人 · 排队${queued}组</span>`;
+    }
+    if(!s.available && seatsLeft <= 0) {
+      capHtml = `<span class="slot-capacity slot-full">已满座</span>`;
+    }
+    return `<div class="${cls}" data-time="${s.time}" ${onclick} ${title}>${s.label}<span class="slot-period">${s.period}</span>${capHtml}</div>`;
   }).join('');
 }
 
@@ -566,11 +575,17 @@ async function loadQueueInfo(code) {
     const q = await fetch(`/api/tea/reservation/queue?code=${code}`).then(r=>r.json());
     if(q.success && q.queue) {
       const d = q.queue;
+      const seated = d.slot_seated || 0;
+      const queued = d.slot_queued || 0;
       el.innerHTML = `
         <div class="queue-row">
           <div class="queue-item">
-            <span class="queue-num">${d.slot_position}<small>/${d.slot_total}</small></span>
-            <span class="queue-label">该时段排队</span>
+            <span class="queue-num">${d.slot_position}<small>/${queued}</small></span>
+            <span class="queue-label">排队中</span>
+          </div>
+          <div class="queue-item">
+            <span class="queue-num">${seated}<small>人</small></span>
+            <span class="queue-label">已落座</span>
           </div>
           <div class="queue-item queue-item--wide">
             <span class="queue-num"><i class="ph-thin ph-clock"></i> ${d.estimated_time}</span>

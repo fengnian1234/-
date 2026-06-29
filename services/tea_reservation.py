@@ -101,11 +101,12 @@ def get_available_slots(date_str, bnb_id=None):
             h += 1
             m -= 60
 
-    # 查询当天有效预约（pending + checked_in），按时段汇总已有人数
+    # 按时段+状态分别汇总：checked_in=占座(计入容量) / pending=排队(不计入)
     db = SessionLocal()
     try:
-        booked = db.query(
+        rows = db.query(
             TeaReservation.reservation_time,
+            TeaReservation.status,
             TeaReservation.guest_count,
         ).filter(
             TeaReservation.bnb_id == bnb_id,
@@ -115,12 +116,15 @@ def get_available_slots(date_str, bnb_id=None):
     finally:
         db.close()
 
-    # 每个时段累计已预约人数
-    slot_guest_count = {}
-    for t, cnt in booked:
-        slot_guest_count[t] = slot_guest_count.get(t, 0) + cnt
+    seated = {}   # checked_in — 已落座，占物理座位
+    queued = {}   # pending   — 排队中，未到店不占座
+    for t, st, cnt in rows:
+        if st == "checked_in":
+            seated[t] = seated.get(t, 0) + cnt
+        else:
+            queued[t] = queued.get(t, 0) + cnt
 
-    MAX_CAPACITY = 60  # 每时段最多容纳 60 人
+    MAX_SEATS = 60  # 最多同时落座 60 人（后续可调）
 
     is_today = (target_date == today)
     now = datetime.now()
@@ -128,22 +132,20 @@ def get_available_slots(date_str, bnb_id=None):
 
     slots = []
     for t in all_slots:
-        used = slot_guest_count.get(t, 0)
-        remaining = MAX_CAPACITY - used
-        available = remaining > 0
+        seated_cnt = seated.get(t, 0)
+        queued_cnt = queued.get(t, 0)
+        seats_left = MAX_SEATS - seated_cnt
+        # 只要有空座就可以预约（队列不限，餐厅占座制）
+        available = seats_left > 0
         reason = None
         if not available:
-            reason = "该时段已约满"
+            reason = "该时段已满座"
         elif is_today and t < now_time:
             available = False
             reason = "该时段已过"
 
-        # 判断时段归属
         hour = int(t.split(":")[0])
-        if hour < MORNING_END + 1:
-            period = "早场"
-        else:
-            period = "晚场"
+        period = "早场" if hour < MORNING_END + 1 else "晚场"
 
         slots.append({
             "time": t,
@@ -151,8 +153,9 @@ def get_available_slots(date_str, bnb_id=None):
             "period": period,
             "available": available,
             "reason": reason,
-            "used": used,
-            "remaining": remaining,
+            "seated": seated_cnt,
+            "queued": queued_cnt,
+            "seats_left": seats_left,
         })
 
     return {
@@ -197,7 +200,7 @@ def create_reservation(data, bnb_id=None):
     except ValueError:
         return {"error": "时间格式错误"}
 
-    # 时间槽二次校验（防止并发冲突）
+    # 时间槽二次校验（占座制：有空座即可预约，queue 不限）
     slots_info = get_available_slots(reservation_date, bnb_id=bnb_id)
     if "error" in slots_info:
         return slots_info
@@ -205,7 +208,7 @@ def create_reservation(data, bnb_id=None):
     if not time_slot:
         return {"error": "所选时间不在营业时段内"}
     if not time_slot["available"]:
-        return {"error": f"该时段不可预约：{time_slot.get('reason', '已被占用')}"}
+        return {"error": f"该时段不可预约：{time_slot.get('reason', '已满座')}"}
 
     # 生成预约码
     reservation_code = _generate_reservation_code()
@@ -329,6 +332,33 @@ def get_reservation_by_code(code, bnb_id=None):
         db.close()
 
 
+def complete_reservation(code, bnb_id=None):
+    """客人离店，释放座位（checked_in → completed）"""
+    bnb_id = _get_bnb_id(bnb_id)
+    code = (code or "").strip()
+    if len(code) < 6:
+        return {"error": "无效的预约码"}
+
+    db = SessionLocal()
+    try:
+        reservation = db.query(TeaReservation).filter(
+            TeaReservation.reservation_code == code,
+            TeaReservation.bnb_id == bnb_id,
+        ).first()
+        if not reservation:
+            return {"error": "预约码无效"}
+        if reservation.status != "checked_in":
+            return {"error": f"当前状态为 {reservation.status}，仅已核验的预约可离店"}
+        reservation.status = "completed"
+        db.commit()
+        return {"success": True, "reservation": reservation.to_dict(), "message": "已离店，座位已释放"}
+    except Exception as e:
+        db.rollback()
+        return {"error": f"操作失败：{e}"}
+    finally:
+        db.close()
+
+
 def cancel_reservation(code, bnb_id=None):
     """取消预约，释放时段名额"""
     bnb_id = _get_bnb_id(bnb_id)
@@ -390,29 +420,38 @@ def get_queue_info(code, bnb_id=None):
         date_position = sum(1 for r in day_reservations if r.created_at < res_created) + 1
         date_total = len(day_reservations)
 
-        # 同时段预约数
-        same_slot = [r for r in day_reservations if r.reservation_time == res_time]
-        slot_position = sum(1 for r in same_slot if r.created_at < res_created) + 1
-        slot_total = len(same_slot)
+        # 同时段预约数（区分已落座和排队中）
+        same_slot_all = [r for r in day_reservations if r.reservation_time == res_time]
+        seated_in_slot = [r for r in same_slot_all if r.status == "checked_in"]
+        queued_in_slot = [r for r in same_slot_all if r.status == "pending"]
 
-        # 预计时间：该时段前方每组约 30 分钟（粗略估算，后续可接入实际翻台数据）
-        ahead_in_slot = slot_position - 1
-        if ahead_in_slot > 0:
+        # 排队位置：按创建时间在 pending 中的排序
+        slot_position = sum(1 for r in queued_in_slot if r.created_at < res_created) + 1
+        slot_queued = len(queued_in_slot)
+        slot_seated = sum(r.guest_count for r in seated_in_slot)
+
+        # 预计时间：前方每组约 30 分钟
+        ahead_in_queue = slot_position - 1
+        if ahead_in_queue > 0:
             h, m = map(int, res_time.split(":"))
-            est_minutes = h * 60 + m + ahead_in_slot * 30
+            est_minutes = h * 60 + m + ahead_in_queue * 30
             est_h = est_minutes // 60
             est_m = est_minutes % 60
             estimated_time = f"{est_h:02d}:{est_m:02d}"
-            estimate_note = f"该时段前方有 {ahead_in_slot} 组客人，预计 {estimated_time} 左右可入座"
+            estimate_note = f"前方还有 {ahead_in_queue} 组排队，预计 {estimated_time} 左右可入座（当前已落座 {slot_seated} 人）"
         else:
             estimated_time = res_time
-            estimate_note = "您是此时段第一组客人，可按预约时间准时入座"
+            if slot_seated > 0:
+                estimate_note = "您是此时段下一组，当前已落座 {} 人，到店核验后即可入座".format(slot_seated)
+            else:
+                estimate_note = "您是此时段第一组客人，可按预约时间准时入座"
 
         return {
             "success": True,
             "queue": {
                 "slot_position": slot_position,
-                "slot_total": slot_total,
+                "slot_queued": slot_queued,
+                "slot_seated": slot_seated,
                 "estimated_time": estimated_time,
                 "estimate_note": estimate_note,
             },
