@@ -6,14 +6,14 @@
 
 /* ── CSS 变量 ─────────────────────────────────────────── */
 :root {
-    /* 品牌色（各 BnB 保持独立） */
-    --color-primary: #4a7c59;        /* 竹青 — 归墅 */
-    --color-primary-light: #6b9b7e;  /* 嫩绿 */
-    --color-primary-dark: #3b5e47;   /* 深林 */
-    --color-accent: #c8966a;         /* 暖木 */
-    --color-accent-light: #dbb88a;   /* 浅木 */
-    --color-sky: #8eb8c9;            /* 山岚 */
-    --color-mist: #d4e5d8;           /* 晨雾 */
+    /* 品牌色（各 BnB 保持独立）— 对标参考 #2C4335 深林地绿 */
+    --color-primary: #2C4335;        /* 墨绿 — 深林地绿（偏暗偏灰，不鲜艳） */
+    --color-primary-light: #4A6E5A;  /* 哑光绿 — 雨后青苔 */
+    --color-primary-dark: #1E2E24;   /* 极深林 — 古木树影 */
+    --color-accent: #B8845A;         /* 暖木 — 陈年檀木 */
+    --color-accent-light: #C8A078;   /* 浅木 — 新剖松香 */
+    --color-sky: #8AA8B4;            /* 山岚 — 远山淡影 */
+    --color-mist: #D8E4D8;           /* 晨雾 — 竹露未晞 */
     /* 中性色（所有 BnB 统一 — 新中式极简·禅意茶室） */
     --color-bg: #F8F5F1;             /* 暖米白 — 纸张棉麻质感 */
     --color-bg-light: #F0EBE1;       /* 淡卡其 — 标签/辅助底色 */
@@ -53,13 +53,13 @@
 
 /* ── 山纪 (shanji) 茶褐暖调 ─────────────────────────────── */
 [data-bnb="shanji"] {
-    --color-primary: #8b6914;        /* 茶褐 — 陈年普洱 */
-    --color-primary-light: #a6863d;  /* 嫩茶 — 新采毛尖 */
-    --color-primary-dark: #6b4f12;   /* 老茶 — 古树茶砖 */
-    --color-accent: #c4955a;         /* 暖茶金 — 金骏眉汤色 */
-    --color-accent-light: #d8b878;   /* 浅茶金 — 白茶浅韵 */
-    --color-sky: #c4b898;            /* 茶烟 — 茶香氤氲 */
-    --color-mist: #e8dcc0;           /* 茶沫 — 茶汤浮沫 */
+    --color-primary: #6B4F10;        /* 老茶褐 — 陈年普洱饼 */
+    --color-primary-light: #8A6E2E;  /* 陈茶 — 十年熟普 */
+    --color-primary-dark: #4A3610;   /* 茶砖 — 古树茶饼芯 */
+    --color-accent: #B08040;         /* 暖茶金 — 金骏眉暗调 */
+    --color-accent-light: #C09860;   /* 浅茶金 — 老枞水仙 */
+    --color-sky: #B8A888;            /* 茶烟 — 茶香氤氲 */
+    --color-mist: #E4D8B8;           /* 茶沫 — 盖碗浮沫 */
     /* 中性色统一 */
     --color-bg: #F8F5F1;
     --color-bg-light: #F0EBE1;
@@ -78,13 +78,13 @@
 
 /* ── 东林外 (donglinwai) 禅灰蓝冷调 ──────────────────────── */
 [data-bnb="donglinwai"] {
-    --color-primary: #6b7d9a;        /* 禅灰蓝 — 僧袍素色 */
-    --color-primary-light: #8b9ab0;  /* 晨钟 — 破晓天色 */
-    --color-primary-dark: #4a5a70;   /* 暮鼓 — 入夜山影 */
-    --color-accent: #a89880;         /* 禅木 — 佛珠手串 */
-    --color-accent-light: #c0b098;   /* 线香 — 檀香轻烟 */
-    --color-sky: #b0c0d8;            /* 远寺 — 天边古刹 */
-    --color-mist: #dce4ec;           /* 晨雾 — 山中薄雾 */
+    --color-primary: #4A5D78;        /* 禅灰蓝 — 僧袍素色（深调） */
+    --color-primary-light: #6A7D95;  /* 晨钟 — 破晓天色 */
+    --color-primary-dark: #324058;   /* 暮鼓 — 入夜山影 */
+    --color-accent: #988870;         /* 禅木 — 佛珠手串 */
+    --color-accent-light: #B0A080;   /* 线香 — 檀香轻烟 */
+    --color-sky: #A0B4CC;            /* 远寺 — 天边古刹 */
+    --color-mist: #D8E0E8;           /* 晨雾 — 山中薄雾 */
     /* 中性色统一 */
     --color-bg: #F8F5F1;
     --color-bg-light: #F0EBE1;
@@ -103,13 +103,13 @@
 
 /* ── 深色模式变量 ─────────────────────────────────────── */
 [data-theme="dark"] {
-    --color-primary: #6baf7e;
-    --color-primary-light: #558a64;
-    --color-primary-dark: #3d5c48;
-    --color-accent: #c89b6a;
-    --color-accent-light: #dab080;
-    --color-sky: #6a95a8;
-    --color-mist: #2a3a2e;
+    --color-primary: #5A8E6A;
+    --color-primary-light: #4A7058;
+    --color-primary-dark: #304838;
+    --color-accent: #B08050;
+    --color-accent-light: #C09870;
+    --color-sky: #5A8090;
+    --color-mist: #243028;
     /* 中性色 — 暖调暗色基底 */
     --color-bg: #1E1C1A;
     --color-bg-light: #242220;
@@ -128,13 +128,13 @@
 
 /* ── 山纪 深色模式 ──────────────────────────────────────── */
 [data-bnb="shanji"][data-theme="dark"] {
-    --color-primary: #a6863d;
-    --color-primary-light: #8b7428;
-    --color-primary-dark: #6b5810;
-    --color-accent: #c4955a;
-    --color-accent-light: #d4a868;
-    --color-sky: #7a6a50;
-    --color-mist: #383020;
+    --color-primary: #8A6E2E;
+    --color-primary-light: #6E5A20;
+    --color-primary-dark: #504010;
+    --color-accent: #B08040;
+    --color-accent-light: #C09050;
+    --color-sky: #665840;
+    --color-mist: #2C2418;
     --color-bg: #1E1C1A;
     --color-bg-light: #242220;
     --color-bg-dark: #2A2824;
@@ -152,13 +152,13 @@
 
 /* ── 东林外 深色模式 ───────────────────────────────────── */
 [data-bnb="donglinwai"][data-theme="dark"] {
-    --color-primary: #8b9ab0;
-    --color-primary-light: #6b7d9a;
-    --color-primary-dark: #505a6a;
-    --color-accent: #a89880;
-    --color-accent-light: #b8a890;
-    --color-sky: #607080;
-    --color-mist: #282830;
+    --color-primary: #6A7D95;
+    --color-primary-light: #5A6A85;
+    --color-primary-dark: #384050;
+    --color-accent: #908070;
+    --color-accent-light: #A09078;
+    --color-sky: #506070;
+    --color-mist: #202028;
     --color-bg: #1E1C1A;
     --color-bg-light: #242220;
     --color-bg-dark: #2A2824;
@@ -176,13 +176,13 @@
 
 /* ── 季节主题：秋 ──────────────────────────────────────── */
 [data-season="autumn"] {
-    --color-primary: #8b5e3c;        /* 枫棕 — 秋叶满山 */
-    --color-primary-light: #a67c52;  /* 暖棕 — 晒秋木色 */
-    --color-primary-dark: #6b3f28;   /* 深棕 — 老树根 */
-    --color-accent: #c47a38;         /* 柿橙 — 秋日暖阳 */
-    --color-accent-light: #d99a5a;   /* 浅橙 — 银杏叶 */
-    --color-sky: #c4a882;            /* 稻金 — 秋日晴空 */
-    --color-mist: #e8dcc8;           /* 薄暮 — 袅袅炊烟 */
+    --color-primary: #735030;        /* 枫棕 — 秋叶满山 */
+    --color-primary-light: #8E6A48;  /* 暖棕 — 晒秋木色 */
+    --color-primary-dark: #5A3420;   /* 深棕 — 老树根 */
+    --color-accent: #B06830;         /* 柿橙 — 秋日暖阳 */
+    --color-accent-light: #C88848;   /* 浅橙 — 银杏叶 */
+    --color-sky: #B09870;            /* 稻金 — 秋日晴空 */
+    --color-mist: #E0D0B8;           /* 薄暮 — 袅袅炊烟 */
     --color-bg: #F8F5F1;
     --color-bg-light: #F0EBE1;
     --color-bg-dark: #E8E3D8;
@@ -198,13 +198,13 @@
     --color-danger: #b85540;
 }
 [data-season="autumn"][data-theme="dark"] {
-    --color-primary: #b88050;
-    --color-primary-light: #9a6b40;
-    --color-primary-dark: #705030;
-    --color-accent: #d09048;
-    --color-accent-light: #dab070;
-    --color-sky: #807060;
-    --color-mist: #302820;
+    --color-primary: #A07048;
+    --color-primary-light: #885838;
+    --color-primary-dark: #604028;
+    --color-accent: #C08040;
+    --color-accent-light: #D0A060;
+    --color-sky: #706050;
+    --color-mist: #282018;
     --color-bg: #1E1C1A;
     --color-bg-light: #242220;
     --color-bg-dark: #2A2824;
@@ -222,13 +222,13 @@
 
 /* ── 季节主题：冬 ──────────────────────────────────────── */
 [data-season="winter"] {
-    --color-primary: #5a7a8a;        /* 雪松青 — 冬雪压松 */
-    --color-primary-light: #7a9aaa;  /* 冰蓝 — 结冰的湖面 */
-    --color-primary-dark: #405a68;   /* 深湖蓝 — 冬日夜空 */
-    --color-accent: #b8684a;         /* 炉火橙 — 冬日暖炉 */
-    --color-accent-light: #d0886a;   /* 暖焰 — 壁炉火光 */
-    --color-sky: #a0c0d8;            /* 晴空蓝 — 雪后初晴 */
-    --color-mist: #dce8f0;           /* 霜白 — 清晨薄霜 */
+    --color-primary: #4A6A78;        /* 雪松青 — 冬雪压松 */
+    --color-primary-light: #6A8A98;  /* 冰蓝 — 结冰的湖面 */
+    --color-primary-dark: #304858;   /* 深湖蓝 — 冬日夜空 */
+    --color-accent: #A05840;         /* 炉火橙 — 冬日暖炉 */
+    --color-accent-light: #C07858;   /* 暖焰 — 壁炉火光 */
+    --color-sky: #90B0C8;            /* 晴空蓝 — 雪后初晴 */
+    --color-mist: #D4E0E8;           /* 霜白 — 清晨薄霜 */
     --color-bg: #F8F5F1;
     --color-bg-light: #F0EBE1;
     --color-bg-dark: #E8E3D8;
@@ -244,13 +244,13 @@
     --color-danger: #b85050;
 }
 [data-season="winter"][data-theme="dark"] {
-    --color-primary: #7a9aaa;
-    --color-primary-light: #608090;
-    --color-primary-dark: #4a6068;
-    --color-accent: #c87858;
-    --color-accent-light: #d89878;
-    --color-sky: #607888;
-    --color-mist: #202830;
+    --color-primary: #6A8A98;
+    --color-primary-light: #587080;
+    --color-primary-dark: #405058;
+    --color-accent: #B86850;
+    --color-accent-light: #D08868;
+    --color-sky: #506878;
+    --color-mist: #182028;
     --color-bg: #1E1C1A;
     --color-bg-light: #242220;
     --color-bg-dark: #2A2824;
@@ -413,7 +413,7 @@ h4 { font-size: 1.05rem; }
 
 /* ── 头部导航 ─────────────────────────────────────────── */
 .header {
-    background: rgba(245, 249, 244, 0.9);
+    background: color-mix(in srgb, var(--color-bg) 92%, transparent);
     border-bottom: 1px solid var(--color-border);
     position: sticky;
     top: 0;
@@ -561,23 +561,9 @@ h4 { font-size: 1.05rem; }
     -webkit-mask-size: 100% 100%; -webkit-mask-repeat: no-repeat;
 }
 [data-theme="dark"] .page-header {
-    background: linear-gradient(170deg, #4a6868 0%, #3d5c48 40%, #2a3a28 100%);
+    background: linear-gradient(170deg, var(--color-sky) 0%, var(--color-primary-light) 40%, var(--color-primary) 70%, var(--color-primary-dark) 100%);
 }
 [data-theme="dark"] .page-header::after { opacity: 0.25; }
-
-/* BnB 页头渐变 */
-[data-bnb="shanji"] .page-header {
-    background: linear-gradient(170deg, #c4b898 0%, #a6863d 20%, #8b6914 60%, #6b4f12 100%);
-}
-[data-bnb="shanji"][data-theme="dark"] .page-header {
-    background: linear-gradient(170deg, #5a4a30 0%, #4a3a20 40%, #3a2a10 100%);
-}
-[data-bnb="donglinwai"] .page-header {
-    background: linear-gradient(170deg, #b0c0d8 0%, #8b9ab0 20%, #6b7d9a 60%, #4a5a70 100%);
-}
-[data-bnb="donglinwai"][data-theme="dark"] .page-header {
-    background: linear-gradient(170deg, #3a4a60 0%, #2a3a50 40%, #1a2838 100%);
-}
 
 /* 季节页头渐变 */
 .page-header h1 {
@@ -1036,9 +1022,9 @@ h4 { font-size: 1.05rem; }
 }
 
 .btn-outline {
-    background: transparent;
+    background: var(--color-white);
     color: var(--color-primary);
-    border: 1px solid var(--color-primary);
+    border: 1px solid var(--color-border);
     border-radius: 24px;
 }
 
