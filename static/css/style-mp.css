@@ -244,7 +244,6 @@ body.mp-mode .faq-a { font-size: 0.72rem; line-height: 1.4; }
 body.mp-mode .faq-item.open .faq-a { padding: 6px 0 2px; margin-top: 0.1rem; }
 body.mp-mode .faq-item:nth-child(n+5) { display: none; }
 body.mp-mode .faq-item:nth-child(n+5).show { display: block; }
-.faq-more-btn { display: none; }
 body.mp-mode .faq-more-btn {
     display: block;
     width: 100%;

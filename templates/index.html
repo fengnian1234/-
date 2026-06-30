@@ -307,7 +307,9 @@
             </div>
             {% endif %}
         </div>
+        {% if request.args.get('mp') == '1' %}
         <button class="faq-more-btn" onclick="toggleMoreFaq()" id="faqMoreBtn"><i class="ph-thin ph-caret-down"></i> 展开更多问题</button>
+        {% endif %}
     </div>
 </section>
 {% endblock %}
