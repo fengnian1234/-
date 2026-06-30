@@ -1815,6 +1815,26 @@ h4 { font-size: var(--text-base); }
 }
 .fab-badge[data-count="0"], .fab-badge:empty { display: none; }
 
+/* FAB 有商品时 → 展开为胶囊条 */
+.fab.has-items {
+    width: auto;
+    min-width: 52px;
+    border-radius: 26px;
+    padding: 0 14px;
+    gap: 6px;
+}
+
+.fab.has-items #fabTotal {
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+.fab.has-items .fab-icon {
+    font-size: 1.1rem;
+}
+
 /* ── 饮品定制弹窗 ─────────────────────────────────────── */
 .drink-modal {
     position: fixed; inset: 0; z-index: 400;

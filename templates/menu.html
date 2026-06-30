@@ -315,6 +315,7 @@ function updateOrderPanel() {
         badge.textContent = totalCnt || '';
     }
 
+    var fab = document.querySelector('.fab');
     var fabTotal = document.getElementById('fabTotal');
     if (fabTotal) {
         var t = cart.reduce(function(s, i) { return s + i.price * i.quantity; }, 0);
@@ -326,6 +327,10 @@ function updateOrderPanel() {
         var cnt = cart.reduce(function(s, i) { return s + i.quantity; }, 0);
         fabCount.textContent = cnt > 0 ? cnt + '件' : '';
         fabCount.style.display = cnt > 0 ? '' : 'none';
+    }
+    // FAB 展开/收起状态
+    if (fab && !fab.querySelector('.fab-checkout')) {
+        fab.classList.toggle('has-items', cart.length > 0);
     }
     if (typeof updateAllItemSteppers === 'function') updateAllItemSteppers();
 
