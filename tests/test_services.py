@@ -225,7 +225,8 @@ class TestAI:
 
     def test_refresh_local_data(self):
         from services.ai import refresh_local_data
-        data = refresh_local_data()
+        data = refresh_local_data(bnb_id="guishu")
+        assert data is not None
         assert len(data) > 0
 
 

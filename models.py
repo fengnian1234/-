@@ -107,6 +107,7 @@ class Booking(Base):
             "room_code": self.room_code,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M") if self.created_at else None,
         }
+        return d
 
     def is_checked_out_recently(self):
         """是否刚退房且在30分钟提醒窗口内"""
@@ -263,6 +264,7 @@ class ServiceRequest(Base):
             "notes": self.notes,
             "created_at": self.created_at.strftime("%H:%M:%S") if self.created_at else None,
         }
+        return d
 
 
 # ══════════════════════════════════════════════════════════
@@ -454,7 +456,7 @@ elif DB_TYPE == "sqlite":
     _engine_kwargs["connect_args"] = {"check_same_thread": False}
 
 engine = create_engine(DATABASE_URL, **_engine_kwargs)
-SessionLocal = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 
 
 @contextmanager
@@ -503,6 +505,7 @@ class GuestPoints(Base):
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
+        return d
 
 
 class PointLog(Base):
@@ -525,6 +528,7 @@ class PointLog(Base):
             "description": self.description,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
+        return d
 
 
 # ── 积分兑换商品定义 ──────────────────────────────────────

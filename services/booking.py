@@ -218,6 +218,7 @@ def confirm_booking(openid: str, guest_name: str, phone: str,
         db.add(booking)
         db.commit()
         db.refresh(booking)
+        db.expunge(booking)  # 脱离session避免调用方DetachedInstanceError
         return booking
 
 
@@ -230,8 +231,7 @@ def check_in_booking(booking_id: int, room_number: str = "") -> Booking:
             booking.room_number = room_number
             booking.ai_enabled = True
             db.commit()
-            # 预加载属性，避免返回后 session 关闭导致 DetachedInstanceError
-            _ = (booking.id, booking.status, booking.room_number, booking.guest_name, booking.room_type)
+            db.expunge(booking)  # 脱离session避免调用方DetachedInstanceError
         return booking
 
 
@@ -273,8 +273,7 @@ def check_out_booking(booking_id: int) -> Booking:
             booking.status = "checked_out"
             booking.checked_out_at = datetime.utcnow()
             db.commit()
-            # 预加载属性，避免返回后 session 关闭导致 DetachedInstanceError
-            _ = (booking.id, booking.status, booking.guest_name, booking.room_type, booking.checked_out_at)
+            db.expunge(booking)  # 脱离session避免调用方DetachedInstanceError
         return booking
 
 
