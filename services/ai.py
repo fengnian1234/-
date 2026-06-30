@@ -903,7 +903,7 @@ def _call_ai(system_template: str, user_openid: str, user_message: str, bnb_id: 
         return _vary_reply_opener() + ai_reply
 
     except Exception as e:
-        log_error("ai.call", str(e), exc_info=True)
+        log_error(f"ai.call 失败: {e}", exc_info=True)
         return _fallback_reply()
 
 

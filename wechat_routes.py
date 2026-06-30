@@ -42,7 +42,7 @@ def _handle_wechat_post(bnb_id="guishu"):
     try:
         msg = parse_message(xml_data)
     except Exception:
-        log_error("wechat.parse_xml", "XML解析失败", exc_info=True)
+        log_error("wechat.parse_xml: XML解析失败", exc_info=True)
         return "success"
 
     msg_type = getattr(msg, 'type', '')
@@ -76,7 +76,7 @@ def _handle_wechat_post(bnb_id="guishu"):
         return xml_response
 
     except Exception:
-        log_error("wechat.handle_message", "消息处理异常", exc_info=True)
+        log_error("wechat.handle_message: 消息处理异常", exc_info=True)
         return "success"
 
 

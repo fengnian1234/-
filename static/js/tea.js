@@ -1,0 +1,601 @@
+// ══════════════════════════════════════════════════════════
+//  mp-mode 精简：隐藏诗意描述，只保留必要信息
+// ══════════════════════════════════════════════════════════
+(function compactForMp(){
+  if(!location.search.includes('mp=1')) return;
+  // 隐藏所有 section-desc
+  document.querySelectorAll('.section-desc').forEach(el => el.style.display = 'none');
+  // 隐藏茶叶品类的品鉴/冲泡详情
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.tea-tasting, .tea-brew, .tea-origin, .tea-weight').forEach(el => el.style.display = 'none');
+  });
+})();
+
+// ══════════════════════════════════════════════════════════
+//  全局状态
+// ══════════════════════════════════════════════════════════
+const STORAGE_KEY = 'tea_reservation_{{ bnb.id }}';
+let _allExperiences = [];
+let _selectedDate = '';
+let _selectedTime = '';
+let _selectedCount = 1;
+let _reservationCode = '';
+let _orderUnlocked = false;
+let _cart = [];
+let _cartSeq = 0;
+let _currentOrderId = null;
+let _debugMode = false;        // ?debug=1 验收模式
+let _pageState = 'form';       // 'form' | 'result'
+
+// ══════════════════════════════════════════════════════════
+//  工具函数
+// ══════════════════════════════════════════════════════════
+function isAlcoholAvailable() { return new Date().getHours() >= 18; }
+function fmtPrice(p) { return '¥' + Number(p).toFixed(0); }
+
+// ══════════════════════════════════════════════════════════
+//  页面初始化 —— 根据 URL 参数和 localStorage 决定状态
+// ══════════════════════════════════════════════════════════
+(function initPage(){
+  const params = new URLSearchParams(location.search);
+
+  // ?reset=1 清除预约状态
+  if(params.get('reset') === '1') {
+    localStorage.removeItem(STORAGE_KEY);
+    // 去掉 URL 参数，干净展示表单
+    history.replaceState(null, '', location.pathname);
+    _pageState = 'form';
+  } else {
+    // 检查 localStorage 是否有有效预约
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved) {
+      try {
+        const res = JSON.parse(saved);
+        // 只对今天及未来的预约恢复状态
+        if(res.reservation_date >= new Date().toISOString().slice(0,10)) {
+          _reservationCode = res.reservation_code;
+          _orderUnlocked = res.ordering_unlocked || false;
+          _pageState = 'result';
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      } catch(e) { localStorage.removeItem(STORAGE_KEY); }
+    }
+  }
+
+  // ?debug=1 验收模式：显示状态切换栏
+  if(params.get('debug') === '1') {
+    _debugMode = true;
+    document.getElementById('debugToggle').style.display = '';
+  }
+})();
+
+// ══════════════════════════════════════════════════════════
+//  加载菜单数据
+// ══════════════════════════════════════════════════════════
+(async function(){
+  try {
+    const types = await fetch('/api/tea/types?bnb_id={{ bnb.id }}').then(r=>r.json());
+    if(types.success) renderTeaTypes(types.types);
+  } catch(e){ console.error('茶叶加载失败:', e); }
+
+  try {
+    const exps = await fetch('/api/tea/experiences?bnb_id={{ bnb.id }}').then(r=>r.json());
+    if(exps.success) { _allExperiences = exps.experiences; renderAllCategories(exps.experiences); }
+  } catch(e){ console.error('菜单加载失败:', e); }
+
+  try {
+    const prods = await fetch('/api/tea/products?bnb_id={{ bnb.id }}').then(r=>r.json());
+    if(prods.success) renderTeaProds(prods.products);
+  } catch(e){ console.error('商品加载失败:', e); }
+
+  // 预约日期
+  loadDates();
+
+  // 根据初始状态显示对应视图
+  if(_pageState === 'result') {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(saved) showReservationResult(saved);
+  }
+})();
+
+// ══════════════════════════════════════════════════════════
+//  渲染函数
+// ══════════════════════════════════════════════════════════
+function renderTeaTypes(types) {
+  document.getElementById('teaTypes').innerHTML = types.map(t => `
+    <div class="tea-type-card">
+      <div class="tea-type-img">🍃</div>
+      <h3>${t.name}</h3>
+      <p class="tea-origin">📍 ${t.origin||''}</p>
+      <p>${t.description||''}</p>
+      ${t.tasting_notes ? `<p class="tea-tasting"><i class="ph-thin ph-coffee"></i> 品鉴：${t.tasting_notes}</p>` : ''}
+      ${t.brewing_method ? `<p class="tea-brew">🫖 冲泡：${t.brewing_method}</p>` : ''}
+    </div>
+  `).join('');
+}
+
+function renderAllCategories(exps) {
+  const cats = {
+    meal: { el: 'teaMeals', label: '简餐' },
+    drink: { el: 'teaDrinks', label: '饮品' },
+    dessert: { el: 'teaDesserts', label: '甜品' },
+    alcohol: { el: 'teaAlcohols', label: '酒水' },
+    performance: { el: 'teaPerformances', label: '演出' },
+  };
+  const alcOk = isAlcoholAvailable();
+
+  for(const [cat, cfg] of Object.entries(cats)) {
+    const items = exps.filter(e => e.category === cat);
+    const grid = document.getElementById(cfg.el);
+    if(!grid) continue;
+    if(!items.length) { grid.innerHTML = '<p class="empty-hint">暂无项目</p>'; continue; }
+
+    const isAlcohol = cat === 'alcohol';
+    const canOrder = !isAlcohol || alcOk;
+
+    grid.innerHTML = items.map(e => {
+      let cardClass = 'tea-exp-card';
+      let overlayHtml = '';
+      if(isAlcohol && !alcOk) {
+        cardClass += ' alcohol-locked';
+        overlayHtml = '<div class="alcohol-locked-tag">18:00 后开放</div>';
+      }
+      const orderBtn = _orderUnlocked && canOrder
+        ? `<button class="btn btn-sm btn-order-tea" onclick="addToTeaCart('${e.name.replace(/'/g, "\\'")}', ${e.price})">+ 点单</button>`
+        : '';
+      return `
+        <div class="${cardClass}">
+          ${overlayHtml}
+          <h3>${e.name}</h3>
+          <p class="price">${fmtPrice(e.price)}${e.category === 'performance' ? ' <span>/人</span>' : ''}</p>
+          ${e.duration ? `<p><i class="ph-thin ph-clock"></i> ${e.duration}</p>` : ''}
+          <p>${e.description||''}</p>
+          ${e.includes && e.includes.length ? `<div class="tea-includes">${e.includes.map(i=>'<span class="tag">'+i+'</span>').join(' ')}</div>` : ''}
+          ${orderBtn}
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+function renderTeaProds(prods) {
+  document.getElementById('teaProds').innerHTML = prods.map(p => `
+    <div class="tea-prod-card">
+      <h3>${p.name}</h3>
+      <p class="price">${fmtPrice(p.price)}</p>
+      <p class="tea-weight">${p.weight||''}</p>
+      <p>${p.description||''}</p>
+      ${p.stock > 0 ? '<span class="tag tag--success">有货</span>' : '<span class="tag tag--warning">暂时售罄</span>'}
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+//  区块B：预约表单逻辑
+// ══════════════════════════════════════════════════════════
+let _allDates = [];
+
+async function loadDates() {
+  try {
+    const r = await fetch('/api/tea/reservation/dates?bnb_id={{ bnb.id }}').then(r=>r.json());
+    if(r.success) { _allDates = r.dates; renderDateChips(r.dates); }
+  } catch(e){ console.error('日期加载失败:', e); }
+}
+
+function renderDateChips(dates) {
+  const strip = document.getElementById('dateChips');
+  if(!dates.length) { strip.innerHTML = '<p class="empty-hint">暂无可用日期</p>'; return; }
+  strip.innerHTML = dates.map((d,i) => `
+    <div class="date-chip ${i===0?'selected':''}" data-date="${d.date}" onclick="selectDate('${d.date}', this)">
+      <span class="date-chip-label">${d.label}</span>
+      <span class="date-chip-weekday">${d.weekday}</span>
+      <span class="date-chip-date">${d.date.slice(5)}</span>
+    </div>
+  `).join('');
+  if(dates.length > 0) selectDate(dates[0].date, strip.querySelector('.date-chip'));
+}
+
+async function selectDate(dateStr, el) {
+  _selectedDate = dateStr;
+  document.querySelectorAll('#dateChips .date-chip').forEach(c=>c.classList.remove('selected'));
+  if(el) el.classList.add('selected');
+  // 加载时间槽
+  const grid = document.getElementById('timeSlots');
+  grid.innerHTML = '<p class="empty-hint">加载中...</p>';
+  try {
+    const r = await fetch(`/api/tea/reservation/slots?bnb_id={{ bnb.id }}&date=${dateStr}`).then(r=>r.json());
+    if(r.success) renderTimeSlots(r.slots);
+    else grid.innerHTML = `<p class="empty-hint">${r.error||'加载失败'}</p>`;
+  } catch(e){ grid.innerHTML = '<p class="empty-hint">加载失败</p>'; }
+}
+
+function renderTimeSlots(slots) {
+  const grid = document.getElementById('timeSlots');
+  if(!slots.length) { grid.innerHTML = '<p class="empty-hint">该日期暂无可选时段</p>'; return; }
+  _selectedTime = '';
+  grid.innerHTML = slots.map(s => {
+    let cls = 'time-slot-chip';
+    if(!s.available) cls += ' unavailable';
+    const onclick = s.available ? `onclick="selectTime('${s.time}', this)"` : '';
+    const title = s.reason ? `title="${s.reason}"` : '';
+    const seated = s.seated || 0;
+    const queued = s.queued || 0;
+    const seatsLeft = s.seats_left || 0;
+    let capHtml = '';
+    if(seated > 0 || queued > 0) {
+      capHtml = `<span class="slot-capacity">🪑${seated}人 · 排队${queued}组</span>`;
+    }
+    if(!s.available && seatsLeft <= 0) {
+      capHtml = `<span class="slot-capacity slot-full">已满座</span>`;
+    }
+    return `<div class="${cls}" data-time="${s.time}" ${onclick} ${title}>${s.label}<span class="slot-period">${s.period}</span>${capHtml}</div>`;
+  }).join('');
+}
+
+function selectTime(time, el) {
+  _selectedTime = time;
+  document.querySelectorAll('#timeSlots .time-slot-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectGuestCount(n) {
+  _selectedCount = n;
+  document.querySelectorAll('#guestCountSelector .guest-count-card').forEach(c=>{
+    c.classList.toggle('selected', parseInt(c.dataset.count) === n);
+  });
+}
+
+async function submitReservation() {
+  const errEl = document.getElementById('reserveError');
+  errEl.textContent = '';
+  if(!_selectedDate) { errEl.textContent = '请选择预约日期'; return; }
+  if(!_selectedTime) { errEl.textContent = '请选择到店时间'; return; }
+
+  const btn = document.getElementById('reserveSubmit');
+  btn.disabled = true; btn.textContent = '提交中...';
+
+  try {
+    const r = await fetch('/api/tea/reservation/book', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        guest_count: _selectedCount,
+        reservation_date: _selectedDate,
+        reservation_time: _selectedTime,
+        openid: 'web_user',
+      }),
+    }).then(r=>r.json());
+    if(r.success) {
+      // 保存到 localStorage，刷新页面自动展示结果
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(r.reservation));
+      location.reload();
+    } else {
+      errEl.textContent = r.error || '预约失败';
+    }
+  } catch(e) {
+    errEl.textContent = '网络错误，请重试';
+  }
+  btn.disabled = false; btn.innerHTML = '<i class="ph-thin ph-check-circle"></i> 确认预约';
+}
+
+// ══════════════════════════════════════════════════════════
+//  区块C：预约结果显示
+// ══════════════════════════════════════════════════════════
+function showReservationResult(res) {
+  _pageState = 'result';
+  _reservationCode = res.reservation_code;
+
+  // 切换视图：隐藏表单，显示结果
+  document.getElementById('reservationForm').style.display = 'none';
+  document.getElementById('reservationResult').style.display = '';
+  updateDebugToggle();
+
+  // 更新解锁状态
+  if(res.ordering_unlocked) {
+    _orderUnlocked = true;
+    document.getElementById('orderLockOverlay').style.display = 'none';
+    document.getElementById('teaFab').style.display = '';
+    renderAllCategories(_allExperiences);
+  }
+
+  document.getElementById('reserveResultCard').innerHTML = `
+    <div class="reservation-code-display">${res.reservation_code}</div>
+    <p class="reservation-code-hint">到店时请出示此预约码或二维码给工作人员核验</p>
+    <div id="qrcodeContainer" style="display:flex;justify-content:center;margin:16px 0"></div>
+    <div class="reservation-detail-grid">
+      <div class="reservation-detail-item">
+        <span class="rd-label">日期</span>
+        <span class="rd-value">${res.reservation_date}</span>
+      </div>
+      <div class="reservation-detail-item">
+        <span class="rd-label">时间</span>
+        <span class="rd-value">${res.reservation_time}</span>
+      </div>
+      <div class="reservation-detail-item">
+        <span class="rd-label">人数</span>
+        <span class="rd-value">${res.guest_count === 2 ? '双人' : '单人'}</span>
+      </div>
+      <div class="reservation-detail-item">
+        <span class="rd-label">状态</span>
+        <span class="rd-value" id="reserveStatus">${res.ordering_unlocked ? '🔓 已核验 · 可点单' : '🔒 待核验'}</span>
+      </div>
+    </div>
+    <div class="queue-info" id="queueInfo">
+      <p class="queue-loading"><i class="ph-thin ph-clock-countdown"></i> 加载排队信息...</p>
+    </div>
+    <button class="btn btn-sm" onclick="clearReservation()" style="margin-top:16px;padding:8px 24px;border-radius:20px;background:var(--color-bg);border:1.5px solid var(--color-border);color:var(--color-text);cursor:pointer;font-size:0.85rem"><i class="ph-thin ph-arrow-left"></i> 重新预约</button>
+  `;
+  // 生成二维码
+  setTimeout(() => {
+    const container = document.getElementById('qrcodeContainer');
+    if(container && typeof QRCode !== 'undefined') {
+      container.innerHTML = '';
+      new QRCode(container, {
+        text: res.reservation_code,
+        width: 160, height: 160,
+        colorDark: '#2C4335', colorLight: '#ffffff',
+      });
+    }
+  }, 100);
+  document.getElementById('reservationResult').scrollIntoView({ behavior: 'smooth' });
+
+  // 异步加载排队信息
+  loadQueueInfo(res.reservation_code);
+}
+
+async function loadQueueInfo(code) {
+  const el = document.getElementById('queueInfo');
+  if(!el) return;
+  try {
+    const q = await fetch(`/api/tea/reservation/queue?code=${code}`).then(r=>r.json());
+    if(q.success && q.queue) {
+      const d = q.queue;
+      const seated = d.slot_seated || 0;
+      const queued = d.slot_queued || 0;
+      el.innerHTML = `
+        <div class="queue-row">
+          <div class="queue-item">
+            <span class="queue-num">${d.slot_position}<small>/${queued}</small></span>
+            <span class="queue-label">排队中</span>
+          </div>
+          <div class="queue-item">
+            <span class="queue-num">${seated}<small>人</small></span>
+            <span class="queue-label">已落座</span>
+          </div>
+          <div class="queue-item queue-item--wide">
+            <span class="queue-num"><i class="ph-thin ph-clock"></i> ${d.estimated_time}</span>
+            <span class="queue-label">预计入座</span>
+          </div>
+        </div>
+        <p class="queue-note">${d.estimate_note}</p>
+      `;
+    } else {
+      el.innerHTML = '<p class="queue-loading">排队信息暂无</p>';
+    }
+  } catch(e) {
+    el.innerHTML = '<p class="queue-loading">排队信息加载失败</p>';
+  }
+}
+
+// ── 清除预约，回到表单 ──
+function clearReservation() {
+  // 显示旧预约码在确认文案中
+  document.getElementById('confirmOldCode').textContent = _reservationCode || '——';
+  document.getElementById('confirmOverlay').style.display = '';
+}
+
+async function confirmClearReservation() {
+  // 先调后端取消预约，释放时段名额
+  if(_reservationCode) {
+    try {
+      await fetch('/api/tea/reservation/cancel', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ reservation_code: _reservationCode }),
+      });
+    } catch(e) { /* 网络错误不阻塞前端清理 */ }
+  }
+
+  localStorage.removeItem(STORAGE_KEY);
+  _reservationCode = '';
+  _orderUnlocked = false;
+  _pageState = 'form';
+  document.getElementById('confirmOverlay').style.display = 'none';
+  document.getElementById('reservationForm').style.display = '';
+  document.getElementById('reservationResult').style.display = 'none';
+  document.getElementById('orderLockOverlay').style.display = '';
+  document.getElementById('teaFab').style.display = 'none';
+  renderAllCategories(_allExperiences);
+  updateDebugToggle();
+  document.getElementById('reservationForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelClearReservation() {
+  document.getElementById('confirmOverlay').style.display = 'none';
+}
+
+// ── debug 模式：在表单和结果间切换 ──
+function switchDebugState(state) {
+  if(state === 'form') {
+    document.getElementById('reservationForm').style.display = '';
+    document.getElementById('reservationResult').style.display = 'none';
+  } else {
+    // 有真实预约用真实数据，否则用模拟数据
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved) {
+      showReservationResult(JSON.parse(saved));
+    } else {
+      showReservationResult({
+        reservation_code: '123456',
+        reservation_date: new Date().toISOString().slice(0,10),
+        reservation_time: '15:30',
+        guest_count: 2,
+        status: 'pending',
+        ordering_unlocked: false,
+      });
+    }
+  }
+  updateDebugToggle();
+}
+
+function updateDebugToggle() {
+  const formBtn = document.getElementById('debugBtnForm');
+  const resultBtn = document.getElementById('debugBtnResult');
+  if(!formBtn || !resultBtn) return;
+  formBtn.classList.toggle('active', _pageState === 'form');
+  resultBtn.classList.toggle('active', _pageState === 'result');
+}
+
+// ══════════════════════════════════════════════════════════
+//  区块D：到店后刷新核验状态（核验由员工操作）
+// ══════════════════════════════════════════════════════════
+async function checkUnlockStatus() {
+  if(!_reservationCode) return;
+  const okEl = document.getElementById('checkinOk');
+  try {
+    const r = await fetch(`/api/tea/reservation/status?code=${_reservationCode}`).then(r=>r.json());
+    if(r.success && r.reservation && r.reservation.ordering_unlocked) {
+      _orderUnlocked = true;
+      document.getElementById('orderLockOverlay').style.display = 'none';
+      document.getElementById('teaFab').style.display = '';
+      renderAllCategories(_allExperiences);
+      const stEl = document.getElementById('reserveStatus');
+      if(stEl) stEl.innerHTML = '🔓 已核验 · 可点单';
+      okEl.style.display = ''; okEl.textContent = '核验成功，请开始点单！';
+    } else {
+      okEl.style.display = ''; okEl.textContent = '尚未核验，请先到店由工作人员核验';
+      okEl.style.color = 'var(--color-text-lighter)';
+    }
+  } catch(e) {}
+}
+
+// ── 购物车逻辑 ──
+function addToTeaCart(name, price) {
+  _cart.push({ seq: ++_cartSeq, id: 'tea_'+_cartSeq, name, price, quantity: 1 });
+  updateTeaCartUI();
+}
+
+function removeFromTeaCart(seq) {
+  _cart = _cart.filter(c => c.seq !== seq);
+  updateTeaCartUI();
+}
+
+function updateQty(seq, delta) {
+  const item = _cart.find(c => c.seq === seq);
+  if(!item) return;
+  item.quantity += delta;
+  if(item.quantity <= 0) { removeFromTeaCart(seq); return; }
+  updateTeaCartUI();
+}
+
+function updateTeaCartUI() {
+  const total = _cart.reduce((s,c) => s + c.price * c.quantity, 0);
+  const badge = document.getElementById('teaFabBadge');
+  const count = _cart.reduce((s,c) => s + c.quantity, 0);
+  badge.textContent = count;
+  badge.style.display = count > 0 ? '' : 'none';
+  document.getElementById('teaOrderTotal').textContent = '¥' + total;
+
+  const itemsEl = document.getElementById('teaOrderItems');
+  if(_cart.length === 0) {
+    itemsEl.innerHTML = '<p class="empty-hint">购物车是空的</p>';
+  } else {
+    itemsEl.innerHTML = _cart.map(c => `
+      <div class="order-item">
+        <div class="order-item-info">
+          <span class="order-item-name">${c.name}</span>
+          <span class="order-item-price">${fmtPrice(c.price)}</span>
+        </div>
+        <div class="qty-stepper">
+          <button class="qty-btn" onclick="updateQty(${c.seq}, -1)">−</button>
+          <span class="qty-val">${c.quantity}</span>
+          <button class="qty-btn" onclick="updateQty(${c.seq}, 1)">+</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function toggleOrderPanel() {
+  document.getElementById('teaOrderPanel').classList.toggle('open');
+}
+
+async function submitTeaOrder() {
+  if(_cart.length === 0) { alert('请先选择项目'); return; }
+  const btn = document.getElementById('teaOrderSubmit');
+  btn.disabled = true; btn.textContent = '提交中...';
+
+  const items = _cart.map(c => ({ menu_item_id: c.seq, name: c.name, quantity: c.quantity, price: c.price }));
+  const total = _cart.reduce((s,c) => s + c.price * c.quantity, 0);
+
+  try {
+    const r = await fetch('/api/order', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        openid: 'web_user',
+        items: items,
+        room_number: _reservationCode,
+        total_price: total,
+        remark: '此山茶场点单',
+      }),
+    }).then(r=>r.json());
+    if(r.success || r.order) {
+      _currentOrderId = r.order ? r.order.id : r.id;
+      // 切换到支付页
+      document.getElementById('teaPayAmount').textContent = '¥' + total;
+      document.getElementById('teaOrderItems').style.display = 'none';
+      document.getElementById('teaOrderFooter').style.display = 'none';
+      document.getElementById('teaPayPage').style.display = '';
+    } else {
+      alert(r.error || '下单失败');
+    }
+  } catch(e) {
+    alert('网络错误');
+  }
+  btn.disabled = false; btn.textContent = '提交订单';
+}
+
+async function confirmTeaPay() {
+  if(!_currentOrderId) return;
+  try {
+    const r = await fetch('/api/order/pay', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ order_id: _currentOrderId }),
+    }).then(r=>r.json());
+    if(r.success) {
+      // 清空购物车
+      _cart = [];
+      _currentOrderId = null;
+      updateTeaCartUI();
+      // 恢复面板
+      document.getElementById('teaOrderItems').style.display = '';
+      document.getElementById('teaOrderFooter').style.display = '';
+      document.getElementById('teaPayPage').style.display = 'none';
+      document.getElementById('teaOrderPanel').classList.remove('open');
+      alert('支付成功！感谢您的惠顾～');
+    } else {
+      alert(r.error || '支付失败');
+    }
+  } catch(e) { alert('网络错误'); }
+}
+
+function cancelTeaPay() {
+  document.getElementById('teaOrderItems').style.display = '';
+  document.getElementById('teaOrderFooter').style.display = '';
+  document.getElementById('teaPayPage').style.display = 'none';
+}
+
+// ── 定时检查酒水开放（每分钟刷新） ──
+setInterval(() => {
+  if(_allExperiences.length && !_orderUnlocked) {
+    // 还没解锁，不刷新
+  } else if(_allExperiences.length && isAlcoholAvailable()) {
+    const alcSection = document.querySelectorAll('.alcohol-locked');
+    if(alcSection.length) renderAllCategories(_allExperiences);
+  }
+}, 60000);
+
+// 核验由员工在 staff 页面操作，客人端不提供自助核验

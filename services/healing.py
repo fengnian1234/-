@@ -224,7 +224,7 @@ def create_appointment(data, bnb_id=None):
         }
     except Exception as e:
         db.rollback()
-        log_error("healing.create_appointment", str(e), exc_info=True)
+        log_error(f"healing.create_appointment 失败: {e}", exc_info=True)
         return {"error": "预约失败，请稍后重试"}
     finally:
         db.close()
@@ -249,7 +249,7 @@ def confirm_payment(appointment_id, bnb_id=None):
         return {"success": True, "message": "支付成功！· 琼儿老师将在约定时间等候您～"}
     except Exception as e:
         db.rollback()
-        log_error("healing.confirm_payment", str(e), exc_info=True)
+        log_error(f"healing.confirm_payment 失败: {e}", exc_info=True)
         return {"error": "支付确认失败，请稍后重试"}
     finally:
         db.close()

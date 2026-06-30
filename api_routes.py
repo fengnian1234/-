@@ -301,7 +301,7 @@ def api_order_pay():
     except Exception as e:
         db.rollback()
         from services.logger import error as log_error
-        log_error("api.pay_order", str(e), exc_info=True)
+        log_error(f"api.pay_order 失败: {e}", exc_info=True)
         return jsonify({"message": "支付处理失败，请稍后重试"}), 500
     finally:
         db.close()
@@ -327,7 +327,7 @@ def api_order_status(order_id: int):
         return jsonify({"success": True, "status": order.status, "order": order.to_dict()})
     except Exception as e:
         db.rollback()
-        log_error("api.order_status", str(e), exc_info=True)
+        log_error(f"api.order_status 失败: {e}", exc_info=True)
         return jsonify({"success": False, "message": "状态更新失败，请稍后重试"}), 500
     finally:
         db.close()
@@ -502,7 +502,7 @@ def api_generate_weekly_report():
         return jsonify(result)
     except Exception:
         from services.logger import error as log_error
-        log_error("api.staff.acknowledge", "操作失败", exc_info=True)
+        log_error(f"api.staff.acknowledge: 操作失败", exc_info=True)
         return jsonify({"success": False, "message": "操作失败，请稍后重试"}), 500
 
 
@@ -1098,7 +1098,7 @@ def api_miniapp_login():
         )
         result = resp.json()
     except Exception as e:
-        log_error("api.wx_login", str(e), exc_info=True)
+        log_error(f"api.wx_login 失败: {e}", exc_info=True)
         return jsonify({"success": False, "message": "微信登录失败，请稍后重试"}), 502
 
     if result.get("errcode", 0) != 0:
