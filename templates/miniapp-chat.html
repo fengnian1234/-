@@ -36,6 +36,19 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 .chat-header .name { font-size:15px; font-weight:600; }
 .chat-header .status { font-size:11px; opacity:.75; }
 .chat-header .btn-reset { padding:4px 12px; border-radius:16px; border:1px solid rgba(255,255,255,.4); background:transparent; color:#fff; font-size:11px; cursor:pointer; }
+/* 鉴权模式切换 */
+.mode-toggle { display:flex; align-items:center; gap:4px; padding:4px 10px; border-radius:16px; border:1px solid rgba(255,255,255,.4); background:transparent; color:#fff; font-size:11px; cursor:pointer; transition:background .15s; white-space:nowrap; }
+.mode-toggle:hover { background:rgba(255,255,255,.15); }
+.mode-popup { position:absolute; top:48px; right:56px; background:var(--bubble-you); border-radius:14px; box-shadow:0 8px 30px rgba(0,0,0,0.12); z-index:30; padding:6px; display:none; gap:2px; flex-direction:column; min-width:180px; }
+.mode-popup.show { display:flex; }
+.mode-item { display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:12px; cursor:pointer; font-size:12px; color:var(--text); border:none; background:none; width:100%; text-align:left; }
+.mode-item:hover { background:var(--pri-light); }
+.mode-item.active { color:var(--pri); font-weight:600; }
+.mode-item .mode-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.mode-item .mode-dot.green { background:#5b8c5a; }
+.mode-item .mode-dot.blue { background:#5b7fbf; }
+.mode-item .mode-dot.orange { background:#d4953a; }
+.mode-item .mode-dot.gray { background:#8c8c8c; }
 
 .quick-hints { display:flex; gap:6px; padding:10px 14px; overflow-x:auto; flex-shrink:0; background:var(--bubble-you); border-bottom:1px solid var(--border); }
 .quick-hint { flex-shrink:0; padding:6px 14px; border-radius:20px; background:var(--pri-light); color:var(--pri); font-size:12px; cursor:pointer; border:none; white-space:nowrap; }
@@ -76,13 +89,22 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 </head>
 <body>
 
-<div class="chat-header">
+<div class="chat-header" style="position:relative">
   <div class="avatar"><i class="ph-thin ph-robot"></i></div>
   <div class="info">
     <div class="name" id="headerName">{{ bnb.short_name }} · AI 管家</div>
-    <div class="status">在线 · 随时为您服务</div>
+    <div class="status" id="modeStatus">加载中...</div>
   </div>
+  <button class="mode-toggle" onclick="toggleModeMenu()" id="modeBtn">
+    <span id="modeBtnLabel">鉴权</span> <i class="ph-thin ph-caret-down" style="font-size:10px"></i>
+  </button>
   <button class="btn-reset" onclick="resetChat()">重置</button>
+  <div class="mode-popup" id="modePopup">
+    <button class="mode-item" data-mode="travel_advisor" onclick="setMode('travel_advisor')"><span class="mode-dot green"></span> 未预订 · 旅行顾问</button>
+    <button class="mode-item" data-mode="pre_arrival" onclick="setMode('pre_arrival')"><span class="mode-dot blue"></span> 已预订 · 待入住</button>
+    <button class="mode-item" data-mode="guest_butler" onclick="setMode('guest_butler')"><span class="mode-dot orange"></span> 已入住 · 管家服务</button>
+    <button class="mode-item" data-mode="post_stay" onclick="setMode('post_stay')"><span class="mode-dot gray"></span> 已退房 · 复购关怀</button>
+  </div>
 </div>
 
 <div class="quick-hints" id="quickHints">
@@ -118,17 +140,34 @@ const API = '/api/simulate-chat';
 const OPENID = 'mp_test_user';
 const BNB_ID = '{{ bnb_id }}';
 let isTyping = false;
+let currentMode = 'travel_advisor';
+
+const MODE_LABELS = {
+  travel_advisor: '未预订 · 旅行顾问',
+  pre_arrival: '已预订 · 待入住',
+  guest_butler: '已入住 · 管家服务',
+  post_stay: '已退房 · 复购关怀',
+};
+const MODE_STATUS = {
+  travel_advisor: '在线 · 免费旅行顾问',
+  pre_arrival: '在线 · 已预订待入住',
+  guest_butler: '在线 · 已入住专属管家',
+  post_stay: '在线 · 离店复购关怀',
+};
 
 (function init(){
   document.getElementById('timeTag').innerText = new Date().toLocaleString('zh-CN');
   document.getElementById('msgInput').addEventListener('keydown', e => { if(e.key==='Enter') send(); });
-  addSysMsg('你好！我是{{ bnb.short_name }}的 AI 管家 <i class="ph-thin ph-robot"></i>\n\n可以问我房型、美食、攻略、交通等问题，也可以直接说「打扫」「叫醒」等快捷指令～');
+  addSysMsg('你好！我是{{ bnb.short_name }}的 AI 管家 <i class="ph-thin ph-robot"></i>\n\n可以问我房型、美食、攻略、交通等问题，也可以直接说「打扫」「叫醒」等快捷指令～\n\n💡 点击右上角「鉴权」按钮切换测试模式');
 
   // 读取 BnB 主题色 — 以自身 data-bnb 的 CSS 变量为准
   try {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--pri').trim();
     if (color) document.querySelector('.chat-header').style.background = color;
   } catch(e){}
+
+  // 默认设为旅行顾问模式
+  setMode('travel_advisor', true);
 })();
 
 function addBubble(text, side, handler) {
@@ -182,6 +221,41 @@ async function send(text) {
   } catch(e) {
     showTyping(false);
     addBubble('连接失败，请确认服务已启动', 'you', 'error');
+  }
+}
+
+function toggleModeMenu() {
+  document.getElementById('modePopup').classList.toggle('show');
+}
+
+// 点击外部关闭鉴权弹窗
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#modeBtn') && !e.target.closest('#modePopup')) {
+    document.getElementById('modePopup').classList.remove('show');
+  }
+});
+
+async function setMode(mode, silent) {
+  currentMode = mode;
+  document.getElementById('modeStatus').textContent = MODE_STATUS[mode] || mode;
+  document.getElementById('modeBtnLabel').textContent = MODE_LABELS[mode] || mode;
+  document.getElementById('modePopup').classList.remove('show');
+  // 高亮当前选项
+  document.querySelectorAll('.mode-item').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.mode === mode);
+  });
+  if (silent) return;
+  try {
+    await fetch('/api/simulate/mode', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({openid: OPENID, mode: mode})
+    });
+    // 重置对话
+    var area = document.getElementById('chatArea');
+    area.innerHTML = '<div class="time-tag">'+new Date().toLocaleString('zh-CN')+'</div>';
+    addSysMsg('已切换至「' + MODE_LABELS[mode] + '」模式，有什么可以帮你的？');
+  } catch(e) {
+    addSysMsg('模式切换失败: ' + e.message);
   }
 }
 

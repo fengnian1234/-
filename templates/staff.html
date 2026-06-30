@@ -107,10 +107,10 @@ body{font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,"PingFang SC",
 <body>
 
 <header class="header">
-    <h1>🛎️ {{ bnb.short_name }} · 员工看板</h1>
+    <h1><i class="ph-thin ph-bell"></i> {{ bnb.short_name }} · 员工看板</h1>
     <div class="header-actions">
         <span class="header-badge" id="pendingBadge" style="display:none">0 待处理</span>
-        <button class="sound-toggle" onclick="toggleSound()" id="soundBtn">🔇 声音提醒：关</button>
+        <button class="sound-toggle" onclick="toggleSound()" id="soundBtn"><i class="ph-thin ph-speaker-x"></i> 声音提醒：关</button>
         <button class="theme-toggle" onclick="toggleTheme()" title="切换深色/浅色模式"><i class="ph-thin ph-moon"></i></button>
     </div>
 </header>
@@ -128,26 +128,28 @@ body{font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,"PingFang SC",
     <!-- 双队列：前台点单机 + 主理人调配 -->
     <div class="dual-panel">
         <div>
-            <h2 class="section-title">🖥️ 前台点单机 <small>餐饮订单</small></h2>
-            <div class="request-list" id="frontdeskList"><div class="empty-state"><span class="empty-icon">☕</span><p>暂无待处理订单</p></div></div>
+            <h2 class="section-title"><i class="ph-thin ph-desktop"></i> 前台点单机 <small>餐饮订单</small></h2>
+            <div class="request-list" id="frontdeskList"><div class="empty-state"><span class="empty-icon"><i class="ph-thin ph-coffee"></i></span><p>暂无待处理订单</p></div></div>
         </div>
         <div>
-            <h2 class="section-title">👤 主理人调配 <small>服务+体验</small></h2>
-            <div class="request-list" id="managerList"><div class="empty-state"><span class="empty-icon">📋</span><p>暂无待调配请求</p></div></div>
+            <h2 class="section-title"><i class="ph-thin ph-user"></i> 主理人调配 <small>服务+体验</small></h2>
+            <div class="request-list" id="managerList"><div class="empty-state"><span class="empty-icon"><i class="ph-thin ph-clipboard-text"></i></span><p>暂无待调配请求</p></div></div>
         </div>
     </div>
 
-    <!-- 此山茶场核验 -->
+    {% if bnb_id == 'shanji' %}
+    <!-- 此山茶场核验（山纪专属） -->
     <h2 class="section-title mt"><i class="ph-thin ph-storefront"></i> 此山茶场 · 预约核验</h2>
     <div class="checkin-row">
         <input type="text" id="teaCheckinInput" class="checkin-input" placeholder="输入6位预约码" maxlength="6">
         <button class="checkin-btn" onclick="teaCheckin()">核验解锁</button>
         <span class="checkin-msg" id="teaCheckinMsg"></span>
     </div>
+    {% endif %}
 
     <!-- 已处理 -->
-    <h2 class="section-title mt">✔️ 今日已完成</h2>
-    <div class="request-list" id="completedList"><div class="empty-state"><span class="empty-icon">📭</span><p>今天还没有完成记录</p></div></div>
+    <h2 class="section-title mt"><i class="ph-thin ph-check-circle"></i> 今日已完成</h2>
+    <div class="request-list" id="completedList"><div class="empty-state"><span class="empty-icon"><i class="ph-thin ph-tray"></i></span><p>今天还没有完成记录</p></div></div>
 </div>
 
 <script>
@@ -184,7 +186,7 @@ function playAlertSound() {
 
 function toggleSound() {
     soundEnabled = !soundEnabled;
-    document.getElementById('soundBtn').textContent = soundEnabled ? '🔊 声音提醒：开' : '🔇 声音提醒：关';
+    document.getElementById('soundBtn').innerHTML = soundEnabled ? '<i class="ph-thin ph-speaker-high"></i> 声音提醒：开' : '<i class="ph-thin ph-speaker-x"></i> 声音提醒：关';
     if (soundEnabled) playAlertSound();
 }
 
@@ -218,8 +220,8 @@ function renderStats(data) {
     var fd = (data.pending_orders_frontdesk || []).length;
     var mg = (data.pending_svc || []).length + (data.pending_orders_manager || []).length;
     document.getElementById('statsArea').innerHTML = `
-        <div class="stat-card stat-pending"><div class="stat-value">${fd}</div><div class="stat-label">🖥️ 前台待处理</div></div>
-        <div class="stat-card stat-rate"><div class="stat-value">${mg}</div><div class="stat-label">👤 主理人待调配</div></div>
+        <div class="stat-card stat-pending"><div class="stat-value">${fd}</div><div class="stat-label"><i class="ph-thin ph-desktop"></i> 前台待处理</div></div>
+        <div class="stat-card stat-rate"><div class="stat-value">${mg}</div><div class="stat-label"><i class="ph-thin ph-user"></i> 主理人待调配</div></div>
         <div class="stat-card stat-today"><div class="stat-value">${stats.today_total||0}</div><div class="stat-label">今日总量</div></div>
         <div class="stat-card stat-done"><div class="stat-value">${stats.today_completed||0}</div><div class="stat-label">已完成</div></div>
         <div class="stat-card stat-rate"><div class="stat-value">${stats.completion_rate||'N/A'}</div><div class="stat-label">完成率</div></div>`;
@@ -229,23 +231,23 @@ function renderStats(data) {
 function renderFrontdesk(orders) {
     const el = document.getElementById('frontdeskList');
     if (!orders || orders.length === 0) {
-        el.innerHTML = '<div class="empty-state"><span class="empty-icon">☕</span><p>暂无待处理订单</p></div>';
+        el.innerHTML = '<div class="empty-state"><span class="empty-icon"><i class="ph-thin ph-coffee"></i></span><p>暂无待处理订单</p></div>';
         return;
     }
     el.innerHTML = orders.map(o => {
         var items = (o.items || []).map(i => i.name + '×' + i.quantity).join(', ');
-        var badge = o.status === 'preparing' ? '🔄 制作中' : '🆕 新订单';
+        var badge = o.status === 'preparing' ? '<i class="ph-thin ph-arrows-clockwise"></i> 制作中' : '<i class="ph-thin ph-plus-circle"></i> 新订单';
         var actions = o.status === 'paid'
             ? `<button class="btn btn-warning" onclick="orderStatus(${o.id},'preparing')">开始准备</button>`
-            : `<button class="btn btn-success" onclick="orderStatus(${o.id},'delivered')">✅ 已送餐</button>`;
+            : `<button class="btn btn-success" onclick="orderStatus(${o.id},'delivered')"><i class="ph-thin ph-check-circle"></i> 已送餐</button>`;
         return `<div class="request-card pending">
-            <span class="request-icon">🍽️</span>
+            <span class="request-icon"><i class="ph-thin ph-fork-knife"></i></span>
             <div class="request-info">
                 <div class="request-name">${items || '订单 #'+o.id}</div>
                 <div class="request-meta">
-                    <span>🕐 ${o.created_at}</span>
-                    <span>🚪 ${o.room_number || '未填'}</span>
-                    <span>💰 ¥${o.total_price}</span>
+                    <span><i class="ph-thin ph-clock"></i> ${o.created_at}</span>
+                    <span><i class="ph-thin ph-door"></i> ${o.room_number || '未填'}</span>
+                    <span><i class="ph-thin ph-currency-cny"></i> ¥${o.total_price}</span>
                     <span>${badge}</span>
                 </div>
             </div>
@@ -268,16 +270,16 @@ function renderManager(services, orders) {
         items.push({type:'order', id:o.id, name:names||'体验订单', time:o.created_at, room:o.room_number, status:o.status, price:o.total_price});
     });
     if (items.length === 0) {
-        el.innerHTML = '<div class="empty-state"><span class="empty-icon">📋</span><p>暂无待调配请求</p></div>';
+        el.innerHTML = '<div class="empty-state"><span class="empty-icon"><i class="ph-thin ph-clipboard-text"></i></span><p>暂无待调配请求</p></div>';
         return;
     }
     el.innerHTML = items.map(r => {
-        var icon = r.type === 'order' ? '🧘' : '🔔';
-        var badge = r.type === 'order' ? '💰 ¥'+r.price : (r.status==='acknowledged'?'📊 处理中':'📊 待确认');
+        var icon = r.type === 'order' ? '<i class="ph-thin ph-sparkle"></i>' : '<i class="ph-thin ph-bell"></i>';
+        var badge = r.type === 'order' ? '<i class="ph-thin ph-currency-cny"></i> ¥'+r.price : (r.status==='acknowledged'?'<i class="ph-thin ph-chart-bar"></i> 处理中':'<i class="ph-thin ph-chart-bar"></i> 待确认');
         var actions = '';
         if (r.type === 'svc') {
             if (r.status === 'pending') actions += `<button class="btn btn-warning" onclick="ack(${r.id})">确认收到</button>`;
-            actions += `<button class="btn btn-success" onclick="done(${r.id})">✓ 完成</button>`;
+            actions += `<button class="btn btn-success" onclick="done(${r.id})"><i class="ph-thin ph-check"></i> 完成</button>`;
         } else {
             actions = `<button class="btn btn-outline" onclick="orderStatus(${r.id},'preparing')">安排人员</button>`;
         }
@@ -286,8 +288,8 @@ function renderManager(services, orders) {
             <div class="request-info">
                 <div class="request-name">${r.name}</div>
                 <div class="request-meta">
-                    <span>🕐 ${r.time}</span>
-                    <span>🚪 ${r.room || '未填'}</span>
+                    <span><i class="ph-thin ph-clock"></i> ${r.time}</span>
+                    <span><i class="ph-thin ph-door"></i> ${r.room || '未填'}</span>
                     <span>${badge}</span>
                 </div>
             </div>
@@ -300,14 +302,14 @@ function renderCompleted(svcList, orderList) {
     const el = document.getElementById('completedList');
     var items = [];
     (svcList || []).forEach(r => {
-        items.push({icon:'✅', name:r.service_name, time:r.created_at, room:r.room_number, handler:r.handler});
+        items.push({icon:'<i class="ph-thin ph-check-circle"></i>', name:r.service_name, time:r.created_at, room:r.room_number, handler:r.handler});
     });
     (orderList || []).forEach(o => {
         var names = (o.items || []).map(i => i.name+'×'+i.quantity).join(', ');
-        items.push({icon:'🍽️', name:names||'订单', time:o.created_at, room:o.room_number, handler:'前台'});
+        items.push({icon:'<i class="ph-thin ph-fork-knife"></i>', name:names||'订单', time:o.created_at, room:o.room_number, handler:'前台'});
     });
     if (items.length === 0) {
-        el.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span><p>今天还没有完成记录</p></div>';
+        el.innerHTML = '<div class="empty-state"><span class="empty-icon"><i class="ph-thin ph-tray"></i></span><p>今天还没有完成记录</p></div>';
         return;
     }
     el.innerHTML = items.reverse().slice(0, 30).map(r => `
@@ -315,14 +317,14 @@ function renderCompleted(svcList, orderList) {
             <span class="request-icon">${r.icon}</span>
             <div class="request-info">
                 <div class="request-name">${r.name}</div>
-                <div class="request-meta"><span>🕐 ${r.time}</span><span>🚪 ${r.room || '未填'}</span><span>👤 ${r.handler || '系统'}</span></div>
+                <div class="request-meta"><span><i class="ph-thin ph-clock"></i> ${r.time}</span><span><i class="ph-thin ph-door"></i> ${r.room || '未填'}</span><span><i class="ph-thin ph-user"></i> ${r.handler || '系统'}</span></div>
             </div>
         </div>`).join('');
 }
 
 function showAlert(fd, mg) {
     const banner = document.getElementById('alertBanner');
-    document.getElementById('alertText').textContent = `🔔 新请求！🖥️前台 ${fd} 条 · 👤主理人 ${mg} 条`;
+    document.getElementById('alertText').innerHTML = `<i class="ph-thin ph-bell"></i> 新请求！<i class="ph-thin ph-desktop"></i>前台 ${fd} 条 · <i class="ph-thin ph-user"></i>主理人 ${mg} 条`;
     banner.classList.add('show');
     setTimeout(() => banner.classList.remove('show'), 5000);
 }
@@ -344,7 +346,8 @@ async function orderStatus(id, status) {
 fetchData();
 setInterval(fetchData, REFRESH_INTERVAL);
 
-// ── 此山茶场核验 ──
+{% if bnb_id == 'shanji' %}
+// ── 此山茶场核验（山纪专属）──
 async function teaCheckin() {
     const code = document.getElementById('teaCheckinInput').value.trim().toUpperCase();
     const msg = document.getElementById('teaCheckinMsg');
@@ -368,6 +371,7 @@ async function teaCheckin() {
 document.getElementById('teaCheckinInput').addEventListener('keydown', function(e) {
     if(e.key === 'Enter') teaCheckin();
 });
+{% endif %}
 </script>
 </body>
 </html>

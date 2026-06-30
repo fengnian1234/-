@@ -105,11 +105,17 @@ def miniapp_chat():
 @_bnb_route("/tea")
 def bnb_tea(bnb_prefix=None):
     """茶园板块（山纪专属）"""
+    from bnb_context import get_current_bnb_id
+    if get_current_bnb_id() != 'shanji':
+        abort(404)
     return render_template("tea.html")
 
 @_bnb_route("/healing")
 def bnb_healing(bnb_prefix=None):
     """疗愈板块（东林外专属）"""
+    from bnb_context import get_current_bnb_id
+    if get_current_bnb_id() != 'donglinwai':
+        abort(404)
     return render_template("healing.html")
 
 @_bnb_route("/staff")
