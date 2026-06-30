@@ -28,19 +28,21 @@
         </div>
         {% if categories %}
         <div class="menu-container">
-            <!-- 左侧分类导航 -->
+            <!-- 左侧分类导航（纯文字，无图标） -->
             <div class="menu-cat-sidebar">
                 {% for cat in categories %}
                 {% if cat['items'] and cat['items']|length > 0 %}
-                <button class="menu-cat-title" data-cat-id="{{ cat.id }}">{{ cat.icon }} {{ cat.name }}</button>
+                <button class="menu-cat-title" data-cat-id="{{ cat.id }}">{{ cat.name }}</button>
                 {% endif %}
                 {% endfor %}
             </div>
-            <!-- 右侧商品列表 -->
+            <!-- 右侧商品列表（按分类分区，支持锚点滚动） -->
             <div class="menu-items">
                 {% for cat in categories %}
                 {% if cat['items'] and cat['items']|length > 0 %}
-                {% set is_drink_cat = (cat.name == '咖啡+茶饮' or cat.name == '特调饮品' or bnb_id == 'donglinwai') %}
+                {% set is_drink_cat = (cat.name == '咖啡/茶饮' or cat.name == '特调饮品' or bnb_id == 'donglinwai') %}
+                <div class="menu-cat-section" id="mp-cat-{{ cat.id }}">
+                    <h3 class="menu-cat-section-title">{{ cat.name }}</h3>
                 {% for item in cat['items'] %}
                 {% set is_tea = ('云雾茶' in item.name) %}
                 {% set has_both = ('热/冰' in item.description) %}
@@ -72,6 +74,7 @@
                     </div>
                 </div>
                 {% endfor %}
+                </div><!-- /menu-cat-section -->
                 {% endif %}
                 {% endfor %}
             </div>
@@ -87,7 +90,7 @@
         <div class="menu-container">
             {% for cat in categories %}
             {% if cat['items'] and cat['items']|length > 0 %}
-            {% set is_drink_cat = (cat.name == '咖啡+茶饮' or cat.name == '特调饮品' or bnb_id == 'donglinwai') %}
+            {% set is_drink_cat = (cat.name == '咖啡/茶饮' or cat.name == '特调饮品' or bnb_id == 'donglinwai') %}
             <div class="menu-category" id="cat-{{ cat.id }}">
                 <h2 class="menu-cat-title">{{ cat.icon }} {{ cat.name }}</h2>
                 <div class="menu-items">
@@ -307,8 +310,10 @@ function updateOrderPanel() {
     const totalEl = document.querySelector('.total-price');
     const totalCnt = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-    badge.setAttribute('data-count', totalCnt);
-    badge.textContent = totalCnt || '';
+    if (badge) {
+        badge.setAttribute('data-count', totalCnt);
+        badge.textContent = totalCnt || '';
+    }
 
     var fabTotal = document.getElementById('fabTotal');
     if (fabTotal) {
@@ -540,37 +545,61 @@ function decrementCartItem(itemId) {
 </script>
 {% if request.args.get('mp') == '1' %}
 <script>
-// ── MP 分类导航 + 搜索过滤 ──
-var _mpActiveCat = null;
-
+// ── MP 分类锚点滚动 + 搜索过滤 ──
 (function() {
     var pills = document.querySelectorAll('.menu-cat-sidebar .menu-cat-title');
+    var itemsPanel = document.querySelector('.menu-container .menu-items');
+    var sections = document.querySelectorAll('.menu-cat-section');
+
+    // 点击分类 → 滚动到对应分区
     pills.forEach(function(pill) {
         pill.addEventListener('click', function() {
             var catId = pill.getAttribute('data-cat-id');
+            var section = document.getElementById('mp-cat-' + catId);
+            if (section && itemsPanel) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
             pills.forEach(function(p) { p.classList.remove('active'); });
             pill.classList.add('active');
-            _mpActiveCat = catId;
-            applyMpFilters();
         });
     });
-    if (pills.length) {
-        pills[0].classList.add('active');
-        _mpActiveCat = pills[0].getAttribute('data-cat-id');
-        applyMpFilters();
+
+    // 初始激活第一个
+    if (pills.length) pills[0].classList.add('active');
+
+    // 滚动时自动更新左侧激活态
+    if (itemsPanel && sections.length) {
+        itemsPanel.addEventListener('scroll', function() {
+            var activeId = null;
+            sections.forEach(function(sec) {
+                var rect = sec.getBoundingClientRect();
+                var panelRect = itemsPanel.getBoundingClientRect();
+                if (rect.top <= panelRect.top + 40) {
+                    activeId = sec.id.replace('mp-cat-', '');
+                }
+            });
+            if (activeId) {
+                pills.forEach(function(p) {
+                    var pid = p.getAttribute('data-cat-id');
+                    if (pid === activeId) p.classList.add('active');
+                    else p.classList.remove('active');
+                });
+            }
+        }, { passive: true });
     }
 })();
 
-function filterMenuMp() { applyMpFilters(); }
-
-function applyMpFilters() {
+function filterMenuMp() {
     var q = (document.getElementById('menuSearch').value || '').toLowerCase();
-    document.querySelectorAll('.menu-container .menu-items .menu-item').forEach(function(item) {
-        var catId = item.getAttribute('data-cat-id');
-        var searchText = (item.getAttribute('data-search-text') || '').toLowerCase();
-        var catMatch = !_mpActiveCat || catId === _mpActiveCat;
-        var searchMatch = !q || searchText.includes(q);
-        item.style.display = catMatch && searchMatch ? '' : 'none';
+    document.querySelectorAll('.menu-cat-section').forEach(function(section) {
+        var anyVisible = false;
+        section.querySelectorAll('.menu-item').forEach(function(item) {
+            var searchText = (item.getAttribute('data-search-text') || '').toLowerCase();
+            var match = !q || searchText.includes(q);
+            item.style.display = match ? '' : 'none';
+            if (match) anyVisible = true;
+        });
+        section.style.display = anyVisible ? '' : 'none';
     });
 }
 </script>

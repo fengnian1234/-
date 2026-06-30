@@ -776,7 +776,7 @@ body.mp-mode .food-detail-link { font-size: 0.65rem; }
 /* ══════════════════════════════════════════════════════════
    菜单页 mp — 外卖点单式双栏布局
    ══════════════════════════════════════════════════════════ */
-body.mp-mode .page-header { padding: 0.25rem 0; }
+body.mp-mode .page-header { display: block; padding: 0.25rem 0; }
 body.mp-mode .page-header h1 { font-size: 0.95rem; }
 body.mp-mode .page-header p { display: none; }
 
@@ -840,8 +840,23 @@ body.mp-mode .menu-cat-title.active {
 /* 右侧商品列表 */
 body.mp-mode .menu-items {
     flex: 1; overflow-y: auto; display: flex;
-    flex-direction: column; gap: 6px;
+    flex-direction: column; gap: 0;
+    scroll-behavior: smooth;
 }
+
+/* 分类分区 */
+body.mp-mode .menu-cat-section {
+    margin-bottom: 2px;
+}
+body.mp-mode .menu-cat-section-title {
+    font-size: 0.72rem; font-weight: 600; color: var(--color-text-light);
+    padding: 6px 4px 4px; margin: 0; letter-spacing: 0.3px;
+    position: sticky; top: 0; background: var(--color-bg);
+    z-index: 2;
+}
+
+/* 分区内商品卡片间距 */
+body.mp-mode .menu-cat-section .menu-item { margin-bottom: 6px; }
 
 /* 商品卡片 */
 body.mp-mode .menu-item {

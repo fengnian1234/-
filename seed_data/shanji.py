@@ -131,7 +131,7 @@ def _seed_shanji_rooms(db):
 def _seed_shanji_menu(db):
     """山纪菜单 — 咖啡书吧 + 云上茶吧 + 山货餐厅"""
     categories = [
-        MenuCategory(bnb_id="shanji", name="咖啡+茶饮", icon="☕", sort_order=1),
+        MenuCategory(bnb_id="shanji", name="咖啡/茶饮", icon="☕", sort_order=1),
         MenuCategory(bnb_id="shanji", name="山货简餐", icon="🍲", sort_order=2),
         MenuCategory(bnb_id="shanji", name="茶道体验", icon="🍵", sort_order=3),
     ]

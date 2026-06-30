@@ -139,7 +139,7 @@ def _seed_guishu_rooms(db):
 def _seed_guishu_menu(db):
     # ── 归墅 (guishu) — 三山二水咖啡 真实菜单 ──
     categories = [
-        MenuCategory(name="咖啡+茶饮", icon="☕", sort_order=1),
+        MenuCategory(name="咖啡/茶饮", icon="☕", sort_order=1),
         MenuCategory(name="简餐", icon="🍝", sort_order=2),
         MenuCategory(name="甜品", icon="🍰", sort_order=3),
         MenuCategory(name="特调饮品", icon="🍹", sort_order=4),
@@ -149,7 +149,7 @@ def _seed_guishu_menu(db):
 
     c0, c1, c2, c3 = categories[0].id, categories[1].id, categories[2].id, categories[3].id
     items = [
-        # 咖啡+茶饮
+        # 咖啡/茶饮
         MenuItem(category_id=c0, name="美式", price=26, description="经典美式咖啡，纯粹醇香", sort_order=1),
         MenuItem(category_id=c0, name="椰青美式", price=32, description="清甜椰青水配浓缩咖啡，清爽回甘", sort_order=2),
         MenuItem(category_id=c0, name="Dirty", price=38, description="热浓缩碰撞冰牛奶，层次分明", is_recommended=True, sort_order=3),

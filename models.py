@@ -996,6 +996,19 @@ def run_migrations():
                         from services.logger import warning as _warn
                         _warn(f"迁移 索引 {idx_name} 跳过: {e}")
 
+        # ── 数据迁移：目录名更新 ──
+        try:
+            result = conn.execute(text(
+                "UPDATE menu_categories SET name = '咖啡/茶饮' WHERE name = '咖啡+茶饮'"
+            ))
+            if result.rowcount > 0:
+                from services.logger import info as _info
+                _info(f"✅ 数据迁移: {result.rowcount} 条分类名 '咖啡+茶饮' → '咖啡/茶饮'")
+            conn.commit()
+        except Exception as e:
+            from services.logger import warning as _warn
+            _warn(f"数据迁移 分类名 跳过: {e}")
+
 
 def init_db():
     """创建所有表并执行迁移"""
