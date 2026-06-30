@@ -8,9 +8,9 @@
             <h1>{{ route.name }}</h1>
             <div class="route-meta">
                 <span class="difficulty-badge difficulty-{{ route.difficulty }}">
-                    {% if route.difficulty == 'easy' %}🟢 轻松
-                    {% elif route.difficulty == 'medium' %}🟡 适中
-                    {% else %}🔴 挑战
+                    {% if route.difficulty == 'easy' %}<i class="ph-thin ph-circle-fill" style="color:var(--color-success)"></i> 轻松
+                    {% elif route.difficulty == 'medium' %}<i class="ph-thin ph-circle-fill" style="color:var(--color-warning)"></i> 适中
+                    {% else %}<i class="ph-thin ph-circle-fill" style="color:var(--color-danger)"></i> 挑战
                     {% endif %}
                 </span>
                 <span>⏱️ {{ route.duration }}</span>
@@ -23,7 +23,7 @@
 
         {% if route.spots and route.spots|length > 0 %}
         <div class="route-spots">
-            <h3>🏞️ 途经景点</h3>
+            <h3><i class="ph-thin ph-mountains"></i> 途经景点</h3>
             <div class="spots-timeline">
                 {% for spot in route.spots %}
                 <div class="spot-item">
@@ -47,7 +47,7 @@
 
         {% if route.tips %}
         <div class="route-tips">
-            <h3>💡 小贴士</h3>
+            <h3><i class="ph-thin ph-lightbulb"></i> 小贴士</h3>
             <p>{{ route.tips }}</p>
         </div>
         {% endif %}
@@ -55,7 +55,7 @@
         {% if route.map_link %}
         <div class="route-map-link">
             <a href="{{ route.map_link }}" class="btn btn-primary btn-large" target="_blank">
-                🗺️ 查看导航路线
+                <i class="ph-thin ph-map-trifold"></i> 查看导航路线
             </a>
         </div>
         {% endif %}

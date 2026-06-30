@@ -152,22 +152,25 @@ body.mp-mode .hero-subtitle { font-size: 0.9rem; }
 body.mp-mode .hero-desc { font-size: 0.85rem; color: rgba(255,255,255,0.9); }
 body.mp-mode .hero-seasonal { font-size: 0.8rem; color: rgba(255,255,255,0.85); opacity: 1; }
 
-/* ── 更紧凑的间距 ── */
-body.mp-mode .section-padding { padding: 1.5rem 0.8rem; }
-body.mp-mode .container { padding: 0 12px; }
-body.mp-mode .section-title { font-size: 1.1rem; margin-bottom: 0.5rem; }
-body.mp-mode .section-desc { font-size: 0.8rem; }
+/* ══════════════════════════════════════════════════════════
+   全局极简 — 小程序端统一收紧间距、精简视觉
+   ══════════════════════════════════════════════════════════ */
 
-/* ── 圆角卡片风格（更像小程序） ── */
+/* ── 更紧凑的全局间距 ── */
+body.mp-mode .section-padding { padding: 1.2rem 0; }
+body.mp-mode .container { padding: 0 10px; }
+body.mp-mode .section-title { font-size: 1rem; font-weight: 510; margin-bottom: 0.4rem; }
+body.mp-mode .section-desc { font-size: 0.72rem; margin-bottom: 0.5rem; }
+
+/* ── 统一卡片呼吸感 ── */
 body.mp-mode .entry-card,
-body.mp-mode .room-preview-card,
 body.mp-mode .intro-item,
 body.mp-mode .feature-item,
 body.mp-mode .review-card,
 body.mp-mode .faq-item,
 body.mp-mode .notice-card {
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    border-radius: 14px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.03);
 }
 
 /* ── 快捷入口网格调整 ── */
@@ -182,25 +185,34 @@ body.mp-mode .entry-icon { font-size: 1.6rem; }
 body.mp-mode .entry-title { font-size: 0.8rem; }
 body.mp-mode .entry-desc { font-size: 0.65rem; }
 
-/* ── 介绍网格 ── */
+/* ── 介绍网格 — mp 收紧为极简卡片 ── */
 body.mp-mode .intro-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
 }
 body.mp-mode .intro-item {
-    padding: 14px 16px;
+    padding: 10px 14px;
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
     text-align: left;
 }
 body.mp-mode .intro-icon {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     flex-shrink: 0;
     margin-bottom: 0;
+    margin-top: 1px;
 }
-body.mp-mode .intro-item h3 { font-size: 0.9rem; margin-bottom: 2px; }
-body.mp-mode .intro-item p { font-size: 0.82rem; line-height: 1.55; color: var(--color-text); }
+body.mp-mode .intro-item h3 { font-size: 0.82rem; margin-bottom: 2px; }
+body.mp-mode .intro-item p {
+    font-size: 0.7rem;
+    line-height: 1.4;
+    color: var(--color-text-light);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
 
 /* ── 房型卡片 ── */
 body.mp-mode .rooms-preview {
@@ -211,20 +223,66 @@ body.mp-mode .room-preview-card h4 { font-size: 0.85rem; }
 body.mp-mode .room-preview-card .price { font-size: 0.8rem; }
 body.mp-mode .room-preview-img { height: 110px; }
 
-/* ── 功能列表 ── */
-body.mp-mode .feature-list { gap: 12px; }
-body.mp-mode .feature-item { padding: 16px; }
-body.mp-mode .feature-item h3 { font-size: 0.9rem; }
-body.mp-mode .feature-item p { font-size: 0.75rem; }
+/* ── 功能介绍 — mp 仅保留摘要行 ── */
+body.mp-mode .feature-list { gap: 8px; }
+body.mp-mode .feature-item { padding: 12px 14px; }
+body.mp-mode .feature-item h3 { font-size: 0.85rem; }
+body.mp-mode .feature-item p { font-size: 0.7rem; line-height: 1.4; }
 
-/* ── 评价卡片 ── */
-body.mp-mode .section-desc { margin-bottom: 0.6rem; }
-body.mp-mode .review-card { padding: 10px 12px; }
-body.mp-mode .review-stars { margin-bottom: 0.2rem; font-size: 0.75rem; }
-body.mp-mode .review-text { font-size: 0.75rem; margin-bottom: 0.2rem; }
-body.mp-mode .review-author { font-size: 0.65rem; }
-body.mp-mode .review-slide { gap: 0.5rem; }
-body.mp-mode .carousel-nav { margin-top: 0.5rem; }
+/* ── 评价卡片 — 进一步收紧 ── */
+body.mp-mode .section-desc { margin-bottom: 0.4rem; }
+body.mp-mode .review-card { padding: 8px 10px; }
+body.mp-mode .review-stars { margin-bottom: 0.1rem; font-size: 0.7rem; }
+body.mp-mode .review-text { font-size: 0.72rem; margin-bottom: 0.1rem; line-height: 1.45; }
+body.mp-mode .review-author { font-size: 0.62rem; }
+body.mp-mode .review-slide { gap: 0.4rem; }
+body.mp-mode .carousel-nav { margin-top: 0.4rem; }
+
+/* ── FAQ — mp 默认只显示 4 条，其余折叠 ── */
+body.mp-mode .faq-q { font-size: 0.78rem; padding: 10px 8px; }
+body.mp-mode .faq-a { font-size: 0.72rem; line-height: 1.4; }
+body.mp-mode .faq-item.open .faq-a { padding: 6px 0 2px; margin-top: 0.1rem; }
+body.mp-mode .faq-item:nth-child(n+5) { display: none; }
+body.mp-mode .faq-item:nth-child(n+5).show { display: block; }
+.faq-more-btn { display: none; }
+body.mp-mode .faq-more-btn {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 8px;
+    background: transparent;
+    border: 1px dashed var(--color-border);
+    border-radius: 10px;
+    color: var(--color-text-light);
+    font-size: 0.72rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* ── 预订须知 — mp 默认折叠为一行提示 ── */
+body.mp-mode .notice-card--warning {
+    max-height: 2.8rem;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    margin-bottom: 0.6rem !important;
+    border-radius: 10px;
+}
+body.mp-mode .notice-card--warning::after {
+    content: ' ▸ 展开';
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: 0.7rem;
+}
+body.mp-mode .notice-card--warning.expanded {
+    max-height: none;
+}
+body.mp-mode .notice-card--warning.expanded::after {
+    content: ' ▸ 收起';
+}
 
 /* ── 民宿环境 ── */
 body.mp-mode .env-gallery { gap: 0.5rem; margin-top: 0.8rem; }
@@ -240,9 +298,16 @@ body.mp-mode .faq-item.open .faq-a { padding: 8px 0 4px; margin-top: 0.2rem; }
 body.mp-mode .featured-rooms .section-action { margin-top: 0.8rem; }
 body.mp-mode .btn { font-size: 0.85rem; padding: 0.6rem 1.2rem; border-radius: 24px; }
 
-/* ── 快捷服务 ── */
-body.mp-mode .service-icon { font-size: 1.2rem; }
-body.mp-mode .service-group-title i { font-size: 1rem; }
+/* ── 快捷服务 — 极简 5 列网格 ── */
+body.mp-mode .service-group { margin-bottom: 1rem; }
+body.mp-mode .service-group-title { font-size: 0.82rem; margin-bottom: 0.5rem; }
+body.mp-mode .service-group-title i { font-size: 0.9rem; }
+body.mp-mode .service-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+body.mp-mode .service-card { padding: 10px 4px; border-radius: 12px; gap: 4px; box-shadow: none; border: 1px solid var(--color-border); }
+body.mp-mode .service-icon { font-size: 1.3rem; }
+body.mp-mode .service-name { font-size: 0.62rem; line-height: 1.2; }
+body.mp-mode .service-desc { display: none; }
+body.mp-mode .service-time { display: none; }
 
 /* ══════════════════════════════════════════════════════════
    此山茶场 — mp-mode 全面简约化
@@ -677,3 +742,51 @@ body.mp-mode .queue-num { font-size: 1.1rem; }
 body.mp-mode .faq-item { padding: 0.35rem 0.6rem; border-radius: 6px; }
 body.mp-mode .faq-q { font-size: 0.75rem; }
 body.mp-mode .faq-a { font-size: 0.72rem; line-height: 1.45; }
+
+/* ══════════════════════════════════════════════════════════
+   攻略页 mp 极简
+   ══════════════════════════════════════════════════════════ */
+body.mp-mode .route-card { padding: 12px 14px; border-radius: 12px; }
+body.mp-mode .route-card-header h3 { font-size: 0.88rem; }
+body.mp-mode .route-card-desc {
+    font-size: 0.7rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+/* 美食卡片描述截断 + 图片缩小 */
+body.mp-mode .foods-list { gap: 10px; }
+body.mp-mode .food-card { border-radius: 12px; }
+body.mp-mode .food-card-img { height: 90px; max-width: 100px; min-width: 100px; }
+body.mp-mode .food-card-body { padding: 8px 10px; }
+body.mp-mode .food-card-header h4 { font-size: 0.85rem; }
+body.mp-mode .food-card-desc {
+    font-size: 0.68rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+body.mp-mode .food-card-meta { font-size: 0.65rem; gap: 6px; }
+body.mp-mode .food-address { font-size: 0.62rem; }
+body.mp-mode .food-detail-link { font-size: 0.65rem; }
+
+/* ══════════════════════════════════════════════════════════
+   菜单页 mp 极简
+   ══════════════════════════════════════════════════════════ */
+body.mp-mode .menu-items-grid { gap: 8px; }
+body.mp-mode .menu-item { padding: 10px; border-radius: 10px; }
+body.mp-mode .menu-item-name { font-size: 0.82rem; }
+body.mp-mode .menu-item-desc { font-size: 0.65rem; }
+body.mp-mode .menu-item-price { font-size: 0.85rem; }
+body.mp-mode .btn-order { font-size: 0.65rem; padding: 3px 10px; }
+
+/* ══════════════════════════════════════════════════════════
+   房型详情 mp — 确保完整描述
+   ══════════════════════════════════════════════════════════ */
+body.mp-mode .room-description p {
+    font-size: 0.8rem;
+    line-height: 1.65;
+    /* 不截断：二级卡片完整展示 */
+}

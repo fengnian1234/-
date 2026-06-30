@@ -63,7 +63,7 @@
             <h3><i class="ph-thin ph-phone"></i> 紧急联系</h3>
             <p>如需紧急帮助，请直接拨打前台电话</p>
             <a href="tel:{{ bnb.phone }}" class="btn btn-primary btn-large">
-                ☎️ 拨打前台
+                <i class="ph-thin ph-phone"></i> 拨打前台
             </a>
         </div>
     </div>
@@ -96,7 +96,7 @@ function requestService(name) {
     var titleEl = document.getElementById('modal-title');
     var msgEl = document.getElementById('modal-message');
     titleEl.textContent = name + ' - 已收到请求';
-    msgEl.textContent = '我们的工作人员会尽快为您处理～\n如有紧急需求，请拨打前台电话 ☎️';
+    msgEl.textContent = '我们的工作人员会尽快为您处理～\n如有紧急需求，请拨打前台电话';
     document.getElementById('service-modal').style.display = 'flex';
 
     fetch('/api/service/request', {

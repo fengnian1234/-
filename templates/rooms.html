@@ -13,7 +13,7 @@
 <section class="section-padding">
     <div class="container">
         <div class="notice-card notice-card--warning" style="margin-bottom:1.5rem">
-            <strong>📋 预订须知</strong><br>
+            <strong><i class="ph-thin ph-clipboard-text"></i> 预订须知</strong><br>
             <i class="ph-thin ph-fork-knife"></i> 民宿<strong>不提供早餐</strong>，{% if bnb_id == 'guishu' %}一楼「{{ bnb.cafe_name }}」供应咖啡简餐{% elif bnb_id == 'shanji' %}「{{ bnb.cafe_name }}」供应茶饮点心{% elif bnb_id == 'donglinwai' %}「{{ bnb.cafe_name }}」供应精品咖啡{% endif %}<br>
             <i class="ph-thin ph-bed"></i> 所有房型<strong>不可加床</strong>，不提供婴儿床<br>
             {% if bnb_id == 'donglinwai' %}<i class="ph-thin ph-paw-print"></i> <strong>宠物友好</strong>：可免费携带宠物入住（需提前联系）<br>
@@ -39,9 +39,9 @@
                     {% endif %}
                     <div class="room-card-badge">
                         {% if room.view_type == "山景" %}<i class="ph-thin ph-mountains"></i> 山景
-                        {% elif room.view_type == "云海" %}☁️ 云海
-                        {% elif room.view_type == "竹林" %}🎋 竹林
-                        {% elif room.view_type == "山景/露台" %}<i class="ph-thin ph-mountains"></i>🌿 山景/露台
+                        {% elif room.view_type == "云海" %}<i class="ph-thin ph-cloud"></i> 云海
+                        {% elif room.view_type == "竹林" %}<i class="ph-thin ph-tree"></i> 竹林
+                        {% elif room.view_type == "山景/露台" %}<i class="ph-thin ph-mountains"></i> <i class="ph-thin ph-leaf"></i> 山景/露台
                         {% else %}<i class="ph-thin ph-house"></i> {{ room.view_type }}
                         {% endif %}
                     </div>

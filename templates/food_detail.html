@@ -48,7 +48,7 @@
         <!-- 必点清单 -->
         {% if food.must_try %}
         <div class="food-detail-musttry">
-            <h3>🥢 必点清单</h3>
+            <h3><i class="ph-thin ph-fork-knife"></i> 必点清单</h3>
             <p>{{ food.must_try }}</p>
         </div>
         {% endif %}
@@ -56,12 +56,12 @@
         <!-- 实用信息 -->
         <div class="food-detail-info">
             <div class="food-info-item">
-                <span class="food-info-icon">📍</span>
+                <span class="food-info-icon"><i class="ph-thin ph-map-pin"></i></span>
                 <span>{{ food.address }}</span>
             </div>
             {% if food.map_link %}
             <div class="food-info-action">
-                <a href="{{ food.map_link }}" class="btn btn-primary" target="_blank">🗺️ 导航前往</a>
+                <a href="{{ food.map_link }}" class="btn btn-primary" target="_blank"><i class="ph-thin ph-map-trifold"></i> 导航前往</a>
             </div>
             {% endif %}
         </div>

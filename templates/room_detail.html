@@ -15,7 +15,7 @@
                 {% endfor %}
             {% else %}
             <div class="gallery-slide active">
-                <div class="gallery-placeholder"><span>🏡</span><p>暂无房间图片</p></div>
+                <div class="gallery-placeholder"><span><i class="ph-thin ph-house"></i></span><p>暂无房间图片</p></div>
             </div>
             {% endif %}
         </div>
@@ -42,7 +42,7 @@
             <span class="current-price">¥{{ room.price }}</span>
             <span class="per-night">/晚</span>
             {% if room.total_count and room.total_count <= 2 %}
-            <span class="room-remaining low">🔥 仅剩{{ room.total_count }}间</span>
+            <span class="room-remaining low"><i class="ph-thin ph-fire"></i> 仅剩{{ room.total_count }}间</span>
             {% elif room.total_count %}
             <span class="room-remaining ok">热订中</span>
             {% endif %}
@@ -53,22 +53,22 @@
         </div>
 
         <div class="room-info-grid">
-            <div class="info-item"><span class="info-label">👤 可住人数</span><span class="info-value">{{ room.capacity }}人</span></div>
-            <div class="info-item"><span class="info-label">🛏️ 床型</span><span class="info-value">{{ room.bed_type }}</span></div>
-            <div class="info-item"><span class="info-label">📐 面积</span><span class="info-value">{{ room.area }}</span></div>
-            <div class="info-item"><span class="info-label">🌅 景观</span><span class="info-value">{{ room.view_type }}</span></div>
+            <div class="info-item"><span class="info-label"><i class="ph-thin ph-user"></i> 可住人数</span><span class="info-value">{{ room.capacity }}人</span></div>
+            <div class="info-item"><span class="info-label"><i class="ph-thin ph-bed"></i> 床型</span><span class="info-value">{{ room.bed_type }}</span></div>
+            <div class="info-item"><span class="info-label"><i class="ph-thin ph-ruler"></i> 面积</span><span class="info-value">{{ room.area }}</span></div>
+            <div class="info-item"><span class="info-label"><i class="ph-thin ph-cloud-sun"></i> 景观</span><span class="info-value">{{ room.view_type }}</span></div>
         </div>
 
-        <div class="room-description"><h3>📝 房间介绍</h3><p>{{ room.description }}</p></div>
+        <div class="room-description"><h3><i class="ph-thin ph-file-text"></i> 房间介绍</h3><p>{{ room.description }}</p></div>
 
         {% if room.amenities and room.amenities|length > 0 %}
-        <div class="room-amenities"><h3>✨ 房间设施</h3><div class="amenities-list">
+        <div class="room-amenities"><h3><i class="ph-thin ph-sparkle"></i> 房间设施</h3><div class="amenities-list">
             {% for amenity in room.amenities %}<span class="amenity-tag">{{ amenity }}</span>{% endfor %}
         </div></div>
         {% endif %}
 
         <div class="room-actions">
-            <button class="btn btn-primary btn-large" onclick="alert('请拨打前台电话预订：{{ bnb.phone }}\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～\n\n🗺️ 预订前免费旅行顾问 · 🛎️ 预订后解锁专属AI管家')">📞 预订咨询</button>
+            <button class="btn btn-primary btn-large" onclick="alert('请拨打前台电话预订：{{ bnb.phone }}\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～\n\n<i class="ph-thin ph-map-trifold"></i> 预订前免费旅行顾问 · <i class="ph-thin ph-bell"></i> 预订后解锁专属AI管家')"><i class="ph-thin ph-phone"></i> 预订咨询</button>
             <a href="{{ bnb_prefix }}/rooms{{ mp }}" class="btn btn-outline btn-large">← 返回房型列表</a>
         </div>
     </div>

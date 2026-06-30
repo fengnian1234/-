@@ -307,22 +307,38 @@
             </div>
             {% endif %}
         </div>
+        <button class="faq-more-btn" onclick="toggleMoreFaq()" id="faqMoreBtn"><i class="ph-thin ph-caret-down"></i> 展开更多问题</button>
     </div>
 </section>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
+// FAQ 展开/收起
+function toggleMoreFaq(){
+  var items = document.querySelectorAll('.faq-item');
+  var btn = document.getElementById('faqMoreBtn');
+  var expanded = btn.getAttribute('data-expanded') === '1';
+  if (expanded) {
+    items.forEach(function(item, i){ if (i >= 4) item.classList.remove('show'); });
+    btn.innerHTML = '<i class="ph-thin ph-caret-down"></i> 展开更多问题';
+    btn.setAttribute('data-expanded', '0');
+  } else {
+    items.forEach(function(item, i){ if (i >= 4) item.classList.add('show'); });
+    btn.innerHTML = '<i class="ph-thin ph-caret-up"></i> 收起';
+    btn.setAttribute('data-expanded', '1');
+  }
+}
 (function(){
     var s = document.documentElement.getAttribute('data-season');
     var texts = {
-        summer: '🌿 夏日庐山均温22°C，天然空调房。推开窗满眼葱翠，蝉鸣鸟叫伴入眠',
-        spring: '🌸 春日庐山杜鹃满山，云雾茶新芽初绽。山花烂漫时，最是人间四月天',
-        autumn: '🍂 秋日庐山层林尽染，枫红银杏黄。天高云淡，正是登山好时节',
-        winter: '❄️ 冬日庐山银装素裹，雾凇云海雪景一绝'
+        summer: '<i class="ph-thin ph-leaf"></i> 夏日庐山均温22°C，天然空调房',
+        spring: '<i class="ph-thin ph-flower"></i> 春日庐山杜鹃满山，云雾茶新芽初绽',
+        autumn: '<i class="ph-thin ph-tree"></i> 秋日庐山层林尽染，正是登山好时节',
+        winter: '<i class="ph-thin ph-snowflake"></i> 冬日庐山银装素裹，雾凇云海雪景一绝'
     };
     var el = document.getElementById('heroSeasonal');
-    if (el && s) el.textContent = texts[s] || texts.summer;
+    if (el && s) el.innerHTML = texts[s] || texts.summer;
 })();
 // 归墅好评轮播
 (function(){

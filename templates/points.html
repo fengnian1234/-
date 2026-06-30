@@ -4,7 +4,7 @@
 {% block content %}
 <section class="page-header">
     <div class="container">
-        <h1>⭐ 积分中心</h1>
+        <h1><i class="ph-thin ph-star"></i> 积分中心</h1>
         <p>入住消费 · 签到 · 写评价 · 兑换好礼</p>
     </div>
 </section>
@@ -16,17 +16,17 @@
             <div style="font-size:0.85rem;opacity:0.8;margin-bottom:0.3rem">我的积分</div>
             <div id="pointsBalance" style="font-size:3rem;font-weight:700;font-family:var(--font-serif)">--</div>
             <div id="memberBadge" style="display:inline-block;background:rgba(255,255,255,0.2);padding:0.25rem 0.8rem;border-radius:20px;font-size:0.8rem;margin-top:0.3rem">--</div>
-            <button onclick="doCheckin()" id="checkinBtn" style="margin-top:0.8rem;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:0.5rem 1.2rem;border-radius:20px;cursor:pointer;font-size:0.85rem">📅 每日签到 +1分</button>
+            <button onclick="doCheckin()" id="checkinBtn" style="margin-top:0.8rem;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:0.5rem 1.2rem;border-radius:20px;cursor:pointer;font-size:0.85rem"><i class="ph-thin ph-calendar"></i> 每日签到 +1分</button>
         </div>
 
         <!-- 积分获取方式 -->
-        <h3 style="margin-bottom:0.8rem;color:var(--color-primary-dark)">💡 如何获取积分</h3>
+        <h3 style="margin-bottom:0.8rem;color:var(--color-primary-dark)"><i class="ph-thin ph-lightbulb"></i> 如何获取积分</h3>
         <div id="earnRules" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-bottom:1.5rem"></div>
 
         <!-- 会员等级 -->
         <div id="membershipBar" style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:0.9rem 1rem;margin-bottom:1.5rem;display:none">
             <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:0.4rem;font-size:0.78rem;color:var(--color-text-lighter)">
-                <span>🥈 银卡</span><span>🥇 金卡</span><span>💎 钻石卡</span>
+                <span><i class="ph-thin ph-medal"></i> 银卡</span><span><i class="ph-thin ph-medal"></i> 金卡</span><span><i class="ph-thin ph-diamond"></i> 钻石卡</span>
             </div>
             <div id="tierProgressBg" style="height:4px;background:var(--color-bg-light);border-radius:2px;position:relative;overflow:hidden">
                 <div id="tierProgressFill" style="height:100%;background:var(--color-accent);border-radius:2px;transition:width 0.6s ease;width:0%"></div>
@@ -38,11 +38,11 @@
         </div>
 
         <!-- 兑换商城 -->
-        <h3 style="margin-bottom:0.8rem;color:var(--color-primary-dark)">🎁 兑换商城</h3>
+        <h3 style="margin-bottom:0.8rem;color:var(--color-primary-dark)"><i class="ph-thin ph-gift"></i> 兑换商城</h3>
         <div id="redeemItems" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem;margin-bottom:1.5rem"></div>
 
         <!-- 近期记录 -->
-        <h3 style="margin-bottom:0.8rem;color:var(--color-primary-dark)">📋 近期记录</h3>
+        <h3 style="margin-bottom:0.8rem;color:var(--color-primary-dark)"><i class="ph-thin ph-clipboard-text"></i> 近期记录</h3>
         <div id="pointLogs" style="display:flex;flex-direction:column;gap:0.4rem"></div>
     </div>
 </section>
@@ -78,7 +78,7 @@ function renderAll(data) {
     const member = data.guest ? data.guest.membership_name : '银卡';
     const discount = data.guest ? Math.round((1-data.guest.discount)*100) : 5;
     document.getElementById('pointsBalance').textContent = pts;
-    document.getElementById('memberBadge').textContent = `💳 ${member} · 享${discount}%折扣`;
+    document.getElementById('memberBadge').innerHTML = `<i class="ph-thin ph-credit-card"></i> ${member} · 享${discount}%折扣`;
 
     // 获取规则
     document.getElementById('earnRules').innerHTML = data.earn_rules.map(r => `
@@ -101,11 +101,11 @@ function renderAll(data) {
         document.getElementById('tierProgressFill').style.width = Math.min(100, pct) + '%';
         var tip;
         if (totalEarned >= diamondMin) {
-            tip = '🎉 已达最高等级钻石卡，享9折+免费升级+专属管家';
+            tip = '已达最高等级钻石卡，享9折+免费升级+专属管家';
         } else if (totalEarned >= goldMin) {
-            tip = '距💎钻石卡还差 ' + (diamondMin - totalEarned).toLocaleString() + ' 分 · 当前享92折+免费延迟退房';
+            tip = '距钻石卡还差 ' + (diamondMin - totalEarned).toLocaleString() + ' 分 · 当前享92折+免费延迟退房';
         } else {
-            tip = '距🥇金卡还差 ' + (goldMin - totalEarned).toLocaleString() + ' 分 · 当前享95折';
+            tip = '距金卡还差 ' + (goldMin - totalEarned).toLocaleString() + ' 分 · 当前享95折';
         }
         document.getElementById('tierTip').textContent = tip;
     }
@@ -150,7 +150,7 @@ async function doCheckin() {
     });
     const result = await resp.json();
     if (result.success) {
-        document.getElementById('checkinBtn').textContent = '✅ 已签到';
+        document.getElementById('checkinBtn').innerHTML = '<i class="ph-thin ph-check-circle"></i> 已签到';
         document.getElementById('checkinBtn').disabled = true;
         loadPoints();
     } else {
