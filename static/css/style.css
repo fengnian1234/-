@@ -4506,13 +4506,13 @@ h4 { font-size: var(--text-base); }
     .hero-desc { font-size: 0.8rem; }
     /* 快捷入口 4列 */
     .entry-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .entry-card { padding: 12px 6px; border-radius: 4px; }
+    .entry-card { padding: 12px 6px; border-radius: 8px; }
     .entry-icon { font-size: 1.3rem; }
     .entry-title { font-size: 0.7rem; }
     .entry-desc { display: none; }
     /* 服务 3列 */
     .service-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 6px; }
-    .service-card { padding: 10px 4px; border-radius: 4px; }
+    .service-card { padding: 10px 4px; border-radius: 8px; }
     .service-desc, .service-time { display: none; }
     .service-name { font-size: 0.65rem; }
     /* 环境图 2列 */

@@ -180,14 +180,14 @@ body.mp-mode .container { padding: 0 10px; }
 body.mp-mode .section-title { font-size: 1rem; font-weight: 510; margin-bottom: 0.5rem; }
 body.mp-mode .section-desc { font-size: 0.72rem; margin-bottom: 0.6rem; }
 
-/* ── 统一卡片呼吸感（喜茶直角风格：4px）── */
+/* ── 统一卡片圆角 ── */
 body.mp-mode .entry-card,
 body.mp-mode .intro-item,
 body.mp-mode .feature-item,
 body.mp-mode .review-card,
 body.mp-mode .faq-item,
 body.mp-mode .notice-card {
-    border-radius: 4px;
+    border-radius: 8px;
     box-shadow: 0 1px 6px rgba(0,0,0,0.03);
 }
 
@@ -269,7 +269,7 @@ body.mp-mode .faq-more-btn {
     padding: 8px;
     background: transparent;
     border: 1px dashed var(--color-border);
-    border-radius: 4px;
+    border-radius: 8px;
     color: var(--color-text-light);
     font-size: 0.72rem;
     cursor: pointer;
@@ -289,12 +289,12 @@ body.mp-mode .notice-card--warning {
     line-height: 1.6;
     margin-top: 1rem;
     margin-bottom: 0 !important;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 /* ── 民宿环境 ── */
 body.mp-mode .env-gallery { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 0.8rem; }
-body.mp-mode .env-card { height: 120px; aspect-ratio: auto; border-radius: 4px; }
+body.mp-mode .env-card { height: 120px; aspect-ratio: auto; border-radius: 8px; }
 body.mp-mode .env-card-label { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
 
 /* ── 房型详情图片 — 去除米白色边框，图片全幅 ── */
@@ -316,9 +316,9 @@ body.mp-mode .service-group { margin-bottom: 1rem; }
 body.mp-mode .service-group-title { font-size: 0.82rem; margin-bottom: 0.5rem; }
 body.mp-mode .service-group-title i { font-size: 0.9rem; }
 body.mp-mode .service-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-body.mp-mode .service-card { padding: 12px 6px; border-radius: 4px; gap: 4px; box-shadow: none; border: 1px solid var(--color-border); }
+body.mp-mode .service-card { padding: 12px 6px; border-radius: 8px; gap: 4px; box-shadow: none; border: 1px solid var(--color-border); }
 /* ── 紧急联系调小 ── */
-body.mp-mode .emergency-contact { margin-top: 1rem; padding: 0.8rem; border-radius: 4px; }
+body.mp-mode .emergency-contact { margin-top: 1rem; padding: 0.8rem; border-radius: 8px; }
 body.mp-mode .emergency-contact h3 { font-size: 0.85rem; margin-bottom: 0.2rem; }
 body.mp-mode .emergency-contact p { font-size: 0.72rem; margin-bottom: 0.5rem; }
 body.mp-mode .emergency-contact .btn { padding: 0.4rem 1rem; font-size: 0.8rem; }
@@ -339,7 +339,7 @@ body.mp-mode .hero-subtitle { font-size: 0.85rem !important; display: none; }
 body.mp-mode .hero-desc { font-size: 0.78rem !important; }
 
 /* ── 场地信息卡片 ── */
-body.mp-mode .venue-info-card { padding: 14px 10px; border-radius: 4px; }
+body.mp-mode .venue-info-card { padding: 14px 10px; border-radius: 8px; }
 body.mp-mode .venue-info-row { gap: 6px; }
 body.mp-mode .venue-info-item { flex: 1 1 45%; min-width: 0; }
 body.mp-mode .venue-info-item i { font-size: 1.1rem; }
@@ -356,7 +356,7 @@ body.mp-mode .section-title i { font-size: 1rem; }
 
 /* ── 菜单分类网格 ── */
 body.mp-mode .tea-cat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-body.mp-mode .tea-exp-card { padding: 12px; border-radius: 4px; }
+body.mp-mode .tea-exp-card { padding: 12px; border-radius: 8px; }
 body.mp-mode .tea-exp-card h3 { font-size: 0.88rem; margin-bottom: 2px; }
 body.mp-mode .tea-exp-card .price { font-size: 0.95rem; margin: 2px 0; }
 body.mp-mode .tea-exp-card p { font-size: 0.72rem; line-height: 1.4; margin: 2px 0; }
@@ -366,11 +366,11 @@ body.mp-mode .btn-order-tea { padding: 4px 12px; font-size: 0.72rem; margin-top:
 /* ── 茶叶品类/伴手礼 ── */
 body.mp-mode .tea-type-grid,
 body.mp-mode .tea-prod-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-body.mp-mode .tea-type-card { padding: 12px; border-radius: 4px; }
+body.mp-mode .tea-type-card { padding: 12px; border-radius: 8px; }
 body.mp-mode .tea-type-card h3 { font-size: 0.88rem; }
 body.mp-mode .tea-type-card p { font-size: 0.72rem; line-height: 1.4; }
 body.mp-mode .tea-type-img { font-size: 1.5rem; }
-body.mp-mode .tea-prod-card { padding: 12px; border-radius: 4px; }
+body.mp-mode .tea-prod-card { padding: 12px; border-radius: 8px; }
 body.mp-mode .tea-prod-card h3 { font-size: 0.88rem; }
 body.mp-mode .tea-prod-card p { font-size: 0.72rem; line-height: 1.4; }
 body.mp-mode .tea-prod-card .price { font-size: 0.95rem; }
@@ -576,7 +576,7 @@ body.mp-mode .room-card {
     display: flex;
     min-height: 100px;
     max-height: 120px;
-    border-radius: 4px;
+    border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 1px 8px rgba(0,0,0,0.03);
     background: var(--color-white);
@@ -724,7 +724,7 @@ body.mp-mode .venue-cta { margin-top: 14px; padding-top: 12px; }
 body.mp-mode .btn-cta { padding: 10px 28px; font-size: 0.9rem; }
 
 /* 预约卡片缩窄 */
-body.mp-mode .reserve-card { padding: 18px 14px; border-radius: 4px; }
+body.mp-mode .reserve-card { padding: 18px 14px; border-radius: 8px; }
 body.mp-mode .reserve-field { margin-bottom: 12px; }
 body.mp-mode .reserve-label { font-size: 0.78rem; margin-bottom: 6px; }
 
@@ -735,14 +735,14 @@ body.mp-mode .guest-count-card .count-icon { font-size: 1.5rem; }
 body.mp-mode .guest-count-card .count-label { font-size: 0.85rem; }
 
 /* 日期 chip 更紧凑 */
-body.mp-mode .date-chip { padding: 6px 10px; min-width: 50px; border-radius: 4px; }
+body.mp-mode .date-chip { padding: 6px 10px; min-width: 50px; border-radius: 6px; }
 body.mp-mode .date-chip-label { font-size: 0.75rem; }
 body.mp-mode .date-chip-weekday { font-size: 0.65rem; }
 body.mp-mode .date-chip-date { font-size: 0.6rem; }
 
 /* 时间槽网格 — 变小变密 */
 body.mp-mode .time-slot-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
-body.mp-mode .time-slot-chip { padding: 8px 4px; font-size: 0.78rem; border-radius: 4px; }
+body.mp-mode .time-slot-chip { padding: 8px 4px; font-size: 0.78rem; border-radius: 6px; }
 
 /* 预约按钮 */
 body.mp-mode .reserve-submit { padding: 10px; font-size: 0.9rem; border-radius: 10px; }
@@ -759,14 +759,14 @@ body.mp-mode .queue-info { padding: 12px 14px; }
 body.mp-mode .queue-num { font-size: 1.1rem; }
 
 /* 常见问题 */
-body.mp-mode .faq-item { padding: 0.35rem 0.6rem; border-radius: 4px; }
+body.mp-mode .faq-item { padding: 0.35rem 0.6rem; border-radius: 8px; }
 body.mp-mode .faq-q { font-size: 0.75rem; }
 body.mp-mode .faq-a { font-size: 0.72rem; line-height: 1.45; }
 
 /* ══════════════════════════════════════════════════════════
    攻略页 mp 极简
    ══════════════════════════════════════════════════════════ */
-body.mp-mode .route-card { padding: 12px 14px; border-radius: 4px; }
+body.mp-mode .route-card { padding: 12px 14px; border-radius: 8px; }
 body.mp-mode .route-card-header h3 { font-size: 0.88rem; }
 body.mp-mode .route-card-desc {
     font-size: 0.7rem;
@@ -778,7 +778,7 @@ body.mp-mode .route-card-desc {
 body.mp-mode .route-spots-preview { display: none; }
 /* 美食卡片描述截断 + 图片缩小 */
 body.mp-mode .foods-list { gap: 12px; }
-body.mp-mode .food-card { border-radius: 4px; }
+body.mp-mode .food-card { border-radius: 8px; }
 body.mp-mode .food-card-img { height: 90px; max-width: 100px; min-width: 100px; }
 body.mp-mode .food-card-body { padding: 8px 10px; }
 body.mp-mode .food-card-header h4 { font-size: 0.85rem; }
@@ -819,7 +819,7 @@ body.mp-mode .menu-search-bar input::placeholder { color: var(--color-text-light
 /* 状态提示条 */
 body.mp-mode .menu-status-bar {
     margin: 0 0.6rem 0.5rem; padding: 0.35rem 0.8rem;
-    background: var(--color-bg-light); border-radius: 4px;
+    background: var(--color-bg-light); border-radius: 8px;
     font-size: 0.64rem; color: var(--color-text-light);
     display: flex; align-items: center; gap: 5px;
     border: none;
@@ -838,7 +838,7 @@ body.mp-mode .menu-cat-sidebar {
     flex: 0 0 74px; overflow-y: auto;
     display: flex; flex-direction: column;
     background: var(--color-bg);
-    border-radius: 4px 0 0 4px;
+    border-radius: 8px 0 0 8px;
     padding: 4px 0;
     scrollbar-width: none;
 }
@@ -872,7 +872,7 @@ body.mp-mode .menu-items {
     flex-direction: column; gap: 0;
     scroll-behavior: smooth;
     background: var(--color-white);
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 8px 8px 0;
     padding: 0 0 6px;
 }
 
@@ -894,7 +894,7 @@ body.mp-mode .menu-cat-section .menu-item {
 body.mp-mode .menu-item {
     display: flex; gap: 10px; padding: 10px;
     background: var(--color-white);
-    border-radius: 4px;
+    border-radius: 8px;
     align-items: flex-start;
     transition: background 0.15s ease;
     position: relative;
@@ -903,7 +903,7 @@ body.mp-mode .menu-item:active { background: var(--color-bg-light); }
 
 /* 商品图片 */
 body.mp-mode .menu-item-img {
-    flex: 0 0 80px; height: 80px; border-radius: 4px;
+    flex: 0 0 80px; height: 80px; border-radius: 8px;
     overflow: hidden; background: var(--color-bg);
 }
 body.mp-mode .menu-item-img img {
@@ -1088,7 +1088,7 @@ body.mp-mode .food-detail-link { display: none; }
 /* ══════════════════════════════════════════════════════════
    茶场页 mp — 信息栏紧凑
    ══════════════════════════════════════════════════════════ */
-body.mp-mode .venue-info-card { padding: 0.8rem; border-radius: 4px; margin: 0 0.5rem; }
+body.mp-mode .venue-info-card { padding: 0.8rem; border-radius: 8px; margin: 0 0.5rem; }
 body.mp-mode .venue-info-row { gap: 0.5rem; }
 body.mp-mode .venue-info-item { padding: 0.4rem 0; }
 body.mp-mode .venue-info-item p { font-size: 0.68rem; line-height: 1.3; margin: 0.1rem 0; }
