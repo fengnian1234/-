@@ -327,14 +327,17 @@ html {
 
 body {
     font-family: var(--font-sans);
-    font-weight: 340;
+    font-weight: var(--font-normal);
+    font-size: var(--text-base);
     color: var(--color-text);
     background: var(--color-bg);
-    line-height: 1.75;
+    line-height: var(--leading-normal);
     letter-spacing: 0.01em;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -390,21 +393,24 @@ img {
 /* ── 排版 ─────────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-sans);
-    font-weight: 600;
-    line-height: 1.4;
+    font-weight: var(--font-semibold);
+    line-height: var(--leading-snug);
     color: var(--color-text);
 }
 
-h1 { font-size: 1.6rem; }
-h2 { font-size: 1.35rem; }
-h3 { font-size: 1.15rem; }
-h4 { font-size: 1.05rem; }
+h1 { font-size: var(--text-xl); letter-spacing: -0.01em; }
+h2 { font-size: var(--text-lg); }
+h3 { font-size: var(--text-md); }
+h4 { font-size: var(--text-base); }
 
 .section-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
     text-align: center;
-    margin-bottom: 0.5rem;
-    color: var(--color-primary-dark);
-    letter-spacing: 0.08em;
+    margin-bottom: var(--space-3);
+    color: var(--color-text);
+    letter-spacing: 0.02em;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -424,12 +430,13 @@ h4 { font-size: 1.05rem; }
 .section-desc {
     text-align: center;
     color: var(--color-text-light);
-    margin-bottom: 1.5rem;
-    font-size: 0.93rem;
+    margin-bottom: var(--space-6);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
 }
 
 .section-padding {
-    padding: 2rem 0;
+    padding: var(--space-20) 0;
 }
 
 .bg-light {
@@ -611,24 +618,27 @@ h4 { font-size: 1.05rem; }
 .page-header h1 {
     color: #fff;
     margin-bottom: 0.4rem;
-    font-size: 1.7rem;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    letter-spacing: 0.05em;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.12);
     position: relative;
     z-index: 1;
 }
 
 .page-header p {
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: var(--text-base);
+    font-weight: var(--font-normal);
     position: relative;
     z-index: 1;
 }
 
 /* ── 首页 Hero — 山间晨雾渐变 ─────────────────────────── */
 .hero {
-    height: 65vh;
-    min-height: 360px;
-    max-height: 560px;
+    height: 80vh;
+    min-height: 420px;
+    max-height: 720px;
     background: var(--color-bg);
     display: flex;
     align-items: center;
@@ -694,10 +704,10 @@ h4 { font-size: 1.05rem; }
 
 .hero-title {
     font-family: var(--font-sans);
-    font-size: 2.6rem;
-    font-weight: 700;
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
     color: var(--color-white);
-    letter-spacing: 0.18em;
+    letter-spacing: 0.08em;
     margin-bottom: 0.7rem;
     text-shadow: 0 1px 4px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.1);
 }
@@ -803,15 +813,15 @@ h4 { font-size: 1.05rem; }
 }
 
 .hero-subtitle {
-    font-size: 1.1rem;
+    font-size: var(--text-md);
     color: rgba(255, 255, 255, 0.85);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     margin-bottom: 0.5rem;
     font-family: var(--font-sans);
 }
 
 .hero-desc {
-    font-size: 0.88rem;
+    font-size: var(--text-sm);
     color: rgba(255, 255, 255, 0.9);
     letter-spacing: 0.04em;
 }
@@ -851,26 +861,26 @@ h4 { font-size: 1.05rem; }
 .entry-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 0.6rem;
+    gap: var(--space-6);
 }
 
 .entry-card {
     background: var(--color-white);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: 1rem 0.5rem;
+    padding: var(--space-6);
     text-align: center;
     transition: all var(--transition);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.3rem;
+    gap: var(--space-2);
 }
 
 .entry-card:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     border-color: var(--color-primary-light);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
 }
 
 .entry-icon {
@@ -878,13 +888,13 @@ h4 { font-size: 1.05rem; }
 }
 
 .entry-title {
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
     color: var(--color-text);
 }
 
 .entry-desc {
-    font-size: 0.72rem;
+    font-size: var(--text-xs);
     color: var(--color-text-lighter);
 }
 
@@ -892,7 +902,7 @@ h4 { font-size: 1.05rem; }
 .intro-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: var(--space-6);
     margin-top: 1.5rem;
 }
 
@@ -913,12 +923,13 @@ h4 { font-size: 1.05rem; }
 .intro-item h3 {
     margin-bottom: 0.4rem;
     color: var(--color-primary-dark);
+    font-size: var(--text-base);
 }
 
 .intro-item p {
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
     color: var(--color-text-light);
-    line-height: 1.6;
+    line-height: var(--leading-normal);
 }
 
 /* ── 精选房型预览 ─────────────────────────────────────── */
@@ -938,7 +949,7 @@ h4 { font-size: 1.05rem; }
 }
 
 .room-preview-img {
-    height: 140px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1017,27 +1028,42 @@ h4 { font-size: 1.05rem; }
 }
 
 .btn-primary {
-    background: var(--color-primary);
+    background: var(--color-primary-dark);
     color: var(--color-white);
     box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
-    background: var(--color-primary-dark);
+    background: var(--color-primary);
     color: var(--color-white);
     box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
 }
 
 .btn-outline {
-    background: var(--color-white);
-    color: var(--color-primary);
-    border: 1px solid var(--color-border);
-    border-radius: 24px;
+    background: transparent;
+    color: var(--color-text);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-full);
 }
 
 .btn-outline:hover {
-    background: var(--color-primary);
-    color: var(--color-white);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: transparent;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: none;
+    color: var(--color-text-light);
+    padding: 0.4rem 0.8rem;
+    font-size: var(--text-xs);
+    border-radius: var(--radius-sm);
+}
+.btn-ghost:hover {
+    background: var(--color-bg-light);
+    color: var(--color-text);
 }
 
 .btn-sm {
@@ -1117,7 +1143,7 @@ h4 { font-size: 1.05rem; }
 }
 
 .room-card-body {
-    padding: 1rem;
+    padding: var(--space-6);
 }
 
 .room-card-header {
@@ -1128,7 +1154,7 @@ h4 { font-size: 1.05rem; }
 }
 
 .room-card-header h3 {
-    font-size: 1.1rem;
+    font-size: var(--text-md);
     color: var(--color-primary-dark);
 }
 
@@ -1142,16 +1168,16 @@ h4 { font-size: 1.05rem; }
 }
 
 .room-card-desc {
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
     color: var(--color-text-light);
     margin-bottom: 0.6rem;
-    line-height: 1.5;
+    line-height: var(--leading-normal);
 }
 
 .room-card-meta {
     display: flex;
     gap: 0.8rem;
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     color: var(--color-text-lighter);
     margin-bottom: 0.6rem;
 }
@@ -1165,7 +1191,7 @@ h4 { font-size: 1.05rem; }
 }
 
 .room-price {
-    font-size: 1.2rem;
+    font-size: var(--text-lg);
     font-weight: 700;
     color: var(--color-accent);
 }
@@ -1817,7 +1843,7 @@ h4 { font-size: 1.05rem; }
 }
 
 .route-card-header h3 {
-    font-size: 1rem;
+    font-size: var(--text-base);
 }
 
 .difficulty-badge {
@@ -1836,16 +1862,16 @@ h4 { font-size: 1.05rem; }
 [data-theme="dark"] .difficulty-hard { background: #2e1518; color: #e85550; }
 
 .route-card-desc {
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
     color: var(--color-text-light);
     margin-bottom: 0.5rem;
-    line-height: 1.5;
+    line-height: var(--leading-normal);
 }
 
 .route-card-meta {
     display: flex;
     gap: 0.8rem;
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     color: var(--color-text-lighter);
     margin-bottom: 0.5rem;
 }
@@ -2059,7 +2085,7 @@ h4 { font-size: 1.05rem; }
 }
 
 .food-card-header h4 {
-    font-size: 1rem;
+    font-size: var(--text-base);
     color: var(--color-text);
 }
 
@@ -2072,7 +2098,7 @@ h4 { font-size: 1.05rem; }
 }
 
 .food-card-desc {
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
     color: var(--color-text-light);
     margin-bottom: 0.5rem;
 }
@@ -2081,7 +2107,7 @@ h4 { font-size: 1.05rem; }
     display: flex;
     flex-wrap: wrap;
     gap: 0.8rem;
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     color: var(--color-text-lighter);
     margin-bottom: 0.4rem;
 }
@@ -2298,18 +2324,18 @@ h4 { font-size: 1.05rem; }
 }
 
 .service-name {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     color: var(--color-text);
 }
 
 .service-desc {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     color: var(--color-text-light);
     line-height: 1.4;
 }
 
 .service-time {
-    font-size: 0.7rem;
+    font-size: 0.6875rem;
     color: var(--color-text-lighter);
 }
 
@@ -3072,32 +3098,32 @@ h4 { font-size: 1.05rem; }
 
     /* Hero 桌面 */
     .hero {
-        height: 75vh;
+        height: 80vh;
         min-height: 480px;
-        max-height: 680px;
+        max-height: 720px;
     }
 
     .hero-title {
-        font-size: 3.4rem;
-        letter-spacing: 0.24em;
+        font-size: var(--text-3xl);
+        letter-spacing: 0.08em;
     }
 
     .hero-subtitle {
-        font-size: 1.3rem;
+        font-size: var(--text-md);
     }
 
     .hero-desc {
-        font-size: 1rem;
+        font-size: var(--text-base);
     }
 
     /* 快捷入口 */
     .entry-grid {
         grid-template-columns: repeat(4, 1fr);
-        gap: 1rem;
+        gap: var(--space-6);
     }
 
     .entry-card {
-        padding: 1.6rem 1rem;
+        padding: var(--space-6);
     }
 
     .entry-icon {
@@ -3115,27 +3141,27 @@ h4 { font-size: 1.05rem; }
     /* 介绍网格 */
     .intro-grid {
         grid-template-columns: repeat(4, 1fr);
-        gap: 1.2rem;
+        gap: var(--space-6);
     }
 
     /* 房型预览 */
     .rooms-preview {
         grid-template-columns: repeat(4, 1fr);
-        gap: 1rem;
+        gap: var(--space-6);
     }
 
     .room-preview-img {
-        height: 150px;
+        height: 200px;
     }
 
-    /* 房型卡片 */
+    /* 房型卡片 — 4 列桌面 */
     .rooms-list {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.2rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-6);
     }
 
     .room-card-image {
-        height: 240px;
+        height: 220px;
     }
 
     /* 菜单双列 */
@@ -3145,22 +3171,22 @@ h4 { font-size: 1.05rem; }
         gap: 0.6rem;
     }
 
-    /* 服务网格 */
+    /* 服务网格 — 4 列 */
     .service-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.8rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
     }
 
-    /* 旅游路线 */
+    /* 旅游路线 — 3 列 */
     .routes-list {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-6);
     }
 
-    /* 美食 */
+    /* 美食 — 保持 3 列 */
     .foods-list {
         grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
+        gap: var(--space-6);
     }
 
     /* 功能列表 */
@@ -3171,7 +3197,7 @@ h4 { font-size: 1.05rem; }
     }
 
     .feature-item {
-        padding: 1.2rem 1.2rem;
+        padding: var(--space-6);
     }
 
     /* 评价轮播 */
@@ -3196,11 +3222,11 @@ h4 { font-size: 1.05rem; }
 
     /* 通用间距 */
     .section-padding {
-        padding: 3rem 0;
+        padding: var(--space-20) 0;
     }
 
     .container {
-        padding: 0 2rem;
+        padding: 0 var(--space-10);
     }
 
     /* 页脚 */
@@ -3293,8 +3319,8 @@ h4 { font-size: 1.05rem; }
 .tea-cat-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    margin-top: 24px;
+    gap: var(--space-5);
+    margin-top: var(--space-6);
 }
 .empty-hint {
     grid-column: 1 / -1;
@@ -3307,21 +3333,22 @@ h4 { font-size: 1.05rem; }
 .tea-type-grid, .tea-exp-grid, .tea-prod-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
-    margin-top: 24px;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
 }
 
 .tea-type-card, .tea-exp-card, .tea-prod-card {
     background: var(--color-white);
-    border-radius: 16px;
-    padding: 28px 24px;
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
     border: 1px solid var(--color-border);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform var(--duration-normal) var(--ease-out),
+                box-shadow var(--duration-normal) var(--ease-out);
 }
 
 .tea-type-card:hover, .tea-exp-card:hover, .tea-prod-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow-md);
 }
 
 .tea-type-img {
@@ -3330,9 +3357,9 @@ h4 { font-size: 1.05rem; }
 }
 
 .tea-type-card h3, .tea-exp-card h3, .tea-prod-card h3 {
-    font-size: 1.2rem;
+    font-size: var(--text-md);
     color: var(--color-primary-dark);
-    margin-bottom: 8px;
+    margin-bottom: var(--space-2);
 }
 
 .tea-origin {
@@ -3803,17 +3830,18 @@ h4 { font-size: 1.05rem; }
 
 .healing-card {
     background: var(--color-white);
-    border-radius: 16px;
-    padding: 24px 24px 20px;
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
     border: 1px solid var(--color-border);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform var(--duration-normal) var(--ease-out),
+                box-shadow var(--duration-normal) var(--ease-out);
     display: flex;
     flex-direction: column;
 }
 
 .healing-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow-md);
 }
 
 .healing-card-header {
@@ -3825,7 +3853,7 @@ h4 { font-size: 1.05rem; }
 }
 
 .healing-card h3 {
-    font-size: 1.15rem;
+    font-size: var(--text-md);
     color: var(--color-primary);
     margin: 0;
     flex-shrink: 0;
