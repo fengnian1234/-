@@ -258,29 +258,20 @@ body.mp-mode .faq-more-btn {
     font-family: inherit;
 }
 
-/* ── 预订须知 — mp 默认折叠为一行提示 ── */
+/* ── 预订须知 — mp 移至底部但保持完整内容 ── */
+body.mp-mode .section-padding .container:has(.rooms-list) {
+    display: flex;
+    flex-direction: column;
+}
+body.mp-mode .rooms-list { order: 1; }
 body.mp-mode .notice-card--warning {
-    max-height: 2.8rem;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-    padding: 0.6rem 0.8rem;
+    order: 2;
+    padding: 0.8rem;
     font-size: 0.75rem;
     line-height: 1.6;
-    margin-bottom: 0.6rem !important;
+    margin-top: 1rem;
+    margin-bottom: 0 !important;
     border-radius: 10px;
-}
-body.mp-mode .notice-card--warning::after {
-    content: ' ▸ 展开';
-    color: var(--color-primary);
-    font-weight: 600;
-    font-size: 0.7rem;
-}
-body.mp-mode .notice-card--warning.expanded {
-    max-height: none;
-}
-body.mp-mode .notice-card--warning.expanded::after {
-    content: ' ▸ 收起';
 }
 
 /* ── 民宿环境 ── */
