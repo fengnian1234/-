@@ -174,25 +174,11 @@ body.mp-mode .hero-seasonal { font-size: 0.8rem; color: rgba(255,255,255,0.85); 
    全局极简 — 小程序端统一收紧间距、精简视觉
    ══════════════════════════════════════════════════════════ */
 
-/* ── 喜茶非对称排版 + 增大留白 ── */
+/* ── 增大留白 ── */
 body.mp-mode .section-padding { padding: 2rem 0; }
-body.mp-mode .container { padding: 0 0 0 10px; }
+body.mp-mode .container { padding: 0 10px; }
 body.mp-mode .section-title { font-size: 1rem; font-weight: 510; margin-bottom: 0.5rem; }
 body.mp-mode .section-desc { font-size: 0.72rem; margin-bottom: 0.6rem; }
-
-/* 非对称卡片间距：左16px 右0 — 喜茶核心空间设计 */
-body.mp-mode .room-card,
-body.mp-mode .food-card,
-body.mp-mode .route-card,
-body.mp-mode .service-card,
-body.mp-mode .entry-card,
-body.mp-mode .intro-item,
-body.mp-mode .feature-item,
-body.mp-mode .review-card,
-body.mp-mode .healing-card {
-    margin-left: 16px;
-    margin-right: 0;
-}
 
 /* ── 统一卡片呼吸感（喜茶直角风格：4px）── */
 body.mp-mode .entry-card,

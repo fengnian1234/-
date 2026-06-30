@@ -4536,11 +4536,6 @@ h4 { font-size: var(--text-base); }
     .page-header p { font-size: 0.75rem; }
     .section-title { font-size: 1.1rem; margin-bottom: 0.5rem; }
     .section-desc { font-size: 0.75rem; }
-    /* 非对称卡片间距 — 喜茶核心空间设计 */
-    .room-card, .food-card, .route-card, .service-card, .entry-card {
-        margin-left: 16px;
-        margin-right: 0;
-    }
     /* FAQ */
     .faq-q { font-size: 0.85rem; padding: 12px; }
     /* 积分 */
