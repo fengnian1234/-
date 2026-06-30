@@ -1319,21 +1319,26 @@ h4 { font-size: 1.05rem; }
 .room-info-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.8rem;
+    gap: 0.6rem;
     margin-bottom: 1.5rem;
+    padding: 0.9rem 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .info-item {
-    background: var(--color-bg-light);
-    padding: 0.8rem;
-    border-radius: var(--radius-sm);
+    padding: 0.4rem 0;
+    border-radius: 0;
+    background: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .info-label {
-    display: block;
     font-size: 0.78rem;
     color: var(--color-text-lighter);
-    margin-bottom: 0.2rem;
+    white-space: nowrap;
 }
 
 .info-value {
@@ -2011,7 +2016,6 @@ h4 { font-size: 1.05rem; }
 .food-card:hover .food-card-img img {
     transform: scale(1.05);
 }
-}
 
 .food-detail-header {
     text-align: center;
@@ -2323,18 +2327,25 @@ h4 { font-size: 1.05rem; }
 .room-modal-content .room-info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    gap: 0.4rem;
     margin-bottom: 1rem;
+    padding: 0.7rem 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .room-modal-content .info-item {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0;
+    background: none;
 }
 
 .room-modal-content .info-label {
     font-size: 0.75rem;
     color: var(--color-text-lighter);
+    white-space: nowrap;
 }
 
 .room-modal-content .info-value {
@@ -2812,6 +2823,7 @@ h4 { font-size: 1.05rem; }
 }
 .carousel-dots {
     display: flex;
+    justify-content: center;
     gap: 0.4rem;
 }
 .carousel-dot {

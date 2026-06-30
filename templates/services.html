@@ -11,6 +11,11 @@
 
 <section class="section-padding">
     <div class="container">
+        {% if request.args.get('mp') == '1' %}
+        <p style="text-align:center;color:var(--color-text-lighter);font-size:0.72rem;margin-bottom:0.6rem;padding:0.4rem 0.8rem;background:var(--color-bg-light);border-radius:8px;display:inline-block;width:100%"><i class="ph-thin ph-info"></i> 人工服务 9:00 — 22:00，其余时段可通过 AI 管家自助查询</p>
+        {% else %}
+        <p style="text-align:center;color:var(--color-text-light);font-size:0.82rem;margin-bottom:0.8rem;padding:0.5rem 1rem;background:var(--color-bg-light);border-radius:8px"><i class="ph-thin ph-info"></i> 人工服务时间为每日上午 9:00 至晚间 22:00，非服务时段可通过微信公众号 AI 管家自助查询</p>
+        {% endif %}
         {% if services %}
         <div class="services-container">
             {% set categories = {} %}

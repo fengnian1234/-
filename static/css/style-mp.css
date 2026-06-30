@@ -133,7 +133,7 @@ body.mp-mode .hero {
     overflow: hidden;
 }
 body.mp-mode .hero--photo {
-    max-height: 320px;
+    max-height: 280px;
     background-position: center 15%;
 }
 body.mp-mode .hero::after {
@@ -275,9 +275,14 @@ body.mp-mode .notice-card--warning {
 }
 
 /* ── 民宿环境 ── */
-body.mp-mode .env-gallery { gap: 0.5rem; margin-top: 0.8rem; }
+body.mp-mode .env-gallery { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 0.8rem; }
 body.mp-mode .env-card { height: 120px; aspect-ratio: auto; border-radius: 10px; }
 body.mp-mode .env-card-label { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+
+/* ── 房型详情图片 — 去除米白色边框，图片全幅 ── */
+body.mp-mode .room-gallery-carousel { background: #000; }
+body.mp-mode .gallery-slide img { object-fit: cover; }
+body.mp-mode .gallery-main { height: 60vw; max-height: 360px; min-height: 220px; }
 
 /* ── FAQ ── */
 body.mp-mode .faq-q { font-size: 0.85rem; padding: 14px 12px; }
@@ -745,6 +750,7 @@ body.mp-mode .route-card-desc {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+body.mp-mode .route-spots-preview { display: none; }
 /* 美食卡片描述截断 + 图片缩小 */
 body.mp-mode .foods-list { gap: 10px; }
 body.mp-mode .food-card { border-radius: 12px; }

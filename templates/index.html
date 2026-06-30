@@ -73,27 +73,23 @@
     </div>
 </section>
 
-<!-- 索道通知（东林外在庐山脚下，无需索道） -->
-{% if bnb_id != 'donglinwai' %}
-<section class="section-padding" style="padding-bottom:0">
-    <div class="container">
-        <div class="notice-card notice-card--success">
-            <strong><i class="ph-thin ph-cable-car"></i> 庐山索道运营中</strong> — 索道上站步行<strong>{% if bnb_id == 'shanji' %}3{% else %}5{% endif %}分钟</strong>即达民宿，观光车站也在门口～ <i class="ph-thin ph-mountains"></i>
-        </div>
-    </div>
-</section>
-{% endif %}
-
 <!-- 民宿介绍（按 BnB 区分） -->
 <section class="intro section-padding">
     <div class="container">
         <h2 class="section-title">关于{{ bnb.short_name }}</h2>
         <div class="intro-grid">
             {% if bnb_id == 'guishu' %}
+            {% if request.args.get('mp') == '1' %}
+            <div class="intro-item"><span class="intro-icon"><i class="ph-thin ph-mountains" style="font-size:2rem"></i></span><h3>山居小院</h3><p>千米海拔小楼11间客房，推窗见云海，前院品茶听风铃</p></div>
+            <div class="intro-item"><span class="intro-icon"><i class="ph-thin ph-coffee" style="font-size:2rem"></i></span><h3>一楼咖啡馆</h3><p>自营三山二水精品咖啡，自种云雾茶，自酿美酒</p></div>
+            <div class="intro-item"><span class="intro-icon"><i class="ph-thin ph-star" style="font-size:2rem"></i></span><h3>携程口碑</h3><p>评分 4.7 · 85条评价 · 住客称赞咖啡出色环境治愈</p></div>
+            <div class="intro-item"><span class="intro-icon"><i class="ph-thin ph-map-pin" style="font-size:2rem"></i></span><h3>绝佳位置</h3><p>大林沟路27号，步行5分钟至牯岭街</p></div>
+            {% else %}
             <div class="intro-item"><span class="intro-icon"><i class="ph-thin ph-mountains" style="font-size:2rem"></i></span><h3>山居小院</h3><p>海拔千米的U型三层小楼，11间客房。推窗即漫山云海，前院品茶听风铃，后院停车便捷。<i class="ph-thin ph-paw-print"></i> 宠物友好。</p></div>
             <div class="intro-item"><span class="intro-icon"><i class="ph-thin ph-coffee" style="font-size:2rem"></i></span><h3>一楼咖啡馆</h3><p>「三山二水咖啡」自营精品咖啡馆，自种庐山云雾茶，自酿美酒，还有特色杂货铺。</p></div>
             <div class="intro-item"><span class="intro-icon"><i class="ph-thin ph-star" style="font-size:2rem"></i></span><h3>携程口碑</h3><p>官方评分 4.7/5.0 · 85条评价<br>「咖啡品质出众」「环境安静治愈」「老板热情像家人」</p></div>
-            <div class="intro-item"><span class="intro-icon"><i class="ph-thin ph-map-pin" style="font-size:2rem"></i></span><h3>绝佳位置</h3><p>庐山山上·大林沟路27号。索道上站步行5分钟，牯岭街步行10分钟。</p></div>
+            <div class="intro-item"><span class="intro-icon"><i class="ph-thin ph-map-pin" style="font-size:2rem"></i></span><h3>绝佳位置</h3><p>庐山山上·大林沟路27号。步行5分钟至牯岭街，近如琴湖、锦绣谷。</p></div>
+            {% endif %}
             {% elif bnb_id == 'shanji' %}
             <div class="intro-item"><span class="intro-icon"><i class="ph-thin ph-coffee" style="font-size:2rem"></i></span><h3>茶场环绕</h3><p>坐拥此山茶场，自种云雾茶，每一间房都能闻到茶香。采茶季亲手采摘嫩芽。</p></div>
             <div class="intro-item"><span class="intro-icon"><i class="ph-thin ph-heart-straight" style="font-size:2rem"></i></span><h3>制茶工坊</h3><p>在制茶师傅指导下完成杀青、揉捻、干燥等工序，制作属于自己的庐山茶带回家。</p></div>
@@ -124,9 +120,10 @@
         ('static/img/exterior/shanji/前台咖啡馆.webp', '咖啡书吧'),
     ],
     'donglinwai': [
-        ('static/img/exterior/donglinwai/民宿门头.webp', '民宿门头'),
+        ('static/img/exterior/donglinwai/民宿门头.webp', '民宿外景'),
         ('static/img/exterior/donglinwai/内景夜景.webp', '庭院夜景'),
         ('static/img/exterior/donglinwai/前台咖啡馆.webp', '前台·咖啡馆'),
+        ('static/img/exterior/donglinwai/小聚会厅.jpg', '小聚会厅'),
     ]
 } %}
 {% set photos = env_photos.get(bnb_id, []) %}
@@ -167,12 +164,8 @@
                     {% endif %}
                 </div>
                 <h4>{{ room.name }}</h4>
-                <p class="price">¥{{ room.price|int }}/晚</p>
             </a>
             {% endfor %}
-        </div>
-        <div class="section-action">
-            <a href="{{ bnb_prefix }}/rooms{{ mp }}" class="btn btn-primary">查看全部房型 →</a>
         </div>
     </div>
 </section>
@@ -238,10 +231,14 @@
 <section class="section-padding">
     <div class="container">
         <h2 class="section-title">微信公众号智能客服</h2>
+        {% if request.args.get('mp') == '1' %}
+        <p class="section-desc">关注公众号即可使用 · 预订后解锁专属AI管家</p>
+        {% else %}
         <p class="section-desc">关注公众号即可使用 · 预订前免费旅行顾问 · 预订后解锁专属AI管家</p>
+        {% endif %}
         <div class="feature-list">
             <div class="feature-item"><span class="feature-icon"><i class="ph-thin ph-robot" style="font-size:2rem"></i></span><div class="feature-content"><h3>AI 智能管家</h3><p>预订前免费旅行顾问 · 预订后专属AI管家 · 离店后温暖复购关怀。全链路陪伴。</p></div></div>
-            <div class="feature-item"><span class="feature-icon"><i class="ph-thin ph-key" style="font-size:2rem"></i></span><div class="feature-content"><h3>关键词秒回</h3><p>回复「房型」「菜单」「攻略」「服务」等关键词秒获信息。回复「人工」转接客服（8:00-22:00）。</p></div></div>
+            <div class="feature-item"><span class="feature-icon"><i class="ph-thin ph-key" style="font-size:2rem"></i></span><div class="feature-content"><h3>关键词秒回</h3><p>回复「房型」「菜单」「攻略」「服务」等关键词秒获信息。回复「人工」转接客服{% if not request.args.get('mp') == '1' %}（8:00-22:00）{% endif %}。</p></div></div>
             <div class="feature-item"><span class="feature-icon"><i class="ph-thin ph-buildings" style="font-size:2rem"></i></span><div class="feature-content"><h3>平台预订</h3><p>通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」预订，确认后解锁专属AI管家。</p></div></div>
             {% if bnb_id == 'shanji' %}
             <div class="feature-item"><span class="feature-icon"><i class="ph-thin ph-coffee" style="font-size:2rem"></i></span><div class="feature-content"><h3>此山茶场特色服务</h3><p>简餐·饮品·甜品、采茶体验、制茶工坊、茶道品鉴课、茶叶伴手礼——山纪独有，让茶香陪伴你的庐山之旅。</p></div></div>
@@ -280,7 +277,7 @@
             </div>
             <div class="faq-item" onclick="this.classList.toggle('open')">
                 <div class="faq-q"><i class="ph-thin ph-car"></i> 怎么到达民宿？<span class="faq-arrow">▾</span></div>
-                <div class="faq-a"><i class="ph-thin ph-map-pin"></i> <strong>{{ bnb.address }}</strong><br>{% if bnb_id == 'donglinwai' %}<i class="ph-thin ph-car"></i> 自驾或打车导航即达，距庐山站10km，九江站16km{% else %}<i class="ph-thin ph-cable-car"></i> 乘索道上山后步行即达（约5分钟）{% endif %}<br><i class="ph-thin ph-phone"></i> 前台电话：<strong>{{ bnb.phone }}</strong></div>
+                <div class="faq-a"><i class="ph-thin ph-map-pin"></i> <strong>{{ bnb.address }}</strong><br>{% if bnb_id == 'donglinwai' %}<i class="ph-thin ph-car"></i> 自驾或打车导航即达，距庐山站10km，九江站16km{% else %}<i class="ph-thin ph-signpost"></i> 到达牯岭镇后步行即达，详情参考<a href="{{ bnb_prefix }}/travel{{ mp }}">游玩攻略</a>{% endif %}<br><i class="ph-thin ph-phone"></i> 前台电话：<strong>{{ bnb.phone }}</strong></div>
             </div>
             <div class="faq-item" onclick="this.classList.toggle('open')">
                 <div class="faq-q"><i class="ph-thin ph-parking"></i> 有停车场吗？<span class="faq-arrow">▾</span></div>
