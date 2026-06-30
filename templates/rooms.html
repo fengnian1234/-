@@ -106,6 +106,17 @@ function showRoomModal(id) {
     var remainingHtml = r.total_count && r.total_count <= 2 ? '<span class="room-remaining low"><i class="ph-thin ph-fire"></i> 仅剩'+r.total_count+'间</span>' : (r.total_count ? '<span class="room-remaining ok">热订中</span>' : '');
     var discountHtml = r.original_price && r.original_price > r.price ? '<span class="original-price">¥'+r.original_price+'</span><span class="discount-tag">省¥'+(r.original_price-r.price)+'</span>' : '';
     var amenitiesHtml = (r.amenities||[]).map(function(a){return '<span class="amenity-tag">'+a+'</span>';}).join('');
+    var bookingHtml = ''
+        +'<div class="room-booking">'
+        +'<div class="booking-section"><h4><i class="ph-thin ph-calendar"></i> 选择日期</h4><div class="date-picker" id="rmDatePicker">'
+        +Array.from({length:7},function(_,i){var d=new Date();d.setDate(d.getDate()+i);var mm=d.getMonth()+1,dd=d.getDate();var w=['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];var label=i===0?'今天':i===1?'明天':w;var ds=d.getFullYear()+'-'+(mm<10?'0':'')+mm+'-'+(dd<10?'0':'')+dd;return '<button class="date-chip'+(i===0?' active':'')+'" data-date="'+ds+'" data-label="'+label+'" data-w="'+w+'" onclick="event.stopPropagation();rmPickDate(this)"><span class="date-chip-label">'+label+'</span><span class="date-chip-date">'+(mm+'/'+dd)+'</span></button>';}).join('')
+        +'</div></div>'
+        +'<div class="booking-section"><h4><i class="ph-thin ph-user"></i> 入住人数</h4><div class="guest-stepper"><button class="stepper-btn" onclick="event.stopPropagation();rmGuestChange(-1)">−</button><span class="stepper-count" id="rmGuestCount">2</span><button class="stepper-btn" onclick="event.stopPropagation();rmGuestChange(1)">+</button></div></div>'
+        +'<div class="booking-summary"><div class="booking-summary-row"><span>¥'+r.price+' × <span id="rmNights">1</span>晚</span><span class="booking-total-price">¥<span id="rmTotalPrice">'+r.price+'</span></span></div><span class="booking-points-hint">预订即送 <span id="rmPoints">'+(Math.floor(r.price/10))+'</span> 积分</span></div>'
+        +'<button class="btn btn-primary btn-large btn-block" onclick="event.stopPropagation();rmConfirmBooking()">确认预订 · ¥<span id="rmBtnPrice">'+r.price+'</span></button>'
+        +'<button class="btn btn-outline btn-large btn-block" style="margin-top:8px" onclick="event.stopPropagation();alert(\'请拨打前台电话预订：{{ bnb.phone }}\\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～\')"><i class="ph-thin ph-phone"></i> 电话咨询</button>'
+        +'</div>'
+        +'<a href="{{ bnb_prefix }}/rooms{{ mp }}" class="btn btn-text btn-block" style="margin-top:12px">← 返回房型列表</a>';
     document.getElementById('roomModalContent').innerHTML =
         '<div class="room-gallery-carousel"><div class="gallery-main" id="rmGallery">'+slidesHtml+'</div>'+navHtml+'</div>'
         +'<div class="room-info-section"><div class="room-info-header"><h2>'+r.name+'</h2><span class="room-type-badge">'+r.room_type+'</span></div>'
@@ -113,10 +124,16 @@ function showRoomModal(id) {
         +'<div class="room-info-grid"><div class="info-item"><span class="info-label"><i class="ph-thin ph-user"></i> 可住</span><span class="info-value">'+r.capacity+'人</span></div><div class="info-item"><span class="info-label"><i class="ph-thin ph-bed"></i> 床型</span><span class="info-value">'+r.bed_type+'</span></div><div class="info-item"><span class="info-label"><i class="ph-thin ph-ruler"></i> 面积</span><span class="info-value">'+r.area+'</span></div><div class="info-item"><span class="info-label"><i class="ph-thin ph-cloud-sun"></i> 景观</span><span class="info-value">'+r.view_type+'</span></div></div>'
         +'<div class="room-description"><h3><i class="ph-thin ph-file-text"></i> 房间介绍</h3><p>'+r.description+'</p></div>'
         +(amenitiesHtml?'<div class="room-amenities"><h3><i class="ph-thin ph-sparkle"></i> 房间设施</h3><div class="amenities-list">'+amenitiesHtml+'</div></div>':'')
-        +'<div class="room-actions"><button class="btn btn-primary btn-large" onclick="alert(\'请拨打前台电话预订：{{ bnb.phone }}\\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～\')"><i class="ph-thin ph-phone"></i> 预订咨询</button><a href="{{ bnb_prefix }}/rooms{{ mp }}" class="btn btn-outline btn-large">← 返回房型列表</a></div></div>';
+        +bookingHtml
+        +'</div>';
     document.getElementById('roomModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
     _roomSlideIdx = 0; _roomSlideTotal = imgs.length;
+    _rmPrice = r.price; _rmNights = 1; _rmGuests = 2; _rmDate = '';
+    var todayChip = document.getElementById('rmDatePicker')?.querySelector('.date-chip');
+    if (todayChip) { _rmDate = todayChip.getAttribute('data-date'); todayChip.classList.add('active'); }
+    var gc = document.getElementById('rmGuestCount'); if (gc) gc.textContent = '2';
+    _rmUpdatePrice();
 }
 function closeRoomModal() {
     document.getElementById('roomModal').style.display = 'none';
@@ -132,5 +149,32 @@ function goRoomSlide(n) {
     var c = document.getElementById('rmCounter'); if (c) c.textContent = (_roomSlideIdx+1)+' / '+_roomSlideTotal;
 }
 function roomSlideChange(dir) { goRoomSlide(_roomSlideIdx + dir); }
+// ── 预订表单 ──
+var _rmPrice = 0, _rmNights = 1, _rmGuests = 2, _rmDate = '';
+function rmPickDate(btn) {
+    var picker = document.getElementById('rmDatePicker');
+    picker.querySelectorAll('.date-chip').forEach(function(c){ c.classList.remove('active'); });
+    btn.classList.add('active');
+    _rmDate = btn.getAttribute('data-date');
+    _rmUpdatePrice();
+}
+function rmGuestChange(d) {
+    _rmGuests = Math.max(1, Math.min(8, _rmGuests + d));
+    var el = document.getElementById('rmGuestCount');
+    if (el) el.textContent = _rmGuests;
+}
+function _rmUpdatePrice() {
+    var total = _rmPrice * _rmNights;
+    var elTotal = document.getElementById('rmTotalPrice');
+    var elBtn = document.getElementById('rmBtnPrice');
+    var elPoints = document.getElementById('rmPoints');
+    if (elTotal) elTotal.textContent = total;
+    if (elBtn) elBtn.textContent = total;
+    if (elPoints) elPoints.textContent = Math.floor(total / 10);
+}
+function rmConfirmBooking() {
+    if (!_rmDate) { alert('请先选择入住日期'); return; }
+    alert('预订确认\n\n日期：' + _rmDate + '\n人数：' + _rmGuests + '人\n金额：¥' + (_rmPrice * _rmNights) + '\n\n请拨打前台电话确认：{{ bnb.phone }}\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～');
+}
 </script>
 {% endblock %}
