@@ -8,7 +8,7 @@ import secrets
 import string
 from datetime import datetime, timedelta
 from models import get_db, Booking, RoomGuest
-from services.logger import info, warning, error as log_error, log_booking
+from services.logger import info, warning, error as log_error, debug, log_booking
 from config import (
     REVIEW_REMINDER_DELAY_MINUTES, BNB_CONFIGS,
 )
@@ -22,6 +22,7 @@ def _resolve_bnb_id(bnb_id: str = None) -> str:
         from bnb_context import get_current_bnb_id
         return get_current_bnb_id()
     except Exception:
+        debug("bnb_id解析失败，降级为guishu", exc_info=True)
         return "guishu"
 
 

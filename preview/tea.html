@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>此山茶场 - 云上·山纪民宿</title>
+<meta name="description" content="庐山索道旁，一方茶香庭院。简餐·饮品·甜品·晚场酒水·晚场演出，免费预约到店消费。">
+<script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+:root{--color-primary:#8B6914;--color-primary-light:#A88A30;--color-primary-dark:#6B4E08;--color-accent:#C8962A;--color-accent-light:#D4B050;--color-sky:#C8B898;--color-mist:#E8DCC8;--color-bg:#FAF7F2;--color-bg-light:#F5F0E6;--color-bg-dark:#E8DDCC;--color-text:#2E2818;--color-text-light:#5E5848;--color-text-lighter:#8E8874;--color-white:#FFFDF8;--color-border:#D8CEB8;--color-shadow:rgba(100,80,30,0.06);--color-shadow-hover:rgba(100,80,30,0.12);--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--font-serif:"Noto Serif SC","STSong","SimSun","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 2px 8px var(--color-shadow);--shadow-md:0 6px 20px var(--color-shadow-hover);--transition:0.3s cubic-bezier(0.4,0,0.2,1);--max-width:720px;--color-danger:#c4554a}
+[data-theme="dark"]{--color-primary:#A88830;--color-primary-light:#8A6A20;--color-primary-dark:#6B5010;--color-accent:#C8A040;--color-accent-light:#D4B860;--color-sky:#6A6050;--color-mist:#2A2520;--color-bg:#1A1A15;--color-bg-light:#1F1F18;--color-bg-dark:#252520;--color-text:#D8D4C8;--color-text-light:#A0A098;--color-text-lighter:#6A6A60;--color-white:#2A2620;--color-border:#3E3830;--color-shadow:rgba(0,0,0,0.35);--color-shadow-hover:rgba(0,0,0,0.50);--color-danger:#cc6050}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:var(--color-text)}
+h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 1rem}
+a{color:var(--color-primary);text-decoration:none}
+.header{background:rgba(250,247,242,0.9);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none}
+.logo-icon{font-size:1.4rem}
+.logo-text{font-family:var(--font-serif);font-size:1.15rem;font-weight:700;color:var(--color-primary-dark);letter-spacing:0.05em}
+.nav-links{display:flex;gap:0.2rem}
+.nav-links a{padding:0.35rem 0.7rem;border-radius:var(--radius-sm);font-size:0.9rem;color:var(--color-text-light);transition:all var(--transition)}
+.nav-links a:hover{color:var(--color-primary);background:var(--color-bg-light)}
+.hero{background:linear-gradient(rgba(0,0,0,0.35),rgba(0,0,0,0.25)),linear-gradient(135deg,#8B6914 0%,#A88830 40%,#6B4E08 100%);color:#fff;padding:3rem 1rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-30px;left:-20%;right:-20%;height:80px;background:radial-gradient(ellipse at 30% 100%,rgba(255,255,255,0.2) 0%,transparent 60%),radial-gradient(ellipse at 70% 100%,rgba(255,255,255,0.15) 0%,transparent 55%);pointer-events:none}
+.hero h1{color:#fff;margin-bottom:0.4rem;font-size:1.7rem;text-shadow:0 2px 8px rgba(0,0,0,0.3);position:relative;z-index:1}
+.hero p{color:rgba(255,255,255,0.9);font-size:0.95rem;text-shadow:0 1px 4px rgba(0,0,0,0.3);position:relative;z-index:1}
+.tea-hero-logo{width:70px;height:70px;border-radius:50%;object-fit:cover;margin-bottom:0.8rem;border:2px solid rgba(255,255,255,0.4);position:relative;z-index:1}
+.section-padding{padding:2rem 0}
+.section-title{margin-bottom:0.6rem;color:var(--color-primary-dark)}
+.section-desc{font-size:0.9rem;color:var(--color-text-light);margin-bottom:1rem}
+.venue-info-card{background:var(--color-white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:1.2rem;margin-bottom:1rem}
+.venue-info-row{display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:1rem}
+.venue-info-item{flex:1;min-width:140px;font-size:0.85rem}
+.venue-info-item i{color:var(--color-primary);font-size:1.1rem}
+.venue-label{display:block;font-weight:600;font-size:0.9rem;margin-top:0.2rem;color:var(--color-text)}
+.venue-note{font-size:0.75rem;color:var(--color-text-lighter);margin-top:0.2rem}
+.venue-cta{text-align:center}
+.btn{display:inline-flex;align-items:center;gap:0.3rem;padding:0.6rem 1.5rem;border-radius:var(--radius-sm);font-size:0.95rem;cursor:pointer;border:none;transition:all var(--transition);font-family:var(--font-sans)}
+.btn-primary{background:var(--color-primary);color:#fff}
+.btn-primary:hover{background:var(--color-primary-dark)}
+.tea-cat-grid,.tea-type-grid,.tea-prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem;margin-bottom:1.5rem}
+.tea-card{background:var(--color-white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:0.8rem;text-align:center}
+.tea-card h4{font-size:0.9rem;margin-bottom:0.2rem}
+.tea-card .price{font-weight:700;color:var(--color-primary);font-size:0.95rem}
+.tea-card .desc{font-size:0.75rem;color:var(--color-text-light);margin-top:0.2rem}
+.reserve-card{background:var(--color-white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:1.2rem}
+.reserve-field{margin-bottom:1rem}
+.reserve-label{display:block;font-weight:600;font-size:0.9rem;margin-bottom:0.5rem;color:var(--color-text)}
+.reserve-hint{font-weight:400;font-size:0.78rem;color:var(--color-text-lighter)}
+.guest-count-selector{display:flex;gap:0.5rem}
+.guest-count-card{flex:1;padding:0.6rem;text-align:center;border:2px solid var(--color-border);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition)}
+.guest-count-card.selected{border-color:var(--color-primary);background:color-mix(in srgb,var(--color-primary) 8%,var(--color-bg-light))}
+.count-icon{font-size:1.2rem;display:block}
+.count-label{font-size:0.85rem;color:var(--color-text-light)}
+.date-chip-strip,.time-slot-grid{display:flex;flex-wrap:wrap;gap:0.4rem}
+.chip{display:inline-flex;padding:0.35rem 0.7rem;border:1px solid var(--color-border);border-radius:var(--radius-sm);font-size:0.8rem;cursor:pointer;background:var(--color-bg-light);transition:all var(--transition)}
+.chip.active{border-color:var(--color-primary);background:color-mix(in srgb,var(--color-primary) 10%,var(--color-bg-light));color:var(--color-primary)}
+.chip.disabled{opacity:0.4;cursor:not-allowed}
+.reserve-submit{width:100%;margin-top:0.5rem;padding:0.8rem}
+.reserve-error{font-size:0.8rem;color:var(--color-danger);text-align:center;margin-top:0.5rem;display:none}
+.free-badge{font-size:0.7rem;background:#4a8c5e;color:#fff;padding:0.15rem 0.5rem;border-radius:10px;margin-left:0.4rem;vertical-align:middle}
+.empty-hint{color:var(--color-text-lighter);text-align:center;padding:1rem;font-size:0.85rem}
+.footer{background:linear-gradient(180deg,var(--color-bg-dark),color-mix(in srgb,var(--color-primary-dark) 15%,var(--color-bg-dark)));padding:2rem 1rem 1.5rem;text-align:center;margin-top:auto;font-size:0.85rem}
+.footer-copy{color:var(--color-text-lighter);font-size:0.8rem;margin-top:0.8rem}
+@media(max-width:480px){.hero{padding:2rem 1rem 1.5rem}.hero h1{font-size:1.4rem}.venue-info-row{flex-direction:column}.tea-cat-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="index.html"><span class="logo-icon">🍵</span><span class="logo-text">云上·山纪</span></a>
+    <nav class="nav-links">
+      <a href="rooms.html">房型</a><a href="menu.html">简餐</a><a href="tea.html">茶场</a><a href="services.html">服务</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70' viewBox='0 0 70 70'%3E%3Crect fill='%238B6914' width='70' height='70' rx='35'/%3E%3Ctext x='35' y='47' text-anchor='middle' fill='white' font-size='35'%3E🍵%3C/text%3E%3C/svg%3E" alt="此山茶场" class="tea-hero-logo">
+  <h1>此山茶场</h1>
+  <p>庐山索道旁，一方茶香庭院</p>
+  <p>简餐 · 饮品 · 甜品 · 晚场酒水 · 晚场演出</p>
+</section>
+
+<!-- 营业时间与预约规则 -->
+<section class="section-padding">
+  <div class="container">
+    <div class="venue-info-card">
+      <div class="venue-info-row">
+        <div class="venue-info-item">
+          <span class="venue-label">🕐 营业时间</span>
+          <p>早场 7:00 — 10:00</p>
+          <p>晚场 15:00 — 22:00</p>
+          <p class="venue-note">点单截止 22:00 · 10:30 结束营业</p>
+        </div>
+        <div class="venue-info-item">
+          <span class="venue-label">📅 免费预约 · 到店消费</span>
+          <p>单人/双人可选 · 提前7天</p>
+          <p>凭预约码核验后解锁点单</p>
+          <p class="venue-note">预约免费 · 每日0点开放最新一天</p>
+        </div>
+        <div class="venue-info-item">
+          <span class="venue-label">🍷 服务项目</span>
+          <p>简餐 · 饮品 · 甜品</p>
+          <p>晚场酒水 · 晚场演出</p>
+          <p class="venue-note">酒水 18:00 后开放购买</p>
+        </div>
+      </div>
+      <div class="venue-cta">
+        <button class="btn btn-primary" onclick="document.getElementById('reservationForm').scrollIntoView({behavior:'smooth'})">📅 立即预约</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 简餐 -->
+<section class="section-padding">
+  <div class="container">
+    <h2 class="section-title">🍜 简餐</h2>
+    <p class="section-desc">山泉煮面，茶香入饭，庐山本味</p>
+    <div class="tea-cat-grid">
+      <div class="tea-card"><h4>云雾茶香面</h4><span class="price">¥38</span><p class="desc">庐山云雾茶汤底，手工拉面</p></div>
+      <div class="tea-card"><h4>茶香炒饭</h4><span class="price">¥42</span><p class="desc">茶油炒制，庐山本地食材</p></div>
+      <div class="tea-card"><h4>山泉馄饨</h4><span class="price">¥35</span><p class="desc">山泉水煮，鲜肉馅料</p></div>
+      <div class="tea-card"><h4>素斋拌面</h4><span class="price">¥32</span><p class="desc">麻油素拌，清淡养生</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 饮品 -->
+<section class="section-padding">
+  <div class="container">
+    <h2 class="section-title">☕ 饮品</h2>
+    <p class="section-desc">云雾冷萃，手冲对饮，山中一壶茶</p>
+    <div class="tea-cat-grid">
+      <div class="tea-card"><h4>庐山云雾茶</h4><span class="price">¥58</span><p class="desc">海拔800米以上高山云雾</p></div>
+      <div class="tea-card"><h4>手冲咖啡</h4><span class="price">¥35</span><p class="desc">单品手冲，产地直供</p></div>
+      <div class="tea-card"><h4>桂花红茶</h4><span class="price">¥48</span><p class="desc">桂花蜜酿，祁红底香</p></div>
+      <div class="tea-card"><h4>冷萃绿茶</h4><span class="price">¥32</span><p class="desc">低温慢萃，清冽回甘</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 甜品 -->
+<section class="section-padding">
+  <div class="container">
+    <h2 class="section-title">🍰 甜品</h2>
+    <p class="section-desc">茶冻凝香，桂花酿酒，一口江南</p>
+    <div class="tea-cat-grid">
+      <div class="tea-card"><h4>茶冻</h4><span class="price">¥28</span><p class="desc">庐山云雾茶制成</p></div>
+      <div class="tea-card"><h4>桂花酒酿</h4><span class="price">¥32</span><p class="desc">手作桂花酒酿圆子</p></div>
+      <div class="tea-card"><h4>抹茶蛋糕</h4><span class="price">¥38</span><p class="desc">日式抹茶千层</p></div>
+      <div class="tea-card"><h4>绿豆糕</h4><span class="price">¥25</span><p class="desc">传统手工绿豆糕</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 晚场酒水 -->
+<section class="section-padding">
+  <div class="container">
+    <h2 class="section-title">🍷 晚场酒水</h2>
+    <p class="section-desc">18:00 后开放购买，茶酒微醺山夜</p>
+    <div class="tea-cat-grid">
+      <div class="tea-card"><h4>茶馆特调</h4><span class="price">¥48</span><p class="desc">茶+酒创意特调</p></div>
+      <div class="tea-card"><h4>精酿啤酒</h4><span class="price">¥38</span><p class="desc">本地精酿</p></div>
+      <div class="tea-card"><h4>梅子酒</h4><span class="price">¥45</span><p class="desc">手酿梅子酒</p></div>
+      <div class="tea-card"><h4>热红酒</h4><span class="price">¥52</span><p class="desc">时令限定</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 晚场演出 -->
+<section class="section-padding">
+  <div class="container">
+    <h2 class="section-title">🎵 晚场演出</h2>
+    <p class="section-desc">民谣弹唱 · 露天电影 · 山夜最好的伴奏</p>
+    <div class="tea-cat-grid">
+      <div class="tea-card"><h4>民谣弹唱</h4><span class="price">免费</span><p class="desc">每晚19:30-21:00</p></div>
+      <div class="tea-card"><h4>露天电影</h4><span class="price">免费</span><p class="desc">周末放映</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 茶叶品类 -->
+<section class="section-padding">
+  <div class="container">
+    <h2 class="section-title">🌱 茶叶品类</h2>
+    <p class="section-desc">庐山云雾茶海拔800米以上，芽叶肥壮、白毫显露</p>
+    <div class="tea-type-grid">
+      <div class="tea-card"><h4>庐山云雾</h4><span class="price">¥168/50g</span><p class="desc">明前特级</p></div>
+      <div class="tea-card"><h4>云雾毛峰</h4><span class="price">¥128/50g</span><p class="desc">一芽一叶</p></div>
+      <div class="tea-card"><h4>庐山红茶</h4><span class="price">¥148/50g</span><p class="desc">全发酵工艺</p></div>
+      <div class="tea-card"><h4>野茶</h4><span class="price">¥198/50g</span><p class="desc">野生茶树</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 茶叶伴手礼 -->
+<section class="section-padding">
+  <div class="container">
+    <h2 class="section-title">🎁 茶叶伴手礼</h2>
+    <p class="section-desc">把庐山云雾茶带回家，茶饼/自采茶叶/礼品装</p>
+    <div class="tea-prod-grid">
+      <div class="tea-card"><h4>云雾茶礼盒</h4><span class="price">¥298</span><p class="desc">精装礼盒</p></div>
+      <div class="tea-card"><h4>茶饼</h4><span class="price">¥188</span><p class="desc">手工压制</p></div>
+      <div class="tea-card"><h4>体验装</h4><span class="price">¥88</span><p class="desc">三款试饮</p></div>
+      <div class="tea-card"><h4>定制礼袋</h4><span class="price">¥368</span><p class="desc">企业定制</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 预约表单（静态展示） -->
+<section class="section-padding" id="reservationForm">
+  <div class="container">
+    <h2 class="section-title">📅 预约入场 <span class="free-badge">免费</span></h2>
+    <p class="section-desc">预约免费，到店核验后解锁点单功能，按实际消费结算</p>
+    <div class="reserve-card">
+      <div class="reserve-field">
+        <label class="reserve-label">人数</label>
+        <div class="guest-count-selector">
+          <div class="guest-count-card selected"><span class="count-icon">👤</span><span class="count-label">单人</span></div>
+          <div class="guest-count-card"><span class="count-icon">👥</span><span class="count-label">双人</span></div>
+        </div>
+      </div>
+      <div class="reserve-field">
+        <label class="reserve-label">日期 <span class="reserve-hint">（可提前7天预约）</span></label>
+        <div class="date-chip-strip">
+          <span class="chip active">今天</span><span class="chip">明天</span><span class="chip">7/2</span><span class="chip">7/3</span><span class="chip">7/4</span><span class="chip">7/5</span><span class="chip">7/6</span>
+        </div>
+      </div>
+      <div class="reserve-field">
+        <label class="reserve-label">到店时间</label>
+        <div class="time-slot-grid">
+          <span class="chip">15:00</span><span class="chip">15:30</span><span class="chip">16:00</span><span class="chip">16:30</span>
+          <span class="chip">17:00</span><span class="chip">17:30</span><span class="chip">18:00</span><span class="chip">18:30</span>
+        </div>
+      </div>
+      <button class="btn btn-primary reserve-submit">✅ 确认预约</button>
+      <p class="reserve-error">预览模式下预约功能不可用，请在实际运行环境中使用</p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>云上·山纪民宿 — 此山茶场 · 庐山索道旁，一方茶香庭院</p>
+  <p class="footer-copy">© 2026 云上·山纪民宿 · 庐山风景名胜区慧远路104号</p>
+</footer>
+</body>
+</html>

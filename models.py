@@ -2,8 +2,11 @@
 云上·归墅 - 数据模型
 使用 SQLAlchemy + SQLite，轻量且方便迁移
 """
+import logging
 from datetime import datetime, timedelta
 from contextlib import contextmanager
+
+logger = logging.getLogger(__name__)
 from sqlalchemy import (
     create_engine, Column, Integer, String, Float, Text,
     Boolean, DateTime, ForeignKey, JSON
@@ -463,6 +466,7 @@ def get_db():
         db.commit()
     except Exception:
         db.rollback()
+        logger.warning("DB会话异常，已回滚", exc_info=True)
         raise
     finally:
         db.close()

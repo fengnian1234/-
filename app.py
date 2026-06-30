@@ -893,7 +893,7 @@ def api_simulate_chat():
                 "matched": str(match.re.pattern) if match else None,
             })
         except Exception:
-            debug("关键词匹配异常，降级到AI")
+            debug("关键词匹配异常，降级到AI", exc_info=True)
 
     # 2. AI 智能对话
     mode = get_conversation_mode(openid)
@@ -922,7 +922,7 @@ def api_simulate_chat():
             "matched": None,
         })
     except Exception:
-        warning("AI对话异常，返回兜底回复")
+        warning("AI对话异常，返回兜底回复", exc_info=True)
 
     # 3. 兜底
     return jsonify({

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>疗愈空间 - 云上·东林外民宿</title>
+<meta name="description" content="东林寺旁，禅意疗愈之所。禅拍律动/铜锣沐心/五音涤尘/僧厨素斋，琼儿老师全程陪伴。">
+<script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
+<style>
+:root{--color-primary:#7B8DAD;--color-primary-light:#9AACC5;--color-primary-dark:#5A6D8D;--color-accent:#C8A96E;--color-accent-light:#D4BC8E;--color-sky:#A0B4C8;--color-mist:#D8DEE8;--color-bg:#F5F6F8;--color-bg-light:#EDEFF4;--color-bg-dark:#DDDFE8;--color-text:#2A2E35;--color-text-light:#5A5E65;--color-text-lighter:#8A8E95;--color-white:#FFFEFB;--color-border:#D0D4DC;--color-shadow:rgba(100,110,130,0.06);--color-shadow-hover:rgba(100,110,130,0.12);--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--font-serif:"Noto Serif SC","STSong","SimSun","KaiTi",serif;--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--shadow-sm:0 2px 8px var(--color-shadow);--shadow-md:0 6px 20px var(--color-shadow-hover);--transition:0.3s cubic-bezier(0.4,0,0.2,1);--max-width:720px;--color-danger:#c4554a}
+[data-theme="dark"]{--color-primary:#8A9DBE;--color-primary-light:#6A7D9E;--color-primary-dark:#5A6D8D;--color-accent:#C8B88E;--color-accent-light:#D4C8AE;--color-sky:#6A7D8E;--color-mist:#2A3038;--color-bg:#1A1E23;--color-bg-light:#1F242A;--color-bg-dark:#252A32;--color-text:#D8DCE2;--color-text-light:#A0A4AA;--color-text-lighter:#6A6E75;--color-white:#22272E;--color-border:#2E343C;--color-shadow:rgba(0,0,0,0.35);--color-shadow-hover:rgba(0,0,0,0.50);--color-danger:#cc6050}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-sans);color:var(--color-text);background:var(--color-bg);line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:600;line-height:1.4;color:var(--color-text)}
+h1{font-size:1.6rem}h2{font-size:1.35rem}h3{font-size:1.15rem}
+.container{max-width:var(--max-width);margin:0 auto;padding:0 1rem}
+a{color:var(--color-primary);text-decoration:none}
+.header{background:rgba(245,246,248,0.9);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.header-inner{max-width:var(--max-width);margin:0 auto;padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:0.4rem;text-decoration:none}
+.logo-icon{font-size:1.4rem}
+.logo-text{font-family:var(--font-serif);font-size:1.15rem;font-weight:700;color:var(--color-primary-dark);letter-spacing:0.05em}
+.nav-links{display:flex;gap:0.2rem}
+.nav-links a{padding:0.35rem 0.7rem;border-radius:var(--radius-sm);font-size:0.9rem;color:var(--color-text-light);transition:all var(--transition)}
+.nav-links a:hover{color:var(--color-primary);background:var(--color-bg-light)}
+.hero{background:linear-gradient(170deg,rgba(0,0,0,0.25),rgba(0,0,0,0.05)),linear-gradient(135deg,#7B8DAD 0%,#9AACC5 30%,#B8C8D8 60%,#8A9DBE 100%);color:#fff;padding:3rem 1rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-30px;left:-20%;right:-20%;height:80px;background:radial-gradient(ellipse at 30% 100%,rgba(255,255,255,0.2) 0%,transparent 60%),radial-gradient(ellipse at 70% 100%,rgba(255,255,255,0.15) 0%,transparent 55%);pointer-events:none}
+.hero h1{color:#fff;margin-bottom:0.4rem;font-size:1.7rem;text-shadow:0 1px 4px rgba(0,0,0,0.1);position:relative;z-index:1}
+.hero p{color:rgba(255,255,255,0.85);font-size:0.95rem;position:relative;z-index:1}
+.section-padding{padding:2rem 0}
+.section-title{margin-bottom:0.6rem;color:var(--color-primary-dark)}
+.healing-grid{display:grid;grid-template-columns:1fr;gap:0.8rem;margin-bottom:2rem}
+.healing-card{background:var(--color-white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:1rem;border-left:3px solid var(--color-primary-light)}
+.healing-card-header{margin-bottom:0.4rem}
+.healing-card-header h3{font-size:1.1rem;color:var(--color-text)}
+.healing-therapist{font-size:0.85rem;color:var(--color-text-light);display:block;margin-top:0.2rem}
+.healing-desc{font-size:0.9rem;color:var(--color-text-light);margin:0.5rem 0;line-height:1.6}
+.healing-tags{display:flex;flex-wrap:wrap;gap:0.3rem;margin:0.4rem 0}
+.healing-tag{font-size:0.72rem;padding:0.15rem 0.5rem;border-radius:12px;background:var(--color-bg-light);color:var(--color-text-light)}
+.healing-tag--blue{background:#e8f0fe;color:#4680cc}
+.healing-tag--green{background:#e8f4ea;color:#4a8c5e}
+.healing-tag--purple{background:#f0e8f6;color:#7a5eac}
+.healing-tiers{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.8rem}
+.tier-item{flex:1;min-width:100px;background:var(--color-bg-light);border-radius:var(--radius-sm);padding:0.5rem 0.7rem;text-align:center;cursor:pointer;transition:all var(--transition);border:1px solid transparent}
+.tier-item:hover{background:var(--color-primary-light);color:#fff;border-color:var(--color-primary)}
+.tier-duration{display:block;font-size:0.8rem;color:var(--color-text-light);margin-bottom:0.1rem}
+.tier-item:hover .tier-duration{color:rgba(255,255,255,0.8)}
+.tier-price{display:block;font-weight:700;font-size:1rem;color:var(--color-primary)}
+.tier-item:hover .tier-price{color:#fff}
+.tier-book-hint{font-size:0.7rem;color:var(--color-text-lighter)}
+.tier-item:hover .tier-book-hint{color:rgba(255,255,255,0.7)}
+.notice-card{background:color-mix(in srgb,var(--color-primary) 8%,var(--color-bg-light));border-radius:var(--radius-md);padding:1rem 1.2rem;border:1px solid color-mix(in srgb,var(--color-primary) 15%,transparent);line-height:1.8;font-size:0.9rem;color:var(--color-text-light)}
+.notice-card strong{color:var(--color-primary-dark);display:block;margin-bottom:0.3rem}
+.notice-card i{margin-right:0.3rem;color:var(--color-primary-light)}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--color-text-lighter)}
+.empty-icon{font-size:3rem;display:block;margin-bottom:1rem;opacity:0.5}
+.footer{background:linear-gradient(180deg,var(--color-bg-dark),color-mix(in srgb,var(--color-primary-dark) 15%,var(--color-bg-dark)));padding:2rem 1rem 1.5rem;text-align:center;margin-top:auto;font-size:0.85rem}
+.footer-copy{color:var(--color-text-lighter);font-size:0.8rem;margin-top:0.8rem}
+@media(max-width:480px){.hero{padding:2rem 1rem 1.5rem}.hero h1{font-size:1.4rem}.healing-tiers{flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="index.html"><span class="logo-icon">🏔️</span><span class="logo-text">云上·东林外</span></a>
+    <nav class="nav-links">
+      <a href="rooms.html">房型</a><a href="menu.html">简餐</a><a href="healing.html">疗愈</a><a href="services.html">服务</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>🪷 疗愈空间</h1>
+  <p>东林寺旁 · 身心归处</p>
+  <p>一对一个案服务 · 琼儿老师全程陪伴</p>
+</section>
+
+<section class="section-padding">
+  <div class="container" id="healingSections">
+    <!-- 音疗疗愈 -->
+    <h2 class="section-title">🔔 音疗疗愈</h2>
+    <div class="healing-grid">
+      <div class="healing-card">
+        <div class="healing-card-header">
+          <h3>铜锣浴</h3>
+          <span class="healing-therapist">🪷 琼儿老师</span>
+          <div class="healing-tags"><span class="healing-tag healing-tag--blue">深度放松</span><span class="healing-tag healing-tag--purple">声波共振</span></div>
+        </div>
+        <p class="healing-desc">古老铜锣声波浴，通过强烈声波振动深入身体每个细胞。帮助释放深层紧张，唤醒自愈力。</p>
+        <div class="healing-tiers">
+          <div class="tier-item"><span class="tier-duration">60分钟</span><span class="tier-price">¥480</span><span class="tier-book-hint">预约</span></div>
+          <div class="tier-item"><span class="tier-duration">90分钟</span><span class="tier-price">¥680</span><span class="tier-book-hint">预约</span></div>
+        </div>
+      </div>
+      <div class="healing-card">
+        <div class="healing-card-header">
+          <h3>颂钵疗愈</h3>
+          <span class="healing-therapist">🪷 琼儿老师</span>
+          <div class="healing-tags"><span class="healing-tag healing-tag--green">减压</span><span class="healing-tag healing-tag--blue">情绪平衡</span></div>
+        </div>
+        <p class="healing-desc">喜马拉雅颂钵振动频率调和身心，引导进入深度冥想状态。适合压力大、失眠、情绪波动的都市人。</p>
+        <div class="healing-tiers">
+          <div class="tier-item"><span class="tier-duration">45分钟</span><span class="tier-price">¥380</span><span class="tier-book-hint">预约</span></div>
+          <div class="tier-item"><span class="tier-duration">75分钟</span><span class="tier-price">¥580</span><span class="tier-book-hint">预约</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- 芳香疗愈 -->
+    <h2 class="section-title">🌿 芳香疗愈</h2>
+    <div class="healing-grid">
+      <div class="healing-card">
+        <div class="healing-card-header">
+          <h3>精油按摩</h3>
+          <span class="healing-therapist">🪷 琼儿老师</span>
+          <div class="healing-tags"><span class="healing-tag healing-tag--green">身体放松</span><span class="healing-tag healing-tag--blue">芳香疗法</span></div>
+        </div>
+        <p class="healing-desc">选用天然植物精油，结合经络推拿手法。针对肩颈、腰背等不同部位提供个性化调理方案。</p>
+        <div class="healing-tiers">
+          <div class="tier-item"><span class="tier-duration">60分钟</span><span class="tier-price">¥420</span><span class="tier-book-hint">预约</span></div>
+          <div class="tier-item"><span class="tier-duration">90分钟</span><span class="tier-price">¥620</span><span class="tier-book-hint">预约</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- 情绪疗愈 -->
+    <h2 class="section-title">💙 情绪疗愈</h2>
+    <div class="healing-grid">
+      <div class="healing-card">
+        <div class="healing-card-header">
+          <h3>禅拍律动</h3>
+          <span class="healing-therapist">🪷 琼儿老师</span>
+          <div class="healing-tags"><span class="healing-tag healing-tag--purple">身心整合</span><span class="healing-tag healing-tag--green">能量疏通</span></div>
+        </div>
+        <p class="healing-desc">传统中医拍打技法结合现代身心学，通过有节律的拍打振动疏通经络、释放积压情绪。</p>
+        <div class="healing-tiers">
+          <div class="tier-item"><span class="tier-duration">60分钟</span><span class="tier-price">¥450</span><span class="tier-book-hint">预约</span></div>
+        </div>
+      </div>
+      <div class="healing-card">
+        <div class="healing-card-header">
+          <h3>五音涤尘</h3>
+          <span class="healing-therapist">🪷 琼儿老师</span>
+          <div class="healing-tags"><span class="healing-tag healing-tag--blue">五行音乐</span><span class="healing-tag healing-tag--purple">心灵净化</span></div>
+        </div>
+        <p class="healing-desc">依五行理论选取宫商角徵羽五音，配合引导冥想，涤荡心中尘埃，回归内在平静。</p>
+        <div class="healing-tiers">
+          <div class="tier-item"><span class="tier-duration">45分钟</span><span class="tier-price">¥350</span><span class="tier-book-hint">预约</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-padding">
+  <div class="container">
+    <div class="notice-card notice-card--success">
+      <strong>📋 预约须知</strong>
+      🪷 琼儿老师一对一服务 · ⏰ 提前2小时预约 · 🕘 9:00-20:00<br>
+      💰 先预约后付款 · 支持微信支付 · 📞 18807028687
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>云上·东林外民宿 — 东林寺旁，禅意疗愈之所</p>
+  <p class="footer-copy">© 2026 云上·东林外民宿 · 九江濂溪区赛阳镇赛阳路8号</p>
+</footer>
+</body>
+</html>
