@@ -16,6 +16,17 @@
 
 <section class="section-padding">
     <div class="container">
+        {% if request.args.get('mp') == '1' %}
+        <!-- 搜索框 -->
+        <div class="menu-search-bar">
+            <i class="ph-thin ph-magnifying-glass"></i>
+            <input type="text" id="menuSearch" placeholder="搜索茶饮、甜品" oninput="filterMenu()">
+        </div>
+        <!-- 状态提示条 -->
+        <div class="menu-status-bar">
+            <i class="ph-thin ph-info"></i> 点单后送餐到房 · 支持微信支付 <i class="ph-thin ph-caret-right" style="font-size:0.7rem"></i>
+        </div>
+        {% endif %}
         {% if categories %}
         <div class="menu-container">
             {% for cat in categories %}
@@ -91,7 +102,11 @@
 <!-- 点餐按钮 -->
 <button class="fab" onclick="toggleOrderPanel()">
     <span class="fab-icon"><i class="ph-thin ph-shopping-cart"></i></span>
+    <span id="fabTotal" style="display:none;font-weight:700">¥0</span>
     <span class="fab-badge" id="cart-badge" data-count="0"></span>
+    {% if request.args.get('mp') == '1' %}
+    <span style="background:rgba(255,255,255,0.2);padding:4px 12px;border-radius:16px;font-size:0.75rem">去结算</span>
+    {% endif %}
 </button>
 {% endblock %}
 
@@ -218,6 +233,13 @@ function updateOrderPanel() {
 
     badge.setAttribute('data-count', totalCnt);
     badge.textContent = totalCnt || '';
+
+    var fabTotal = document.getElementById('fabTotal');
+    if (fabTotal) {
+        var t = cart.reduce(function(s, i) { return s + i.price * i.quantity; }, 0);
+        fabTotal.textContent = '¥' + t;
+        fabTotal.style.display = t > 0 ? '' : 'none';
+    }
 
     if (cart.length === 0) {
         container.innerHTML = '<p class="empty-hint">还没有选择菜品～</p>';
@@ -371,4 +393,31 @@ function finishOrder() {
     if (footer) footer.style.display = '';
 }
 </script>
+{% if request.args.get('mp') == '1' %}
+<script>
+// 分类导航点击滚动
+(function() {
+    var cats = document.querySelectorAll('.menu-cat-title');
+    cats.forEach(function(cat, i) {
+        cat.addEventListener('click', function() {
+            cats.forEach(function(c) { c.classList.remove('active'); });
+            cat.classList.add('active');
+            var items = cat.nextElementSibling;
+            if (items) items.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    // 默认选中第一个
+    if (cats.length) cats[0].classList.add('active');
+})();
+
+// 搜索过滤
+function filterMenu() {
+    var q = (document.getElementById('menuSearch').value || '').toLowerCase();
+    document.querySelectorAll('.menu-item').forEach(function(item) {
+        var text = (item.textContent || '').toLowerCase();
+        item.style.display = q && !text.includes(q) ? 'none' : '';
+    });
+}
+</script>
+{% endif %}
 {% endblock %}

@@ -77,8 +77,8 @@
             {% for food in foods %}
             <a href="{{ bnb_prefix }}/travel/food/{{ food.id }}" class="food-card" onclick="showFoodModal({{ food.id }}); return false;">
                 {% if food.images and food.images|length > 0 %}
-                <div class="food-card-img">
-                    <img src="{{ food.images[0] }}" alt="{{ food.name }}" loading="lazy">
+                <div class="food-card-img" style="background:var(--color-bg-light)">
+                    <img src="{{ food.images[0] }}" alt="{{ food.name }}" loading="{{ 'eager' if loop.index0 < 3 else 'lazy' }}">
                 </div>
                 {% endif %}
                 <div class="food-card-body">

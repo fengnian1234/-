@@ -17,7 +17,7 @@ MORNING_START = 7   # 早场 7:00
 MORNING_END = 10    # 早场 10:00
 EVENING_START = 15  # 晚场 15:00
 EVENING_END = 22    # 晚场 22:00
-SLOT_INTERVAL = 30  # 30分钟一个时间槽
+SLOT_INTERVAL = 60  # 每小时一个时间段（7:00起）
 ALCOHOL_START_HOUR = 18  # 酒水18:00后开放
 MAX_ADVANCE_DAYS = 7  # 最多提前7天
 
@@ -434,7 +434,7 @@ def get_queue_info(code, bnb_id=None):
         ahead_in_queue = slot_position - 1
         if ahead_in_queue > 0:
             h, m = map(int, res_time.split(":"))
-            est_minutes = h * 60 + m + ahead_in_queue * 30
+            est_minutes = h * 60 + m + ahead_in_queue * SLOT_INTERVAL
             est_h = est_minutes // 60
             est_m = est_minutes % 60
             estimated_time = f"{est_h:02d}:{est_m:02d}"

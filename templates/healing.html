@@ -145,10 +145,7 @@ function selectSlot(btn, timeStr){
 
 function submitBooking(){
   if (!_selectedTime) { alert('请选择服务时间'); return; }
-  var name = document.getElementById('guestName').value.trim();
-  var phone = document.getElementById('guestPhone').value.trim();
-  if (!name) { alert('请填写姓名'); return; }
-  if (!phone) { alert('请填写手机号码'); return; }
+
   var dateChip = document.querySelector('.date-chip.active');
   var dateStr = dateChip ? dateChip.getAttribute('data-date') : new Date().toISOString().split('T')[0];
 
@@ -157,7 +154,7 @@ function submitBooking(){
 
   fetch('/api/healing/book', {
     method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({course_id:_bookingCourse.id, tier_index:_bookingTierIdx, date:dateStr, time:_selectedTime, guest_name:name, guest_phone:phone, bnb_id:'donglinwai'})
+    body: JSON.stringify({course_id:_bookingCourse.id, tier_index:_bookingTierIdx, date:dateStr, time:_selectedTime, bnb_id:'donglinwai'})
   }).then(function(r){ return r.json(); })
     .then(function(data){
       if (data.error) { alert(data.error); if(btn){ btn.disabled=false; btn.textContent='确认预约 · ¥'+_bookingTier.price; } return; }

@@ -4234,3 +4234,65 @@ h4 { font-size: 1.05rem; }
 .icon-lg { font-size: 2rem !important; }
 .icon-xl { font-size: 3rem !important; }
 .icon-inline { vertical-align: -0.125em; }
+
+/* ══════════════════════════════════════════════════════════
+   网页端·手机适配 — 对齐小程序紧凑布局
+   仅在 < 768px 手机竖屏生效，平板/横屏保持原有布局
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+    /* Hero 缩小 */
+    .hero--photo { max-height: 300px; }
+    .hero-overlay { padding: 2rem 1rem 2rem; }
+    .hero-title { font-size: 1.5rem; }
+    .hero-subtitle { font-size: 0.85rem; }
+    .hero-desc { font-size: 0.8rem; }
+    /* 快捷入口 4列 */
+    .entry-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .entry-card { padding: 12px 6px; border-radius: 12px; }
+    .entry-icon { font-size: 1.3rem; }
+    .entry-title { font-size: 0.7rem; }
+    .entry-desc { display: none; }
+    /* 服务 3列 */
+    .service-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 6px; }
+    .service-card { padding: 10px 4px; border-radius: 12px; }
+    .service-desc, .service-time { display: none; }
+    .service-name { font-size: 0.65rem; }
+    /* 环境图 2列 */
+    .env-gallery { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    .env-card { height: 120px; aspect-ratio: auto; }
+    .env-card-label { font-size: 0.7rem; padding: 0.3rem 0.6rem; }
+    /* 介绍文字截断 */
+    .intro-item p { font-size: 0.75rem; line-height: 1.45; }
+    /* 房型预览紧凑 */
+    .room-preview-card h4 { font-size: 0.85rem; }
+    /* 美食卡片紧凑 */
+    .food-card { flex-direction: row; }
+    .food-card-img { height: 90px; max-width: 100px; min-width: 100px; }
+    .food-card-body { padding: 8px 10px; }
+    .food-card-desc { font-size: 0.7rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .food-card-meta { font-size: 0.65rem; }
+    /* 通用间距收紧 */
+    .section-padding { padding: 1.2rem 0; }
+    .page-header { padding: 1.2rem 0; }
+    .page-header h1 { font-size: 1.3rem; }
+    .page-header p { font-size: 0.75rem; }
+    .section-title { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .section-desc { font-size: 0.75rem; }
+    /* FAQ */
+    .faq-q { font-size: 0.85rem; padding: 12px; }
+    /* 积分 */
+    .points-balance { font-size: 2rem !important; }
+    /* 房型详情 */
+    .room-gallery-carousel { background: #000; }
+    .gallery-slide img { object-fit: cover; }
+    .gallery-main { height: 55vw; max-height: 320px; min-height: 200px; }
+    .room-info-grid { gap: 0.4rem; }
+    .info-item { padding: 0.3rem 0; }
+    /* 攻略路线 */
+    .route-spots-preview { display: none; }
+    .route-card-desc { font-size: 0.7rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    /* 紧急联系 */
+    .emergency-contact { margin-top: 1rem; padding: 0.8rem; }
+    .emergency-contact h3 { font-size: 0.85rem; }
+    .emergency-contact p { font-size: 0.72rem; }
+}
