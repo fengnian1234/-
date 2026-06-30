@@ -808,7 +808,7 @@ body.mp-mode .menu-status-bar i:last-child { margin-left: auto; font-size: 0.6re
 
 /* 双栏容器 */
 body.mp-mode .menu-container {
-    display: flex; gap: 10px;
+    display: flex; flex-direction: row; gap: 10px;
     height: calc(100vh - 220px);
     overflow: hidden; padding: 0 0.6rem;
 }

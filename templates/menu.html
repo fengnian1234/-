@@ -94,7 +94,11 @@
                     {% for item in cat['items'] %}
                     {% set is_tea = ('云雾茶' in item.name) %}
                     {% set has_both = ('热/冰' in item.description) %}
+                    {% set has_specs = is_tea or is_drink_cat %}
                     <div class="menu-item {% if item.is_recommended %}recommended{% endif %}">
+                        {% if item.image %}
+                        <div class="menu-item-img"><img src="{{ item.image }}" alt="{{ item.name }}" loading="lazy"></div>
+                        {% endif %}
                         <div class="menu-item-info">
                             <div class="menu-item-header">
                                 <h4>
@@ -109,7 +113,16 @@
                             <p class="menu-item-desc">{{ item.description }}</p>
                             {% endif %}
                         </div>
-                        <button class="btn btn-sm btn-order" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}" data-tea="{% if is_tea %}true{% else %}false{% endif %}" data-drink="{% if is_drink_cat %}true{% else %}false{% endif %}" data-temp="{% if has_both %}both{% else %}single{% endif %}">+ 点单</button>
+                        {% if has_specs %}
+                        <button class="btn btn-sm btn-order-spec" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}" data-tea="{% if is_tea %}true{% else %}false{% endif %}" data-drink="{% if is_drink_cat %}true{% else %}false{% endif %}" data-temp="{% if has_both %}both{% else %}single{% endif %}">选规格</button>
+                        {% else %}
+                        <button class="btn btn-sm btn-order" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}">+</button>
+                        <div class="stepper" data-item-id="{{ item.id }}">
+                            <button class="stepper-btn stepper-dec">−</button>
+                            <span class="stepper-count">0</span>
+                            <button class="stepper-btn stepper-inc">+</button>
+                        </div>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
@@ -462,10 +475,72 @@ function finishOrder() {
     var footer = document.querySelector('.order-panel-footer');
     if (footer) footer.style.display = '';
 }
+
+// ── Stepper 通用逻辑（桌面 + mp）──
+function getCartQtyForItem(itemId) {
+    var total = 0;
+    cart.forEach(function(entry) { if (entry.id === itemId) total += entry.quantity; });
+    return total;
+}
+
+function updateAllItemSteppers() {
+    document.querySelectorAll('.stepper').forEach(function(stepper) {
+        var itemId = parseInt(stepper.getAttribute('data-item-id'));
+        var qty = getCartQtyForItem(itemId);
+        var countEl = stepper.querySelector('.stepper-count');
+        if (countEl) countEl.textContent = qty;
+        var card = stepper.closest('.menu-item');
+        var orderBtn = card ? card.querySelector('.btn-order') : null;
+        var hasSpecBtn = card ? card.querySelector('.btn-order-spec') : null;
+        if (qty > 0 && !hasSpecBtn) {
+            if (orderBtn) orderBtn.style.display = 'none';
+            stepper.classList.add('active');
+        } else {
+            if (orderBtn) orderBtn.style.display = '';
+            stepper.classList.remove('active');
+        }
+    });
+}
+
+function decrementCartItem(itemId) {
+    for (var i = cart.length - 1; i >= 0; i--) {
+        if (cart[i].id === itemId) {
+            if (cart[i].quantity > 1) { cart[i].quantity--; }
+            else { cart.splice(i, 1); }
+            break;
+        }
+    }
+    updateOrderPanel();
+}
+
+// Stepper 点击委托
+(function() {
+    var mc = document.querySelector('.menu-container');
+    if (!mc) return;
+    mc.addEventListener('click', function(e) {
+        var decBtn = e.target.closest('.stepper-dec');
+        var incBtn = e.target.closest('.stepper-inc');
+        if (!decBtn && !incBtn) return;
+        e.stopPropagation();
+        var stepper = (decBtn || incBtn).closest('.stepper');
+        var itemId = parseInt(stepper.getAttribute('data-item-id'));
+        if (!itemId) return;
+        var card = stepper.closest('.menu-item');
+        var orderBtn = card ? card.querySelector('.btn-order') : null;
+        if (!orderBtn) return;
+        var name = orderBtn.getAttribute('data-name');
+        var price = parseInt(orderBtn.getAttribute('data-price'));
+        if (decBtn) {
+            decrementCartItem(itemId);
+        } else {
+            addToOrder(itemId, name, price, '');
+        }
+    });
+})();
 </script>
 {% if request.args.get('mp') == '1' %}
 <script>
-// ── MP 分类导航 + 搜索过滤 + Stepper ──
+// ── MP 分类导航 + 搜索过滤 ──
 var _mpActiveCat = null;
 
 (function() {
@@ -497,66 +572,6 @@ function applyMpFilters() {
         var searchMatch = !q || searchText.includes(q);
         item.style.display = catMatch && searchMatch ? '' : 'none';
     });
-}
-
-function getCartQtyForItem(itemId) {
-    var total = 0;
-    cart.forEach(function(entry) { if (entry.id === itemId) total += entry.quantity; });
-    return total;
-}
-
-function updateAllItemSteppers() {
-    document.querySelectorAll('.stepper').forEach(function(stepper) {
-        var itemId = parseInt(stepper.getAttribute('data-item-id'));
-        var qty = getCartQtyForItem(itemId);
-        var countEl = stepper.querySelector('.stepper-count');
-        if (countEl) countEl.textContent = qty;
-        var card = stepper.closest('.menu-item');
-        var orderBtn = card ? card.querySelector('.btn-order') : null;
-        var hasSpecBtn = card ? card.querySelector('.btn-order-spec') : null;
-        if (qty > 0 && !hasSpecBtn) {
-            if (orderBtn) orderBtn.style.display = 'none';
-            stepper.classList.add('active');
-        } else {
-            if (orderBtn) orderBtn.style.display = '';
-            stepper.classList.remove('active');
-        }
-    });
-}
-
-(function() {
-    var itemsContainer = document.querySelector('.menu-container .menu-items');
-    if (!itemsContainer) return;
-    itemsContainer.addEventListener('click', function(e) {
-        var decBtn = e.target.closest('.stepper-dec');
-        var incBtn = e.target.closest('.stepper-inc');
-        if (!decBtn && !incBtn) return;
-        e.stopPropagation();
-        var stepper = (decBtn || incBtn).closest('.stepper');
-        var itemId = parseInt(stepper.getAttribute('data-item-id'));
-        if (!itemId) return;
-        var card = stepper.closest('.menu-item');
-        var orderBtn = card ? card.querySelector('.btn-order') : null;
-        if (!orderBtn) return;
-        var name = orderBtn.getAttribute('data-name');
-        var price = parseInt(orderBtn.getAttribute('data-price'));
-        if (decBtn) {
-            decrementCartItem(itemId);
-        } else {
-            addToOrder(itemId, name, price, '');
-        }
-    });
-})();
-
-function decrementCartItem(itemId) {
-    for (var i = cart.length - 1; i >= 0; i--) {
-        if (cart[i].id === itemId) {
-            if (cart[i].quantity > 1) { cart[i].quantity--; }
-            else { cart.splice(i, 1); }
-            break;
-        }
-    }
-    updateOrderPanel();
 }
 </script>
 {% endif %}
