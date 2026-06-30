@@ -30,7 +30,7 @@ def api_staff_dashboard():
     from services.notify import get_pending_requests, get_all_requests_today, get_notification_stats
     from services.booking import get_review_reminders_due
     from models import SessionLocal, Order
-    from datetime import datetime
+    from datetime import datetime, UTC
 
     stats = get_notification_stats()
     pending_svc = get_pending_requests()
@@ -47,7 +47,7 @@ def api_staff_dashboard():
         orders_frontdesk = [o.to_dict() for o in paid_orders if o.notify_target == "frontdesk"]
         orders_manager = [o.to_dict() for o in paid_orders if o.notify_target == "manager"]
         # 今日完成的订单
-        today = datetime.utcnow().date()
+        today = datetime.now(UTC).date()
         completed_orders = db.query(Order).filter(
             Order.status.in_(["completed", "delivered"]),
             Order.created_at >= today
@@ -636,7 +636,7 @@ def api_simulate_set_mode():
         return jsonify({"success": False, "message": "模拟器仅限开发模式使用"}), 403
     from services.ai import get_conversation_mode, reset_conversation
     from models import SessionLocal, Booking
-    from datetime import datetime, timedelta
+    from datetime import datetime, timedelta, UTC
 
     data = request.get_json() or {}
     openid = data.get("openid", "sim_test_user")
@@ -657,7 +657,7 @@ def api_simulate_set_mode():
                 Booking.status == "confirmed"
             ).first()
             if not existing:
-                now = datetime.utcnow()
+                now = datetime.now(UTC)
                 booking = Booking(
                     openid=openid,
                     guest_name="测试客人",
@@ -690,7 +690,7 @@ def api_simulate_set_mode():
                 Booking.status == "checked_in"
             ).first()
             if not existing:
-                now = datetime.utcnow()
+                now = datetime.now(UTC)
                 booking = Booking(
                     openid=openid,
                     guest_name="测试客人",
@@ -715,14 +715,14 @@ def api_simulate_set_mode():
             db.query(Booking).filter(
                 Booking.openid == openid,
                 Booking.status.in_(["confirmed", "checked_in"])
-            ).update({"status": "checked_out", "checked_out_at": datetime.utcnow()}, synchronize_session=False)
+            ).update({"status": "checked_out", "checked_out_at": datetime.now(UTC)}, synchronize_session=False)
             db.commit()
             existing = db.query(Booking).filter(
                 Booking.openid == openid,
                 Booking.status == "checked_out"
             ).first()
             if not existing:
-                now = datetime.utcnow()
+                now = datetime.now(UTC)
                 booking = Booking(
                     openid=openid,
                     guest_name="测试客人",

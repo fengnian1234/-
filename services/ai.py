@@ -393,6 +393,7 @@ def record_guest_preference(openid: str, key: str, value: str):
     """从对话中提取并记录客人偏好"""
     try:
         from models import SessionLocal, GuestPreference
+        from datetime import datetime, UTC
         db = SessionLocal()
         try:
             pref = db.query(GuestPreference).filter(
@@ -413,7 +414,7 @@ def record_guest_preference(openid: str, key: str, value: str):
                 pref.room_pref = value
             elif key == "special" and not pref.special_notes:
                 pref.special_notes = value
-            pref.updated_at = datetime.utcnow()
+            pref.updated_at = datetime.now(UTC)
             db.commit()
             debug(f"偏好记录: {openid[:12]} {key}={value[:30]}")
         finally:

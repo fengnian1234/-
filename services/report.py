@@ -5,7 +5,7 @@ v3.6: +趋势分析图表（matplotlib）
 """
 import os
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from io import BytesIO
 from docx import Document
 from docx.shared import Pt, Cm, Inches, RGBColor, Emu
@@ -65,7 +65,7 @@ def generate_weekly_report() -> dict:
     summary = get_mentions_summary(bnb_id="guishu")
 
     # 3. 生成 DOCX
-    now = datetime.utcnow()
+    now = datetime.now(UTC)
     week_start = (now - timedelta(days=7)).strftime("%Y.%m.%d")
     week_end = now.strftime("%Y.%m.%d")
     cfg = BNB_CONFIGS["guishu"]
@@ -230,7 +230,7 @@ if _HAS_MPL:
 
 def _query_weekly_trends(db, weeks: int = 6) -> list:
     """从 PlatformMention 查询最近 N 周的逐周趋势数据"""
-    cutoff = datetime.utcnow() - timedelta(weeks=weeks)
+    cutoff = datetime.now(UTC) - timedelta(weeks=weeks)
 
     mentions = db.query(PlatformMention).filter(
         PlatformMention.collected_at >= cutoff
@@ -425,7 +425,7 @@ def _build_docx(summary: dict, search_results: dict,
             intro = doc.add_paragraph()
             intro.paragraph_format.space_after = Pt(6)
             _add_rich_run(intro,
-                f"以下图表展示最近 {len(trend_data)} 周的口碑变化趋势（数据截止 {datetime.utcnow().strftime('%m.%d')}）：",
+                f"以下图表展示最近 {len(trend_data)} 周的口碑变化趋势（数据截止 {datetime.now(UTC).strftime('%m.%d')}）：",
                 Pt(10.5), color=COLOR_DARK)
 
             # 嵌入三张趋势图（每张图配简短解读）
@@ -495,7 +495,7 @@ def _build_docx(summary: dict, search_results: dict,
     footer = doc.add_paragraph()
     footer.alignment = WD_ALIGN_PARAGRAPH.CENTER
     footer.paragraph_format.space_before = Pt(4)
-    _add_rich_run(footer, f"—— {BNB_NAME} · 自动生成 ——  {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}", Pt(8), color=COLOR_MUTED)
+    _add_rich_run(footer, f"—— {BNB_NAME} · 自动生成 ——  {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}", Pt(8), color=COLOR_MUTED)
 
     return doc
 
@@ -522,7 +522,7 @@ def _build_cover(doc, week_start: str, week_end: str):
     _add_rich_run(subtitle, "口碑监控周报", Pt(17), color=COLOR_SECONDARY)
 
     # 期数
-    week_num = datetime.utcnow().isocalendar()[1]
+    week_num = datetime.now(UTC).isocalendar()[1]
     period = doc.add_paragraph()
     period.alignment = WD_ALIGN_PARAGRAPH.CENTER
     period.paragraph_format.space_before = Pt(6)

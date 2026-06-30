@@ -3,7 +3,7 @@
 使用 SQLAlchemy + SQLite，轻量且方便迁移
 """
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
@@ -13,6 +13,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import DeclarativeBase, relationship, sessionmaker
 from config import DATABASE_URL, DB_TYPE, DB_POOL_SIZE, DB_POOL_OVERFLOW, DEBUG, REVIEW_REMINDER_DELAY_MINUTES
+
+# Python 3.12+ 弃用 utcnow()，用 UTC 时区感知替代
+_utcnow = lambda: datetime.now(UTC)
 
 
 class Base(DeclarativeBase):
@@ -41,7 +44,7 @@ class Room(Base):
     is_available = Column(Boolean, default=True, comment="是否可订")
     total_count = Column(Integer, default=1, comment="该房型总间数")
     sort_order = Column(Integer, default=0, comment="排序")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
     def to_dict(self):
         return {
@@ -87,8 +90,8 @@ class Booking(Base):
     review_sent_at = Column(DateTime, comment="好评推送时间")
     review_platform = Column(String(30), comment="推送好评的平台")
     notes = Column(Text, comment="内部备注")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
     def to_dict(self, include_pii: bool = True):
         """序列化预订。include_pii=False 时隐藏手机号/openid（客人端使用）"""
@@ -113,7 +116,7 @@ class Booking(Base):
         """是否刚退房且在30分钟提醒窗口内"""
         if not self.checked_out_at or self.review_sent:
             return False
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         trigger_time = self.checked_out_at + timedelta(minutes=REVIEW_REMINDER_DELAY_MINUTES)
         return now >= trigger_time
 
@@ -131,8 +134,8 @@ class RoomGuest(Base):
     guest_name = Column(String(50), comment="合住人称呼")
     relation = Column(String(30), default="同住", comment="关系: 家人/朋友/伴侣/同住")
     is_active = Column(Boolean, default=True, comment="是否仍有效")
-    bound_at = Column(DateTime, default=datetime.utcnow)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    bound_at = Column(DateTime, default=_utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
     def to_dict(self):
         return {
@@ -180,7 +183,7 @@ class MenuItem(Base):
     is_available = Column(Boolean, default=True)
     is_recommended = Column(Boolean, default=False, comment="是否推荐")
     sort_order = Column(Integer, default=0)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
     category = relationship("MenuCategory", back_populates="items")
 
@@ -214,8 +217,8 @@ class Order(Base):
     remark = Column(Text, comment="备注")
     notify_target = Column(String(20), default="frontdesk",
                           comment="通知目标: frontdesk=前台点单机 / manager=主理人调配")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
     def to_dict(self):
         return {
@@ -247,7 +250,7 @@ class ServiceRequest(Base):
                     comment="状态: pending→acknowledged→in_progress→completed")
     handler = Column(String(50), comment="处理人")
     notes = Column(Text, comment="处理备注")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
     acknowledged_at = Column(DateTime, comment="确认时间")
     completed_at = Column(DateTime, comment="完成时间")
 
@@ -377,8 +380,8 @@ class GuestPreference(Base):
     visit_count = Column(Integer, default=1, comment="入住次数")
     avg_rating_given = Column(Float, comment="历史均分")
     last_topic = Column(String(100), comment="最近关心的话题")
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
     def to_dict(self):
         return {
@@ -409,7 +412,7 @@ class PlatformMention(Base):
     is_verified = Column(Boolean, default=False, comment="是否已验证")
     image_urls = Column(JSON, comment="原始图片URL列表")
     local_images = Column(JSON, comment="本地下载的图片路径列表")
-    collected_at = Column(DateTime, default=datetime.utcnow)
+    collected_at = Column(DateTime, default=_utcnow)
     created_at = Column(DateTime, comment="原始发布时间")
 
     def to_dict(self):
@@ -438,7 +441,7 @@ class MessageLog(Base):
     message_type = Column(String(20), default="text", comment="消息类型: text/event/user/assistant/system")
     content = Column(Text)
     reply = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
 
 # ══════════════════════════════════════════════════════════
@@ -487,8 +490,8 @@ class GuestPoints(Base):
     total_spent = Column(Integer, default=0, comment="累计消费积分")
     membership = Column(String(20), default="silver", comment="会员等级: silver/gold/diamond")
     birthday_month = Column(Integer, comment="生日月份(1-12)，激活当月积分1.5倍")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
     def to_dict(self, include_pii: bool = True):
         """序列化预订。include_pii=False 时隐藏手机号/openid（客人端使用）"""
@@ -516,7 +519,7 @@ class PointLog(Base):
     points = Column(Integer, nullable=False, comment="积分变动(+入/-出)")
     action = Column(String(50), nullable=False, comment="行为: earn_checkin/earn_booking/earn_review/earn_share/earn_birthday/redeem_coffee/redeem_upgrade/redeem_late/redeem_coupon")
     description = Column(String(200), comment="积分变动说明")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
     def to_dict(self, include_pii: bool = True):
         """序列化预订。include_pii=False 时隐藏手机号/openid（客人端使用）"""
@@ -583,8 +586,8 @@ class AggregatedOrder(Base):
     remark = Column(String(500), comment="备注")
     source = Column(String(20), default="manual", comment="录入方式: manual/api/import")
     synced_at = Column(DateTime, comment="最后同步时间")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
     def to_dict(self):
         platform_icons = {"ctrip":"🏨","meituan":"🏠","fliggy":"✈️","dianping":"⭐","direct":"📞","xiaohongshu":"📕","douyin":"🎵"}
@@ -633,7 +636,7 @@ class Bnb(Base):
     wechat_app_secret = Column(String(100), comment="公众号AppSecret")
     is_active = Column(Boolean, default=True)
     sort_order = Column(Integer, default=0)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
     def to_dict(self):
         return {
@@ -766,7 +769,7 @@ class TeaReservation(Base):
     ordering_unlocked = Column(Boolean, default=False, comment="点单功能是否已解锁")
     checked_in_at = Column(DateTime, comment="核验到店时间")
     note = Column(String(200), comment="备注")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
     def to_dict(self):
         return {
@@ -908,7 +911,7 @@ class HealingAppointment(Base):
     status = Column(String(20), default="pending", comment="pending/paid/cancelled/completed")
     pay_status = Column(String(20), default="unpaid", comment="unpaid/paid/refunded")
     note = Column(String(200), comment="备注")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=_utcnow)
 
     def to_dict(self):
         return {

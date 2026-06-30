@@ -9,7 +9,7 @@ import re
 import subprocess
 import time
 import hashlib
-from datetime import datetime
+from datetime import datetime, UTC
 
 import requests
 
@@ -217,7 +217,7 @@ def _take_browser_screenshot(platform: str, query: str) -> tuple:
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         screenshot_dir = os.path.join(project_root, "local_data", "images", "monitor")
         os.makedirs(screenshot_dir, exist_ok=True)
-        filename = f"{platform}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.png"
+        filename = f"{platform}_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.png"
         path = os.path.join(screenshot_dir, filename)
 
         subprocess.run(
@@ -847,7 +847,7 @@ def search_platform_mentions(query: str = "", bnb_id: str = "guishu") -> dict:
 
     results = {
         "query": query,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "bnb_name": cfg["name"],
         "search_backend": "opencli browser + opencli + WebSearch",
         "platforms": {},
@@ -948,7 +948,7 @@ def download_mention_images(image_urls: list, platform: str) -> list:
             ext = os.path.splitext(img_url.split("?")[0])[1]
             if not ext or len(ext) > 5:
                 ext = ".jpg"
-            filename = f"{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{url_hash}{ext}"
+            filename = f"{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}_{url_hash}{ext}"
             filepath = os.path.join(monitor_img_dir, filename)
 
             # 下载
@@ -1035,7 +1035,7 @@ def store_mentions(platform: str, mentions: list, bnb_id: str = "guishu"):
                 sentiment=m.get("sentiment", "neutral"),
                 image_urls=image_urls,
                 local_images=local_images,
-                collected_at=datetime.utcnow(),
+                collected_at=datetime.now(UTC),
             )
             db.add(mention)
             count += 1
@@ -1054,7 +1054,7 @@ def get_mentions_summary(bnb_id: str = "guishu") -> dict:
     try:
         summary = {
             "bnb_name": cfg["name"],
-            "updated_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
             "platforms": {},
         }
 
@@ -1207,7 +1207,7 @@ def agent_collect_platform_info(bnb_id: str = "guishu") -> dict:
             "address": cfg["address"],
             "search_keywords": MONITOR_KEYWORDS_BY_BNB.get(bnb_id, MONITOR_KEYWORDS_BY_BNB["guishu"]),
         },
-        "collection_timestamp": datetime.utcnow().isoformat(),
+        "collection_timestamp": datetime.now(UTC).isoformat(),
         "powered_by": "opencli (平台精准搜索) + WebSearch/Bing (通用兜底)",
     }
 

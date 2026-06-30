@@ -1,7 +1,7 @@
 """
 积分体系服务 — 会员积分获取、兑换、等级管理
 """
-from datetime import datetime
+from datetime import datetime, UTC
 from models import SessionLocal, GuestPoints, PointLog, REDEEM_ITEMS, EARN_RULES, MEMBERSHIP_TIERS
 
 
@@ -79,7 +79,7 @@ def earn_points(openid: str, action: str, amount: int = None, description: str =
         pts = amount or rule["points"]
 
         # 生日月 1.5 倍积分
-        now = dt.utcnow()
+        now = dt.now(UTC)
         birthday_bonus = False
         if gp.birthday_month and gp.birthday_month == now.month and action != "birthday":
             pts = int(pts * 1.5)

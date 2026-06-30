@@ -1,7 +1,7 @@
 """
 多平台订单聚合服务 — 统一管理各OTA平台订单
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from sqlalchemy import func
 from models import SessionLocal, AggregatedOrder, Room
 from bnb_context import get_service_bnb_id as _get_bnb_id
@@ -90,7 +90,7 @@ def update_order_status(order_id: int, status: str, room_number: str = "") -> di
         order.status = status
         if room_number:
             order.room_number = room_number
-        order.updated_at = datetime.utcnow()
+        order.updated_at = datetime.now(UTC)
         db.commit()
         return {"success": True, "order": order.to_dict()}
     finally:
@@ -102,7 +102,7 @@ def get_dashboard_stats(bnb_id=None) -> dict:
     bnb_id = _get_bnb_id(bnb_id)
     db = SessionLocal()
     try:
-        today = datetime.utcnow().strftime("%Y-%m-%d")
+        today = datetime.now(UTC).strftime("%Y-%m-%d")
         base_filter = AggregatedOrder.bnb_id == bnb_id
 
         total = db.query(AggregatedOrder).filter(base_filter, AggregatedOrder.status != "cancelled").count()
@@ -140,7 +140,7 @@ def get_dashboard_stats(bnb_id=None) -> dict:
         ).scalar() or 0
 
         # 未来7天到店
-        week_later = (datetime.utcnow() + timedelta(days=7)).strftime("%Y-%m-%d")
+        week_later = (datetime.now(UTC) + timedelta(days=7)).strftime("%Y-%m-%d")
         upcoming = db.query(AggregatedOrder).filter(
             base_filter, AggregatedOrder.check_in > today, AggregatedOrder.check_in <= week_later,
             AggregatedOrder.status == "confirmed"
@@ -166,7 +166,7 @@ def get_room_calendar(days: int = 14, bnb_id: str = "guishu") -> list:
     """获取未来N天的房态日历"""
     db = SessionLocal()
     try:
-        today = datetime.utcnow()
+        today = datetime.now(UTC)
         # 按民宿查询实际客房总数
         total_rooms = db.query(Room).filter(
             Room.bnb_id == bnb_id

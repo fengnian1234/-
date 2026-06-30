@@ -6,7 +6,7 @@
 """
 import secrets
 import string
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from models import get_db, Booking, RoomGuest
 from services.logger import info, warning, error as log_error, debug, log_booking
 from config import (
@@ -271,7 +271,7 @@ def check_out_booking(booking_id: int) -> Booking:
         booking = db.query(Booking).filter(Booking.id == booking_id).first()
         if booking:
             booking.status = "checked_out"
-            booking.checked_out_at = datetime.utcnow()
+            booking.checked_out_at = datetime.now(UTC)
             db.commit()
             db.expunge(booking)  # 脱离session避免调用方DetachedInstanceError
         return booking
@@ -280,7 +280,7 @@ def check_out_booking(booking_id: int) -> Booking:
 def get_review_reminders_due():
     """获取需要推送好评提醒的退房记录（退房30分钟后）"""
     with get_db() as db:
-        cutoff = datetime.utcnow() - timedelta(minutes=REVIEW_REMINDER_DELAY_MINUTES)
+        cutoff = datetime.now(UTC) - timedelta(minutes=REVIEW_REMINDER_DELAY_MINUTES)
         bookings = db.query(Booking).filter(
             Booking.status == "checked_out",
             Booking.review_sent == False,
@@ -295,7 +295,7 @@ def mark_review_sent(booking_id: int, platform: str):
         booking = db.query(Booking).filter(Booking.id == booking_id).first()
         if booking:
             booking.review_sent = True
-            booking.review_sent_at = datetime.utcnow()
+            booking.review_sent_at = datetime.now(UTC)
             booking.review_platform = platform
             booking.status = "completed"
             db.commit()

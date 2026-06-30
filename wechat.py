@@ -8,7 +8,7 @@
 - 要求6：平台信息收集子Agent
 """
 import re
-from datetime import datetime
+from datetime import datetime, UTC
 from config import (
     AUTO_REPLY_NIGHT, HUMAN_SERVICE_OPEN_HOURS,
     BNB_PHONE, BNB_CONFIGS,
@@ -641,7 +641,7 @@ def check_and_send_review_reminders():
             "openid": booking.openid,
             "guest_name": booking.guest_name,
             "platform": booking.platform,
-            "sent_at": datetime.utcnow().isoformat(),
+            "sent_at": datetime.now(UTC).isoformat(),
         })
 
     return results

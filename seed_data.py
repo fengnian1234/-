@@ -1224,13 +1224,13 @@ def _seed_donglinwai_foods(db):
 
 def seed_orders(db):
     """示例订单数据"""
-    from datetime import datetime, timedelta
+    from datetime import datetime, timedelta, UTC
     if db.query(AggregatedOrder).count() > 0:
         return
-    today = datetime.utcnow().strftime("%Y-%m-%d")
-    tmr = (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d")
-    d3 = (datetime.utcnow() + timedelta(days=3)).strftime("%Y-%m-%d")
-    d5 = (datetime.utcnow() + timedelta(days=5)).strftime("%Y-%m-%d")
+    today = datetime.now(UTC).strftime("%Y-%m-%d")
+    tmr = (datetime.now(UTC) + timedelta(days=1)).strftime("%Y-%m-%d")
+    d3 = (datetime.now(UTC) + timedelta(days=3)).strftime("%Y-%m-%d")
+    d5 = (datetime.now(UTC) + timedelta(days=5)).strftime("%Y-%m-%d")
     PLATFORM_FEES = {"ctrip":0.12,"meituan":0.10,"fliggy":0.10,"dianping":0.08,"direct":0,"xiaohongshu":0,"douyin":0}
     orders = [
         ("ctrip","CT20260601","张伟","山景·精致大床房",today,tmr,1,688,2,"checked_in"),
@@ -1238,8 +1238,8 @@ def seed_orders(db):
         ("fliggy","FZ20260603","王磊","清舍·露台大床房",today,tmr,1,788,2,"confirmed"),
         ("ctrip","CT20260604","赵雪","室雅茶香套房",tmr,d3,2,1976,4,"confirmed"),
         ("direct","","陈明","知还标准间",tmr,d3,2,976,2,"confirmed"),
-        ("meituan","MT20260605","刘洋","特惠标准间",d5,(datetime.utcnow()+timedelta(days=6)).strftime("%Y-%m-%d"),1,388,2,"confirmed"),
-        ("xiaohongshu","","孙雨","山野大床房",d5,(datetime.utcnow()+timedelta(days=7)).strftime("%Y-%m-%d"),2,1176,2,"confirmed"),
+        ("meituan","MT20260605","刘洋","特惠标准间",d5,(datetime.now(UTC)+timedelta(days=6)).strftime("%Y-%m-%d"),1,388,2,"confirmed"),
+        ("xiaohongshu","","孙雨","山野大床房",d5,(datetime.now(UTC)+timedelta(days=7)).strftime("%Y-%m-%d"),2,1176,2,"confirmed"),
     ]
     for plat, oid, name, room, ci, co, n, amt, gc, st in orders:
         fee = round(amt * PLATFORM_FEES.get(plat, 0), 2)
@@ -1249,10 +1249,10 @@ def seed_orders(db):
 
 def seed_bookings(db):
     """预订种子数据 — 演示AI解锁 + 退房好评推送"""
-    from datetime import datetime, timedelta
+    from datetime import datetime, timedelta, UTC
     if db.query(Booking).count() > 0:
         return
-    now = datetime.utcnow()
+    now = datetime.now(UTC)
     today = now.strftime("%Y-%m-%d")
     tmr = (now + timedelta(days=1)).strftime("%Y-%m-%d")
     yst = (now - timedelta(days=1)).strftime("%Y-%m-%d")
@@ -1289,10 +1289,10 @@ def seed_bookings(db):
 
 def seed_points(db):
     """积分种子数据 — 演示积分中心"""
-    from datetime import datetime, timedelta
+    from datetime import datetime, timedelta, UTC
     if db.query(GuestPoints).count() > 0:
         return
-    now = datetime.utcnow()
+    now = datetime.now(UTC)
 
     # 积分账户
     guest = GuestPoints(

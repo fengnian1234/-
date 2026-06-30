@@ -6,7 +6,7 @@
 """
 import random
 import string
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, UTC
 from models import SessionLocal, TeaReservation
 from bnb_context import get_service_bnb_id
 
@@ -277,7 +277,7 @@ def check_in_reservation(code, bnb_id=None):
         # 核验通过
         reservation.status = "checked_in"
         reservation.ordering_unlocked = True
-        reservation.checked_in_at = datetime.utcnow()
+        reservation.checked_in_at = datetime.now(UTC)
         db.commit()
         return {
             "success": True,

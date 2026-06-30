@@ -4,7 +4,7 @@
 - 员工看板数据
 - 浏览器声音提醒支持
 """
-from datetime import datetime
+from datetime import datetime, UTC
 from models import get_db, ServiceRequest
 from bnb_context import get_service_bnb_id as _get_bnb_id
 
@@ -43,7 +43,7 @@ def get_pending_requests():
 def get_all_requests_today():
     """获取今日所有服务请求"""
     with get_db() as db:
-        today = datetime.utcnow().date()
+        today = datetime.now(UTC).date()
         requests = db.query(ServiceRequest).filter(
             ServiceRequest.created_at >= today
         ).order_by(ServiceRequest.created_at.desc()).all()
@@ -59,7 +59,7 @@ def acknowledge_request(request_id: int, handler: str = ""):
         if req:
             req.status = "acknowledged"
             req.handler = handler
-            req.acknowledged_at = datetime.utcnow()
+            req.acknowledged_at = datetime.now(UTC)
             db.commit()
             return True
         return False
@@ -73,7 +73,7 @@ def complete_request(request_id: int, notes: str = ""):
         ).first()
         if req:
             req.status = "completed"
-            req.completed_at = datetime.utcnow()
+            req.completed_at = datetime.now(UTC)
             if notes:
                 req.notes = notes
             db.commit()
@@ -92,7 +92,7 @@ def get_pending_count() -> int:
 def get_notification_stats() -> dict:
     """获取通知统计"""
     with get_db() as db:
-        today = datetime.utcnow().date()
+        today = datetime.now(UTC).date()
         pending = db.query(ServiceRequest).filter(
             ServiceRequest.status == "pending"
         ).count()
