@@ -106,13 +106,16 @@ function showRoomModal(id) {
     var remainingHtml = r.total_count && r.total_count <= 2 ? '<span class="room-remaining low"><i class="ph-thin ph-fire"></i> 仅剩'+r.total_count+'间</span>' : (r.total_count ? '<span class="room-remaining ok">热订中</span>' : '');
     var discountHtml = r.original_price && r.original_price > r.price ? '<span class="original-price">¥'+r.original_price+'</span><span class="discount-tag">省¥'+(r.original_price-r.price)+'</span>' : '';
     var amenitiesHtml = (r.amenities||[]).map(function(a){return '<span class="amenity-tag">'+a+'</span>';}).join('');
+    // 生成14天日期芯片
+    var _dateChips = Array.from({length:14},function(_,i){var d=new Date();d.setDate(d.getDate()+i);var mm=d.getMonth()+1,dd=d.getDate();var w=['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];var label=i===0?'今天':i===1?'明天':w;var ds=d.getFullYear()+'-'+(mm<10?'0':'')+mm+'-'+(dd<10?'0':'')+dd;return {label:label, mmdd:(mm+'/'+dd), ds:ds, w:w, idx:i};});
+    var _checkinChipsHtml = _dateChips.map(function(d){return '<button class="date-chip'+(d.idx===0?' active':'')+'" data-idx="'+d.idx+'" data-date="'+d.ds+'" data-label="'+d.label+'" onclick="event.stopPropagation();rmPickCheckin(this)"><span class="date-chip-label">'+d.label+'</span><span class="date-chip-date">'+d.mmdd+'</span></button>';}).join('');
+    var _checkoutChipsHtml = _dateChips.slice(1).map(function(d){return '<button class="date-chip'+(d.idx===1?' active':'')+'" data-idx="'+d.idx+'" data-date="'+d.ds+'" data-label="'+d.label+'" onclick="event.stopPropagation();rmPickCheckout(this)"><span class="date-chip-label">'+d.label+'</span><span class="date-chip-date">'+d.mmdd+'</span></button>';}).join('');
     var bookingHtml = ''
         +'<div class="room-booking">'
-        +'<div class="booking-section"><h4><i class="ph-thin ph-calendar"></i> 选择日期</h4><div class="date-picker" id="rmDatePicker">'
-        +Array.from({length:7},function(_,i){var d=new Date();d.setDate(d.getDate()+i);var mm=d.getMonth()+1,dd=d.getDate();var w=['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];var label=i===0?'今天':i===1?'明天':w;var ds=d.getFullYear()+'-'+(mm<10?'0':'')+mm+'-'+(dd<10?'0':'')+dd;return '<button class="date-chip'+(i===0?' active':'')+'" data-date="'+ds+'" data-label="'+label+'" data-w="'+w+'" onclick="event.stopPropagation();rmPickDate(this)"><span class="date-chip-label">'+label+'</span><span class="date-chip-date">'+(mm+'/'+dd)+'</span></button>';}).join('')
-        +'</div></div>'
+        +'<div class="booking-section"><h4><i class="ph-thin ph-calendar"></i> 入住日期</h4><div class="date-picker" id="rmCheckinPicker">'+_checkinChipsHtml+'</div></div>'
+        +'<div class="booking-section"><h4><i class="ph-thin ph-calendar-check"></i> 离店日期</h4><div class="date-picker" id="rmCheckoutPicker">'+_checkoutChipsHtml+'</div></div>'
         +'<div class="booking-section"><h4><i class="ph-thin ph-user"></i> 入住人数</h4><div class="guest-stepper"><button class="stepper-btn" onclick="event.stopPropagation();rmGuestChange(-1)">−</button><span class="stepper-count" id="rmGuestCount">2</span><button class="stepper-btn" onclick="event.stopPropagation();rmGuestChange(1)">+</button></div></div>'
-        +'<div class="booking-summary"><div class="booking-summary-row"><span>¥'+r.price+' × <span id="rmNights">1</span>晚</span><span class="booking-total-price">¥<span id="rmTotalPrice">'+r.price+'</span></span></div><span class="booking-points-hint">预订即送 <span id="rmPoints">'+(Math.floor(r.price/10))+'</span> 积分</span></div>'
+        +'<div class="booking-summary"><div class="booking-summary-row"><span>¥'+r.price+' × <span id="rmNights">1</span>晚 · <span id="rmGuestSummary">2</span>人</span><span class="booking-total-price">¥<span id="rmTotalPrice">'+r.price+'</span></span></div><span class="booking-points-hint">预订即送 <span id="rmPoints">'+(Math.floor(r.price/10))+'</span> 积分</span></div>'
         +'<button class="btn btn-primary btn-large btn-block" onclick="event.stopPropagation();rmConfirmBooking()">确认预订 · ¥<span id="rmBtnPrice">'+r.price+'</span></button>'
         +'<button class="btn btn-outline btn-large btn-block" style="margin-top:8px" onclick="event.stopPropagation();alert(\'请拨打前台电话预订：{{ bnb.phone }}\\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～\')"><i class="ph-thin ph-phone"></i> 电话咨询</button>'
         +'</div>'
@@ -129,11 +132,12 @@ function showRoomModal(id) {
     document.getElementById('roomModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
     _roomSlideIdx = 0; _roomSlideTotal = imgs.length;
-    _rmPrice = r.price; _rmNights = 1; _rmGuests = 2; _rmDate = '';
-    var todayChip = document.getElementById('rmDatePicker')?.querySelector('.date-chip');
-    if (todayChip) { _rmDate = todayChip.getAttribute('data-date'); todayChip.classList.add('active'); }
+    _rmPrice = r.price; _rmGuests = 2;
+    _rmCheckinIdx = 0;   // 今天
+    _rmCheckoutIdx = 1;  // 明天
+    _rmNights = 1;
     var gc = document.getElementById('rmGuestCount'); if (gc) gc.textContent = '2';
-    _rmUpdatePrice();
+    _rmUpdateBooking();
 }
 function closeRoomModal() {
     document.getElementById('roomModal').style.display = 'none';
@@ -149,32 +153,65 @@ function goRoomSlide(n) {
     var c = document.getElementById('rmCounter'); if (c) c.textContent = (_roomSlideIdx+1)+' / '+_roomSlideTotal;
 }
 function roomSlideChange(dir) { goRoomSlide(_roomSlideIdx + dir); }
-// ── 预订表单 ──
-var _rmPrice = 0, _rmNights = 1, _rmGuests = 2, _rmDate = '';
-function rmPickDate(btn) {
-    var picker = document.getElementById('rmDatePicker');
+// ── 预订表单（携程风：入住+离店双日期选择）──
+var _rmPrice = 0, _rmNights = 1, _rmGuests = 2;
+var _rmCheckinIdx = 0, _rmCheckoutIdx = 1;
+
+function rmPickCheckin(btn) {
+    var picker = document.getElementById('rmCheckinPicker');
     picker.querySelectorAll('.date-chip').forEach(function(c){ c.classList.remove('active'); });
     btn.classList.add('active');
-    _rmDate = btn.getAttribute('data-date');
-    _rmUpdatePrice();
+    _rmCheckinIdx = parseInt(btn.getAttribute('data-idx'));
+    // 离店必须晚于入住
+    if (_rmCheckoutIdx <= _rmCheckinIdx) {
+        _rmCheckoutIdx = _rmCheckinIdx + 1;
+        // 更新离店选择器
+        var outPicker = document.getElementById('rmCheckoutPicker');
+        outPicker.querySelectorAll('.date-chip').forEach(function(c){ c.classList.remove('active'); });
+        var targetChip = outPicker.querySelector('[data-idx="'+_rmCheckoutIdx+'"]');
+        if (targetChip) targetChip.classList.add('active');
+    }
+    _rmUpdateBooking();
 }
+
+function rmPickCheckout(btn) {
+    var idx = parseInt(btn.getAttribute('data-idx'));
+    if (idx <= _rmCheckinIdx) return; // 离店必须晚于入住
+    var picker = document.getElementById('rmCheckoutPicker');
+    picker.querySelectorAll('.date-chip').forEach(function(c){ c.classList.remove('active'); });
+    btn.classList.add('active');
+    _rmCheckoutIdx = idx;
+    _rmUpdateBooking();
+}
+
 function rmGuestChange(d) {
     _rmGuests = Math.max(1, Math.min(8, _rmGuests + d));
     var el = document.getElementById('rmGuestCount');
     if (el) el.textContent = _rmGuests;
+    var el2 = document.getElementById('rmGuestSummary');
+    if (el2) el2.textContent = _rmGuests;
 }
-function _rmUpdatePrice() {
+
+function _rmUpdateBooking() {
+    _rmNights = _rmCheckoutIdx - _rmCheckinIdx;
+    if (_rmNights < 1) _rmNights = 1;
     var total = _rmPrice * _rmNights;
+    var elNights = document.getElementById('rmNights');
     var elTotal = document.getElementById('rmTotalPrice');
     var elBtn = document.getElementById('rmBtnPrice');
     var elPoints = document.getElementById('rmPoints');
+    if (elNights) elNights.textContent = _rmNights;
     if (elTotal) elTotal.textContent = total;
     if (elBtn) elBtn.textContent = total;
     if (elPoints) elPoints.textContent = Math.floor(total / 10);
 }
+
 function rmConfirmBooking() {
-    if (!_rmDate) { alert('请先选择入住日期'); return; }
-    alert('预订确认\n\n日期：' + _rmDate + '\n人数：' + _rmGuests + '人\n金额：¥' + (_rmPrice * _rmNights) + '\n\n请拨打前台电话确认：{{ bnb.phone }}\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～');
+    var checkinChip = document.querySelector('#rmCheckinPicker .date-chip.active');
+    var checkoutChip = document.querySelector('#rmCheckoutPicker .date-chip.active');
+    var cinDate = checkinChip ? checkinChip.getAttribute('data-date') : '未选';
+    var coutDate = checkoutChip ? checkoutChip.getAttribute('data-date') : '未选';
+    alert('预订确认\n\n入住：' + cinDate + '\n离店：' + coutDate + '\n共' + _rmNights + '晚 · ' + _rmGuests + '人\n金额：¥' + (_rmPrice * _rmNights) + '\n\n请拨打前台电话确认：{{ bnb.phone }}\n或通过携程/美团/飞猪/大众点评搜索「{{ bnb.short_name }}」在线预订～');
 }
 </script>
 {% endblock %}
