@@ -18,14 +18,9 @@ body.mp-mode * {
     scrollbar-width: none;            /* Firefox */
     -ms-overflow-style: none;         /* IE/Edge */
 }
-body.mp-mode::-webkit-scrollbar,
-body.mp-mode *::-webkit-scrollbar {
-    display: none;                    /* Chrome/Safari */
-}
-
-/* 模拟器 iframe 本身也隐藏滚动条（外壳层级） */
-body.mp-mode .content-frame {
-    scrollbar-width: none;
+/* Chrome/Safari: 空一格 + ::伪元素 才能正确匹配所有后代元素的滚动条 */
+body.mp-mode ::-webkit-scrollbar {
+    display: none;
 }
 
 /* ── 小程序端配色（归墅·茶褐，喜茶克制哲学） ── */
