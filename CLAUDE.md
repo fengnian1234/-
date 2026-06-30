@@ -386,3 +386,17 @@ bnb_id = get_service_bnb_id(bnb_id)
 - 作为 `BNB_CONFIGS.get()` 的 fallback 默认值
 
 **新增代码禁止引用这些别名。**
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues; external PRs are treated as a triage surface. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
