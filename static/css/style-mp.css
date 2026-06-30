@@ -774,7 +774,7 @@ body.mp-mode .food-card-header h4 { font-size: 0.85rem; }
 body.mp-mode .food-card-desc { display: none; }
 body.mp-mode .food-card-meta { font-size: 0.65rem; gap: 6px; }
 body.mp-mode .food-address { display: none; }
-body.mp-mode .food-detail-link { display: none; }
+body.mp-mode .food-detail-link { font-size: 0.7rem; font-weight: 500; }
 
 /* ══════════════════════════════════════════════════════════
    菜单页 mp — 喜茶GO / 瑞幸咖啡 设计语言
