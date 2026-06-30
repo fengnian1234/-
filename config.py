@@ -66,7 +66,7 @@ BNB_CONFIGS = {
         "phone": "16607927666",
         "latitude": 29.5568,
         "longitude": 115.9797,
-        "theme_color": "#5C8E6B",
+        "theme_color": "#7B5D3B",  # 茶褐 — 陈年普洱，温润沉稳
         "tagline": "U型三层山居小院 · 11间客房",
         "footer_poems": {
             "spring": "云无心以出岫，鸟倦飞而知还",

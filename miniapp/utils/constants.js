@@ -15,7 +15,7 @@ const BNBS = {
     phone: '16607927666',
     latitude: 29.5568,
     longitude: 115.9797,
-    themeColor: '#5C8E6B',
+    themeColor: '#7B5D3B',
     description: '庐山之巅，大林沟路27号，云雾深处的静谧之所。',
   },
   shanji: {

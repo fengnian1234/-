@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/thin/style.css">
 <style>
 :root {
-  --bg:#F8F5F1; --phone-bg:#FAF9F6; --text:#2D2A26; --text2:#8C8C8C; --pri:#5C8E6B;
-  --border:#E0DCD5; --tab-bg:#FAF9F6; --tab-active:#5C8E6B;
+  --bg:#F8F5F1; --phone-bg:#FAF9F6; --text:#2D2A26; --text2:#8C8C8C; --pri:#7B5D3B;
+  --border:#E0DCD5; --tab-bg:#FAF9F6; --tab-active:#7B5D3B;
   --nav-bg:var(--pri); --nav-text:#fff; --nav-btn-bg:rgba(255,255,255,.2);
   --popup-bg:#FAF9F6; --popup-hover:#F0EBE1; --popup-shadow:rgba(0,0,0,0.06);
   --drawer-bg:#FAF9F6; --drawer-overlay:rgba(0,0,0,0.15);
@@ -21,7 +21,7 @@
 }
 [data-theme="dark"] {
   --bg:#1E1C1A; --phone-bg:#242220; --text:#D8D5D0; --text2:#A09890;
-  --border:#2E2C28; --tab-bg:#1E1C1A; --tab-active:#7DAA8A;
+  --border:#2E2C28; --tab-bg:#1E1C1A; --tab-active:#9B7D5B;
   --nav-bg:#2A2824; --nav-text:#D8D5D0; --nav-btn-bg:rgba(255,255,255,.12);
   --popup-bg:#2A2824; --popup-hover:#302E2A; --popup-shadow:rgba(0,0,0,0.4);
   --drawer-bg:#242220; --drawer-overlay:rgba(0,0,0,0.5);
@@ -171,7 +171,7 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 <p style="font-size:12px;color:var(--text2);margin-bottom:16px">左上角=我的 · 右上角=切换民宿 · 底部Tab按民宿区分</p>
 
 <div class="bnb-select-grid">
-  <div class="bnb-select-card active" id="cardGuishu" style="--color:#5C8E6B" onclick="switchBnb('guishu')"><div class="card-icon"><i class="ph-thin ph-house"></i></div><div class="card-name">归墅</div><div class="card-label">5Tab</div></div>
+  <div class="bnb-select-card active" id="cardGuishu" style="--color:#7B5D3B" onclick="switchBnb('guishu')"><div class="card-icon"><i class="ph-thin ph-house"></i></div><div class="card-name">归墅</div><div class="card-label">5Tab</div></div>
   <div class="bnb-select-card" id="cardShanji" style="--color:#2C4335" onclick="switchBnb('shanji')"><div class="card-icon"><i class="ph-thin ph-coffee"></i></div><div class="card-name">山纪</div><div class="card-label">6Tab</div></div>
   <div class="bnb-select-card" id="cardDonglinwai" style="--color:#4A5D78" onclick="switchBnb('donglinwai')"><div class="card-icon"><i class="ph-thin ph-flower-lotus"></i></div><div class="card-name">东林外</div><div class="card-label">6Tab</div></div>
 </div>
@@ -193,9 +193,9 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 const BNB_PREFIX = { guishu: '/gs', shanji: '/sj', donglinwai: '/dlw' };
 const BNB_NAMES = { guishu: '云上·归墅', shanji: '云上·山纪', donglinwai: '云上·东林外' };
 const BNB_ICONS = { guishu: '<i class="ph-thin ph-house"></i>', shanji: '<i class="ph-thin ph-coffee"></i>', donglinwai: '<i class="ph-thin ph-flower-lotus"></i>' };
-const BNB_COLORS = { guishu: '#5C8E6B', shanji: '#2C4335', donglinwai: '#4A5D78' };
+const BNB_COLORS = { guishu: '#7B5D3B', shanji: '#2C4335', donglinwai: '#4A5D78' };
 const BNB_GRADIENTS = {
-  guishu: 'linear-gradient(135deg, #5C8E6B, #7DAA8A)',
+  guishu: 'linear-gradient(135deg, #7B5D3B, #9B7D5B)',
   shanji: 'linear-gradient(135deg, #2C4335, #4A6E5A)',
   donglinwai: 'linear-gradient(135deg, #4A5D78, #7A8DA8)',
 };
