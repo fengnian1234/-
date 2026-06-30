@@ -69,11 +69,11 @@
     </footer>
 
     <script>
-    // 滚动入场动画
+    // 滚动入场动画（提前300px触发，避免区块"突然出现"的衔接感）
     (function(){
         var observer = new IntersectionObserver(function(entries){
             entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
-        }, {threshold: 0.1});
+        }, {threshold: 0, rootMargin: '300px 0px'});
         document.querySelectorAll('.section-padding,.page-header,.hero,.quick-entry,.footer,.rooms-list,.routes-list,.foods-list,.menu-container,.feature-list,.faq-list,.review-carousel,.entry-grid,.intro-grid,.service-grid')
             .forEach(function(el){ el.classList.add('fade-up'); observer.observe(el); });
     })();
