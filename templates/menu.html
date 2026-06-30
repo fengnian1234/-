@@ -20,13 +20,69 @@
         <!-- 搜索框 -->
         <div class="menu-search-bar">
             <i class="ph-thin ph-magnifying-glass"></i>
-            <input type="text" id="menuSearch" placeholder="搜索茶饮、甜品" oninput="filterMenu()">
+            <input type="text" id="menuSearch" placeholder="搜索茶饮、甜品" oninput="filterMenuMp()">
         </div>
         <!-- 状态提示条 -->
         <div class="menu-status-bar">
-            <i class="ph-thin ph-info"></i> 点单后送餐到房 · 支持微信支付 <i class="ph-thin ph-caret-right" style="font-size:0.7rem"></i>
+            <i class="ph-thin ph-info"></i> 点单后送餐到房 · 支持微信支付 <i class="ph-thin ph-caret-right"></i>
+        </div>
+        {% if categories %}
+        <div class="menu-container">
+            <!-- 左侧分类导航 -->
+            <div class="menu-cat-sidebar">
+                {% for cat in categories %}
+                {% if cat['items'] and cat['items']|length > 0 %}
+                <button class="menu-cat-title" data-cat-id="{{ cat.id }}">{{ cat.icon }} {{ cat.name }}</button>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <!-- 右侧商品列表 -->
+            <div class="menu-items">
+                {% for cat in categories %}
+                {% if cat['items'] and cat['items']|length > 0 %}
+                {% set is_drink_cat = (cat.name == '咖啡+茶饮' or cat.name == '特调饮品' or bnb_id == 'donglinwai') %}
+                {% for item in cat['items'] %}
+                {% set is_tea = ('云雾茶' in item.name) %}
+                {% set has_both = ('热/冰' in item.description) %}
+                {% set has_specs = is_tea or is_drink_cat %}
+                <div class="menu-item" data-cat-id="{{ cat.id }}" data-search-text="{{ item.name }} {{ item.description or '' }}">
+                    {% if item.image %}
+                    <div class="menu-item-img"><img src="{{ item.image }}" alt="{{ item.name }}" loading="lazy"></div>
+                    {% endif %}
+                    <div class="menu-item-info">
+                        <div class="menu-item-header">
+                            <h4>{{ item.name }}{% if item.is_recommended %}<span class="rec-badge"><i class="ph-thin ph-star"></i>推荐</span>{% endif %}</h4>
+                        </div>
+                        {% if item.description %}
+                        <p class="menu-item-desc">{{ item.description }}</p>
+                        {% endif %}
+                        <div class="menu-item-meta">
+                            <span class="menu-item-price">{% if is_tea %}¥38起{% else %}¥{{ item.price }}{% endif %}</span>
+                            {% if has_specs %}
+                            <button class="btn-order-spec" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}" data-tea="{% if is_tea %}true{% else %}false{% endif %}" data-drink="{% if is_drink_cat %}true{% else %}false{% endif %}" data-temp="{% if has_both %}both{% else %}single{% endif %}">选规格</button>
+                            {% else %}
+                            <button class="btn-order" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}">+</button>
+                            {% endif %}
+                            <div class="stepper" data-item-id="{{ item.id }}">
+                                <button class="stepper-btn stepper-dec">-</button>
+                                <span class="stepper-count">0</span>
+                                <button class="stepper-btn stepper-inc">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon"><i class="ph-thin ph-fork-knife"></i></span>
+            <p>暂无菜单信息</p>
         </div>
         {% endif %}
+        {% else %}
         {% if categories %}
         <div class="menu-container">
             {% for cat in categories %}
@@ -67,6 +123,7 @@
             <p>暂无菜单信息</p>
         </div>
         {% endif %}
+        {% endif %}
     </div>
 </section>
 
@@ -101,11 +158,17 @@
 
 <!-- 点餐按钮 -->
 <button class="fab" onclick="toggleOrderPanel()">
+    {% if request.args.get('mp') == '1' %}
+    <span class="fab-cart-info">
+        <span class="fab-icon"><i class="ph-thin ph-shopping-cart"></i></span>
+        <span class="fab-cart-total" id="fabTotal">¥0</span>
+        <span class="fab-cart-count" id="fabCount"></span>
+    </span>
+    <span class="fab-checkout">去结算</span>
+    {% else %}
     <span class="fab-icon"><i class="ph-thin ph-shopping-cart"></i></span>
     <span id="fabTotal" style="display:none;font-weight:700">¥0</span>
     <span class="fab-badge" id="cart-badge" data-count="0"></span>
-    {% if request.args.get('mp') == '1' %}
-    <span style="background:rgba(255,255,255,0.2);padding:4px 12px;border-radius:16px;font-size:0.75rem">去结算</span>
     {% endif %}
 </button>
 {% endblock %}
@@ -118,7 +181,7 @@ let cartSeq = 0;
 // Delegate click on all 点单 buttons
 var _mc = document.querySelector('.menu-container');
 if (_mc) _mc.addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-order');
+    const btn = e.target.closest('.btn-order, .btn-order-spec');
     if (!btn) return;
     const id = parseInt(btn.dataset.id);
     const name = btn.dataset.name;
@@ -240,6 +303,13 @@ function updateOrderPanel() {
         fabTotal.textContent = '¥' + t;
         fabTotal.style.display = t > 0 ? '' : 'none';
     }
+    var fabCount = document.getElementById('fabCount');
+    if (fabCount) {
+        var cnt = cart.reduce(function(s, i) { return s + i.quantity; }, 0);
+        fabCount.textContent = cnt > 0 ? cnt + '件' : '';
+        fabCount.style.display = cnt > 0 ? '' : 'none';
+    }
+    if (typeof updateAllItemSteppers === 'function') updateAllItemSteppers();
 
     if (cart.length === 0) {
         container.innerHTML = '<p class="empty-hint">还没有选择菜品～</p>';
@@ -395,28 +465,98 @@ function finishOrder() {
 </script>
 {% if request.args.get('mp') == '1' %}
 <script>
-// 分类导航点击滚动
+// ── MP 分类导航 + 搜索过滤 + Stepper ──
+var _mpActiveCat = null;
+
 (function() {
-    var cats = document.querySelectorAll('.menu-cat-title');
-    cats.forEach(function(cat, i) {
-        cat.addEventListener('click', function() {
-            cats.forEach(function(c) { c.classList.remove('active'); });
-            cat.classList.add('active');
-            var items = cat.nextElementSibling;
-            if (items) items.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var pills = document.querySelectorAll('.menu-cat-sidebar .menu-cat-title');
+    pills.forEach(function(pill) {
+        pill.addEventListener('click', function() {
+            var catId = pill.getAttribute('data-cat-id');
+            pills.forEach(function(p) { p.classList.remove('active'); });
+            pill.classList.add('active');
+            _mpActiveCat = catId;
+            applyMpFilters();
         });
     });
-    // 默认选中第一个
-    if (cats.length) cats[0].classList.add('active');
+    if (pills.length) {
+        pills[0].classList.add('active');
+        _mpActiveCat = pills[0].getAttribute('data-cat-id');
+        applyMpFilters();
+    }
 })();
 
-// 搜索过滤
-function filterMenu() {
+function filterMenuMp() { applyMpFilters(); }
+
+function applyMpFilters() {
     var q = (document.getElementById('menuSearch').value || '').toLowerCase();
-    document.querySelectorAll('.menu-item').forEach(function(item) {
-        var text = (item.textContent || '').toLowerCase();
-        item.style.display = q && !text.includes(q) ? 'none' : '';
+    document.querySelectorAll('.menu-container .menu-items .menu-item').forEach(function(item) {
+        var catId = item.getAttribute('data-cat-id');
+        var searchText = (item.getAttribute('data-search-text') || '').toLowerCase();
+        var catMatch = !_mpActiveCat || catId === _mpActiveCat;
+        var searchMatch = !q || searchText.includes(q);
+        item.style.display = catMatch && searchMatch ? '' : 'none';
     });
+}
+
+function getCartQtyForItem(itemId) {
+    var total = 0;
+    cart.forEach(function(entry) { if (entry.id === itemId) total += entry.quantity; });
+    return total;
+}
+
+function updateAllItemSteppers() {
+    document.querySelectorAll('.stepper').forEach(function(stepper) {
+        var itemId = parseInt(stepper.getAttribute('data-item-id'));
+        var qty = getCartQtyForItem(itemId);
+        var countEl = stepper.querySelector('.stepper-count');
+        if (countEl) countEl.textContent = qty;
+        var card = stepper.closest('.menu-item');
+        var orderBtn = card ? card.querySelector('.btn-order') : null;
+        var hasSpecBtn = card ? card.querySelector('.btn-order-spec') : null;
+        if (qty > 0 && !hasSpecBtn) {
+            if (orderBtn) orderBtn.style.display = 'none';
+            stepper.classList.add('active');
+        } else {
+            if (orderBtn) orderBtn.style.display = '';
+            stepper.classList.remove('active');
+        }
+    });
+}
+
+(function() {
+    var itemsContainer = document.querySelector('.menu-container .menu-items');
+    if (!itemsContainer) return;
+    itemsContainer.addEventListener('click', function(e) {
+        var decBtn = e.target.closest('.stepper-dec');
+        var incBtn = e.target.closest('.stepper-inc');
+        if (!decBtn && !incBtn) return;
+        e.stopPropagation();
+        var stepper = (decBtn || incBtn).closest('.stepper');
+        var itemId = parseInt(stepper.getAttribute('data-item-id'));
+        if (!itemId) return;
+        var card = stepper.closest('.menu-item');
+        var orderBtn = card ? card.querySelector('.btn-order') : null;
+        if (!orderBtn) return;
+        var name = orderBtn.getAttribute('data-name');
+        var price = parseInt(orderBtn.getAttribute('data-price'));
+        if (decBtn) {
+            decrementCartItem(itemId);
+        } else {
+            addToOrder(itemId, name, price, '');
+        }
+    });
+})();
+
+function decrementCartItem(itemId) {
+    for (var i = cart.length - 1; i >= 0; i--) {
+        if (cart[i].id === itemId) {
+            if (cart[i].quantity > 1) { cart[i].quantity--; }
+            else { cart.splice(i, 1); }
+            break;
+        }
+    }
+    updateOrderPanel();
 }
 </script>
 {% endif %}
