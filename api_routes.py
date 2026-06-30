@@ -8,6 +8,19 @@ from services.logger import error as log_error
 from config import DEBUG, BNB_NAME, BASE_URL, WECHAT_MINI_APP_ID, WECHAT_MINI_APP_SECRET
 
 
+def _err(msg: str, code: int = 400):
+    """统一 API 错误响应: {"success": False, "message": msg}"""
+    return jsonify({"success": False, "message": msg}), code
+
+
+def _ok(data: dict = None):
+    """统一 API 成功响应: {"success": True, ...data}"""
+    if data is None:
+        data = {}
+    data["success"] = True
+    return jsonify(data)
+
+
 # ══════════════════════════════════════════════════════════
 #  员工通知看板（要求2：醒目有效的通知方式）
 # ══════════════════════════════════════════════════════════
@@ -167,7 +180,7 @@ def api_check_ai_enabled():
     from bnb_context import get_current_bnb_id
     data = request.get_json()
     if not data or "openid" not in data:
-        return jsonify({"error": "缺少openid"}), 400
+        return _err("缺少openid")
     enabled = is_ai_enabled(data["openid"], bnb_id=get_current_bnb_id())
     return jsonify({"ai_enabled": enabled})
 
@@ -265,18 +278,18 @@ def api_order_pay():
     """模拟微信支付 — 确认订单付款"""
     data = request.get_json()
     if not data:
-        return jsonify({"error": "数据为空"}), 400
+        return _err("数据为空")
     order_id = data.get("order_id")
     if not order_id:
-        return jsonify({"error": "缺少订单ID"}), 400
+        return _err("缺少订单ID")
     from models import SessionLocal, Order
     db = SessionLocal()
     try:
         order = db.query(Order).filter(Order.id == order_id).first()
         if not order:
-            return jsonify({"error": "订单不存在"}), 404
+            return _err("订单不存在", 404)
         if order.pay_status == "paid":
-            return jsonify({"error": "已支付，无需重复支付"}), 400
+            return _err("已支付，无需重复支付")
         order.pay_status = "paid"
         order.status = "paid"
         db.commit()
@@ -537,7 +550,7 @@ def api_simulate_chat():
 
     data = request.get_json()
     if not data or "content" not in data:
-        return jsonify({"error": "缺少content字段"}), 400
+        return _err("缺少content字段")
 
     content = data["content"].strip()
     openid = data.get("openid", "sim_test_user")
@@ -815,7 +828,7 @@ def api_tea_reservation_slots():
     date_str = request.args.get("date", datetime.now().strftime("%Y-%m-%d"))
     result = get_available_slots(date_str, bnb_id=bnb_id)
     if "error" in result:
-        return jsonify({"success": False, "error": result["error"]}), 400
+        return _err(result["error"])
     return jsonify({"success": True, **result})
 
 
@@ -828,7 +841,7 @@ def api_tea_reservation_book():
     data["openid"] = data.get("openid", "web_user")
     result = create_reservation(data, bnb_id=bnb_id)
     if "error" in result:
-        return jsonify({"success": False, "error": result["error"]}), 400
+        return _err(result["error"])
     return jsonify(result)
 
 
@@ -841,10 +854,10 @@ def api_tea_reservation_checkin():
     data = request.get_json(silent=True) or {}
     reservation_code = data.get("reservation_code", "").strip().upper()
     if not reservation_code:
-        return jsonify({"success": False, "error": "请输入预约码"}), 400
+        return _err("请输入预约码")
     result = check_in_reservation(reservation_code, bnb_id=bnb_id)
     if "error" in result:
-        return jsonify({"success": False, "error": result["error"]}), 400
+        return _err(result["error"])
     return jsonify(result)
 
 
@@ -856,10 +869,10 @@ def api_tea_reservation_cancel():
     data = request.get_json(silent=True) or {}
     code = data.get("reservation_code", "").strip()
     if not code:
-        return jsonify({"success": False, "error": "缺少预约码"}), 400
+        return _err("缺少预约码")
     result = cancel_reservation(code, bnb_id=bnb_id)
     if "error" in result:
-        return jsonify({"success": False, "error": result["error"]}), 400
+        return _err(result["error"])
     return jsonify(result)
 
 
@@ -871,10 +884,10 @@ def api_tea_reservation_complete():
     data = request.get_json(silent=True) or {}
     code = data.get("reservation_code", "").strip()
     if not code:
-        return jsonify({"success": False, "error": "缺少预约码"}), 400
+        return _err("缺少预约码")
     result = complete_reservation(code)
     if "error" in result:
-        return jsonify({"success": False, "error": result["error"]}), 400
+        return _err(result["error"])
     return jsonify(result)
 
 
@@ -886,10 +899,10 @@ def api_tea_reservation_status():
     bnb_id = request.args.get("bnb_id", get_current_bnb_id())
     code = request.args.get("code", "").strip().upper()
     if not code:
-        return jsonify({"success": False, "error": "缺少预约码"}), 400
+        return _err("缺少预约码")
     result = get_reservation_by_code(code, bnb_id=bnb_id)
     if not result:
-        return jsonify({"success": False, "error": "预约码无效"}), 404
+        return _err("预约码无效", 404)
     return jsonify({"success": True, "reservation": result})
 
 
@@ -900,10 +913,10 @@ def api_tea_reservation_queue():
     bnb_id = request.args.get("bnb_id")
     code = request.args.get("code", "").strip()
     if not code:
-        return jsonify({"success": False, "error": "缺少预约码"}), 400
+        return _err("缺少预约码")
     result = get_queue_info(code, bnb_id=bnb_id)
     if "error" in result:
-        return jsonify({"success": False, "error": result["error"]}), 404
+        return _err(result["error"], 404)
     return jsonify(result)
 
 
@@ -934,10 +947,10 @@ def api_healing_slots():
     tier_index = request.args.get("tier_index", type=int)
     date_str = request.args.get("date", datetime.now().strftime("%Y-%m-%d"))
     if not course_id or tier_index is None:
-        return jsonify({"success": False, "error": "缺少参数 course_id / tier_index"}), 400
+        return _err("缺少参数 course_id / tier_index")
     result = get_available_slots(course_id, tier_index, date_str, bnb_id=bnb_id)
     if "error" in result:
-        return jsonify({"success": False, "error": result["error"]}), 400
+        return _err(result["error"])
     return jsonify({"success": True, **result})
 
 
@@ -950,10 +963,10 @@ def api_healing_pay():
     data = request.get_json(silent=True) or {}
     appointment_id = data.get("appointment_id")
     if not appointment_id:
-        return jsonify({"success": False, "error": "缺少 appointment_id"}), 400
+        return _err("缺少 appointment_id")
     result = confirm_payment(appointment_id, bnb_id=bnb_id)
     if "error" in result:
-        return jsonify({"success": False, "error": result["error"]}), 400
+        return _err(result["error"])
     return jsonify(result)
 
 
@@ -967,7 +980,7 @@ def api_healing_book():
     data["openid"] = request.args.get("openid") or data.get("openid")
     result = create_appointment(data, bnb_id=bnb_id)
     if "error" in result:
-        return jsonify({"success": False, "error": result["error"]}), 400
+        return _err(result["error"])
     return jsonify(result)
 
 # ══════════════════════════════════════════════════════════
