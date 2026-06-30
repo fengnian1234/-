@@ -349,11 +349,6 @@ body.mp-mode .venue-note { font-size: 0.65rem !important; margin-top: 2px !impor
 body.mp-mode .venue-cta { margin-top: 10px; padding-top: 10px; }
 body.mp-mode .btn-cta { padding: 10px 24px; font-size: 0.85rem; border-radius: 10px; }
 
-/* ── 全局间距 ── */
-body.mp-mode .section-padding { padding: 1.2rem 0; }
-body.mp-mode .section-title { font-size: 1rem; margin-bottom: 0; }
-body.mp-mode .section-title i { font-size: 1rem; }
-
 /* ── 菜单分类网格 ── */
 body.mp-mode .tea-cat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
 body.mp-mode .tea-exp-card { padding: 12px; border-radius: 8px; }
@@ -775,7 +770,9 @@ body.mp-mode .route-card-desc {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
-body.mp-mode .route-spots-preview { display: none; }
+body.mp-mode .route-spots-preview { display: flex; flex-wrap: wrap; gap: 4px; }
+body.mp-mode .spot-tag { font-size: 0.6rem; padding: 1px 6px; border-radius: 4px; }
+body.mp-mode .spot-more { font-size: 0.6rem; color: var(--color-text-lighter); }
 /* 美食卡片描述截断 + 图片缩小 */
 body.mp-mode .foods-list { gap: 12px; }
 body.mp-mode .food-card { border-radius: 8px; }
@@ -1080,10 +1077,15 @@ body.mp-mode #pointsCard {
 }
 
 /* ══════════════════════════════════════════════════════════
-   美食卡片 mp — 一级仅保留图/名/标签/价格/地址
+   美食卡片 mp — 图/名/标签/价格/地址 + 截断描述
    ══════════════════════════════════════════════════════════ */
-body.mp-mode .food-card-desc { display: none; }
-body.mp-mode .food-detail-link { display: none; }
+body.mp-mode .food-card-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+body.mp-mode .food-detail-link { font-size: 0.65rem; }
 
 /* ══════════════════════════════════════════════════════════
    茶场页 mp — 信息栏紧凑
@@ -1095,3 +1097,74 @@ body.mp-mode .venue-info-item p { font-size: 0.68rem; line-height: 1.3; margin: 
 body.mp-mode .venue-note { font-size: 0.6rem !important; }
 body.mp-mode .venue-cta { margin-top: 0.5rem; }
 body.mp-mode .venue-cta .btn-cta { padding: 0.5rem 1.2rem; font-size: 0.8rem; }
+
+/* ══════════════════════════════════════════════════════════
+   路线详情 mp — 时间线紧凑 + 信息层级清晰
+   ══════════════════════════════════════════════════════════ */
+body.mp-mode .route-detail { padding: 0.5rem 0; }
+body.mp-mode .route-header h1 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+body.mp-mode .route-meta { font-size: 0.72rem; gap: 0.6rem; }
+body.mp-mode .route-description { font-size: 0.78rem; line-height: 1.65; margin-bottom: 1rem; color: var(--color-text-light); }
+body.mp-mode .route-description p { font-size: 0.78rem; line-height: 1.65; }
+body.mp-mode .route-spots { margin-bottom: 1rem; }
+body.mp-mode .route-spots h3 { font-size: 0.85rem; margin-bottom: 0.6rem; }
+body.mp-mode .spots-timeline { padding-left: 1.5rem; }
+body.mp-mode .spots-timeline::before { left: 0.65rem; }
+body.mp-mode .spot-item { margin-bottom: 0.8rem; }
+body.mp-mode .spot-number { left: -1.15rem; width: 1rem; height: 1rem; font-size: 0.6rem; }
+body.mp-mode .spot-content h4 { font-size: 0.82rem; margin-bottom: 0.1rem; }
+body.mp-mode .spot-content p { font-size: 0.7rem; line-height: 1.45; color: var(--color-text-light); }
+body.mp-mode .spot-image { max-height: 140px; border-radius: 6px; }
+body.mp-mode .route-tips { padding: 0.7rem 0.9rem; border-radius: 6px; font-size: 0.72rem; margin: 1rem 0; }
+body.mp-mode .route-tips h3 { font-size: 0.8rem; margin-bottom: 0.3rem; }
+body.mp-mode .route-tips p { font-size: 0.72rem; line-height: 1.5; }
+body.mp-mode .route-map-link { margin: 1rem 0; }
+body.mp-mode .route-map-link .btn { font-size: 0.82rem; padding: 0.55rem 1.4rem; }
+body.mp-mode .route-back { text-align: center; margin-top: 0.5rem; }
+body.mp-mode .route-back .btn { font-size: 0.78rem; padding: 0.45rem 1.2rem; }
+
+/* ══════════════════════════════════════════════════════════
+   美食详情 mp — XHS风格内容页适配
+   ══════════════════════════════════════════════════════════ */
+body.mp-mode .food-detail { padding: 0.5rem 0 2rem; }
+body.mp-mode .food-detail-hero { margin: -0.5rem -0.6rem 1rem; border-radius: 0 0 12px 12px; }
+body.mp-mode .food-hero-img { max-height: 260px; }
+body.mp-mode .food-detail-header h1 { font-size: 1.2rem; margin-bottom: 0.3rem; }
+body.mp-mode .food-detail-meta { gap: 0.6rem; }
+body.mp-mode .food-category-badge { font-size: 0.68rem; padding: 0.15rem 0.5rem; }
+body.mp-mode .food-price { font-size: 0.9rem; }
+body.mp-mode .food-detail-tags { gap: 0.3rem; margin-bottom: 0.8rem; }
+body.mp-mode .food-tag { font-size: 0.65rem; padding: 0.15rem 0.5rem; }
+body.mp-mode .food-detail-intro { padding: 0.6rem 0.8rem; font-size: 0.78rem; line-height: 1.55; margin-bottom: 1rem; }
+body.mp-mode .food-detail-body p { font-size: 0.78rem; line-height: 1.7; margin-bottom: 0.6rem; }
+body.mp-mode .food-detail-musttry { padding: 0.7rem 0.9rem; border-radius: 6px; margin-bottom: 1rem; }
+body.mp-mode .food-detail-musttry h3 { font-size: 0.85rem; margin-bottom: 0.3rem; }
+body.mp-mode .food-detail-musttry p { font-size: 0.78rem; }
+body.mp-mode .food-detail-info { padding: 0.7rem 0.9rem; border-radius: 6px; margin-bottom: 1rem; }
+body.mp-mode .food-info-item { font-size: 0.75rem; margin-bottom: 0.5rem; }
+body.mp-mode .food-detail-back { text-align: center; margin-top: 0.5rem; }
+body.mp-mode .food-detail-back .btn { font-size: 0.78rem; padding: 0.45rem 1.2rem; }
+
+/* 美食详情弹窗 mp — 底部抽屉式 */
+body.mp-mode .food-modal-content {
+    max-width: 100%;
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 88vh;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-bg);
+}
+body.mp-mode .food-modal-content .food-detail-hero { border-radius: 16px 16px 0 0; }
+body.mp-mode .food-modal-content .food-hero-img { max-height: 220px; }
+body.mp-mode .food-modal-content .food-detail-header { padding: 0.8rem 1rem 0.3rem; }
+body.mp-mode .food-modal-content .food-detail-header h2 { font-size: 1.05rem; }
+body.mp-mode .food-modal-content .food-detail-tags { padding: 0 1rem; }
+body.mp-mode .food-modal-content .food-detail-intro { padding: 0 1rem; margin-bottom: 0.6rem; }
+body.mp-mode .food-modal-content .food-detail-intro p { font-size: 0.78rem; }
+body.mp-mode .food-modal-content .food-detail-body { padding: 0 1rem; }
+body.mp-mode .food-modal-content .food-detail-body p { font-size: 0.75rem; line-height: 1.7; }
+body.mp-mode .food-modal-content .food-detail-musttry { margin: 0 1rem 0.6rem; padding: 0.6rem 0.8rem; }
+body.mp-mode .food-modal-content .food-detail-info { margin: 0 1rem 0.6rem; padding: 0.6rem 0.8rem; }

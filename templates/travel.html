@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}游玩攻略 - {{ bnb.short_name }}{% endblock %}
+{% set mp = '?mp=1' if request.args.get('mp') == '1' else '' %}
 
 {% block content %}
 <section class="page-header">
@@ -12,9 +13,11 @@
 <!-- 重要通知 -->
 <section class="section-padding" style="padding-bottom:0">
     <div class="container">
+        {% if bnb_id == 'guishu' or bnb_id == 'shanji' %}
         <div class="notice-card notice-card--warning" style="margin-bottom:0.8rem">
             <strong><i class="ph-thin ph-car"></i> 暑期自驾限行</strong> — 每年<strong>7-8月份</strong>庐山实行暑期管制，禁止私家车自驾上山。请换乘景区大巴、索道或打车。详情咨询前台 <i class="ph-thin ph-phone"></i>{{ bnb.phone }}。
         </div>
+        {% endif %}
     </div>
 </section>
 
@@ -75,7 +78,7 @@
         {% if foods %}
         <div class="foods-list">
             {% for food in foods %}
-            <a href="{{ bnb_prefix }}/travel/food/{{ food.id }}" class="food-card" onclick="showFoodModal({{ food.id }}); return false;">
+            <a href="{{ bnb_prefix }}/travel/food/{{ food.id }}{{ mp }}" class="food-card" onclick="showFoodModal({{ food.id }}); return false;">
                 {% if food.images and food.images|length > 0 %}
                 <div class="food-card-img" style="background:var(--color-bg-light)">
                     <img src="{{ food.images[0] }}" alt="{{ food.name }}" loading="{{ 'eager' if loop.index0 < 3 else 'lazy' }}">

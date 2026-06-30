@@ -4547,7 +4547,8 @@ h4 { font-size: var(--text-base); }
     .room-info-grid { gap: 0.4rem; }
     .info-item { padding: 0.3rem 0; }
     /* 攻略路线 */
-    .route-spots-preview { display: none; }
+    .route-spots-preview { display: flex; flex-wrap: wrap; gap: 4px; }
+    .spot-tag { font-size: 0.65rem; padding: 1px 6px; }
     .route-card-desc { font-size: 0.7rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     /* 紧急联系 */
     .emergency-contact { margin-top: 1rem; padding: 0.8rem; }

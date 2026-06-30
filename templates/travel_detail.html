@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ route.name }} - {{ bnb.short_name }}{% endblock %}
+{% set mp = '?mp=1' if request.args.get('mp') == '1' else '' %}
 
 {% block content %}
 <section class="route-detail">
@@ -61,7 +62,7 @@
         {% endif %}
 
         <div class="route-back">
-            <a href="{{ bnb_prefix }}/travel" class="btn btn-outline">← 返回攻略列表</a>
+            <a href="{{ bnb_prefix }}/travel{{ mp }}" class="btn btn-outline">← 返回攻略列表</a>
         </div>
     </div>
 </section>
