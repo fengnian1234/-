@@ -18,7 +18,13 @@ body.mp-mode * {
     scrollbar-width: none;            /* Firefox */
     -ms-overflow-style: none;         /* IE/Edge */
 }
-/* Chrome/Safari: 空一格 + ::伪元素 才能正确匹配所有后代元素的滚动条 */
+/*
+ * Chrome/Safari: 必须同时覆盖两层
+ * 1. html 视口滚动条（mp-mode 在 body 上，需用 :has 穿透到 html）
+ * 2. 所有后代元素的滚动条（空格 + ::伪元素）
+ */
+html:has(body.mp-mode)::-webkit-scrollbar,
+body.mp-mode::-webkit-scrollbar,
 body.mp-mode ::-webkit-scrollbar {
     display: none;
 }
