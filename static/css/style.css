@@ -4494,6 +4494,10 @@ h4 { font-size: var(--text-base); }
    仅在 < 768px 手机竖屏生效，平板/横屏保持原有布局
    ══════════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
+    /* 喜茶排版：加大行高+字间距 */
+    body { line-height: 1.75; letter-spacing: 0.02em; }
+    /* 价格数字 serif + 字间距 */
+    .room-price, .menu-item-price, .price { font-family: var(--font-serif); letter-spacing: 0.03em; }
     /* Hero 缩小 */
     .hero--photo { max-height: 300px; }
     .hero-overlay { padding: 2rem 1rem 2rem; }
@@ -4502,13 +4506,13 @@ h4 { font-size: var(--text-base); }
     .hero-desc { font-size: 0.8rem; }
     /* 快捷入口 4列 */
     .entry-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .entry-card { padding: 12px 6px; border-radius: 12px; }
+    .entry-card { padding: 12px 6px; border-radius: 4px; }
     .entry-icon { font-size: 1.3rem; }
     .entry-title { font-size: 0.7rem; }
     .entry-desc { display: none; }
     /* 服务 3列 */
     .service-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 6px; }
-    .service-card { padding: 10px 4px; border-radius: 12px; }
+    .service-card { padding: 10px 4px; border-radius: 4px; }
     .service-desc, .service-time { display: none; }
     .service-name { font-size: 0.65rem; }
     /* 环境图 2列 */
@@ -4525,13 +4529,18 @@ h4 { font-size: var(--text-base); }
     .food-card-body { padding: 8px 10px; }
     .food-card-desc { font-size: 0.7rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .food-card-meta { font-size: 0.65rem; }
-    /* 通用间距收紧 */
-    .section-padding { padding: 1.2rem 0; }
+    /* 通用间距 — 喜茶风格：增大留白 */
+    .section-padding { padding: 2rem 0; }
     .page-header { padding: 1.2rem 0; }
     .page-header h1 { font-size: 1.3rem; }
     .page-header p { font-size: 0.75rem; }
     .section-title { font-size: 1.1rem; margin-bottom: 0.5rem; }
     .section-desc { font-size: 0.75rem; }
+    /* 非对称卡片间距 — 喜茶核心空间设计 */
+    .room-card, .food-card, .route-card, .service-card, .entry-card {
+        margin-left: 16px;
+        margin-right: 0;
+    }
     /* FAQ */
     .faq-q { font-size: 0.85rem; padding: 12px; }
     /* 积分 */
@@ -4549,4 +4558,8 @@ h4 { font-size: var(--text-base); }
     .emergency-contact { margin-top: 1rem; padding: 0.8rem; }
     .emergency-contact h3 { font-size: 0.85rem; }
     .emergency-contact p { font-size: 0.72rem; }
+    /* 购物车FAB — 喜茶深灰 */
+    .fab { background: #343434; border-radius: 4px; }
+    .fab .fab-badge { background: var(--color-danger); color: #fff; }
+    .fab-checkout { background: var(--color-accent); color: #fff; border-radius: 4px; }
 }

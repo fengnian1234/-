@@ -35,13 +35,13 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 .chat-header .info { flex:1; }
 .chat-header .name { font-size:15px; font-weight:600; }
 .chat-header .status { font-size:11px; opacity:.75; }
-.chat-header .btn-reset { padding:4px 12px; border-radius:16px; border:1px solid rgba(255,255,255,.4); background:transparent; color:#fff; font-size:11px; cursor:pointer; }
+.chat-header .btn-reset { padding:4px 12px; border-radius:4px; border:1px solid rgba(255,255,255,.4); background:transparent; color:#fff; font-size:11px; cursor:pointer; }
 /* 鉴权模式切换 */
-.mode-toggle { display:flex; align-items:center; gap:4px; padding:4px 10px; border-radius:16px; border:1px solid rgba(255,255,255,.4); background:transparent; color:#fff; font-size:11px; cursor:pointer; transition:background .15s; white-space:nowrap; }
+.mode-toggle { display:flex; align-items:center; gap:4px; padding:4px 10px; border-radius:4px; border:1px solid rgba(255,255,255,.4); background:transparent; color:#fff; font-size:11px; cursor:pointer; transition:background .15s; white-space:nowrap; }
 .mode-toggle:hover { background:rgba(255,255,255,.15); }
-.mode-popup { position:absolute; top:48px; right:56px; background:var(--bubble-you); border-radius:14px; box-shadow:0 8px 30px rgba(0,0,0,0.12); z-index:30; padding:6px; display:none; gap:2px; flex-direction:column; min-width:180px; }
+.mode-popup { position:absolute; top:48px; right:56px; background:var(--bubble-you); border-radius:4px; box-shadow:0 8px 30px rgba(0,0,0,0.12); z-index:30; padding:6px; display:none; gap:2px; flex-direction:column; min-width:180px; }
 .mode-popup.show { display:flex; }
-.mode-item { display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:12px; cursor:pointer; font-size:12px; color:var(--text); border:none; background:none; width:100%; text-align:left; }
+.mode-item { display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:4px; cursor:pointer; font-size:12px; color:var(--text); border:none; background:none; width:100%; text-align:left; }
 .mode-item:hover { background:var(--pri-light); }
 .mode-item.active { color:var(--pri); font-weight:600; }
 .mode-item .mode-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
@@ -51,23 +51,23 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 .mode-item .mode-dot.gray { background:#8c8c8c; }
 
 .quick-hints { display:flex; gap:6px; padding:10px 14px; overflow-x:auto; flex-shrink:0; background:var(--bubble-you); border-bottom:1px solid var(--border); }
-.quick-hint { flex-shrink:0; padding:6px 14px; border-radius:20px; background:var(--pri-light); color:var(--pri); font-size:12px; cursor:pointer; border:none; white-space:nowrap; }
+.quick-hint { flex-shrink:0; padding:6px 14px; border-radius:2px; background:var(--pri-light); color:var(--pri); font-size:12px; cursor:pointer; border:none; white-space:nowrap; }
 .quick-hint:active { opacity:.7; }
 
 .chat-area { flex:1; overflow-y:auto; padding:12px 14px; background:var(--chat-bg); display:flex; flex-direction:column; gap:10px; }
 .time-tag { text-align:center; font-size:11px; color:#999; margin:4px 0; }
-.bubble { max-width:78%; padding:10px 14px; border-radius:12px; font-size:14px; line-height:1.6; word-break:break-word; white-space:pre-wrap; animation: fadeUp .25s ease; box-shadow:0 1px 3px rgba(0,0,0,0.03); }
-.bubble.you { align-self:flex-start; background:var(--bubble-you); border-radius:4px 14px 14px 14px; }
-.bubble.me { align-self:flex-end; background:var(--bubble-me); border-radius:14px 4px 14px 14px; }
+.bubble { max-width:78%; padding:10px 14px; border-radius:4px; font-size:14px; line-height:1.75; word-break:break-word; white-space:pre-wrap; animation: fadeUp .25s ease; box-shadow:0 1px 2px rgba(0,0,0,0.02); }
+.bubble.you { align-self:flex-start; background:var(--bubble-you); border-radius:4px 4px 4px 4px; border-left:3px solid var(--pri); }
+.bubble.me { align-self:flex-end; background:var(--bubble-me); border-radius:4px; }
 .bubble .meta { font-size:10px; color:#999; margin-top:6px; padding-top:6px; border-top:1px solid rgba(0,0,0,.06); }
 @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
 .input-area { display:flex; gap:8px; padding:10px 14px; padding-bottom:max(10px, env(safe-area-inset-bottom)); background:var(--bubble-you); border-top:1px solid var(--border); flex-shrink:0; }
-.input-area input { flex:1; padding:10px 14px; border:1px solid var(--border); border-radius:24px; font-size:14px; background:#FAF9F6; outline:none; }
+.input-area input { flex:1; padding:10px 14px; border:1px solid var(--border); border-radius:4px; font-size:14px; background:#FAF9F6; outline:none; }
 .input-area input:focus { border-color:var(--pri); }
-.input-area button { width:44px; height:44px; border-radius:50%; background:var(--pri); color:#fff; border:none; font-size:18px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.input-area button { width:44px; height:44px; border-radius:4px; background:var(--pri); color:#fff; border:none; font-size:18px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
 
-.typing { align-self:flex-start; padding:10px 16px; border-radius:14px; background:var(--bubble-you); display:none; box-shadow:0 1px 3px rgba(0,0,0,0.03); }
+.typing { align-self:flex-start; padding:10px 16px; border-radius:4px; background:var(--bubble-you); display:none; box-shadow:0 1px 2px rgba(0,0,0,0.02); }
 .typing.show { display:block; }
 .typing span { display:inline-block; width:6px; height:6px; border-radius:50%; background:#bbb; animation: bounce 1.4s infinite; margin:0 2px; }
 .typing span:nth-child(2) { animation-delay:.2s; }
@@ -84,7 +84,7 @@ body { font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; ba
 [data-theme="dark"] .input-area { background: var(--color-bg-dark, #2A2824); }
 [data-theme="dark"] .input-area input { background: var(--color-bg, #1E1C1A); color: var(--color-text, #D8D5D0); }
 [data-theme="dark"] .quick-hints { background: var(--color-bg-dark, #2A2824); }
-[data-theme="dark"] .chat-header { background: linear-gradient(135deg, var(--pri), color-mix(in srgb, var(--pri) 60%, black)); }
+[data-theme="dark"] .chat-header { background: var(--pri); }
 </style>
 </head>
 <body>
