@@ -30,24 +30,30 @@ def create_service_request(openid: str, service_name: str,
         return req
 
 
-def get_pending_requests():
-    """获取所有待处理的服务请求"""
+def get_pending_requests(bnb_id=None):
+    """获取待处理的服务请求，可按 BnB 过滤"""
     with get_db() as db:
-        requests = db.query(ServiceRequest).filter(
+        q = db.query(ServiceRequest).filter(
             ServiceRequest.status.in_(["pending", "acknowledged"])
-        ).order_by(ServiceRequest.urgency.desc(),
-                   ServiceRequest.created_at.asc()).all()
-        return [r.to_dict() for r in requests]
+        )
+        if bnb_id:
+            q = q.filter(ServiceRequest.bnb_id == bnb_id)
+        q = q.order_by(ServiceRequest.urgency.desc(),
+                       ServiceRequest.created_at.asc())
+        return [r.to_dict() for r in q.all()]
 
 
-def get_all_requests_today():
-    """获取今日所有服务请求"""
+def get_all_requests_today(bnb_id=None):
+    """获取今日所有服务请求，可按 BnB 过滤"""
     with get_db() as db:
         today = datetime.now(UTC).date()
-        requests = db.query(ServiceRequest).filter(
+        q = db.query(ServiceRequest).filter(
             ServiceRequest.created_at >= today
-        ).order_by(ServiceRequest.created_at.desc()).all()
-        return [r.to_dict() for r in requests]
+        )
+        if bnb_id:
+            q = q.filter(ServiceRequest.bnb_id == bnb_id)
+        q = q.order_by(ServiceRequest.created_at.desc())
+        return [r.to_dict() for r in q.all()]
 
 
 def acknowledge_request(request_id: int, handler: str = ""):
@@ -89,20 +95,24 @@ def get_pending_count() -> int:
         ).count()
 
 
-def get_notification_stats() -> dict:
-    """获取通知统计"""
+def get_notification_stats(bnb_id=None) -> dict:
+    """获取通知统计，可按 BnB 过滤"""
     with get_db() as db:
         today = datetime.now(UTC).date()
-        pending = db.query(ServiceRequest).filter(
-            ServiceRequest.status == "pending"
-        ).count()
-        today_total = db.query(ServiceRequest).filter(
-            ServiceRequest.created_at >= today
-        ).count()
-        today_completed = db.query(ServiceRequest).filter(
-            ServiceRequest.created_at >= today,
-            ServiceRequest.status == "completed"
-        ).count()
+
+        def _count(status_filter, date_filter=False):
+            q = db.query(ServiceRequest)
+            if bnb_id:
+                q = q.filter(ServiceRequest.bnb_id == bnb_id)
+            if date_filter:
+                q = q.filter(ServiceRequest.created_at >= today)
+            if status_filter:
+                q = q.filter(ServiceRequest.status == status_filter)
+            return q.count()
+
+        pending = _count("pending")
+        today_total = _count(None, date_filter=True)
+        today_completed = _count("completed", date_filter=True)
 
         return {
             "pending": pending,

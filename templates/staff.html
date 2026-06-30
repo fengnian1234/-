@@ -1,81 +1,75 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-bnb="{{ bnb_id }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>员工通知看板 - 云上·归墅</title>
+<title>{{ bnb.short_name }} · 员工看板</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/thin/style.css">
+<link rel="stylesheet" href="/static/css/style.css">
 <script>
 (function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);})();
 </script>
 <style>
-:root{--primary:#2a3d33;--danger:#c4554a;--warning:#c9954a;--success:#5b8c5a;--bg:#F8F5F1;--card-bg:#FAF9F6;--border:#E0DCD5;--text:#2D2A26;--text-light:#8C8C8C;--radius:14px;--shadow:0 1px 4px rgba(0,0,0,0.04)}
+:root{--radius:14px;--staff-shadow:0 1px 4px rgba(0,0,0,0.04)}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
-.header{background:var(--primary);color:#fff;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--color-bg);color:var(--color-text);line-height:1.6}
+.header{background:var(--color-primary);color:#fff;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .header h1{font-size:1.2rem;font-weight:600}
-.header-badge{background:var(--danger);color:#fff;padding:0.3rem 0.8rem;border-radius:24px;font-size:0.9rem;font-weight:700;animation:pulse 2s infinite}
+.header-badge{background:var(--color-danger);color:#fff;padding:0.3rem 0.8rem;border-radius:24px;font-size:0.9rem;font-weight:700;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
 .container{max-width:900px;margin:0 auto;padding:1rem}
 /* Stats */
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:0.8rem;margin-bottom:1.5rem}
-.stat-card{background:var(--card-bg);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:var(--shadow)}
+.stat-card{background:var(--color-white);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:var(--staff-shadow)}
 .stat-value{font-size:2rem;font-weight:700;line-height:1.2}
-.stat-label{font-size:0.8rem;color:var(--text-light);margin-top:0.2rem}
-.stat-pending .stat-value{color:var(--danger)}
-.stat-today .stat-value{color:var(--primary)}
-.stat-done .stat-value{color:var(--success)}
-.stat-rate .stat-value{color:var(--warning)}
+.stat-label{font-size:0.8rem;color:var(--color-text-light);margin-top:0.2rem}
+.stat-pending .stat-value{color:var(--color-danger)}
+.stat-today .stat-value{color:var(--color-primary)}
+.stat-done .stat-value{color:var(--color-success)}
+.stat-rate .stat-value{color:var(--color-warning)}
 /* Alert banner */
-.alert-banner{background:var(--danger);color:#fff;padding:0.8rem 1.2rem;border-radius:var(--radius);margin-bottom:1rem;display:none;align-items:center;gap:0.8rem;font-weight:600}
+.alert-banner{background:var(--color-danger);color:#fff;padding:0.8rem 1.2rem;border-radius:var(--radius);margin-bottom:1rem;display:none;align-items:center;gap:0.8rem;font-weight:600}
 .alert-banner.show{display:flex}
 .alert-banner .dot{width:10px;height:10px;background:#fff;border-radius:50%;animation:pulse 1s infinite}
 /* Request List */
-.section-title{font-size:1rem;font-weight:600;margin-bottom:0.8rem;color:var(--primary);padding-bottom:0.4rem;border-bottom:2px solid var(--primary)}
+.section-title{font-size:1rem;font-weight:600;margin-bottom:0.8rem;color:var(--color-primary-dark);padding-bottom:0.4rem;border-bottom:2px solid var(--color-primary)}
 .request-list{display:flex;flex-direction:column;gap:0.6rem}
-.request-card{background:var(--card-bg);border-radius:var(--radius);padding:1rem 1.2rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:1rem;border-left:4px solid var(--border);transition:all 0.2s}
-.request-card.pending{border-left-color:var(--danger);animation:slideIn 0.3s ease-out}
-.request-card.acknowledged{border-left-color:var(--warning)}
-.request-card.completed{border-left-color:var(--success);opacity:0.6}
+.request-card{background:var(--color-white);border-radius:var(--radius);padding:1rem 1.2rem;box-shadow:var(--staff-shadow);display:flex;align-items:center;gap:1rem;border-left:4px solid var(--color-border);transition:all 0.2s}
+.request-card.pending{border-left-color:var(--color-danger);animation:slideIn 0.3s ease-out}
+.request-card.acknowledged{border-left-color:var(--color-warning)}
+.request-card.completed{border-left-color:var(--color-success);opacity:0.6}
 @keyframes slideIn{from{transform:translateX(-20px);opacity:0}to{transform:translateX(0);opacity:1}}
 .request-icon{font-size:2rem;flex-shrink:0}
 .request-info{flex:1}
 .request-name{font-weight:600;font-size:1rem}
-.request-meta{font-size:0.8rem;color:var(--text-light);display:flex;gap:1rem;margin-top:0.2rem}
+.request-meta{font-size:0.8rem;color:var(--color-text-light);display:flex;gap:1rem;margin-top:0.2rem}
 .request-actions{display:flex;gap:0.4rem;flex-shrink:0}
 .btn{padding:0.4rem 0.8rem;border-radius:6px;border:none;cursor:pointer;font-size:0.8rem;font-weight:500;transition:all 0.2s;font-family:inherit}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:#1a2d23}
-.btn-warning{background:var(--warning);color:#fff}
-.btn-warning:hover{background:#b87d30}
-.btn-success{background:var(--success);color:#fff}
-.btn-success:hover{background:#4a7a49}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
-.btn-outline:hover{background:var(--bg)}
+.btn-primary{background:var(--color-primary);color:#fff}
+.btn-primary:hover{filter:brightness(0.85)}
+.btn-warning{background:var(--color-warning);color:#fff}
+.btn-warning:hover{filter:brightness(0.85)}
+.btn-success{background:var(--color-success);color:#fff}
+.btn-success:hover{filter:brightness(0.85)}
+.btn-outline{background:transparent;border:1px solid var(--color-border);color:var(--color-text)}
+.btn-outline:hover{background:var(--color-bg)}
 /* Sound toggle */
 .sound-toggle{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;gap:0.3rem}
-.empty-state{text-align:center;padding:2rem;color:var(--text-light)}
+.empty-state{text-align:center;padding:2rem;color:var(--color-text-light)}
 .empty-icon{font-size:3rem;margin-bottom:0.5rem}
 /* Responsive */
 @media(max-width:800px){.stats{grid-template-columns:repeat(3,1fr)}.dual-panel{grid-template-columns:1fr !important}.request-card{flex-wrap:wrap}.request-actions{width:100%;justify-content:flex-end}}
 @media(max-width:500px){.stats{grid-template-columns:repeat(2,1fr)}}
-/* 深色模式 */
-[data-theme="dark"]{--primary:#5a9a6e;--danger:#cc6050;--warning:#d0a050;--success:#5c9c5a;--bg:#1a1e1c;--card-bg:#252927;--border:#3a3e3b;--text:#dcd8cf;--text-light:#909088}
-[data-theme="dark"] .header{background:var(--primary);color:#dcd8cf}
-[data-theme="dark"] .btn-primary:hover{background:#2a4a30}
-[data-theme="dark"] .btn-warning:hover{background:#8a6020}
-[data-theme="dark"] .btn-success:hover{background:#3a6a38}
-[data-theme="dark"] .btn-outline:hover{background:var(--border)}
-[data-theme="dark"] .sound-toggle{background:rgba(220,216,207,0.15);border-color:rgba(220,216,207,0.2);color:#dcd8cf}
-[data-theme="dark"] body{background:var(--bg);color:var(--text)}
-[data-theme="dark"] .request-card{background:var(--card-bg)}
-[data-theme="dark"] .stat-card{background:var(--card-bg)}
+/* 深色模式 — style.css 变量自动切换，此处仅保留 staff 特有微调 */
+[data-theme="dark"]{--staff-shadow:0 1px 4px rgba(0,0,0,0.2)}
+[data-theme="dark"] .header{background:var(--color-primary)}
+[data-theme="dark"] .sound-toggle{background:rgba(220,216,207,0.15);border-color:rgba(220,216,207,0.2);color:var(--color-text)}
 </style>
 </head>
 <body>
 
 <header class="header">
-    <h1>🛎️ 云上·归墅 · 员工看板</h1>
+    <h1>🛎️ {{ bnb.short_name }} · 员工看板</h1>
     <div style="display:flex;align-items:center;gap:0.8rem">
         <span class="header-badge" id="pendingBadge" style="display:none">0 待处理</span>
         <button class="sound-toggle" onclick="toggleSound()" id="soundBtn">🔇 声音提醒：关</button>
@@ -157,7 +151,8 @@ function toggleSound() {
 // 获取数据
 async function fetchData() {
     try {
-        const resp = await fetch('/api/staff/dashboard');
+        const bnbId = document.documentElement.getAttribute('data-bnb') || 'guishu';
+        const resp = await fetch(`/api/staff/dashboard?bnb_id=${bnbId}`);
         const data = await resp.json();
         renderStats(data.stats);
         renderFrontdesk(data.pending_orders_frontdesk || []);
@@ -184,7 +179,7 @@ function renderStats(data) {
     var mg = (data.pending_svc || []).length + (data.pending_orders_manager || []).length;
     document.getElementById('statsArea').innerHTML = `
         <div class="stat-card stat-pending"><div class="stat-value">${fd}</div><div class="stat-label">🖥️ 前台待处理</div></div>
-        <div class="stat-card" style="--danger:#c9954a"><div class="stat-value" style="color:var(--warning)">${mg}</div><div class="stat-label">👤 主理人待调配</div></div>
+        <div class="stat-card" style="--danger:#c9954a"><div class="stat-value" style="color:var(--color-warning)">${mg}</div><div class="stat-label">👤 主理人待调配</div></div>
         <div class="stat-card stat-today"><div class="stat-value">${stats.today_total||0}</div><div class="stat-label">今日总量</div></div>
         <div class="stat-card stat-done"><div class="stat-value">${stats.today_completed||0}</div><div class="stat-label">已完成</div></div>
         <div class="stat-card stat-rate"><div class="stat-value">${stats.completion_rate||'N/A'}</div><div class="stat-label">完成率</div></div>`;
@@ -313,7 +308,7 @@ setInterval(fetchData, REFRESH_INTERVAL);
 async function teaCheckin() {
     const code = document.getElementById('teaCheckinInput').value.trim().toUpperCase();
     const msg = document.getElementById('teaCheckinMsg');
-    if(!code || code.length < 6) { msg.textContent = '请输入6位预约码'; msg.style.color = 'var(--danger,#dc3545)'; return; }
+    if(!code || code.length < 6) { msg.textContent = '请输入6位预约码'; msg.style.color = 'var(--color-danger,#dc3545)'; return; }
     try {
         const r = await fetch('/api/tea/reservation/checkin?bnb_id=shanji', {
             method: 'POST',
@@ -322,13 +317,13 @@ async function teaCheckin() {
         }).then(r => r.json());
         if(r.success) {
             msg.textContent = r.message || '核验成功！点单已解锁';
-            msg.style.color = 'var(--success,#198754)';
+            msg.style.color = 'var(--color-success,#198754)';
             document.getElementById('teaCheckinInput').value = '';
         } else {
             msg.textContent = r.error || '核验失败';
-            msg.style.color = 'var(--danger,#dc3545)';
+            msg.style.color = 'var(--color-danger,#dc3545)';
         }
-    } catch(e) { msg.textContent = '网络错误'; msg.style.color = 'var(--danger,#dc3545)'; }
+    } catch(e) { msg.textContent = '网络错误'; msg.style.color = 'var(--color-danger,#dc3545)'; }
 }
 document.getElementById('teaCheckinInput').addEventListener('keydown', function(e) {
     if(e.key === 'Enter') teaCheckin();

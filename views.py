@@ -112,7 +112,7 @@ def bnb_healing(bnb_prefix=None):
     """疗愈板块（东林外专属）"""
     return render_template("healing.html")
 
-@app.route("/staff")
-def staff_dashboard():
+@_bnb_route("/staff")
+def staff_dashboard(bnb_prefix=None):
     """员工通知看板页面"""
     return render_template("staff.html")

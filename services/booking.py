@@ -277,16 +277,18 @@ def check_out_booking(booking_id: int) -> Booking:
         return booking
 
 
-def get_review_reminders_due():
-    """获取需要推送好评提醒的退房记录（退房30分钟后）"""
+def get_review_reminders_due(bnb_id=None):
+    """获取需要推送好评提醒的退房记录（退房30分钟后），可按 BnB 过滤"""
     with get_db() as db:
         cutoff = datetime.now(UTC) - timedelta(minutes=REVIEW_REMINDER_DELAY_MINUTES)
-        bookings = db.query(Booking).filter(
+        q = db.query(Booking).filter(
             Booking.status == "checked_out",
             Booking.review_sent == False,
             Booking.checked_out_at <= cutoff,
-        ).all()
-        return bookings
+        )
+        if bnb_id:
+            q = q.filter(Booking.bnb_id == bnb_id)
+        return q.all()
 
 
 def mark_review_sent(booking_id: int, platform: str):

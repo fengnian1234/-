@@ -26,37 +26,46 @@ def _ok(data: dict = None):
 # ══════════════════════════════════════════════════════════
 @app.route("/api/staff/dashboard")
 def api_staff_dashboard():
-    """获取员工看板数据 — 含点餐订单（前台）+ 服务请求（主理人）"""
+    """获取员工看板数据 — 含点餐订单（前台）+ 服务请求（主理人），支持 ?bnb_id= 过滤"""
     from services.notify import get_pending_requests, get_all_requests_today, get_notification_stats
     from services.booking import get_review_reminders_due
     from models import SessionLocal, Order
     from datetime import datetime, UTC
+    from bnb_context import get_current_bnb_id
 
-    stats = get_notification_stats()
-    pending_svc = get_pending_requests()
-    all_today_svc = get_all_requests_today()
+    bnb_id = request.args.get("bnb_id") or get_current_bnb_id()
+
+    stats = get_notification_stats(bnb_id)
+    pending_svc = get_pending_requests(bnb_id)
+    all_today_svc = get_all_requests_today(bnb_id)
     completed_svc = [r for r in all_today_svc if r["status"] == "completed"]
 
     # 点餐订单：已支付未完成的
     db = SessionLocal()
     try:
-        paid_orders = db.query(Order).filter(
+        q = db.query(Order).filter(
             Order.pay_status == "paid",
             Order.status.in_(["paid", "preparing"])
-        ).order_by(Order.created_at.asc()).all()
+        )
+        if bnb_id:
+            q = q.filter(Order.bnb_id == bnb_id)
+        paid_orders = q.order_by(Order.created_at.asc()).all()
         orders_frontdesk = [o.to_dict() for o in paid_orders if o.notify_target == "frontdesk"]
         orders_manager = [o.to_dict() for o in paid_orders if o.notify_target == "manager"]
         # 今日完成的订单
         today = datetime.now(UTC).date()
-        completed_orders = db.query(Order).filter(
+        cq = db.query(Order).filter(
             Order.status.in_(["completed", "delivered"]),
             Order.created_at >= today
-        ).order_by(Order.created_at.desc()).limit(20).all()
+        )
+        if bnb_id:
+            cq = cq.filter(Order.bnb_id == bnb_id)
+        completed_orders = cq.order_by(Order.created_at.desc()).limit(20).all()
     finally:
         db.close()
 
     # 检查好评推送提醒
-    review_reminders = get_review_reminders_due()
+    review_reminders = get_review_reminders_due(bnb_id)
 
     # 合并统计
     total_pending = stats["pending"] + len(orders_frontdesk) + len(orders_manager)
