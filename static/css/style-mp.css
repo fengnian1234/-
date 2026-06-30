@@ -763,32 +763,18 @@ body.mp-mode .faq-a { font-size: 0.72rem; line-height: 1.45; }
    ══════════════════════════════════════════════════════════ */
 body.mp-mode .route-card { padding: 12px 14px; border-radius: 8px; }
 body.mp-mode .route-card-header h3 { font-size: 0.88rem; }
-body.mp-mode .route-card-desc {
-    font-size: 0.7rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-body.mp-mode .route-spots-preview { display: flex; flex-wrap: wrap; gap: 4px; }
-body.mp-mode .spot-tag { font-size: 0.6rem; padding: 1px 6px; border-radius: 4px; }
-body.mp-mode .spot-more { font-size: 0.6rem; color: var(--color-text-lighter); }
+body.mp-mode .route-card-desc { display: none; }
+body.mp-mode .route-spots-preview { display: none; }
 /* 美食卡片描述截断 + 图片缩小 */
 body.mp-mode .foods-list { gap: 12px; }
 body.mp-mode .food-card { border-radius: 8px; }
 body.mp-mode .food-card-img { height: 90px; max-width: 100px; min-width: 100px; }
 body.mp-mode .food-card-body { padding: 8px 10px; }
 body.mp-mode .food-card-header h4 { font-size: 0.85rem; }
-body.mp-mode .food-card-desc {
-    font-size: 0.68rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
+body.mp-mode .food-card-desc { display: none; }
 body.mp-mode .food-card-meta { font-size: 0.65rem; gap: 6px; }
-body.mp-mode .food-address { font-size: 0.62rem; }
-body.mp-mode .food-detail-link { font-size: 0.65rem; }
+body.mp-mode .food-address { display: none; }
+body.mp-mode .food-detail-link { display: none; }
 
 /* ══════════════════════════════════════════════════════════
    菜单页 mp — 喜茶GO / 瑞幸咖啡 设计语言
@@ -1077,15 +1063,8 @@ body.mp-mode #pointsCard {
 }
 
 /* ══════════════════════════════════════════════════════════
-   美食卡片 mp — 图/名/标签/价格/地址 + 截断描述
+   美食卡片 mp — 图/名/标签/价格（一级极简，详情进弹窗）
    ══════════════════════════════════════════════════════════ */
-body.mp-mode .food-card-desc {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-body.mp-mode .food-detail-link { font-size: 0.65rem; }
 
 /* ══════════════════════════════════════════════════════════
    茶场页 mp — 信息栏紧凑
