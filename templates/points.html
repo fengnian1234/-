@@ -81,12 +81,8 @@ function renderAll(data) {
     document.getElementById('pointsBalance').textContent = pts;
     document.getElementById('memberBadge').innerHTML = `<i class="ph-thin ph-credit-card"></i> ${member}`;
     const multBadge = document.getElementById('multiplierBadge');
-    if (multiplier > 1.0) {
-        multBadge.style.display = 'block';
-        multBadge.textContent = `积分×${multiplier} 加速中`;
-    } else {
-        multBadge.style.display = 'none';
-    }
+    multBadge.textContent = `积分×${multiplier} 加速中`;
+    multBadge.style.display = 'block';
 
     // 获取规则
     document.getElementById('earnRules').innerHTML = data.earn_rules.map(r => `
