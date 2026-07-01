@@ -716,25 +716,6 @@
     50% { opacity: 0.5; }
 }
 
-/* 茶场核验区 */
-.saas-tea-checkin {
-    background: var(--color-white);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: 0.8rem 1rem;
-    margin-bottom: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-}
-
-.saas-tea-checkin label {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--color-text);
-    white-space: nowrap;
-}
-
 /* ═══════════════════════════════════════════════════════════════════
    响应式
    ═══════════════════════════════════════════════════════════════════ */

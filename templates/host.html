@@ -94,16 +94,6 @@ body { overflow: hidden; }
                     </div>
                 </div>
 
-                {% if bnb_id == 'shanji' %}
-                <!-- 此山茶场核验（山纪专属） -->
-                <div class="saas-tea-checkin">
-                    <label><i class="ph-thin ph-storefront"></i> 此山茶场 · 预约核验</label>
-                    <input type="text" id="teaCheckinInput" class="saas-input saas-input--sm" placeholder="输入6位预约码" maxlength="6" style="width:140px;text-transform:uppercase;letter-spacing:0.15em;text-align:center">
-                    <button class="saas-btn saas-btn--default saas-btn--sm" onclick="teaCheckin()">核验解锁</button>
-                    <span id="teaCheckinMsg" style="font-size:0.82rem"></span>
-                </div>
-                {% endif %}
-
                 <!-- 已完成列表 -->
                 <div class="saas-section">
                     <h2 class="saas-panel-title"><i class="ph-thin ph-check-circle"></i> 今日已完成</h2>
@@ -846,35 +836,6 @@ async function savePricing() {
         console.error('保存房价失败:', e);
     }
 }
-
-// ══════════════════════════════════════════════════════════
-//  山纪茶场核验
-// ══════════════════════════════════════════════════════════
-{% if bnb_id == 'shanji' %}
-async function teaCheckin() {
-    const code = document.getElementById('teaCheckinInput').value.trim().toUpperCase();
-    const msg = document.getElementById('teaCheckinMsg');
-    if (!code || code.length < 6) { msg.textContent = '请输入6位预约码'; msg.style.color = 'var(--color-danger)'; return; }
-    try {
-        const r = await fetch('/api/tea/reservation/checkin?bnb_id=shanji', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'X-Staff-Key': localStorage.getItem('staff_key') || ''},
-            body: JSON.stringify({ reservation_code: code }),
-        }).then(r => r.json());
-        if (r.success) {
-            msg.textContent = r.message || '核验成功！点单已解锁';
-            msg.style.color = 'var(--color-success)';
-            document.getElementById('teaCheckinInput').value = '';
-        } else {
-            msg.textContent = r.error || '核验失败';
-            msg.style.color = 'var(--color-danger)';
-        }
-    } catch(e) { msg.textContent = '网络错误'; msg.style.color = 'var(--color-danger)'; }
-}
-document.getElementById('teaCheckinInput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') teaCheckin();
-});
-{% endif %}
 
 // ══════════════════════════════════════════════════════════
 //  初始化
