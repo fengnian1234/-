@@ -547,13 +547,13 @@ REDEEM_ITEMS = {
 
 # ── 积分获取规则 ──────────────────────────────────────────
 EARN_RULES = {
-    "booking":     {"name": "入住消费",       "points": 5,   "unit": "每5元得5分（不足5元按5分计）"},
-    "checkin":     {"name": "每日签到",       "points": 5,   "unit": "每天签到+5分"},
-    "review":      {"name": "写订单平台评价", "points": 100, "unit": "携程/美团/飞猪/大众点评写评价+100分（截图发前台）"},
-    "share":       {"name": "邀请好友预订",   "points": 200, "unit": "好友通过分享首次入住+200分"},
-    "birthday":    {"name": "生日当月积分×1.5","points": 0,  "unit": "生日当月所有积分获取享1.5倍（联系前台登记生日月份）"},
-    "xhs_note":    {"name": "小红书笔记",     "points": 100, "unit": "带图发笔记+100分"},
-    "social_post": {"name": "朋友圈打卡",     "points": 50,  "unit": "定位+民宿图片发朋友圈+50分（截图发前台）"},
+    "booking":     {"name": "入住消费",       "points": 5,   "unit": "每5元 +5"},
+    "checkin":     {"name": "每日签到",       "points": 5,   "unit": "+5"},
+    "review":      {"name": "写平台评价",     "points": 100, "unit": "+100"},
+    "share":       {"name": "邀请好友预订",   "points": 200, "unit": "+200"},
+    "birthday":    {"name": "生日当月 ×1.5",  "points": 0,   "unit": "×1.5"},
+    "xhs_note":    {"name": "小红书笔记",     "points": 100, "unit": "+100"},
+    "social_post": {"name": "朋友圈打卡",     "points": 50,  "unit": "+50"},
 }
 
 # ── 会员等级 ──────────────────────────────────────────────

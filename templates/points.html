@@ -86,10 +86,9 @@ function renderAll(data) {
 
     // 获取规则
     document.getElementById('earnRules').innerHTML = data.earn_rules.map(r => `
-        <div style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:0.8rem;font-size:0.85rem">
+        <div style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:0.65rem 0.8rem;font-size:0.85rem;display:flex;justify-content:space-between;align-items:center">
             <strong>${r.name}</strong>
-            <span style="float:right;color:var(--color-accent);font-weight:700">+${r.points}分</span>
-            <div style="color:var(--color-text-lighter);font-size:0.75rem;margin-top:0.2rem">${r.unit}</div>
+            <span style="color:var(--color-accent);font-weight:700;flex-shrink:0;margin-left:0.5rem">${r.unit}</span>
         </div>
     `).join('');
 
@@ -114,11 +113,12 @@ function renderAll(data) {
         document.getElementById('tierTip').textContent = tip;
     }
 
-    // 兑换商品
-    document.getElementById('redeemItems').innerHTML = data.redeem_items.map(item => `
+    // 兑换商品（按积分升序）
+    var redeemSorted = [...data.redeem_items].sort((a,b) => a.points - b.points);
+    document.getElementById('redeemItems').innerHTML = redeemSorted.map(item => `
         <div style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:1rem;text-align:center">
             <div style="font-size:1rem;font-weight:600;margin-bottom:0.3rem">${item.name}</div>
-            <div style="color:var(--color-accent);font-weight:700;font-size:1.1rem;margin-bottom:0.5rem">${item.points}分</div>
+            <div style="color:var(--color-accent);font-weight:700;font-size:1.1rem;margin-bottom:0.5rem">${item.points}</div>
             <button onclick="doRedeem('${item.key}')" ${!data.guest || pts < item.points ? 'disabled' : ''}
                 style="background:${pts>=item.points?'var(--color-primary)':'var(--color-border)'};color:${pts>=item.points?'white':'var(--color-text-lighter)'};border:none;padding:0.4rem 1rem;border-radius:20px;cursor:${pts>=item.points?'pointer':'not-allowed'};font-size:0.82rem">
                 ${pts >= item.points ? '立即兑换' : '积分不足'}
