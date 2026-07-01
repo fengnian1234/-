@@ -41,14 +41,18 @@
                         {% endif %}
                     </span>
                 </div>
+                {% if request.args.get('mp') != '1' %}
                 <p class="route-card-desc">{{ route.description[:100] }}{% if route.description|length > 100 %}...{% endif %}</p>
+                {% else %}
+                <p class="route-card-desc">{{ route.description[:40] }}{% if route.description|length > 40 %}...{% endif %}</p>
+                {% endif %}
                 <div class="route-card-meta">
                     <span><i class="ph-thin ph-clock"></i> {{ route.duration }}</span>
                     {% if route.is_recommended %}
                     <span class="rec-tag"><i class="ph-thin ph-star"></i> 精选推荐</span>
                     {% endif %}
                 </div>
-                {% if route.spots %}
+                {% if request.args.get('mp') != '1' and route.spots %}
                 <div class="route-spots-preview">
                     {% for spot in route.spots[:3] %}
                         {% if spot is mapping %}
@@ -84,7 +88,7 @@
             <a href="{{ bnb_prefix }}/travel/food/{{ food.id }}{{ mp }}" class="food-card" onclick="showFoodModal({{ food.id }}); return false;">
                 {% if food.images and food.images|length > 0 %}
                 <div class="food-card-img" style="background:var(--color-bg-light)">
-                    <img src="{{ food.images[0] }}" alt="{{ food.name }}" loading="{{ 'eager' if loop.index0 < 3 else 'lazy' }}">
+                    <img src="{{ food.images[0] }}" alt="{{ food.name }}" loading="eager" onload="this.style.opacity='1'" style="opacity:0;transition:opacity 0.3s ease">
                 </div>
                 {% endif %}
                 <div class="food-card-body">
@@ -92,19 +96,21 @@
                         <h4>{{ food.name }}</h4>
                         <span class="food-category">{{ food.category }}</span>
                     </div>
-                    {% if food.description %}
+                    {% if request.args.get('mp') != '1' and food.description %}
                     <p class="food-card-desc">{{ food.description }}</p>
                     {% endif %}
                     <div class="food-card-meta">
                         <span><i class="ph-thin ph-currency-cny"></i> {{ food.price_range }}</span>
-                        {% if food.must_try %}
+                        {% if request.args.get('mp') != '1' and food.must_try %}
                         <span><i class="ph-thin ph-fork-knife"></i> 必点：{{ food.must_try }}</span>
                         {% endif %}
                     </div>
                     {% if food.address %}
                     <p class="food-address"><i class="ph-thin ph-map-pin"></i> {{ food.address }}</p>
                     {% endif %}
+                    {% if request.args.get('mp') != '1' %}
                     <span class="food-detail-link">查看详情 →</span>
+                    {% endif %}
                 </div>
             </a>
             {% endfor %}

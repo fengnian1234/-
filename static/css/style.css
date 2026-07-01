@@ -3277,9 +3277,9 @@ h4 { font-size: var(--text-base); }
         gap: 0.6rem;
     }
 
-    /* 服务网格 — 4 列 */
+    /* 服务网格 — 3 列 */
     .service-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: var(--space-4);
     }
 
