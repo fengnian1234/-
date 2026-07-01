@@ -48,21 +48,31 @@ def seed_all():
         # 0. 确保 Bnb 基础信息表已填充（从 BNB_CONFIGS 同步）
         seed_bnbs(db)
 
-        # 检查哪些民宿已有客房数据
+        # 检查哪些民宿已有客房数据（客房/菜单/服务仅首次填充）
         existing_bnbs = set()
         if db.query(Room).count() > 0:
             existing_bnbs = set(r[0] for r in db.query(Room.bnb_id).distinct().all())
 
-        # 逐民宿填充数据（各民宿数据独立，互不覆盖）
+        # 逐民宿填充客房/菜单/服务（仅首次）
         for bnb_id in ["guishu", "shanji", "donglinwai"]:
             if bnb_id not in existing_bnbs:
                 info(f" 初始化 {bnb_id} 客房/菜单/服务数据...")
                 seed_rooms(db, bnb_id)
                 seed_menu(db, bnb_id)
                 seed_services(db, bnb_id)
-                seed_travel_routes(db, bnb_id)
-                seed_food_recommends(db, bnb_id)
                 info(f"   {bnb_id} 基础数据填充完成")
+
+        # 攻略数据（路线+美食）每次启动刷新，确保与种子文件一致
+        for bnb_id in ["guishu", "shanji", "donglinwai"]:
+            fc = db.query(FoodRecommend).filter(FoodRecommend.bnb_id == bnb_id).count()
+            rc = db.query(TravelRoute).filter(TravelRoute.bnb_id == bnb_id).count()
+            if fc > 0 or rc > 0:
+                db.query(FoodRecommend).filter(FoodRecommend.bnb_id == bnb_id).delete()
+                db.query(TravelRoute).filter(TravelRoute.bnb_id == bnb_id).delete()
+                db.flush()
+            seed_travel_routes(db, bnb_id)
+            seed_food_recommends(db, bnb_id)
+            info(f" 攻略数据刷新: {bnb_id}" + (f" ({rc}→路线, {fc}→美食)" if fc or rc else ""))
 
         # 公共数据（仅初始化一次）
         if db.query(AggregatedOrder).count() == 0:

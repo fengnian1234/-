@@ -956,6 +956,11 @@ def run_migrations():
         "guest_points": [
             ("base_earned", "INTEGER DEFAULT 0", "基础积分累计（不含加成，用于等级升级）"),
         ],
+        "food_recommends": [
+            ("images", "JSON", "多图列表（XHS风格图文展示）"),
+            ("detail_content", "TEXT", "XHS风格长文描述（含emoji、分段）"),
+            ("tags", "JSON", "标签列表如 #庐山美食 #必打卡"),
+        ],
     }
 
     # 需要添加的索引: {表名: [(列名, 索引名)]}
