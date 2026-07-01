@@ -135,7 +135,7 @@ def earn_points(openid: str, action: str, amount: int = None, description: str =
 def redeem(openid: str, item_key: str, description: str = "") -> dict:
     """
     兑换商品
-    item_key: coffee|upgrade|late|tea_sample|tea_gift
+    item_key: coffee|upgrade|late|tea_sample
     """
     db = SessionLocal()
     try:

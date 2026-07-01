@@ -539,22 +539,21 @@ class PointLog(Base):
 
 # ── 积分兑换商品定义 ──────────────────────────────────────
 REDEEM_ITEMS = {
-    "coffee":     {"name": "☕ 精品咖啡1杯",         "points": 300, "type": "redeem_coffee"},
-    "upgrade":    {"name": "🏠 房型免费升级（视空房）", "points": 500, "type": "redeem_upgrade"},
-    "late":       {"name": "⏰ 延迟退房至14:00",       "points": 300, "type": "redeem_late"},
-    "tea_sample": {"name": "🍵 庐山云雾茶包·体验装(5泡)", "points": 200, "type": "redeem_gift"},
-    "tea_gift":   {"name": "🎁 庐山云雾茶·礼盒装(250g)",  "points": 800, "type": "redeem_gift"},
+    "coffee":     {"name": "☕ 精品咖啡1杯",              "points": 300, "type": "redeem_coffee"},
+    "upgrade":    {"name": "🏠 房型免费升级（视空房）",      "points": 500, "type": "redeem_upgrade"},
+    "late":       {"name": "⏰ 延迟退房至14:00",            "points": 300, "type": "redeem_late"},
+    "tea_sample": {"name": "🍵 庐山云雾茶包·体验装(5泡)",   "points": 500, "type": "redeem_gift"},
 }
 
 # ── 积分获取规则 ──────────────────────────────────────────
 EARN_RULES = {
-    "booking":     {"name": "入住消费",       "points": 1,   "unit": "每消费¥1得1分"},
-    "checkin":     {"name": "每日签到",       "points": 1,   "unit": "每天签到+1分"},
-    "review":      {"name": "写订单平台评价", "points": 80,  "unit": "携程/美团/飞猪/大众点评写评价+80分（截图发前台）"},
-    "share":       {"name": "邀请好友预订",   "points": 100, "unit": "好友通过分享首次入住+100分"},
+    "booking":     {"name": "入住消费",       "points": 5,   "unit": "每消费¥1得5分"},
+    "checkin":     {"name": "每日签到",       "points": 5,   "unit": "每天签到+5分"},
+    "review":      {"name": "写订单平台评价", "points": 100, "unit": "携程/美团/飞猪/大众点评写评价+100分（截图发前台）"},
+    "share":       {"name": "邀请好友预订",   "points": 200, "unit": "好友通过分享首次入住+200分"},
     "birthday":    {"name": "生日当月积分×1.5","points": 0,  "unit": "生日当月所有积分获取享1.5倍（联系前台登记生日月份）"},
-    "xhs_note":    {"name": "小红书笔记",     "points": 80,  "unit": "带图发笔记+80分"},
-    "social_post": {"name": "朋友圈打卡",     "points": 30,  "unit": "定位+民宿图片发朋友圈+30分（截图发前台）"},
+    "xhs_note":    {"name": "小红书笔记",     "points": 100, "unit": "带图发笔记+100分"},
+    "social_post": {"name": "朋友圈打卡",     "points": 50,  "unit": "定位+民宿图片发朋友圈+50分（截图发前台）"},
 }
 
 # ── 会员等级 ──────────────────────────────────────────────
