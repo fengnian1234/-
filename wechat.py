@@ -509,8 +509,11 @@ def handle_wechat_message(msg, bnb_id="guishu"):
             try:
                 from models import SessionLocal, MessageLog
                 db = SessionLocal()
-                log_entry = MessageLog(openid=openid, bnb_id=bnb_id, message_type="text", content=content, reply=str(reply)[:500])
-                db.add(log_entry); db.commit(); db.close()
+                try:
+                    log_entry = MessageLog(openid=openid, bnb_id=bnb_id, message_type="text", content=content, reply=str(reply)[:500])
+                    db.add(log_entry); db.commit()
+                finally:
+                    db.close()
             except Exception:
                 debug("消息日志记录失败")
             if match:

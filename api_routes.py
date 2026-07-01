@@ -132,6 +132,8 @@ def api_confirm_booking():
         check_out=data["check_out"],
         room_type=data.get("room_type", ""),
     )
+    if not booking:
+        return jsonify({"success": False, "message": "预订确认失败，请稍后重试"}), 500
     # 生成到店前关怀消息（Phase 3 通过微信客服消息发送）
     from services.ai import generate_pre_arrival_message
     pre_arrival_msg = generate_pre_arrival_message(
@@ -757,7 +759,6 @@ def api_simulate_set_mode():
                 Booking.openid == openid,
                 Booking.status.in_(["confirmed", "checked_in", "checked_out"])
             ).update({"status": "cancelled"}, synchronize_session=False)
-            db.commit()
             db.commit()
             reset_conversation(openid)
         finally:

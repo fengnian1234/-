@@ -46,8 +46,10 @@ def _try_acquire_slot(openid: str = "") -> tuple[bool, float]:
 
 # 简单去重：同一用户短时间内重复发相同消息则拦截
 _last_messages = {}  # {openid: (content, timestamp)}
+_last_messages_lock = threading.Lock()
 # 待续写：记录被截断的对话所使用的 system_template
 _pending_continuation = {}  # {openid: system_template}
+_continuation_lock = threading.Lock()
 
 
 def _validate_and_sanitize(openid: str, content: str) -> str | None:
@@ -68,13 +70,14 @@ def _validate_and_sanitize(openid: str, content: str) -> str | None:
 
     # 4. 连续重复消息拦截（30秒内完全相同）
     now = _time_module.time()
-    if openid in _last_messages:
-        last_content, last_time = _last_messages[openid]
-        if sanitized.strip() == last_content.strip() and (now - last_time) < 30:
-            warning(f"[AI] 重复消息拦截 openid={openid[:12]}")
-            return "您刚发送了相同的问题，我已收到～请稍候或换个问题试试"
+    with _last_messages_lock:
+        if openid in _last_messages:
+            last_content, last_time = _last_messages[openid]
+            if sanitized.strip() == last_content.strip() and (now - last_time) < 30:
+                warning(f"[AI] 重复消息拦截 openid={openid[:12]}")
+                return "您刚发送了相同的问题，我已收到～请稍候或换个问题试试"
 
-    _last_messages[openid] = (sanitized.strip(), now)
+        _last_messages[openid] = (sanitized.strip(), now)
     return None  # 校验通过
 
 
@@ -659,9 +662,9 @@ SESSION_TTL_SECONDS = 7 * 24 * 3600  # 会话7天无活动自动清理
 
 def _save_conversation(openid: str, role: str, content: str, bnb_id: str = "guishu"):
     """持久化对话记录到数据库（完整存储，不截断）"""
+    from models import SessionLocal, MessageLog
+    db = SessionLocal()
     try:
-        from models import SessionLocal, MessageLog
-        db = SessionLocal()
         log = MessageLog(
             openid=openid,
             bnb_id=bnb_id,
@@ -669,21 +672,22 @@ def _save_conversation(openid: str, role: str, content: str, bnb_id: str = "guis
             content=content[:2000],  # 完整存储，最长2000字符
             reply=content[:2000] if role == 'assistant' else ''
         )
-        db.add(log); db.commit(); db.close()
+        db.add(log); db.commit()
     except Exception as e:
         warning(f"对话持久化失败: {e}")
+    finally:
+        db.close()
 
 
 def _load_conversation(openid: str, limit: int = 40, bnb_id: str = "guishu") -> list:
     """从数据库加载最近对话历史（完整内容）"""
+    from models import SessionLocal, MessageLog
+    db = SessionLocal()
     try:
-        from models import SessionLocal, MessageLog
-        db = SessionLocal()
         logs = db.query(MessageLog).filter(
             MessageLog.openid == openid,
             MessageLog.bnb_id == bnb_id,
         ).order_by(MessageLog.created_at.desc()).limit(limit).all()
-        db.close()
         history = []
         for log in reversed(logs):
             if log.content and log.message_type in ('user', 'text'):
@@ -694,6 +698,8 @@ def _load_conversation(openid: str, limit: int = 40, bnb_id: str = "guishu") -> 
     except Exception:
         debug("对话历史加载失败")
         return []
+    finally:
+        db.close()
 
 
 def _summarize_memory(history: list, existing_summary: str = "") -> str:
@@ -883,7 +889,8 @@ def _call_ai(system_template: str, user_openid: str, user_message: str, bnb_id: 
 
         # 记录截断状态（用于「继续生成」）
         if truncated:
-            _pending_continuation[user_openid] = system_template
+            with _continuation_lock:
+                _pending_continuation[user_openid] = system_template
 
         history.append({"role": "user", "content": user_message})
         history.append({"role": "assistant", "content": ai_reply})
@@ -1068,10 +1075,10 @@ def continue_reply(user_openid: str) -> str:
     继续生成被截断的回复。
     将上一条截断的 AI 回复作为上下文，请求 AI 从断点继续。
     """
-    if user_openid not in _pending_continuation:
-        return "当前没有需要继续生成的内容～请直接提出新的问题吧"
-
-    system_template = _pending_continuation.pop(user_openid)
+    with _continuation_lock:
+        if user_openid not in _pending_continuation:
+            return "当前没有需要继续生成的内容～请直接提出新的问题吧"
+        system_template = _pending_continuation.pop(user_openid)
     return _call_ai(system_template, user_openid, "请继续上文未完的内容，从断点处接着写，不要重复已写过的部分。")
 
 
