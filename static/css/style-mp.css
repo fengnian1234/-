@@ -985,7 +985,7 @@ body.mp-mode .stepper-count {
 body.mp-mode .fab {
     position: fixed; bottom: 16px; left: 0.7rem; right: 0.7rem; width: auto;
     height: auto; border-radius: 4px; padding: 10px 16px;
-    background: #343434; color: #fff;
+    background: #343434; color: var(--color-on-primary);
     display: flex; align-items: center; justify-content: space-between;
     box-shadow: 0 6px 24px rgba(0,0,0,0.18);
     z-index: 100; font-size: 0.82rem;
@@ -996,7 +996,7 @@ body.mp-mode .fab .fab-icon { font-size: 1.3rem; opacity: 0.92; position: relati
 body.mp-mode .fab .fab-badge {
     position: static; background: var(--color-danger);
     padding: 2px 8px; border-radius: 10px; font-size: 0.66rem;
-    margin: 0 2px; color: #fff;
+    margin: 0 2px; color: var(--color-on-primary);
 }
 body.mp-mode .fab-cart-info {
     display: flex; align-items: center; gap: 7px;
@@ -1009,7 +1009,7 @@ body.mp-mode .fab-cart-badge {
     height: 16px;
     border-radius: 8px;
     background: #e74c3c;
-    color: #fff;
+    color: var(--color-on-primary);
     font-size: 0.6rem;
     font-weight: 700;
     display: flex;
@@ -1130,7 +1130,7 @@ body.mp-mode .room-booking .date-chip {
 body.mp-mode .room-booking .date-chip.active {
     background: var(--color-primary);
     border-color: var(--color-primary);
-    color: #fff;
+    color: var(--color-on-primary);
 }
 body.mp-mode .room-booking .date-chip-label {
     display: block;
@@ -1168,7 +1168,7 @@ body.mp-mode .room-booking .stepper-btn {
 }
 body.mp-mode .room-booking .stepper-btn:active {
     background: var(--color-primary);
-    color: #fff;
+    color: var(--color-on-primary);
 }
 body.mp-mode .room-booking .stepper-count {
     font-size: 1.1rem;
