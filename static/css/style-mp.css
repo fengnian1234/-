@@ -151,7 +151,7 @@ body.mp-mode .hero {
     overflow: hidden;
 }
 body.mp-mode .hero--photo {
-    max-height: 280px;
+    max-height: 260px;
     background-position: center 15%;
 }
 body.mp-mode .hero::after {
@@ -334,7 +334,7 @@ body.mp-mode .service-time { display: none; }
 
 /* ── Hero ── */
 body.mp-mode .tea-hero-logo { width: 50px !important; height: 50px !important; }
-body.mp-mode .hero { height: 38vh; min-height: 220px; max-height: 320px; }
+body.mp-mode .hero { height: 34vh; min-height: 200px; max-height: 300px; }
 body.mp-mode .hero-title { font-size: 1.4rem !important; }
 body.mp-mode .hero-subtitle { font-size: 0.85rem !important; display: none; }
 body.mp-mode .hero-desc { font-size: 0.78rem !important; }
