@@ -24,7 +24,7 @@
         </div>
         <!-- 状态提示条 -->
         <div class="menu-status-bar">
-            <i class="ph-thin ph-info"></i> 点单后送餐到房 · 支持微信支付 <i class="ph-thin ph-caret-right"></i>
+            <i class="ph-thin ph-info"></i> 点单后备注房间号可享受送餐到房服务，支持微信支付 <i class="ph-thin ph-caret-right"></i>
         </div>
         {% if categories %}
         <div class="menu-container">
@@ -172,7 +172,7 @@
             <input type="text" id="room-number" placeholder="房间号（选填）">
             <input type="text" id="order-remark" placeholder="备注（选填）">
         </div>
-        <div class="order-notice"><i class="ph-thin ph-coffee"></i> {% if bnb_id == 'donglinwai' %}东林外咖啡 · 点单后送饮到房{% else %}三山二水咖啡 · 点单后送餐到房{% endif %}<br><i class="ph-thin ph-credit-card"></i> 支持微信支付，确认后为您准备</div>
+        <div class="order-notice"><i class="ph-thin ph-info"></i> 备注房间号可享受送餐到房服务，支持微信支付</div>
         <button class="btn btn-primary btn-block" onclick="submitOrder()">确认下单</button>
     </div>
 </div>
