@@ -107,44 +107,49 @@ a{color:var(--color-primary);text-decoration:none}
     <!-- Points Balance -->
     <div class="points-balance">
         <div class="points-label">可用积分</div>
-        <div class="points-num">580</div>
-        <div class="points-label">累计获得 850 · 已使用 270</div>
-        <div class="points-badge">🥈 银牌会员</div>
+        <div class="points-num">365</div>
+        <div class="points-label">累计获得 1,065 · 已使用 700</div>
+        <div class="points-badge">🥈 银卡 · 积分×1.0</div>
         <div class="points-actions">
-            <button class="btn btn-white" onclick="alert('签到成功！+1 积分')">📅 每日签到</button>
-            <button class="btn" style="background:rgba(255,255,255,0.2);color:white" onclick="alert('积分规则：签到+1，写平台评价+80，邀请好友预订+100，朋友圈打卡+30，小红书笔记+80，生日月积分×1.5（联系前台登记）')">📖 规则</button>
+            <button class="btn btn-white" onclick="alert('签到成功！+5 积分')">📅 每日签到</button>
+            <button class="btn" style="background:rgba(255,255,255,0.2);color:white" onclick="alert('积分加速：银卡×1.0 / 金卡×1.2 / 钻卡×1.4\n\n获取方式：签到+5 | 平台评价+100 | 邀请好友+200\n小红书笔记+100 | 朋友圈打卡+50 | 入住消费每5元+5分\n生日当月×1.5倍（联系前台登记）')">📖 规则</button>
         </div>
     </div>
 
     <!-- Earn Rules -->
     <h3 class="section-title">🎯 如何赚积分</h3>
     <div class="rules-grid">
-        <div class="rule-card" onclick="alert('每日签到 +1 积分')">
+        <div class="rule-card">
             <div class="rule-icon">📅</div>
             <div class="rule-name">每日签到</div>
-            <div class="rule-points">+1 积分/天</div>
+            <div class="rule-points">+5 积分/天</div>
         </div>
-        <div class="rule-card" onclick="alert('在携程/美团/飞猪/大众点评写订单评价+80分（截图发前台）')">
+        <div class="rule-card">
+            <div class="rule-icon">💳</div>
+            <div class="rule-name">入住消费</div>
+            <div class="rule-points">每5元+5分</div>
+        </div>
+        <div class="rule-card">
             <div class="rule-icon">⭐</div>
-            <div class="rule-name">写订单平台评价</div>
-            <div class="rule-points">+80 积分</div>
-        </div>
-        <div class="rule-card" onclick="alert('邀请好友通过分享首次入住+100分')">
-            <div class="rule-icon">👥</div>
-            <div class="rule-name">邀请好友预订</div>
+            <div class="rule-name">写平台评价</div>
             <div class="rule-points">+100 积分</div>
         </div>
-        <div class="rule-card" onclick="alert('定位+民宿图片发朋友圈+30分（截图发前台）')">
+        <div class="rule-card">
+            <div class="rule-icon">👥</div>
+            <div class="rule-name">邀请好友预订</div>
+            <div class="rule-points">+200 积分</div>
+        </div>
+        <div class="rule-card">
             <div class="rule-icon">📸</div>
             <div class="rule-name">朋友圈打卡</div>
-            <div class="rule-points">+30 积分</div>
+            <div class="rule-points">+50 积分</div>
         </div>
-        <div class="rule-card" onclick="alert('在小红书带图发庐山民宿笔记+80分')">
+        <div class="rule-card">
             <div class="rule-icon">📕</div>
             <div class="rule-name">小红书笔记</div>
-            <div class="rule-points">+80 积分</div>
+            <div class="rule-points">+100 积分</div>
         </div>
-        <div class="rule-card" onclick="alert('生日当月所有积分获取享1.5倍！联系前台登记生日月份')">
+        <div class="rule-card">
             <div class="rule-icon">🎂</div>
             <div class="rule-name">生日当月×1.5</div>
             <div class="rule-points">倍数加成</div>
@@ -166,25 +171,25 @@ a{color:var(--color-primary);text-decoration:none}
 <section class="section-padding bg-light"><div class="container">
     <h3 class="section-title">🎁 积分兑换</h3>
     <div class="redeem-grid">
-        <div class="redeem-card" onclick="alert('兑换手冲咖啡需 120 积分（演示）')">
+        <div class="redeem-card">
             <div class="redeem-icon">☕</div>
-            <div class="redeem-name">手冲咖啡</div>
-            <div class="redeem-cost">120 积分</div>
+            <div class="redeem-name">精品咖啡1杯</div>
+            <div class="redeem-cost">300 积分</div>
         </div>
-        <div class="redeem-card" onclick="alert('兑换50元优惠券需 150 积分（演示）')">
-            <div class="redeem-icon">🎫</div>
-            <div class="redeem-name">50元优惠券</div>
-            <div class="redeem-cost">150 积分</div>
+        <div class="redeem-card">
+            <div class="redeem-icon">🏠</div>
+            <div class="redeem-name">房型免费升级</div>
+            <div class="redeem-cost">500 积分</div>
         </div>
-        <div class="redeem-card" onclick="alert('兑换手工桂花糕需 80 积分（演示）')">
-            <div class="redeem-icon">🍰</div>
-            <div class="redeem-name">手工桂花糕</div>
-            <div class="redeem-cost">80 积分</div>
-        </div>
-        <div class="redeem-card" onclick="alert('兑换云雾茶一壶需 200 积分（演示）')">
+        <div class="redeem-card">
             <div class="redeem-icon">🍵</div>
-            <div class="redeem-name">云雾茶一壶</div>
-            <div class="redeem-cost">200 积分</div>
+            <div class="redeem-name">庐山云雾茶包体验装</div>
+            <div class="redeem-cost">500 积分</div>
+        </div>
+        <div class="redeem-card">
+            <div class="redeem-icon">🫓</div>
+            <div class="redeem-name">庐山云雾茶饼</div>
+            <div class="redeem-cost">400 积分</div>
         </div>
     </div>
 </div></section>
@@ -195,35 +200,35 @@ a{color:var(--color-primary);text-decoration:none}
     <div class="log-list">
         <div class="log-item">
             <div class="log-info"><div class="log-desc">每日签到</div><div class="log-date">2026-06-12 08:30</div></div>
+            <div class="log-points plus">+5</div>
+        </div>
+        <div class="log-item">
+            <div class="log-info"><div class="log-desc">平台评价（携程）</div><div class="log-date">2026-06-11 14:20</div></div>
             <div class="log-points plus">+100</div>
         </div>
         <div class="log-item">
-            <div class="log-info"><div class="log-desc">预订确认</div><div class="log-date">2026-06-11 14:20</div></div>
+            <div class="log-info"><div class="log-desc">邀请好友预订</div><div class="log-date">2026-06-09 16:45</div></div>
             <div class="log-points plus">+200</div>
         </div>
         <div class="log-item">
-            <div class="log-info"><div class="log-desc">携程好评</div><div class="log-date">2026-06-09 16:45</div></div>
-            <div class="log-points plus">+300</div>
-        </div>
-        <div class="log-item">
-            <div class="log-info"><div class="log-desc">分享民宿</div><div class="log-date">2026-06-08 10:15</div></div>
+            <div class="log-info"><div class="log-desc">朋友圈打卡</div><div class="log-date">2026-06-08 10:15</div></div>
             <div class="log-points plus">+50</div>
         </div>
         <div class="log-item">
             <div class="log-info"><div class="log-desc">每日签到</div><div class="log-date">2026-06-07 07:50</div></div>
-            <div class="log-points plus">+100</div>
+            <div class="log-points plus">+5</div>
         </div>
         <div class="log-item">
             <div class="log-info"><div class="log-desc">每日签到</div><div class="log-date">2026-06-06 08:00</div></div>
-            <div class="log-points plus">+100</div>
+            <div class="log-points plus">+5</div>
         </div>
         <div class="log-item">
-            <div class="log-info"><div class="log-desc">兑换手冲咖啡</div><div class="log-date">2026-06-09 12:00</div></div>
-            <div class="log-points minus">-120</div>
+            <div class="log-info"><div class="log-desc">兑换精品咖啡</div><div class="log-date">2026-06-09 12:00</div></div>
+            <div class="log-points minus">-300</div>
         </div>
         <div class="log-item">
-            <div class="log-info"><div class="log-desc">兑换50元优惠券</div><div class="log-date">2026-06-05 15:30</div></div>
-            <div class="log-points minus">-150</div>
+            <div class="log-info"><div class="log-desc">兑换云雾茶饼</div><div class="log-date">2026-06-05 15:30</div></div>
+            <div class="log-points minus">-400</div>
         </div>
     </div>
 </div></section>
@@ -239,7 +244,7 @@ document.getElementById('themeToggle').onclick=function(){var c=document.documen
 <script>(function(){var o=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1});document.querySelectorAll('.section-padding,.page-header,.footer,.points-balance,.rules-grid,.redeem-grid,.log-list,.membership-bar').forEach(function(e){e.classList.add('fade-up');o.observe(e)})})();</script>
 <script>
 (function(){
-    var totalEarned = 850; // 演示数据
+    var totalEarned = 1065; // 演示数据
     var goldMin = 3000, diamondMin = 8000;
     var pct = totalEarned >= diamondMin ? 100 : totalEarned >= goldMin ? 50 + (totalEarned-goldMin)/(diamondMin-goldMin)*50 : (totalEarned/goldMin)*50;
     document.getElementById('tierFill').style.width = Math.min(100, pct) + '%';

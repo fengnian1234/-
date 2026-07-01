@@ -17,7 +17,7 @@
             <div id="pointsBalance" style="font-size:3rem;font-weight:700;font-family:var(--font-serif)">--</div>
             <div id="memberBadge" style="display:inline-block;background:rgba(255,255,255,0.2);padding:0.25rem 0.8rem;border-radius:20px;font-size:0.8rem;margin-top:0.3rem">--</div>
             <div id="multiplierBadge" style="display:none;font-size:0.75rem;margin-top:0.35rem;opacity:0.85"></div>
-            <button onclick="doCheckin()" id="checkinBtn" style="margin-top:0.8rem;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:0.5rem 1.2rem;border-radius:20px;cursor:pointer;font-size:0.85rem"><i class="ph-thin ph-calendar"></i> 每日签到 +1分</button>
+            <button onclick="doCheckin()" id="checkinBtn" style="margin-top:0.8rem;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:0.5rem 1.2rem;border-radius:20px;cursor:pointer;font-size:0.85rem"><i class="ph-thin ph-calendar"></i> 每日签到 +5分</button>
         </div>
 
         <!-- 会员等级 -->
@@ -101,7 +101,7 @@ function renderAll(data) {
     var bar = document.getElementById('membershipBar');
     if (data.guest && data.membership_info) {
         bar.style.display = 'block';
-        var totalEarned = data.guest.total_earned || 0;
+        var totalEarned = data.guest.base_earned || data.guest.total_earned || 0;
         var tiers = data.membership_info;
         var goldMin = tiers.gold ? tiers.gold.min_points : 3000;
         var diamondMin = tiers.diamond ? tiers.diamond.min_points : 8000;

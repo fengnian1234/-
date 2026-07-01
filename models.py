@@ -541,8 +541,8 @@ class PointLog(Base):
 REDEEM_ITEMS = {
     "coffee":     {"name": "☕ 精品咖啡1杯",              "points": 300, "type": "redeem_coffee"},
     "upgrade":    {"name": "🏠 房型免费升级（视空房）",      "points": 500, "type": "redeem_upgrade"},
-    "late":       {"name": "⏰ 延迟退房至14:00",            "points": 300, "type": "redeem_late"},
-    "tea_sample": {"name": "🍵 庐山云雾茶包·体验装(5泡)",   "points": 500, "type": "redeem_gift"},
+    "tea_sample": {"name": "🍵 庐山云雾茶包体验装",         "points": 500, "type": "redeem_gift"},
+    "tea_cake":   {"name": "🫓 庐山云雾茶饼",              "points": 400, "type": "redeem_gift"},
 }
 
 # ── 积分获取规则 ──────────────────────────────────────────
