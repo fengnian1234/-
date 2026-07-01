@@ -31,34 +31,12 @@ _ROOM_IMAGE_SETS = {
     8: ["/static/img/rooms/room08_00.webp","/static/img/rooms/room08_01.webp","/static/img/rooms/room08_02.webp","/static/img/rooms/room08_03.webp","/static/img/rooms/room08_04.webp"],
 }
 
-# 山纪房型图片独立 — 来自 local_data/images
-_SHANJI_ROOM_IMAGE_COUNTS = {
-    1:9, 2:7, 3:5, 4:6, 5:9, 6:7, 7:5, 8:6,
-    9:7, 10:6, 11:7, 12:11, 13:6, 14:13, 15:8, 16:8,
-}
-
-# 东林外房型图片独立 — 来自 local_data/images
-_DONGLINWAI_ROOM_IMAGE_COUNTS = {
-    1:5, 2:5, 3:5, 4:6, 5:7, 6:7,
-}
+# 山纪房型图片独立 — 已移至 seed_data/shanji.py
+# 东林外房型图片独立 — 已移至 seed_data/donglinwai.py
 
 def _room_imgs(sort_order):
     """按 sort_order 获取房型图片列表（归墅专用）"""
     return _ROOM_IMAGE_SETS.get(sort_order, [])
-
-
-def _shanji_room_imgs(sort_order):
-    """按 sort_order 获取山纪房型图片列表（独立图片库）"""
-    count = _SHANJI_ROOM_IMAGE_COUNTS.get(sort_order, 0)
-    return [f"/static/img/rooms/shanji/room{sort_order:02d}_{i:02d}.webp"
-            for i in range(count)]
-
-
-def _donglinwai_room_imgs(sort_order):
-    """按 sort_order 获取东林外房型图片列表（独立图片库）"""
-    count = _DONGLINWAI_ROOM_IMAGE_COUNTS.get(sort_order, 0)
-    return [f"/static/img/rooms/donglinwai/room{sort_order:02d}_{i:02d}.webp"
-            for i in range(count)]
 
 
 def seed_all():

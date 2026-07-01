@@ -4,6 +4,17 @@
 from models import Room, MenuCategory, MenuItem, QuickService, TravelRoute, FoodRecommend
 from services.logger import info
 
+# 房型图片计数（sort_order → 图片数量）
+_DONGLINWAI_ROOM_IMAGE_COUNTS = {
+    1:5, 2:5, 3:5, 4:6, 5:7, 6:7,
+}
+
+def _donglinwai_room_imgs(sort_order):
+    """按 sort_order 获取东林外房型图片列表（独立图片库）"""
+    count = _DONGLINWAI_ROOM_IMAGE_COUNTS.get(sort_order, 0)
+    return [f"/static/img/rooms/donglinwai/room{sort_order:02d}_{i:02d}.webp"
+            for i in range(count)]
+
 
 def _seed_donglinwai_rooms(db):
     """东林外客房 — 携程官方数据（2026.6），26间8种房型"""

@@ -4,6 +4,18 @@
 from models import Room, MenuCategory, MenuItem, QuickService, TravelRoute, FoodRecommend
 from services.logger import info
 
+# 房型图片计数（sort_order → 图片数量）
+_SHANJI_ROOM_IMAGE_COUNTS = {
+    1:9, 2:7, 3:5, 4:6, 5:9, 6:7, 7:5, 8:6,
+    9:7, 10:6, 11:7, 12:11, 13:6, 14:13, 15:8, 16:8,
+}
+
+def _shanji_room_imgs(sort_order):
+    """按 sort_order 获取山纪房型图片列表（独立图片库）"""
+    count = _SHANJI_ROOM_IMAGE_COUNTS.get(sort_order, 0)
+    return [f"/static/img/rooms/shanji/room{sort_order:02d}_{i:02d}.webp"
+            for i in range(count)]
+
 
 def _seed_shanji_rooms(db):
     """山纪客房 — 官方数据（2026.6），30间16种房型，按民宿主指定排序"""
