@@ -12,6 +12,21 @@ from bnb_context import get_current_bnb, get_current_bnb_id, get_bnb_id_from_pat
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
+# ── Sentry 错误追踪（可选启用，未设置 DSN 则零开销）──────────
+import os as _os
+_sentry_dsn = _os.getenv("SENTRY_DSN", "")
+if _sentry_dsn:
+    import sentry_sdk
+    from sentry_sdk.integrations.flask import FlaskIntegration
+    sentry_sdk.init(
+        dsn=_sentry_dsn,
+        integrations=[FlaskIntegration()],
+        traces_sample_rate=0.1,
+        send_default_pii=False,
+        environment=_os.getenv("FLASK_ENV", "development"),
+    )
+    from services.logger import info as _info
+    _info("Sentry 错误追踪已启用")
 
 # ── CORS 支持（限制来源）──────────────────────────────────
 @app.after_request

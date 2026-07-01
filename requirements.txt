@@ -23,5 +23,8 @@ python-dotenv==1.2.1
 requests==2.32.4
 pydantic==2.12.2
 
+# 错误追踪
+sentry-sdk[flask]==2.19.0
+
 # 测试
 pytest==8.4.2

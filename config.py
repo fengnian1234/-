@@ -191,6 +191,9 @@ MONITOR_KEYWORDS_BY_BNB = {
     "donglinwai": ["云上·东林外", "云上东林外", "庐山东林外", "庐山东林民宿"],
 }
 MONITOR_KEYWORDS = MONITOR_KEYWORDS_BY_BNB["guishu"]
+# ── 错误追踪 ─────────────────────────────────────────────
+SENTRY_DSN = os.getenv("SENTRY_DSN", "")
+
 # ── 客服配置 ─────────────────────────────────────────────
 HUMAN_SERVICE_OPEN_HOURS = (8, 22)
 AUTO_REPLY_NIGHT = "夜深了·，{short_name}已进入梦乡。您的问题我们会在明早8点后第一时间回复，感谢您的理解～"
