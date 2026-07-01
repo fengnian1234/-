@@ -939,6 +939,16 @@ class HealingAppointment(Base):
 def run_migrations():
     """自动迁移：为已有表添加缺失的列和索引（SQLite）"""
     from sqlalchemy import text, inspect
+    import re
+
+    # ── 白名单校验：防止 SQL 注入（仅允许字母/数字/下划线）──
+    _SAFE_NAME = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
+
+    def _safe_ident(name: str, label: str) -> str:
+        if not _SAFE_NAME.match(name):
+            raise ValueError(f"非法{label}: {name}")
+        return name
+
     inspector = inspect(engine)
 
     migrations = {
@@ -980,7 +990,7 @@ def run_migrations():
                 if col_name not in existing_cols:
                     try:
                         conn.execute(text(
-                            f"ALTER TABLE {table} ADD COLUMN {col_name} {col_type}"
+                            f"ALTER TABLE {_safe_ident(table, '表名')} ADD COLUMN {_safe_ident(col_name, '列名')} {col_type}"
                         ))
                         conn.commit()
                         from services.logger import info as _info
@@ -998,7 +1008,7 @@ def run_migrations():
                 if idx_name not in existing_indexes:
                     try:
                         conn.execute(text(
-                            f"CREATE INDEX IF NOT EXISTS {idx_name} ON {table} ({col_name})"
+                            f"CREATE INDEX IF NOT EXISTS {_safe_ident(idx_name, '索引名')} ON {_safe_ident(table, '表名')} ({_safe_ident(col_name, '列名')})"
                         ))
                         conn.commit()
                         from services.logger import info as _info

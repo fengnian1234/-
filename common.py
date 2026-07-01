@@ -24,16 +24,20 @@ def _require_staff_auth(f):
 
 
 # ── 简易限流（内存，单进程） ──────────────────────────────
+import threading
+
 _rate_limit_store = {}
+_rate_limit_lock = threading.Lock()
 
 
 def rate_limit(key: str, max_req: int = 10, window: int = 60) -> bool:
     """简单的滑动窗口限流。返回 True 表示未超限。"""
     now = time.time()
-    if key not in _rate_limit_store:
-        _rate_limit_store[key] = []
-    _rate_limit_store[key] = [t for t in _rate_limit_store[key] if now - t < window]
-    if len(_rate_limit_store[key]) >= max_req:
-        return False
-    _rate_limit_store[key].append(now)
+    with _rate_limit_lock:
+        if key not in _rate_limit_store:
+            _rate_limit_store[key] = []
+        _rate_limit_store[key] = [t for t in _rate_limit_store[key] if now - t < window]
+        if len(_rate_limit_store[key]) >= max_req:
+            return False
+        _rate_limit_store[key].append(now)
     return True
