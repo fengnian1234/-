@@ -6,8 +6,11 @@
       <view class="user-header__avatar">🧑‍💼</view>
       <view class="user-header__info" wx:if="{{guest}}">
         <text class="user-header__name">{{guest.membership_name || '云上住客'}}</text>
-        <text class="user-header__level" wx:if="{{guest.discount && guest.discount < 10}}">
-          {{guest.discount > 0 ? '享' + (guest.discount * 10).toFixed(0) + '折优惠' : ''}}
+        <text class="user-header__level" wx:if="{{guest.point_multiplier > 1}}">
+          积分×{{guest.point_multiplier}}加速中
+        </text>
+        <text class="user-header__level" wx:else>
+          积分累计中
         </text>
       </view>
       <view class="user-header__info" wx:else>

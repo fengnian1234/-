@@ -486,7 +486,8 @@ class GuestPoints(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     openid = Column(String(200), unique=True, nullable=False, index=True, comment="微信OpenID")
     total_points = Column(Integer, default=0, comment="当前总积分")
-    total_earned = Column(Integer, default=0, comment="累计获取积分")
+    total_earned = Column(Integer, default=0, comment="累计获取积分（含等级加成，用于兑换）")
+    base_earned = Column(Integer, default=0, comment="基础积分累计（不含加成，用于等级升级判断）")
     total_spent = Column(Integer, default=0, comment="累计消费积分")
     membership = Column(String(20), default="silver", comment="会员等级: silver/gold/diamond")
     birthday_month = Column(Integer, comment="生日月份(1-12)，激活当月积分1.5倍")
@@ -494,16 +495,18 @@ class GuestPoints(Base):
     updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
     def to_dict(self, include_pii: bool = True):
-        """序列化预订。include_pii=False 时隐藏手机号/openid（客人端使用）"""
+        """序列化。include_pii=False 时隐藏 openid"""
+        multiplier = MEMBERSHIP_TIERS[self.membership]["point_multiplier"]
         d = {
             "id": self.id,
             "openid": self.openid if include_pii else "***",
             "total_points": self.total_points,
             "total_earned": self.total_earned,
+            "base_earned": self.base_earned,
             "total_spent": self.total_spent,
             "membership": self.membership,
             "membership_name": {"silver": "银卡", "gold": "金卡", "diamond": "钻石卡"}.get(self.membership, "银卡"),
-            "discount": {"silver": 0.95, "gold": 0.92, "diamond": 0.90}.get(self.membership, 0.95),
+            "point_multiplier": multiplier,
             "birthday_month": self.birthday_month,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
@@ -536,10 +539,11 @@ class PointLog(Base):
 
 # ── 积分兑换商品定义 ──────────────────────────────────────
 REDEEM_ITEMS = {
-    "coffee":    {"name": "☕ 三山二水精品咖啡1杯", "points": 300, "type": "redeem_coffee"},
-    "upgrade":   {"name": "🏠 房型免费升级（视空房）", "points": 500, "type": "redeem_upgrade"},
-    "late":      {"name": "⏰ 延迟退房至14:00",       "points": 300, "type": "redeem_late"},
-    "coupon50":  {"name": "🎫 房费抵扣券 ¥50",       "points": 500, "type": "redeem_coupon"},
+    "coffee":     {"name": "☕ 精品咖啡1杯",         "points": 300, "type": "redeem_coffee"},
+    "upgrade":    {"name": "🏠 房型免费升级（视空房）", "points": 500, "type": "redeem_upgrade"},
+    "late":       {"name": "⏰ 延迟退房至14:00",       "points": 300, "type": "redeem_late"},
+    "tea_sample": {"name": "🍵 庐山云雾茶包·体验装(5泡)", "points": 200, "type": "redeem_gift"},
+    "tea_gift":   {"name": "🎁 庐山云雾茶·礼盒装(250g)",  "points": 800, "type": "redeem_gift"},
 }
 
 # ── 积分获取规则 ──────────────────────────────────────────
@@ -555,9 +559,9 @@ EARN_RULES = {
 
 # ── 会员等级 ──────────────────────────────────────────────
 MEMBERSHIP_TIERS = {
-    "silver":  {"name": "银卡", "min_points": 0,     "discount": 0.95},
-    "gold":    {"name": "金卡", "min_points": 3000,  "discount": 0.92, "perk": "免费延迟退房"},
-    "diamond": {"name": "钻石卡","min_points": 8000, "discount": 0.90, "perk": "免费升级+专属管家"},
+    "silver":  {"name": "银卡",  "min_points": 0,     "point_multiplier": 1.0},
+    "gold":    {"name": "金卡",  "min_points": 3000,  "point_multiplier": 1.2, "perk": "积分×1.2 · 免费延迟退房"},
+    "diamond": {"name": "钻石卡", "min_points": 8000, "point_multiplier": 1.4, "perk": "积分×1.4 · 免费升级 · 专属管家"},
 }
 
 
@@ -949,6 +953,9 @@ def run_migrations():
         ],
         "tea_experiences": [
             ("category", "VARCHAR(20) DEFAULT 'experience'", "分类: experience/meal/drink/dessert"),
+        ],
+        "guest_points": [
+            ("base_earned", "INTEGER DEFAULT 0", "基础积分累计（不含加成，用于等级升级）"),
         ],
     }
 

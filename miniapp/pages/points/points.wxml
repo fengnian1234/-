@@ -7,7 +7,7 @@
     </view>
     <view class="points-card__member" wx:if="{{guest.membership_name}}">
       <text>{{guest.membership_name}}</text>
-      <text wx:if="{{guest.discount < 10}}"> · 享{{(guest.discount * 10).toFixed(0)}}折</text>
+      <text wx:if="{{guest.point_multiplier > 1}}"> · 积分×{{guest.point_multiplier}}加速</text>
     </view>
     <view class="points-card__checkin press-active" bindtap="onCheckIn">📅 每日签到 +10</view>
   </view>

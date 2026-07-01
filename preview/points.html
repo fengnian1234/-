@@ -245,11 +245,11 @@ document.getElementById('themeToggle').onclick=function(){var c=document.documen
     document.getElementById('tierFill').style.width = Math.min(100, pct) + '%';
     var tip;
     if (totalEarned >= diamondMin) {
-        tip = '🎉 已达最高等级钻石卡，享9折+免费升级+专属管家';
+        tip = '🎉 已达最高等级钻石卡，积分×1.4 · 免费升级 · 专属管家';
     } else if (totalEarned >= goldMin) {
-        tip = '距💎钻石卡还差 ' + (diamondMin - totalEarned).toLocaleString() + ' 分 · 当前享92折+免费延迟退房';
+        tip = '距💎钻石卡还差 ' + (diamondMin - totalEarned).toLocaleString() + ' 分 · 当前积分×1.2 · 免费延迟退房';
     } else {
-        tip = '距🥇金卡还差 ' + (goldMin - totalEarned).toLocaleString() + ' 分 · 当前享95折';
+        tip = '距🥇金卡还差 ' + (goldMin - totalEarned).toLocaleString() + ' 分 · 当前积分×1.0';
     }
     document.getElementById('tierTip').textContent = tip;
 })();

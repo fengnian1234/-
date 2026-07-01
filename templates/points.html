@@ -16,6 +16,7 @@
             <div style="font-size:0.85rem;opacity:0.8;margin-bottom:0.3rem">我的积分</div>
             <div id="pointsBalance" style="font-size:3rem;font-weight:700;font-family:var(--font-serif)">--</div>
             <div id="memberBadge" style="display:inline-block;background:rgba(255,255,255,0.2);padding:0.25rem 0.8rem;border-radius:20px;font-size:0.8rem;margin-top:0.3rem">--</div>
+            <div id="multiplierBadge" style="display:none;font-size:0.75rem;margin-top:0.35rem;opacity:0.85"></div>
             <button onclick="doCheckin()" id="checkinBtn" style="margin-top:0.8rem;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:0.5rem 1.2rem;border-radius:20px;cursor:pointer;font-size:0.85rem"><i class="ph-thin ph-calendar"></i> 每日签到 +1分</button>
         </div>
 
@@ -76,9 +77,16 @@ function renderAll(data) {
     // 积分余额
     const pts = data.guest ? data.guest.total_points : 0;
     const member = data.guest ? data.guest.membership_name : '银卡';
-    const discount = data.guest ? Math.round((1-data.guest.discount)*100) : 5;
+    const multiplier = data.guest ? data.guest.point_multiplier : 1.0;
     document.getElementById('pointsBalance').textContent = pts;
-    document.getElementById('memberBadge').innerHTML = `<i class="ph-thin ph-credit-card"></i> ${member} · 享${discount}%折扣`;
+    document.getElementById('memberBadge').innerHTML = `<i class="ph-thin ph-credit-card"></i> ${member}`;
+    const multBadge = document.getElementById('multiplierBadge');
+    if (multiplier > 1.0) {
+        multBadge.style.display = 'block';
+        multBadge.textContent = `积分×${multiplier} 加速中`;
+    } else {
+        multBadge.style.display = 'none';
+    }
 
     // 获取规则
     document.getElementById('earnRules').innerHTML = data.earn_rules.map(r => `
@@ -101,11 +109,11 @@ function renderAll(data) {
         document.getElementById('tierProgressFill').style.width = Math.min(100, pct) + '%';
         var tip;
         if (totalEarned >= diamondMin) {
-            tip = '已达最高等级钻石卡，享9折+免费升级+专属管家';
+            tip = '已达最高等级钻石卡，积分×1.4 · 免费升级 · 专属管家';
         } else if (totalEarned >= goldMin) {
-            tip = '距钻石卡还差 ' + (diamondMin - totalEarned).toLocaleString() + ' 分 · 当前享92折+免费延迟退房';
+            tip = '距钻石卡还差 ' + (diamondMin - totalEarned).toLocaleString() + ' 分 · 当前积分×1.2 · 免费延迟退房';
         } else {
-            tip = '距金卡还差 ' + (goldMin - totalEarned).toLocaleString() + ' 分 · 当前享95折';
+            tip = '距金卡还差 ' + (goldMin - totalEarned).toLocaleString() + ' 分 · 当前积分×1.0';
         }
         document.getElementById('tierTip').textContent = tip;
     }

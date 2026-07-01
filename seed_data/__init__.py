@@ -246,10 +246,10 @@ def seed_points(db):
         return
     now = datetime.now(UTC)
 
-    # 积分账户
+    # 积分账户（银卡会员，85基础分 → 距金卡还差2150分）
     guest = GuestPoints(
-        openid="web_user", total_points=580, total_earned=850,
-        total_spent=270, membership="silver",
+        openid="web_user", total_points=530, total_earned=850,
+        base_earned=850, total_spent=320, membership="silver",
     )
     db.add(guest)
     db.flush()
@@ -270,8 +270,8 @@ def seed_points(db):
                  description="每日签到 +100", created_at=now - timedelta(days=6)),
         PointLog(openid="web_user", points=-120, action="redeem_coffee",
                  description="兑换手冲咖啡 -120", created_at=now - timedelta(days=3)),
-        PointLog(openid="web_user", points=-150, action="redeem_coupon",
-                 description="兑换50元优惠券 -150", created_at=now - timedelta(days=7)),
+        PointLog(openid="web_user", points=-200, action="redeem_gift",
+                 description="兑换云雾茶包体验装 -200", created_at=now - timedelta(days=7)),
     ]
     db.add_all(logs)
 
