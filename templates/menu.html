@@ -502,11 +502,15 @@ function updateAllItemSteppers() {
         var card = stepper.closest('.menu-item');
         var orderBtn = card ? card.querySelector('.btn-order') : null;
         var hasSpecBtn = card ? card.querySelector('.btn-order-spec') : null;
-        if (qty > 0 && !hasSpecBtn) {
+        if (qty > 0) {
+            // 有数量：隐藏原始按钮，显示步进器
             if (orderBtn) orderBtn.style.display = 'none';
+            if (hasSpecBtn) hasSpecBtn.style.display = 'none';
             stepper.classList.add('active');
         } else {
+            // 无数量：显示原始按钮，隐藏步进器
             if (orderBtn) orderBtn.style.display = '';
+            if (hasSpecBtn) hasSpecBtn.style.display = '';
             stepper.classList.remove('active');
         }
     });
@@ -536,14 +540,25 @@ function decrementCartItem(itemId) {
         var itemId = parseInt(stepper.getAttribute('data-item-id'));
         if (!itemId) return;
         var card = stepper.closest('.menu-item');
-        var orderBtn = card ? card.querySelector('.btn-order') : null;
-        if (!orderBtn) return;
-        var name = orderBtn.getAttribute('data-name');
-        var price = parseInt(orderBtn.getAttribute('data-price'));
+        var specBtn = card ? card.querySelector('.btn-order-spec') : null;
         if (decBtn) {
             decrementCartItem(itemId);
+        } else if (specBtn) {
+            // 有规格商品：重新打开规格弹窗
+            var isTea = specBtn.dataset.tea === 'true';
+            var isDrink = specBtn.dataset.drink === 'true';
+            var tempMode = specBtn.dataset.temp || 'single';
+            var name = specBtn.dataset.name;
+            var price = parseInt(specBtn.dataset.price);
+            if (isTea) openTeaModal(itemId, name);
+            else if (isDrink) openDrinkModal(itemId, name, price, tempMode);
         } else {
-            addToOrder(itemId, name, price, '');
+            var orderBtn = card ? card.querySelector('.btn-order') : null;
+            if (orderBtn) {
+                var name = orderBtn.getAttribute('data-name');
+                var price = parseInt(orderBtn.getAttribute('data-price'));
+                addToOrder(itemId, name, price, '');
+            }
         }
     });
 })();
