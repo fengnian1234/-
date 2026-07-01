@@ -255,6 +255,9 @@ def handle_bind_room_code(msg, room_code: str) -> str:
     """合住人通过房间码绑定AI管家"""
     openid = _get_openid(msg)
     result = bind_room_guest(room_code.upper(), openid)
+    from bnb_context import get_current_bnb_id
+    bnb_id = get_current_bnb_id()
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
 
     if result["success"]:
         return (
@@ -271,7 +274,7 @@ def handle_bind_room_code(msg, room_code: str) -> str:
             f"  · 房间码输入正确（6位字母数字）\n"
             f"  · 预订仍然有效\n"
             f"  · 码区分大小写？不区分，直接输入即可\n\n"
-            f"☎ 如有疑问，联系前台：{BNB_PHONE}"
+            f"☎ 如有疑问，联系前台：{cfg['phone']}"
         )
 
 

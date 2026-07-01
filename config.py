@@ -191,16 +191,5 @@ MONITOR_KEYWORDS = MONITOR_KEYWORDS_BY_BNB["guishu"]
 # ── 客服配置 ─────────────────────────────────────────────
 HUMAN_SERVICE_OPEN_HOURS = (8, 22)
 AUTO_REPLY_NIGHT = "夜深了·，{short_name}已进入梦乡。您的问题我们会在明早8点后第一时间回复，感谢您的理解～"
-WELCOME_MESSAGE = """· 欢迎来到{short_name}！
-
-{address}，云雾深处的静谧之所。
-
-回复以下数字或关键词探索：
-【1】· 房型展示
-【2】· 咖啡简餐
-【3】· 游玩攻略
-【4】· 快捷服务
-【5】· 在线咨询
-
-· 预订请通过携程/美团/飞猪/大众点评搜索「{short_name}」
-· 预订前免费旅行顾问 · 预订后解锁专属AI管家～"""
+# WELCOME_MESSAGE — DEPRECATED since v3.7（wechat.py 改用 _welcome_for_bnb() 按 BnB 动态生成）
+# 保留仅作参考，新增代码禁止使用此常量

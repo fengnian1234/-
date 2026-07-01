@@ -1,15 +1,18 @@
 {% extends "base.html" %}
-{% block title %}{% if bnb_id == 'donglinwai' %}精品咖啡{% else %}咖啡简餐{% endif %} - {{ bnb.short_name }}{% endblock %}
+{% block title %}{% if bnb_id == 'shanji' %}山货餐厅{% elif bnb_id == 'donglinwai' %}精品咖啡{% else %}咖啡简餐{% endif %} - {{ bnb.short_name }}{% endblock %}
 
 {% block content %}
 <section class="page-header">
     <div class="container">
-        {% if bnb_id == 'donglinwai' %}
+        {% if bnb_id == 'shanji' %}
+        <h1><i class="ph-thin ph-fork-knife" style="font-size:2rem"></i> 山货餐厅</h1>
+        <p>「{{ bnb.cafe_name }}」· 山货小炒 · 烧菜炖品 · 主食简餐 · 咖啡茶饮</p>
+        {% elif bnb_id == 'donglinwai' %}
         <h1><i class="ph-thin ph-coffee" style="font-size:2rem"></i> 精品咖啡</h1>
-        <p>「东林外咖啡」· 经典咖啡 · 风味拿铁 · 创意特调 · 云上奶茶</p>
+        <p>「{{ bnb.cafe_name }}」· 经典咖啡 · 风味拿铁 · 创意特调 · 云上奶茶</p>
         {% else %}
         <h1><i class="ph-thin ph-coffee" style="font-size:2rem"></i> 咖啡简餐</h1>
-        <p>「三山二水咖啡」· 咖啡茶饮 · 简餐 · 甜品 · 特调饮品</p>
+        <p>「{{ bnb.cafe_name }}」· 咖啡茶饮 · 简餐 · 甜品 · 特调饮品</p>
         {% endif %}
     </div>
 </section>
@@ -41,6 +44,7 @@
                 {% for cat in categories %}
                 {% if cat['items'] and cat['items']|length > 0 %}
                 {% set is_drink_cat = (cat.name == '咖啡/茶饮' or cat.name == '特调饮品' or bnb_id == 'donglinwai') %}
+                {% set is_shanji_cat = (bnb_id == 'shanji') %}
                 <div class="menu-cat-section" id="mp-cat-{{ cat.id }}">
                     <h3 class="menu-cat-section-title">{{ cat.name }}</h3>
                 {% for item in cat['items'] %}
@@ -91,13 +95,14 @@
             {% for cat in categories %}
             {% if cat['items'] and cat['items']|length > 0 %}
             {% set is_drink_cat = (cat.name == '咖啡/茶饮' or cat.name == '特调饮品' or bnb_id == 'donglinwai') %}
+                {% set is_shanji_cat = (bnb_id == 'shanji') %}
             <div class="menu-category" id="cat-{{ cat.id }}">
                 <h2 class="menu-cat-title">{{ cat.icon }} {{ cat.name }}</h2>
                 <div class="menu-items">
                     {% for item in cat['items'] %}
                     {% set is_tea = ('云雾茶' in item.name) %}
                     {% set has_both = ('热/冰' in item.description) %}
-                    {% set has_specs = is_tea or is_drink_cat %}
+                    {% set has_specs = (is_tea or (is_drink_cat and not is_shanji_cat)) %}
                     <div class="menu-item {% if item.is_recommended %}recommended{% endif %}">
                         {% if item.image %}
                         <div class="menu-item-img"><img src="{{ item.image }}" alt="{{ item.name }}" loading="lazy"></div>
@@ -433,7 +438,7 @@ function showOrderPayment(order) {
           '<div class="pay-info">' +
             itemsHtml +
             (order.room_number ? '<div class="pay-row"><span>房间号</span><span>' + order.room_number + '</span></div>' : '') +
-            '<div class="pay-row"><span>商户</span><span>{{ '东林外咖啡' if bnb_id == 'donglinwai' else '三山二水咖啡' }}</span></div>' +
+            '<div class="pay-row"><span>商户</span><span>{{ bnb.cafe_name }}</span></div>' +
           '</div>' +
           '<button class="btn btn-primary btn-large pay-btn" onclick="confirmOrderPay(' + order.id + ')"><i class="ph-thin ph-heart"></i> 立即支付 ¥' + total + '</button>' +
           '<button class="btn btn-outline" style="width:100%;margin-top:0.5rem" onclick="backToCart()">← 返回购物车</button>' +

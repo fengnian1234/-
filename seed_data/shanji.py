@@ -129,34 +129,50 @@ def _seed_shanji_rooms(db):
 
 
 def _seed_shanji_menu(db):
-    """山纪菜单 — 咖啡书吧 + 云上茶吧 + 山货餐厅"""
+    """山纪菜单 — 山货餐厅（独立于茶场，山货小炒烧菜为主）"""
     categories = [
-        MenuCategory(bnb_id="shanji", name="咖啡/茶饮", icon="☕", sort_order=1),
-        MenuCategory(bnb_id="shanji", name="山货简餐", icon="🍲", sort_order=2),
-        MenuCategory(bnb_id="shanji", name="茶道体验", icon="🍵", sort_order=3),
+        MenuCategory(bnb_id="shanji", name="山货小炒", icon="🔥", sort_order=1),
+        MenuCategory(bnb_id="shanji", name="山货烧菜", icon="🍲", sort_order=2),
+        MenuCategory(bnb_id="shanji", name="汤煲炖品", icon="🫕", sort_order=3),
+        MenuCategory(bnb_id="shanji", name="主食简餐", icon="🍚", sort_order=4),
+        MenuCategory(bnb_id="shanji", name="咖啡茶饮", icon="☕", sort_order=5),
     ]
     db.add_all(categories)
     db.flush()
 
-    c0, c1, c2 = categories[0].id, categories[1].id, categories[2].id
+    c0, c1, c2, c3, c4 = categories[0].id, categories[1].id, categories[2].id, categories[3].id, categories[4].id
     items = [
-        MenuItem(bnb_id="shanji", category_id=c0, name="美式咖啡", price=26, description="经典美式，纯粹醇香", sort_order=1),
-        MenuItem(bnb_id="shanji", category_id=c0, name="拿铁", price=36, description="经典意式拿铁，奶香丝滑", sort_order=2),
-        MenuItem(bnb_id="shanji", category_id=c0, name="生椰拿铁", price=36, description="生椰乳配浓缩咖啡，热带风味", sort_order=3),
-        MenuItem(bnb_id="shanji", category_id=c0, name="庐山云雾茶(杯)", price=38, description="中国十大名茶，明前高山云雾，红绿两色可选", is_recommended=True, sort_order=4),
-        MenuItem(bnb_id="shanji", category_id=c0, name="庐山云雾茶(壶)", price=98, description="整壶冲泡，2-3人品茗，配茶点", is_recommended=True, sort_order=5),
-        MenuItem(bnb_id="shanji", category_id=c0, name="桂花云雾奶盖", price=32, description="云雾茶底+鲜奶奶盖+干桂花，山纪特调", sort_order=6),
-        MenuItem(bnb_id="shanji", category_id=c1, name="庐山三石煲", price=88, description="石鸡+石鱼+石耳，庐山珍味一锅鲜", is_recommended=True, sort_order=1),
-        MenuItem(bnb_id="shanji", category_id=c1, name="农家小炒肉套餐", price=42, description="本地土猪肉配时蔬，米饭+例汤", sort_order=2),
-        MenuItem(bnb_id="shanji", category_id=c1, name="庐山石鱼蒸蛋", price=38, description="庐山特有石鱼干蒸土鸡蛋，鲜香嫩滑", sort_order=3),
-        MenuItem(bnb_id="shanji", category_id=c1, name="山货炒饭", price=32, description="腊肉+笋干+香菇，山货满满", sort_order=4),
-        MenuItem(bnb_id="shanji", category_id=c1, name="江西拌粉", price=22, description="地道江西米粉，住客早餐好评率最高", sort_order=5),
-        MenuItem(bnb_id="shanji", category_id=c2, name="茶道品鉴体验", price=128, description="茶艺师一对一，品鉴三款云雾茶，60分钟", is_recommended=True, sort_order=1),
-        MenuItem(bnb_id="shanji", category_id=c2, name="此山采茶体验", price=168, description="此山茶场亲手采茶+制茶，90分钟，含茶礼伴手礼", sort_order=2),
-        MenuItem(bnb_id="shanji", category_id=c2, name="茶点拼盘", price=48, description="桂花糕+核桃酥+绿豆糕，配一壶茶", sort_order=3),
+        # ── 山货小炒 ──
+        MenuItem(bnb_id="shanji", category_id=c0, name="竹笋炒庐山腊肉", price=48, description="庐山野竹笋+农家土猪腊肉，柴火灶爆炒，镬气十足", is_recommended=True, sort_order=1),
+        MenuItem(bnb_id="shanji", category_id=c0, name="野山菌炒土猪肉", price=42, description="庐山松林野菌+散养土猪五花，鲜香滑嫩", sort_order=2),
+        MenuItem(bnb_id="shanji", category_id=c0, name="蒜苗炒土鸡蛋", price=28, description="后院散养土鸡蛋+庐山紫皮蒜苗，最简单也最下饭", sort_order=3),
+        MenuItem(bnb_id="shanji", category_id=c0, name="茶香小河虾", price=58, description="庐山云雾茶嫩芽入馔，小河虾酥脆可连壳吃", sort_order=4),
+        MenuItem(bnb_id="shanji", category_id=c0, name="青椒炒石鸡", price=68, description="庐山石鸡+本地薄皮青椒，肉质细嫩胜田鸡", is_recommended=True, sort_order=5),
+        MenuItem(bnb_id="shanji", category_id=c0, name="蕨菜炒肉丝", price=32, description="春日限定野生蕨菜，过季改用山泉水发制干蕨菜", sort_order=6),
+        # ── 山货烧菜 ──
+        MenuItem(bnb_id="shanji", category_id=c1, name="庐山三石煲", price=88, description="石鸡+石鱼+石耳文火慢炖两小时，庐山珍味一锅鲜", is_recommended=True, sort_order=1),
+        MenuItem(bnb_id="shanji", category_id=c1, name="茶树菇红烧肉", price=68, description="庐山茶树菇+土猪五花，冰糖上色，入口即化", is_recommended=True, sort_order=2),
+        MenuItem(bnb_id="shanji", category_id=c1, name="笋干焖土鸡", price=78, description="庐山野笋干+散养土鸡，柴火灶焖烧40分钟", sort_order=3),
+        MenuItem(bnb_id="shanji", category_id=c1, name="石耳烧排骨", price=58, description="庐山岩壁石耳+土猪肋排，咸鲜入味", sort_order=4),
+        MenuItem(bnb_id="shanji", category_id=c1, name="山泉豆腐煲", price=38, description="庐山泉水手工豆腐+菌菇时蔬，素净鲜甜", sort_order=5),
+        # ── 汤煲炖品 ──
+        MenuItem(bnb_id="shanji", category_id=c2, name="石耳土鸡汤", price=68, description="庐山野生石耳+散养土鸡，隔水炖三小时，汤清味醇", is_recommended=True, sort_order=1),
+        MenuItem(bnb_id="shanji", category_id=c2, name="竹荪排骨汤", price=48, description="庐山竹林竹荪+土猪排骨，清润养胃", sort_order=2),
+        MenuItem(bnb_id="shanji", category_id=c2, name="茶树菇老鸭汤", price=58, description="庐山干茶树菇+两年老鸭，文火慢炖，回味甘香", sort_order=3),
+        # ── 主食简餐 ──
+        MenuItem(bnb_id="shanji", category_id=c3, name="山货炒饭", price=32, description="腊肉丁+笋干+野菌+土鸡蛋，山货满满一大盘", is_recommended=True, sort_order=1),
+        MenuItem(bnb_id="shanji", category_id=c3, name="江西拌粉", price=22, description="地道南昌拌粉做法，花生碎+萝卜干+辣椒油，住客好评率最高", sort_order=2),
+        MenuItem(bnb_id="shanji", category_id=c3, name="庐山石鱼蒸蛋", price=38, description="庐山石鱼干蒸土鸡蛋，鲜香嫩滑，老少皆宜", sort_order=3),
+        MenuItem(bnb_id="shanji", category_id=c3, name="农家小炒肉套餐", price=42, description="土猪五花配薄皮青椒+时蔬+米饭+例汤", sort_order=4),
+        # ── 咖啡茶饮 ──
+        MenuItem(bnb_id="shanji", category_id=c4, name="庐山云雾茶(杯)", price=38, description="中国十大名茶，明前高山云雾，红绿两色可选", is_recommended=True, sort_order=1),
+        MenuItem(bnb_id="shanji", category_id=c4, name="庐山云雾茶(壶)", price=98, description="整壶冲泡，2-3人品茗，配茶点", sort_order=2),
+        MenuItem(bnb_id="shanji", category_id=c4, name="美式咖啡", price=26, description="经典美式，纯粹醇香", sort_order=3),
+        MenuItem(bnb_id="shanji", category_id=c4, name="现磨拿铁", price=36, description="意式浓缩+鲜牛乳，奶香丝滑", sort_order=4),
+        MenuItem(bnb_id="shanji", category_id=c4, name="桂花云雾奶盖", price=32, description="云雾茶底+鲜奶奶盖+干桂花，山纪特调", sort_order=5),
     ]
     db.add_all(items)
-    info("   山纪 3类14款菜单 已填充")
+    info("   山纪 5类27款山货餐厅菜单 已填充")
 
 
 

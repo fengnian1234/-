@@ -674,13 +674,13 @@ body.mp-mode .room-remaining {
 body.mp-mode .room-card .btn-sm {
     display: none;  /* mp-mode 卡片整体可点击，隐藏冗余按钮 */
 }
+/* ── mp-mode 隐藏 web 端 page-header（仅首页/房型/攻略/服务/点餐/积分等不需要大标题的页面）── */
 body.mp-mode .room-card-badge {
     font-size: 0.6rem;
     padding: 3px 8px;
 }
 
-/* ── 隐藏 web 端 page-header（小程序不需要） ── */
-body.mp-mode .page-header { display: none; }
+/* 注：page-header 不再全局隐藏，各页面按需通过自己的 CSS 控制 */
 
 /* ── 暗色模式：通用规则使用 CSS 变量（配色由上方 [data-bnb] 块控制） ── */
 [data-theme="dark"] body.mp-mode .entry-card,

@@ -6,7 +6,7 @@
 <section class="page-header">
     <div class="container">
         <h1><i class="ph-thin ph-map-trifold" style="font-size:2rem"></i> 游玩攻略</h1>
-        <p>索道上站步行5分钟 · 牯岭街步行10分钟 · 近如琴湖/锦绣谷</p>
+        <p>{% if bnb_id == 'guishu' %}索道上站步行5分钟 · 牯岭街步行10分钟 · 近如琴湖/锦绣谷{% elif bnb_id == 'shanji' %}索道上站步行3分钟 · 牯岭街步行8分钟 · 300平花园庭院{% elif bnb_id == 'donglinwai' %}东林寺步行5分钟 · 庐山站10km · 免费停车{% endif %}</p>
     </div>
 </section>
 

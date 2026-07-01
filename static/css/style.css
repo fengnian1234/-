@@ -4258,6 +4258,11 @@ h4 { font-size: var(--text-base); }
     font-weight: 600;
     color: #07c160;
 }
+[data-theme="dark"] .pay-amount strong { color: #4ade80; }
+[data-theme="dark"] .pay-btn {
+    background: #166434 !important;
+    border-color: #1a7a3a !important;
+}
 .pay-close {
     width: 28px;
     height: 28px;

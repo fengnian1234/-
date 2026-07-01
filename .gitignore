@@ -14,6 +14,8 @@ venv/
 
 # 环境变量
 .env
+.env.prod
+.env.local
 
 # IDE
 .vscode/
@@ -33,6 +35,9 @@ Desktop.ini
 # 临时文件
 *.log
 *.tmp
+*.bak
+*.bak2
+Dockerfile
 
 # Node
 node_modules/
@@ -43,6 +48,9 @@ node_modules/
 
 # 口碑监控图片缓存（采集后可重新生成）
 local_data/images/monitor/
+
+# 本地数据目录（爬虫采集、文档提取等中间产物）
+local_data/
 
 # 临时脚本/数据
 cleanup_and_collect.py

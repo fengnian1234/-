@@ -40,9 +40,8 @@ def handle_preflight():
 # ── BnB 上下文注入 ──────────────────────────────────────
 @app.before_request
 def set_bnb_context():
-    """在每次请求前注入当前民宿标识到 Flask g 对象"""
-    g.bnb_id = get_bnb_id_from_path(request.path)
-    g.bnb_config = get_current_bnb()
+    """在每次请求前注入当前民宿标识到 Flask g 对象（路径解析 → g + 线程本地）"""
+    set_current_bnb(get_bnb_id_from_path(request.path))
 
 
 # ── 模板全局变量注入 ───────────────────────────────────
@@ -69,13 +68,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def server_error(e):
     return render_template('500.html'), 500
-
-
-# ── BnB 上下文注入 ───────────────────────────────────────
-@app.before_request
-def _inject_bnb_context():
-    """每个请求开始时自动注入 BnB 上下文（路径解析 → Flask g）"""
-    set_current_bnb(get_bnb_id_from_path())
 
 
 # ── 应用初始化 ───────────────────────────────────────────

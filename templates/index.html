@@ -206,22 +206,50 @@
         {% elif bnb_id == 'shanji' %}
         <h2 class="section-title">住客好评</h2>
         <p class="section-desc">携程 4.6分 · 真实住客评价</p>
-        <div class="review-list">
-            <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"在庐山住进了水墨画里，白墙原木嵌在青山翠柏里。坐在阳台泡一杯云雾茶，静静看云雾流转，瞬间抚平浮躁。"</p><div class="review-author">daniel626 · 2026年6月</div></div>
-            <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"300平花园庭院太绝了！咖啡书吧、云上茶吧，每一处都透着侘寂感。原木风房间宽敞，落地窗框成天然背景。"</p><div class="review-author">上山下海的茵茵 · 2026年4月</div></div>
-            <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"离索道站特别近，步行几分钟就到了。站在阳台上就能看到牯岭镇美景。早餐江西拌粉超喜欢！"</p><div class="review-author">梦梦旅行酱 · 2026年5月</div></div>
-            <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"住了三天临走居然舍不得。早上雾慢慢散了，山一点一点露出来，那个过程比直接看见大晴天还让人高兴。"</p><div class="review-author">海绵擦 · 2026年3月</div></div>
-            <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"森系氛围戳中心巴，原木风满院绿意。床品软乎乎，地暖加智能马桶卫浴细节拉满，舒适度不输奢野酒店。"</p><div class="review-author">爱旅游的朵一 · 2026年3月</div></div>
+        <div class="review-carousel">
+            <div class="review-slides" id="reviewSlides">
+                <div class="review-slide">
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"在庐山住进了水墨画里，白墙原木嵌在青山翠柏里。坐在阳台泡一杯云雾茶，静静看云雾流转，瞬间抚平浮躁。"</p><div class="review-author">daniel626 · 2026年6月</div></div>
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"300平花园庭院太绝了！咖啡书吧、云上茶吧，每一处都透着侘寂感。原木风房间宽敞，落地窗框成天然背景。"</p><div class="review-author">上山下海的茵茵 · 2026年4月</div></div>
+                </div>
+                <div class="review-slide">
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"离索道站特别近，步行几分钟就到了。站在阳台上就能看到牯岭镇美景。早餐江西拌粉超喜欢！"</p><div class="review-author">梦梦旅行酱 · 2026年5月</div></div>
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"住了三天临走居然舍不得。早上雾慢慢散了，山一点一点露出来，那个过程比直接看见大晴天还让人高兴。"</p><div class="review-author">海绵擦 · 2026年3月</div></div>
+                </div>
+                <div class="review-slide">
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"森系氛围戳中心巴，原木风满院绿意。床品软乎乎，地暖加智能马桶卫浴细节拉满，舒适度不输奢野酒店。"</p><div class="review-author">爱旅游的朵一 · 2026年3月</div></div>
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"山货餐厅的庐山三石煲太绝了！石鸡嫩石鱼鲜，配上山泉水煮的米饭，连吃三碗。坐在花园里吃饭太惬意了～"</p><div class="review-author">吃货在路上 · 2026年4月</div></div>
+                </div>
+            </div>
+            <div class="carousel-dots" id="carouselDots">
+                <button class="carousel-dot active" onclick="goSlide(0)"></button>
+                <button class="carousel-dot" onclick="goSlide(1)"></button>
+                <button class="carousel-dot" onclick="goSlide(2)"></button>
+            </div>
         </div>
         {% elif bnb_id == 'donglinwai' %}
         <h2 class="section-title">住客好评</h2>
         <p class="section-desc">携程 4.7分 · 真实住客评价</p>
-        <div class="review-list">
-            <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"很棒的一次出行体验！前台小哥很暖心，房间干净，整个民宿特别有艺术气息，还有一只可爱的小猫。"</p><div class="review-author">携程住客 · 2026年1月</div></div>
-            <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"物超所值！无论硬件还是软性服务都极高水准。接送服务非常满意，已经推荐给了计划来玩的朋友。"</p><div class="review-author">携程住客 · 2026年1月</div></div>
-            <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"房间干净整洁设施完善，紧邻西林寺和东林寺。服务热情周到，店里还有只小猫！下次还定这家。"</p><div class="review-author">携程住客 · 2026年2月</div></div>
-            <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"本想不写评论但这次太舒服了。白色房子清清爽爽，院子里有水池和橘子树的院子。卫生到位地板锃亮！"</p><div class="review-author">携程住客 · 2025年12月</div></div>
-            <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"管家态度超好，一进门就惊艳。早上被浓浓咖啡味香醒，拿铁超级好喝！一切都是那么惊喜和意外。"</p><div class="review-author">微信用户 · 2026年1月</div></div>
+        <div class="review-carousel">
+            <div class="review-slides" id="reviewSlides">
+                <div class="review-slide">
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"很棒的一次出行体验！前台小哥很暖心，房间干净，整个民宿特别有艺术气息，还有一只可爱的小猫。"</p><div class="review-author">携程住客 · 2026年1月</div></div>
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"物超所值！无论硬件还是软性服务都极高水准。接送服务非常满意，已经推荐给了计划来玩的朋友。"</p><div class="review-author">携程住客 · 2026年1月</div></div>
+                </div>
+                <div class="review-slide">
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"房间干净整洁设施完善，紧邻西林寺和东林寺。服务热情周到，店里还有只小猫！下次还定这家。"</p><div class="review-author">携程住客 · 2026年2月</div></div>
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"本想不写评论但这次太舒服了。白色房子清清爽爽，院子里有水池和橘子树的院子。卫生到位地板锃亮！"</p><div class="review-author">携程住客 · 2025年12月</div></div>
+                </div>
+                <div class="review-slide">
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"管家态度超好，一进门就惊艳。早上被浓浓咖啡味香醒，拿铁超级好喝！一切都是那么惊喜和意外。"</p><div class="review-author">微信用户 · 2026年1月</div></div>
+                    <div class="review-card"><div class="review-stars"><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i><i class="ph-thin ph-star"></i></div><p class="review-text">"琼儿老师的颂钵音疗太神奇了！钵声响起整个人都松下来。东林寺晨钟暮课，禅意满满，还会再来。"</p><div class="review-author">禅意旅人 · 2026年3月</div></div>
+                </div>
+            </div>
+            <div class="carousel-dots" id="carouselDots">
+                <button class="carousel-dot active" onclick="goSlide(0)"></button>
+                <button class="carousel-dot" onclick="goSlide(1)"></button>
+                <button class="carousel-dot" onclick="goSlide(2)"></button>
+            </div>
         </div>
         {% endif %}
     </div>

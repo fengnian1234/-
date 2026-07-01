@@ -52,7 +52,6 @@ def create_order(openid: str, items_data: list, room_number: str = "",
     自动判定通知目标：含体验/疗愈/茶道类 → 主理人，纯餐饮 → 前台点单机
     """
     bnb_id = _get_bnb_id(bnb_id)
-    from models import MenuItem, MenuCategory
     with get_db() as db:
         total = sum(item["price"] * item["quantity"] for item in items_data)
         # 判定通知目标
@@ -110,16 +109,22 @@ STATUS_LABELS = {
 
 
 def format_menu_text(bnb_id=None):
-    """格式化为微信文本菜单（要求5：咖啡简餐）"""
+    """格式化为微信文本菜单"""
     bnb_id = _get_bnb_id(bnb_id)
     categories = get_menu_categories(bnb_id=bnb_id)
     if not categories:
         return "暂无菜单信息，请咨询前台～"
 
     from config import BNB_CONFIGS
-    name = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])["short_name"]
-    lines = [f"· *{name} · 咖啡简餐*\n"]
-    lines.append("本民宿不提供正餐，以下为咖啡、茶饮与简餐～\n")
+    cfg = BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"])
+    name = cfg["short_name"]
+
+    if bnb_id == "shanji":
+        lines = [f"· *{name} · 山货餐厅*\n"]
+        lines.append("庐山山货小炒·烧菜·炖品，地道山里味道～\n")
+    else:
+        lines = [f"· *{name} · 咖啡简餐*\n"]
+        lines.append("本民宿不提供正餐，以下为咖啡、茶饮与简餐～\n")
 
     # 先展示推荐
     recommended = get_recommended_items(bnb_id=bnb_id)
@@ -150,7 +155,8 @@ def format_menu_text(bnb_id=None):
     lines.append("  · 回复「推荐」查看今日推荐")
     lines.append("  · 支持微信支付 💳")
     lines.append("  · 回复「下单+编号」如「下单1,3」")
-    lines.append("\n🍜 需要正餐？回复「周边美食」查看推荐餐厅")
+    if bnb_id != "shanji":
+        lines.append("\n🍜 需要正餐？回复「周边美食」查看推荐餐厅")
     return "\n".join(lines)
 
 
