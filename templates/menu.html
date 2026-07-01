@@ -181,8 +181,7 @@
 <button class="fab" onclick="toggleOrderPanel()">
     {% if request.args.get('mp') == '1' %}
     <span class="fab-cart-info">
-        <span class="fab-icon"><i class="ph-thin ph-shopping-cart"></i></span>
-        <span class="fab-cart-badge" id="fabCountBadge" style="display:none"></span>
+        <span class="fab-icon"><i class="ph-thin ph-shopping-cart"></i><span class="fab-cart-badge" id="fabCountBadge" style="display:none"></span></span>
         <span class="fab-cart-total" id="fabTotal" style="display:none"></span>
     </span>
     <span class="fab-checkout">去结算</span>
