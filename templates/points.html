@@ -12,26 +12,25 @@
 <section class="section-padding">
     <div class="container">
         <!-- 积分余额卡片 -->
-        <div id="pointsCard" style="background:linear-gradient(135deg,var(--color-primary-dark),var(--color-primary));color:white;border-radius:var(--radius-lg);padding:1.8rem;text-align:center;margin-bottom:1.5rem">
+        <div id="pointsCard" style="background:linear-gradient(135deg,var(--color-primary-dark),var(--color-primary));color:white;border-radius:var(--radius-lg);padding:1.5rem 1.8rem 1.2rem;text-align:center;margin-bottom:1.2rem">
             <div style="font-size:0.85rem;opacity:0.8;margin-bottom:0.3rem">我的积分</div>
-            <div id="pointsBalance" style="font-size:3rem;font-weight:700;font-family:var(--font-serif)">--</div>
+            <div id="pointsBalance" style="font-size:2.6rem;font-weight:700;font-family:var(--font-serif)">--</div>
             <div id="memberBadge" style="display:inline-block;background:rgba(255,255,255,0.2);padding:0.25rem 0.8rem;border-radius:20px;font-size:0.8rem;margin-top:0.3rem">--</div>
             <div id="multiplierBadge" style="display:none;font-size:0.75rem;margin-top:0.35rem;opacity:0.85"></div>
-            <button onclick="doCheckin()" id="checkinBtn" style="margin-top:0.8rem;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:0.5rem 1.2rem;border-radius:20px;cursor:pointer;font-size:0.85rem"><i class="ph-thin ph-calendar"></i> 每日签到 +5分</button>
-        </div>
-
-        <!-- 会员等级 -->
-        <div id="membershipBar" style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:0.9rem 1rem;margin-bottom:1.5rem;display:none">
-            <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:0.4rem;font-size:0.78rem;color:var(--color-text-lighter)">
-                <span><i class="ph-thin ph-medal"></i> 银卡</span><span><i class="ph-thin ph-medal"></i> 金卡</span><span><i class="ph-thin ph-diamond"></i> 钻石卡</span>
+            <!-- 会员等级进度条（内嵌于积分卡片中） -->
+            <div id="membershipBar" style="margin-top:0.8rem;padding:0.5rem 0 0;display:none">
+                <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:0.3rem;font-size:0.7rem;opacity:0.8">
+                    <span><i class="ph-thin ph-medal"></i> 银卡</span><span><i class="ph-thin ph-medal"></i> 金卡</span><span><i class="ph-thin ph-diamond"></i> 钻石卡</span>
+                </div>
+                <div id="tierProgressBg" style="height:3px;background:rgba(255,255,255,0.25);border-radius:2px;position:relative;overflow:hidden">
+                    <div id="tierProgressFill" style="height:100%;background:rgba(255,255,255,0.8);border-radius:2px;transition:width 0.6s ease;width:0%"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:0.6rem;opacity:0.65;margin-top:0.2rem">
+                    <span>0</span><span>3,000 分</span><span>8,000 分</span>
+                </div>
+                <div id="tierTip" style="text-align:center;font-size:0.68rem;opacity:0.75;margin-top:0.3rem"></div>
             </div>
-            <div id="tierProgressBg" style="height:4px;background:var(--color-bg-light);border-radius:2px;position:relative;overflow:hidden">
-                <div id="tierProgressFill" style="height:100%;background:var(--color-accent);border-radius:2px;transition:width 0.6s ease;width:0%"></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:var(--color-text-lighter);margin-top:0.3rem">
-                <span>0</span><span>3,000 分</span><span>8,000 分</span>
-            </div>
-            <div id="tierTip" style="text-align:center;font-size:0.72rem;color:var(--color-text-lighter);margin-top:0.4rem"></div>
+            <button onclick="doCheckin()" id="checkinBtn" style="margin-top:0.6rem;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:0.5rem 1.2rem;border-radius:20px;cursor:pointer;font-size:0.85rem"><i class="ph-thin ph-calendar"></i> 每日签到 +5分</button>
         </div>
 
         <!-- 积分获取方式 -->

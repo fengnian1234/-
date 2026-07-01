@@ -14,11 +14,9 @@ def _get_bnb_id(bnb_id=None):
     return get_service_bnb_id(bnb_id, "shanji")
 
 # ── 营业时间常量 ──
-MORNING_START = 7   # 早场 7:00
-MORNING_END = 10    # 早场 10:00
-EVENING_START = 15  # 晚场 15:00
-EVENING_END = 22    # 晚场 22:00
-SLOT_INTERVAL = 60  # 每小时一个时间段（7:00起）
+SLOT_START = 7    # 首时段 7:00
+SLOT_END = 20     # 末时段 20:00（最后一小时 19:00-20:00）
+SLOT_INTERVAL = 60  # 每小时一个时间段
 ALCOHOL_START_HOUR = 18  # 酒水18:00后开放
 MAX_ADVANCE_DAYS = 7  # 最多提前7天
 
@@ -83,19 +81,9 @@ def get_available_slots(date_str, bnb_id=None):
 
     # 生成当天所有时间槽
     all_slots = []
-    # 早场
-    h = MORNING_START
+    h = SLOT_START
     m = 0
-    while h < MORNING_END or (h == MORNING_END and m == 0):
-        all_slots.append(f"{h:02d}:{m:02d}")
-        m += SLOT_INTERVAL
-        if m >= 60:
-            h += 1
-            m -= 60
-    # 晚场
-    h = EVENING_START
-    m = 0
-    while h < EVENING_END or (h == EVENING_END and m == 0):
+    while h < SLOT_END or (h == SLOT_END and m == 0):
         all_slots.append(f"{h:02d}:{m:02d}")
         m += SLOT_INTERVAL
         if m >= 60:
@@ -146,7 +134,7 @@ def get_available_slots(date_str, bnb_id=None):
             reason = "该时段已过"
 
         hour = int(t.split(":")[0])
-        period = "早场" if hour < MORNING_END + 1 else "晚场"
+        period = ""  # 统一营业时段，不再区分早晚场
 
         slots.append({
             "time": t,
