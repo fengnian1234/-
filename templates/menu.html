@@ -118,6 +118,11 @@
                         </div>
                         {% if has_specs %}
                         <button class="btn btn-sm btn-order-spec" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}" data-tea="{% if is_tea %}true{% else %}false{% endif %}" data-drink="{% if is_drink_cat %}true{% else %}false{% endif %}" data-temp="{% if has_both %}both{% else %}single{% endif %}">选规格</button>
+                        <div class="stepper" data-item-id="{{ item.id }}">
+                            <button class="stepper-btn stepper-dec">−</button>
+                            <span class="stepper-count">0</span>
+                            <button class="stepper-btn stepper-inc">+</button>
+                        </div>
                         {% else %}
                         <button class="btn btn-sm btn-order" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}">+</button>
                         <div class="stepper" data-item-id="{{ item.id }}">
@@ -177,8 +182,8 @@
     {% if request.args.get('mp') == '1' %}
     <span class="fab-cart-info">
         <span class="fab-icon"><i class="ph-thin ph-shopping-cart"></i></span>
-        <span class="fab-cart-total" id="fabTotal">¥0</span>
-        <span class="fab-cart-count" id="fabCount"></span>
+        <span class="fab-cart-badge" id="fabCountBadge" style="display:none"></span>
+        <span class="fab-cart-total" id="fabTotal" style="display:none"></span>
     </span>
     <span class="fab-checkout">去结算</span>
     {% else %}
@@ -322,11 +327,15 @@ function updateOrderPanel() {
         fabTotal.textContent = '¥' + t;
         fabTotal.style.display = t > 0 ? '' : 'none';
     }
-    var fabCount = document.getElementById('fabCount');
-    if (fabCount) {
+    var fabBadge = document.getElementById('fabCountBadge');
+    var fabTotalEl = document.getElementById('fabTotal');
+    if (fabBadge) {
         var cnt = cart.reduce(function(s, i) { return s + i.quantity; }, 0);
-        fabCount.textContent = cnt > 0 ? cnt + '件' : '';
-        fabCount.style.display = cnt > 0 ? '' : 'none';
+        fabBadge.textContent = cnt;
+        fabBadge.style.display = cnt > 0 ? '' : 'none';
+    }
+    if (fabTotalEl) {
+        fabTotalEl.style.display = t > 0 ? '' : 'none';
     }
     // FAB 展开/收起状态
     if (fab && !fab.querySelector('.fab-checkout')) {
