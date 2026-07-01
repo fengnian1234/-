@@ -1312,3 +1312,67 @@ body.mp-mode .food-modal-content .food-detail-body { padding: 0 1rem; }
 body.mp-mode .food-modal-content .food-detail-body p { font-size: 0.75rem; line-height: 1.7; }
 body.mp-mode .food-modal-content .food-detail-musttry { margin: 0 1rem 0.6rem; padding: 0.6rem 0.8rem; }
 body.mp-mode .food-modal-content .food-detail-info { margin: 0 1rem 0.6rem; padding: 0.6rem 0.8rem; }
+
+
+/* ══════════════════════════════════════════════════════════
+   主理人面板 mp-mode 适配
+   ══════════════════════════════════════════════════════════ */
+
+/* 侧边栏在 mp 下收窄为图标模式 */
+body.mp-mode .saas-sidebar { width: 52px; }
+body.mp-mode .saas-sidebar-brand { justify-content: center; padding: 0.5rem 0; }
+body.mp-mode .saas-sidebar-brand span,
+body.mp-mode .saas-nav-item span,
+body.mp-mode .saas-sidebar-footer { display: none; }
+body.mp-mode .saas-nav-item { justify-content: center; padding: 0.5rem 0; }
+body.mp-mode .saas-nav-item i { font-size: 1.15rem; }
+
+/* 顶栏缩小 */
+body.mp-mode .saas-topbar { padding: 0.35rem 0.7rem; min-height: 38px; }
+body.mp-mode .saas-topbar-title { font-size: 0.8rem; }
+
+/* 内容区间距缩小 */
+body.mp-mode .saas-content { padding: 0.5rem; }
+
+/* 统计卡在 mp 下 3 列 */
+body.mp-mode .saas-stats-grid { grid-template-columns: repeat(3, 1fr); gap: 0.35rem; }
+body.mp-mode .saas-stat-card { padding: 0.55rem 0.65rem; }
+body.mp-mode .saas-stat-value { font-size: 1.35rem; }
+body.mp-mode .saas-stat-label { font-size: 0.65rem; }
+
+/* 双队列在 mp 下堆叠 */
+body.mp-mode .saas-dual-panel { grid-template-columns: 1fr; gap: 0.6rem; }
+
+/* 工单卡片缩小 */
+body.mp-mode .saas-request-card { padding: 0.5rem 0.6rem; gap: 0.5rem; }
+body.mp-mode .saas-request-icon { font-size: 1.1rem; width: 1.5rem; }
+body.mp-mode .saas-request-name { font-size: 0.78rem; }
+body.mp-mode .saas-request-meta { font-size: 0.68rem; }
+
+/* 预订卡片缩小 */
+body.mp-mode .saas-booking-card { padding: 0.6rem 0.8rem; }
+body.mp-mode .saas-booking-guest { font-size: 0.82rem; }
+body.mp-mode .saas-booking-meta { font-size: 0.68rem; }
+
+/* 表格缩小 */
+body.mp-mode .saas-data-table thead th,
+body.mp-mode .saas-data-table tbody td { padding: 0.35rem 0.45rem; font-size: 0.7rem; }
+
+/* 面板标题缩小 */
+body.mp-mode .saas-panel-title { font-size: 0.85rem; }
+
+/* 按钮在 mp 下缩小 */
+body.mp-mode .saas-btn { padding: 0.3rem 0.7rem; font-size: 0.72rem; }
+body.mp-mode .saas-btn--sm { padding: 0.2rem 0.5rem; font-size: 0.68rem; }
+
+/* 下拉缩小 */
+body.mp-mode .saas-select { padding: 0.3rem 1.6rem 0.3rem 0.5rem; font-size: 0.72rem; }
+body.mp-mode .saas-select--sm { padding: 0.2rem 1.4rem 0.2rem 0.4rem; font-size: 0.68rem; }
+
+/* 输入框缩小 */
+body.mp-mode .saas-input { padding: 0.3rem 0.5rem; font-size: 0.75rem; }
+
+/* 订单聚合表单在 mp 下单列 */
+@media (max-width: 600px) {
+    body.mp-mode #panel-orders > div:last-child { grid-template-columns: 1fr !important; }
+}

@@ -76,6 +76,7 @@ class Booking(Base):
     openid = Column(String(100), nullable=False, index=True, comment="微信用户openid（预订者）")
     guest_name = Column(String(50), comment="客人姓名")
     phone = Column(String(20), comment="联系电话")
+    id_card = Column(String(30), comment="身份证号（复购/续住时需核验）")
     room_type = Column(String(50), comment="预订房型")
     platform = Column(String(30), comment="预订来源平台: 携程/美团/飞猪/大众点评")
     check_in_date = Column(String(30), comment="入住日期")
@@ -100,6 +101,7 @@ class Booking(Base):
             "openid": self.openid if include_pii else "***",
             "guest_name": self.guest_name,
             "phone": self.phone if include_pii else "***",
+            "id_card": self.id_card if include_pii else "***",
             "room_type": self.room_type,
             "platform": self.platform,
             "check_in_date": self.check_in_date,
@@ -619,6 +621,42 @@ class AggregatedOrder(Base):
 
 
 # ══════════════════════════════════════════════════════════
+#  每日房价模型（主理人面板）
+# ══════════════════════════════════════════════════════════
+class DailyPricing(Base):
+    """各民宿每日基准房价，由主理人手动录入更新"""
+    __tablename__ = "daily_pricing"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    bnb_id = Column(String(20), nullable=False, default="guishu", index=True, comment="所属民宿")
+    room_type = Column(String(50), nullable=False, comment="房型名称")
+    base_price = Column(Float, nullable=False, comment="平日基准价")
+    weekend_price = Column(Float, comment="周末价（周五周六）")
+    holiday_price = Column(Float, comment="节假日价")
+    special_price = Column(Float, comment="活动特价")
+    date = Column(String(20), nullable=False, comment="适用日期 YYYY-MM-DD")
+    updated_by = Column(String(50), comment="更新人（主理人姓名）")
+    notes = Column(Text, comment="调价备注")
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "bnb_id": self.bnb_id,
+            "room_type": self.room_type,
+            "base_price": self.base_price,
+            "weekend_price": self.weekend_price,
+            "holiday_price": self.holiday_price,
+            "special_price": self.special_price,
+            "date": self.date,
+            "updated_by": self.updated_by,
+            "notes": self.notes,
+            "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M") if self.updated_at else None,
+        }
+
+
+# ══════════════════════════════════════════════════════════
 #  民宿配置模型
 # ══════════════════════════════════════════════════════════
 class Bnb(Base):
@@ -952,6 +990,9 @@ def run_migrations():
     inspector = inspect(engine)
 
     migrations = {
+        "bookings": [
+            ("id_card", "VARCHAR(30)", "身份证号（复购/续住时需核验）"),
+        ],
         "platform_mentions": [
             ("image_urls", "JSON", "原始图片URL列表"),
             ("local_images", "JSON", "本地下载的图片路径列表"),

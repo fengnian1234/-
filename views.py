@@ -120,5 +120,7 @@ def bnb_healing(bnb_prefix=None):
 
 @_bnb_route("/staff")
 def staff_dashboard(bnb_prefix=None):
-    """员工通知看板页面"""
-    return render_template("staff.html")
+    """主理人管理面板"""
+    if request.args.get("legacy") == "1":
+        return render_template("staff.html")
+    return render_template("host.html")

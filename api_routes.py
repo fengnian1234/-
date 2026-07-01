@@ -32,6 +32,7 @@ def api_staff_dashboard():
     from models import SessionLocal, Order
     from datetime import datetime, UTC
     from bnb_context import get_current_bnb_id
+    from config import BNB_CONFIGS
 
     bnb_id = request.args.get("bnb_id") or get_current_bnb_id()
 
@@ -81,6 +82,7 @@ def api_staff_dashboard():
         "completed_svc": completed_svc[:20],
         "completed_orders": [o.to_dict() for o in completed_orders],
         "review_reminders_count": len(review_reminders),
+        "staff_list": BNB_CONFIGS.get(bnb_id, BNB_CONFIGS["guishu"]).get("staff", []),
     })
 
 @app.route("/api/staff/acknowledge", methods=["POST"])
@@ -98,6 +100,28 @@ def api_acknowledge_request():
 @_require_staff_auth
 def api_complete_request():
     """员工完成请求 — 需员工鉴权"""
+    from services.notify import complete_request
+    data = request.get_json()
+    if not data or "id" not in data:
+        return jsonify({"success": False, "message": "缺少请求ID"}), 400
+    complete_request(data["id"], data.get("notes", ""))
+    return jsonify({"success": True})
+
+@app.route("/api/staff/assign", methods=["POST"])
+@_require_staff_auth
+def api_assign_request():
+    """主理人指派工单给员工 — 需员工鉴权"""
+    from services.notify import assign_request
+    data = request.get_json()
+    if not data or "id" not in data or "assigned_to" not in data:
+        return jsonify({"success": False, "message": "缺少请求ID或指派人"}), 400
+    assign_request(data["id"], data["assigned_to"])
+    return jsonify({"success": True})
+
+@app.route("/api/staff/confirm-complete", methods=["POST"])
+@_require_staff_auth
+def api_confirm_complete():
+    """主理人确认工单最终完成 — 需员工鉴权"""
     from services.notify import complete_request
     data = request.get_json()
     if not data or "id" not in data:
@@ -226,6 +250,16 @@ def api_get_room_code():
         "check_in_date": booking.get("check_in_date", ""),
         "guests": get_room_guests(booking.get("room_code", "")),
     })
+
+@app.route("/api/booking/pending")
+@_require_staff_auth
+def api_pending_bookings():
+    """获取待确认预订列表（主理人电话确认用）— 需员工鉴权"""
+    from services.booking import get_pending_bookings
+    from bnb_context import get_current_bnb_id
+    bnb_id = request.args.get("bnb_id") or get_current_bnb_id()
+    bookings = get_pending_bookings(bnb_id)
+    return jsonify({"success": True, "bookings": bookings})
 
 
 # ══════════════════════════════════════════════════════════
@@ -496,6 +530,49 @@ def api_update_order_status(order_id: int):
     data = request.get_json() or {}
     result = update_order_status(order_id, data.get("status", ""), data.get("room_number", ""))
     return jsonify(result)
+
+
+# ══════════════════════════════════════════════════════════
+#  每日房价管理（主理人面板）
+# ══════════════════════════════════════════════════════════
+@app.route("/api/pricing/today")
+def api_today_pricing():
+    """获取今日各房型基准房价"""
+    from services.pricing import get_today_pricing
+    from bnb_context import get_current_bnb_id
+    bnb_id = request.args.get("bnb_id") or get_current_bnb_id()
+    pricing = get_today_pricing(bnb_id)
+    return jsonify({"success": True, "pricing": pricing})
+
+@app.route("/api/pricing/update", methods=["POST"])
+@_require_staff_auth
+def api_update_pricing():
+    """更新今日房价 — 需员工鉴权"""
+    from services.pricing import update_pricing
+    data = request.get_json()
+    if not data or "room_type" not in data or "base_price" not in data:
+        return jsonify({"success": False, "message": "缺少房型或价格"}), 400
+    result = update_pricing(
+        room_type=data["room_type"],
+        base_price=float(data["base_price"]),
+        weekend_price=data.get("weekend_price"),
+        holiday_price=data.get("holiday_price"),
+        special_price=data.get("special_price"),
+        updated_by=data.get("updated_by", ""),
+        notes=data.get("notes", ""),
+    )
+    return jsonify(result)
+
+@app.route("/api/pricing/history")
+def api_pricing_history():
+    """获取房价调价历史"""
+    from services.pricing import get_pricing_history
+    from bnb_context import get_current_bnb_id
+    bnb_id = request.args.get("bnb_id") or get_current_bnb_id()
+    room_type = request.args.get("room_type")
+    days = int(request.args.get("days", 7))
+    history = get_pricing_history(room_type=room_type, days=days, bnb_id=bnb_id)
+    return jsonify({"success": True, "history": history})
 
 
 # ══════════════════════════════════════════════════════════

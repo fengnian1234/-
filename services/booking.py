@@ -7,7 +7,7 @@
 import secrets
 import string
 from datetime import datetime, timedelta, UTC
-from models import get_db, Booking, RoomGuest
+from models import get_db, Booking, RoomGuest, SessionLocal
 from services.logger import info, warning, error as log_error, debug, log_booking
 from config import (
     REVIEW_REMINDER_DELAY_MINUTES, BNB_CONFIGS,
@@ -350,3 +350,17 @@ def send_review_reminder(openid: str, bnb_id: str, message: str):
     # from wechatpy import WeChatClient
     # client = WeChatClient(app_id, app_secret)
     # client.message.send_text(openid, message)
+
+
+def get_pending_bookings(bnb_id=None) -> list:
+    """获取待确认的预订（status=pending，主理人需电话确认）"""
+    bnb_id = _resolve_bnb_id(bnb_id)
+    db = SessionLocal()
+    try:
+        bookings = db.query(Booking).filter(
+            Booking.bnb_id == bnb_id,
+            Booking.status == "pending",
+        ).order_by(Booking.check_in_date.asc()).limit(50).all()
+        return [b.to_dict() for b in bookings]
+    finally:
+        db.close()

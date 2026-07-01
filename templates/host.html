@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-bnb="{{ bnb_id }}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>{{ bnb.short_name }} · 主理人面板</title>
+<!-- 内联防闪烁脚本 -->
+<script>(function(){var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/thin/style.css">
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/saas-components.css">
+{% if request.args.get('mp') == '1' %}
+<link rel="stylesheet" href="/static/css/style-mp.css">
+{% endif %}
+<style>
+/* 页面特化微调 — 仅覆盖 saas-components.css 无法表达的极小调整 */
+body { overflow: hidden; }
+</style>
+</head>
+<body class="{% if request.args.get('mp') == '1' %}mp-mode{% endif %}">
+
+<div class="saas-layout">
+    <!-- ═══════════════════════════════════════ 侧边栏 ═══════════════════════════════════════ -->
+    <aside class="saas-sidebar">
+        <div class="saas-sidebar-brand">
+            <i class="ph-thin ph-mountains"></i>
+            <span>{{ bnb.short_name }}</span>
+        </div>
+        <nav class="saas-sidebar-nav">
+            <button class="saas-nav-item active" data-panel="dashboard" onclick="switchPanel('dashboard')">
+                <i class="ph-thin ph-chart-bar"></i> <span>实时看板</span>
+            </button>
+            <button class="saas-nav-item" data-panel="orders" onclick="switchPanel('orders')">
+                <i class="ph-thin ph-notepad"></i> <span>订单聚合</span>
+            </button>
+            <button class="saas-nav-item" data-panel="pricing" onclick="switchPanel('pricing')">
+                <i class="ph-thin ph-currency-cny"></i> <span>今日房价</span>
+            </button>
+        </nav>
+        <div class="saas-sidebar-footer">
+            <i class="ph-thin ph-mountains"></i> {{ bnb.tagline }}
+        </div>
+    </aside>
+
+    <!-- ═══════════════════════════════════════ 主内容区 ═══════════════════════════════════════ -->
+    <div class="saas-main">
+        <!-- 顶栏 -->
+        <header class="saas-topbar">
+            <div class="saas-topbar-left">
+                <span class="saas-topbar-title"><i class="ph-thin ph-buildings"></i> {{ bnb.short_name }} · 主理人面板</span>
+            </div>
+            <div class="saas-topbar-right">
+                <span class="saas-badge saas-badge--pending" id="topPendingBadge" style="display:none"><i class="ph-thin ph-bell-ringing"></i> <span id="topPendingCount">0</span> 待处理</span>
+                <button class="saas-btn saas-btn--ghost saas-btn--sm" onclick="toggleSound()" id="soundBtn">
+                    <i class="ph-thin ph-speaker-x"></i> <span>声音提醒：关</span>
+                </button>
+                <button class="saas-btn saas-btn--ghost saas-btn--sm" onclick="toggleTheme()" title="切换深色/浅色模式">
+                    <i class="ph-thin ph-moon" id="themeIcon"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="saas-content">
+
+            <!-- ═════════════════════ ════════════════════
+                 Panel 1: 实时看板
+                 ═════════════════════ ════════════════════ -->
+            <div id="panel-dashboard">
+
+                <!-- 警报横幅 -->
+                <div class="saas-alert-banner" id="alertBanner">
+                    <i class="ph-thin ph-bell-ringing"></i>
+                    <span id="alertText">有新的请求！</span>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="saas-stats-grid" id="statsArea"></div>
+
+                <!-- 待确认预订 -->
+                <div class="saas-section" id="pendingBookingsSection">
+                    <h2 class="saas-panel-title"><i class="ph-thin ph-phone-call"></i> 待确认预订 <small>需要电话确认</small></h2>
+                    <div id="pendingBookings"><div class="saas-empty"><div class="saas-empty-icon"><i class="ph-thin ph-calendar-check"></i></div><p class="saas-empty-text">暂无待确认预订</p></div></div>
+                </div>
+
+                <!-- 双队列 -->
+                <div class="saas-dual-panel">
+                    <div>
+                        <h2 class="saas-panel-title"><i class="ph-thin ph-desktop"></i> 前台点单机 <small>餐饮订单</small></h2>
+                        <div id="frontdeskList"><div class="saas-empty"><div class="saas-empty-icon"><i class="ph-thin ph-coffee"></i></div><p class="saas-empty-text">暂无待处理订单</p></div></div>
+                    </div>
+                    <div>
+                        <h2 class="saas-panel-title"><i class="ph-thin ph-user-circle-gear"></i> 主理人调配 <small>服务+体验</small></h2>
+                        <div id="managerList"><div class="saas-empty"><div class="saas-empty-icon"><i class="ph-thin ph-clipboard-text"></i></div><p class="saas-empty-text">暂无待调配请求</p></div></div>
+                    </div>
+                </div>
+
+                {% if bnb_id == 'shanji' %}
+                <!-- 此山茶场核验（山纪专属） -->
+                <div class="saas-tea-checkin">
+                    <label><i class="ph-thin ph-storefront"></i> 此山茶场 · 预约核验</label>
+                    <input type="text" id="teaCheckinInput" class="saas-input saas-input--sm" placeholder="输入6位预约码" maxlength="6" style="width:140px;text-transform:uppercase;letter-spacing:0.15em;text-align:center">
+                    <button class="saas-btn saas-btn--default saas-btn--sm" onclick="teaCheckin()">核验解锁</button>
+                    <span id="teaCheckinMsg" style="font-size:0.82rem"></span>
+                </div>
+                {% endif %}
+
+                <!-- 已完成列表 -->
+                <div class="saas-section">
+                    <h2 class="saas-panel-title"><i class="ph-thin ph-check-circle"></i> 今日已完成</h2>
+                    <div id="completedList"><div class="saas-empty"><div class="saas-empty-icon"><i class="ph-thin ph-tray"></i></div><p class="saas-empty-text">今天还没有完成记录</p></div></div>
+                </div>
+            </div>
+
+            <!-- ═════════════════════ ════════════════════
+                 Panel 2: 订单聚合
+                 ═════════════════════ ════════════════════ -->
+            <div id="panel-orders" style="display:none">
+                <div class="saas-stats-grid" id="orderStatsRow"></div>
+
+                <div class="saas-section">
+                    <h2 class="saas-panel-title"><i class="ph-thin ph-calendar-dots"></i> 未来14天房态</h2>
+                    <div id="calendar" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:2fr 1fr;gap:1rem">
+                    <div>
+                        <h2 class="saas-panel-title"><i class="ph-thin ph-list-numbers"></i> 订单列表</h2>
+                        <div id="orderList"></div>
+                    </div>
+                    <div>
+                        <div style="background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:1rem">
+                            <h2 class="saas-panel-title" style="font-size:0.9rem"><i class="ph-thin ph-plus-circle"></i> 录入新订单</h2>
+                            <form id="addOrderForm" onsubmit="addOrder(event)" style="display:flex;flex-direction:column;gap:0.45rem">
+                                <select name="platform" class="saas-select" required>
+                                    <option value="">选择平台</option>
+                                    <option value="ctrip">🏨 携程</option><option value="meituan">🏠 美团</option><option value="fliggy">✈️ 飞猪</option>
+                                    <option value="dianping">⭐ 大众点评</option><option value="direct">📞 直接预订</option>
+                                    <option value="xiaohongshu">📕 小红书</option><option value="douyin">🎵 抖音</option>
+                                </select>
+                                <input name="guest_name" class="saas-input" placeholder="客人姓名 *" required>
+                                <input name="guest_phone" class="saas-input" placeholder="电话">
+                                <input name="room_type" class="saas-input" placeholder="房型">
+                                <input name="check_in" type="date" class="saas-input" required>
+                                <input name="check_out" type="date" class="saas-input" required>
+                                <input name="total_amount" type="number" class="saas-input" placeholder="订单金额">
+                                <input name="platform_order_id" class="saas-input" placeholder="平台订单号">
+                                <button type="submit" class="saas-btn saas-btn--default" style="width:100%;justify-content:center">✅ 录入订单</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═════════════════════ ════════════════════
+                 Panel 3: 今日房价
+                 ═════════════════════ ════════════════════ -->
+            <div id="panel-pricing" style="display:none">
+                <div class="saas-section">
+                    <h2 class="saas-panel-title"><i class="ph-thin ph-currency-cny"></i> 今日房价管理 <small id="pricingDate"></small></h2>
+                    <div style="overflow-x:auto">
+                        <table class="saas-data-table saas-data-table--striped">
+                            <thead>
+                                <tr>
+                                    <th>房型</th>
+                                    <th>平日基准价</th>
+                                    <th>周末价</th>
+                                    <th>节假日价</th>
+                                    <th>活动特价</th>
+                                    <th>更新人</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pricingTableBody">
+                                <tr><td colspan="7"><div class="saas-empty"><div class="saas-empty-icon"><i class="ph-thin ph-currency-cny"></i></div><p class="saas-empty-text">暂无今日房价数据，请从下方房型列表录入</p></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 快速录入 -->
+                <div class="saas-section">
+                    <h2 class="saas-panel-title"><i class="ph-thin ph-plus-circle"></i> 新增/修改房价</h2>
+                    <div id="pricingForm" style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:flex-end">
+                        <select id="pricingRoomType" class="saas-select" style="min-width:160px">
+                            <option value="">选择房型</option>
+                        </select>
+                        <input id="pricingBasePrice" class="saas-input" type="number" placeholder="平日基准价 ¥" style="width:120px" min="0">
+                        <input id="pricingWeekendPrice" class="saas-input" type="number" placeholder="周末价(可选)" style="width:120px" min="0">
+                        <input id="pricingHolidayPrice" class="saas-input" type="number" placeholder="节假日价(可选)" style="width:120px" min="0">
+                        <input id="pricingSpecialPrice" class="saas-input" type="number" placeholder="活动特价(可选)" style="width:120px" min="0">
+                        <input id="pricingNotes" class="saas-input" placeholder="调价备注(可选)" style="width:160px">
+                        <button class="saas-btn saas-btn--default" onclick="savePricing()"><i class="ph-thin ph-floppy-disk"></i> 保存</button>
+                    </div>
+                </div>
+
+                <!-- 调价历史 -->
+                <div class="saas-section">
+                    <h2 class="saas-panel-title"><i class="ph-thin ph-clock-counter-clockwise"></i> 近期调价记录</h2>
+                    <div id="pricingHistory"><div class="saas-empty"><p class="saas-empty-text">暂无记录</p></div></div>
+                </div>
+            </div>
+
+        </div><!-- .saas-content -->
+    </div><!-- .saas-main -->
+</div><!-- .saas-layout -->
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  全局状态
+// ══════════════════════════════════════════════════════════
+const REFRESH_INTERVAL = 5000;
+let soundEnabled = false;
+let lastPendingCount = 0;
+let currentPanel = 'dashboard';
+let staffList = [];
+let roomTypes = [];  // 所有房型名称（用于房价表单下拉）
+
+// ══════════════════════════════════════════════════════════
+//  面板切换
+// ══════════════════════════════════════════════════════════
+function switchPanel(name) {
+    currentPanel = name;
+    // 导航高亮
+    document.querySelectorAll('.saas-nav-item').forEach(el => el.classList.remove('active'));
+    const navItem = document.querySelector(`[data-panel="${name}"]`);
+    if (navItem) navItem.classList.add('active');
+    // 面板显隐
+    ['dashboard','orders','pricing'].forEach(p => {
+        const panel = document.getElementById('panel-' + p);
+        if (panel) panel.style.display = p === name ? 'block' : 'none';
+    });
+    // 按需加载数据
+    if (name === 'dashboard') fetchDashboardData();
+    if (name === 'orders') fetchOrdersData();
+    if (name === 'pricing') fetchPricingData();
+}
+
+// ══════════════════════════════════════════════════════════
+//  主题切换
+// ══════════════════════════════════════════════════════════
+function toggleTheme() {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    const icon = document.getElementById('themeIcon');
+    if (icon) icon.className = 'ph-thin ' + (next === 'dark' ? 'ph-sun' : 'ph-moon');
+}
+
+// 初始化主题图标
+(function(){
+    const t = document.documentElement.getAttribute('data-theme');
+    const icon = document.getElementById('themeIcon');
+    if (icon) icon.className = 'ph-thin ' + (t === 'dark' ? 'ph-sun' : 'ph-moon');
+})();
+
+// ══════════════════════════════════════════════════════════
+//  声音提醒
+// ══════════════════════════════════════════════════════════
+function playAlertSound() {
+    if (!soundEnabled) return;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        [800, 1000, 1200].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.frequency.value = freq; osc.type = 'sine';
+            gain.gain.value = 0.1;
+            osc.start(ctx.currentTime + i * 0.15);
+            osc.stop(ctx.currentTime + i * 0.15 + 0.1);
+        });
+    } catch(e) {}
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    const btn = document.getElementById('soundBtn');
+    if (soundEnabled) {
+        btn.innerHTML = '<i class="ph-thin ph-speaker-high"></i> <span>声音提醒：开</span>';
+    } else {
+        btn.innerHTML = '<i class="ph-thin ph-speaker-x"></i> <span>声音提醒：关</span>';
+    }
+    if (soundEnabled) playAlertSound();
+}
+
+// ══════════════════════════════════════════════════════════
+//  Dashboard 数据获取与渲染
+// ══════════════════════════════════════════════════════════
+async function fetchDashboardData() {
+    try {
+        const bnbId = document.documentElement.getAttribute('data-bnb') || 'guishu';
+        const resp = await fetch(`/api/staff/dashboard?bnb_id=${bnbId}`);
+        const data = await resp.json();
+        staffList = data.staff_list || [];
+        renderStats(data);
+        renderFrontdesk(data.pending_orders_frontdesk || []);
+        renderManager(data.pending_svc || [], data.pending_orders_manager || []);
+        renderCompleted(data.completed_svc || [], data.completed_orders || []);
+        fetchPendingBookings();
+        // 新请求提醒
+        const totalPending = data.stats.pending || 0;
+        if (totalPending > lastPendingCount && lastPendingCount > 0) {
+            showAlert(totalPending);
+            playAlertSound();
+        }
+        lastPendingCount = totalPending;
+        const badge = document.getElementById('topPendingBadge');
+        const countEl = document.getElementById('topPendingCount');
+        if (totalPending > 0) {
+            badge.style.display = 'inline-flex';
+            if (countEl) countEl.textContent = totalPending;
+        } else {
+            badge.style.display = 'none';
+        }
+    } catch(e) {
+        console.error('获取看板数据失败:', e);
+    }
+}
+
+async function fetchPendingBookings() {
+    try {
+        const bnbId = document.documentElement.getAttribute('data-bnb') || 'guishu';
+        const resp = await fetch(`/api/booking/pending?bnb_id=${bnbId}`, {
+            headers: {'X-Staff-Key': localStorage.getItem('staff_key') || ''}
+        });
+        const data = await resp.json();
+        renderPendingBookings(data.bookings || []);
+    } catch(e) {
+        console.error('获取预订数据失败:', e);
+    }
+}
+
+function renderStats(data) {
+    const stats = data.stats || {};
+    const fd = (data.pending_orders_frontdesk || []).length;
+    const mg = (data.pending_svc || []).length + (data.pending_orders_manager || []).length;
+    document.getElementById('statsArea').innerHTML = `
+        <div class="saas-stat-card saas-stat--danger">
+            <div class="saas-stat-value">${fd}</div>
+            <div class="saas-stat-label"><i class="ph-thin ph-desktop"></i> 前台待处理</div>
+        </div>
+        <div class="saas-stat-card saas-stat--warning">
+            <div class="saas-stat-value">${mg}</div>
+            <div class="saas-stat-label"><i class="ph-thin ph-user-circle-gear"></i> 主理人待调配</div>
+        </div>
+        <div class="saas-stat-card saas-stat--primary">
+            <div class="saas-stat-value">${stats.today_total||0}</div>
+            <div class="saas-stat-label"><i class="ph-thin ph-chart-line"></i> 今日总量</div>
+        </div>
+        <div class="saas-stat-card saas-stat--success">
+            <div class="saas-stat-value">${stats.today_completed||0}</div>
+            <div class="saas-stat-label"><i class="ph-thin ph-check-circle"></i> 已完成</div>
+        </div>
+        <div class="saas-stat-card saas-stat--primary">
+            <div class="saas-stat-value">${stats.completion_rate||'N/A'}</div>
+            <div class="saas-stat-label"><i class="ph-thin ph-target"></i> 完成率</div>
+        </div>`;
+}
+
+function renderPendingBookings(bookings) {
+    const el = document.getElementById('pendingBookings');
+    if (!bookings || bookings.length === 0) {
+        el.innerHTML = '<div class="saas-empty"><div class="saas-empty-icon"><i class="ph-thin ph-calendar-check"></i></div><p class="saas-empty-text">暂无待确认预订</p></div>';
+        document.getElementById('pendingBookingsSection').style.display = 'block';
+        return;
+    }
+    document.getElementById('pendingBookingsSection').style.display = 'block';
+    el.innerHTML = bookings.map(b => `
+        <div class="saas-booking-card">
+            <div class="saas-booking-icon"><i class="ph-thin ph-calendar-check"></i></div>
+            <div class="saas-booking-info">
+                <div class="saas-booking-guest">
+                    ${b.guest_name || '未填姓名'}
+                    <span class="saas-booking-phone">${b.phone || '未填电话'}</span>
+                </div>
+                <div class="saas-booking-meta">
+                    <span><i class="ph-thin ph-calendar"></i> ${b.check_in_date} → ${b.check_out_date}</span>
+                    <span><i class="ph-thin ph-bed"></i> ${b.room_type || '未指定房型'}</span>
+                    <span><i class="ph-thin ph-globe"></i> ${b.platform || '未知平台'}</span>
+                    ${b.id_card ? `<span><i class="ph-thin ph-identification-card"></i> ${b.id_card}</span>` : '<span style="color:var(--color-warning)"><i class="ph-thin ph-warning-circle"></i> 需确认身份</span>'}
+                </div>
+            </div>
+            <div class="saas-booking-actions">
+                <button class="saas-btn saas-btn--default saas-btn--sm" onclick="confirmBooking(${b.id})"><i class="ph-thin ph-phone-call"></i> 确认预订</button>
+            </div>
+        </div>`).join('');
+}
+
+// 前台点单机
+function renderFrontdesk(orders) {
+    const el = document.getElementById('frontdeskList');
+    if (!orders || orders.length === 0) {
+        el.innerHTML = '<div class="saas-empty"><div class="saas-empty-icon"><i class="ph-thin ph-coffee"></i></div><p class="saas-empty-text">暂无待处理订单</p></div>';
+        return;
+    }
+    el.innerHTML = orders.map(o => {
+        const items = (o.items || []).map(i => i.name + '×' + i.quantity).join(', ');
+        const statusClass = o.status === 'preparing' ? 'status-in_progress' : 'status-pending';
+        const badge = o.status === 'preparing'
+            ? '<span class="saas-badge saas-badge--active"><i class="ph-thin ph-arrows-clockwise"></i> 制作中</span>'
+            : '<span class="saas-badge saas-badge--pending"><i class="ph-thin ph-plus-circle"></i> 新订单</span>';
+        const actions = o.status === 'paid'
+            ? `<button class="saas-btn saas-btn--secondary saas-btn--sm" onclick="orderStatus(${o.id},'preparing')"><i class="ph-thin ph-arrows-clockwise"></i> 开始准备</button>`
+            : `<button class="saas-btn saas-btn--default saas-btn--sm" onclick="orderStatus(${o.id},'delivered')"><i class="ph-thin ph-check-circle"></i> 已送餐</button>`;
+        return `<div class="saas-request-card ${statusClass}">
+            <span class="saas-request-icon"><i class="ph-thin ph-fork-knife"></i></span>
+            <div class="saas-request-info">
+                <div class="saas-request-name">${items || '订单 #'+o.id}</div>
+                <div class="saas-request-meta">
+                    <span><i class="ph-thin ph-clock"></i> ${o.created_at}</span>
+                    <span><i class="ph-thin ph-door"></i> ${o.room_number || '未填'}</span>
+                    <span><i class="ph-thin ph-currency-cny"></i> ¥${o.total_price}</span>
+                    ${badge}
+                </div>
+            </div>
+            <div class="saas-request-actions">${actions}</div>
+        </div>`;
+    }).join('');
+}
+
+// 主理人调配 — 含指派下拉
+function renderManager(services, orders) {
+    const el = document.getElementById('managerList');
+    const items = [];
+    (services || []).forEach(r => {
+        items.push({type:'svc', id:r.id, name:r.service_name, time:r.created_at, room:r.room_number, status:r.status, handler:r.handler});
+    });
+    (orders || []).forEach(o => {
+        const names = (o.items || []).map(i => i.name+'×'+i.quantity).join(', ');
+        items.push({type:'order', id:o.id, name:names||'体验订单', time:o.created_at, room:o.room_number, status:o.status, price:o.total_price});
+    });
+    if (items.length === 0) {
+        el.innerHTML = '<div class="saas-empty"><div class="saas-empty-icon"><i class="ph-thin ph-clipboard-text"></i></div><p class="saas-empty-text">暂无待调配请求</p></div>';
+        return;
+    }
+
+    // 生成员工指派下拉选项
+    const staffOptions = staffList.map(s => `<option value="${s}">${s}</option>`).join('');
+    const staffSelect = (itemId, currentHandler) => {
+        if (!staffList.length) return '';
+        return `<select class="saas-select saas-select--sm" onchange="assignRequest(${itemId}, this.value)" style="width:auto">
+            <option value="">指派给...</option>
+            ${staffList.map(s => `<option value="${s}" ${s===currentHandler?'selected':''}>${s}</option>`).join('')}
+        </select>`;
+    };
+
+    el.innerHTML = items.map(r => {
+        const icon = r.type === 'order' ? '<i class="ph-thin ph-sparkle"></i>' : '<i class="ph-thin ph-bell"></i>';
+        const statusMap = {pending:'status-pending', acknowledged:'status-acknowledged', in_progress:'status-in_progress'};
+        const statusClass = statusMap[r.status] || 'status-pending';
+        const badgeMap = {
+            pending: '<span class="saas-badge saas-badge--pending">待确认</span>',
+            acknowledged: '<span class="saas-badge saas-badge--warning">已确认</span>',
+            in_progress: '<span class="saas-badge saas-badge--active">处理中</span>'
+        };
+        const badge = badgeMap[r.status] || '';
+        const handlerLabel = r.handler ? `<span class="saas-badge saas-badge--info"><i class="ph-thin ph-user"></i> ${r.handler}</span>` : '';
+
+        let actions = '';
+        if (r.type === 'svc') {
+            if (r.status === 'pending') {
+                actions += `<button class="saas-btn saas-btn--secondary saas-btn--sm" onclick="ackRequest(${r.id})"><i class="ph-thin ph-check"></i> 确认收到</button>`;
+            }
+            if (r.status === 'pending' || r.status === 'acknowledged') {
+                actions += staffSelect(r.id, r.handler);
+            }
+            if (r.status === 'in_progress') {
+                actions += `<button class="saas-btn saas-btn--default saas-btn--sm" onclick="confirmComplete(${r.id})"><i class="ph-thin ph-check-circle"></i> 确认完成</button>`;
+            }
+            // 兼容旧流程：所有状态都能直接完成
+            if (r.status !== 'in_progress') {
+                actions += `<button class="saas-btn saas-btn--outline saas-btn--sm" onclick="doneRequest(${r.id})"><i class="ph-thin ph-check-fat"></i> 完成</button>`;
+            }
+        } else {
+            actions = `<button class="saas-btn saas-btn--secondary saas-btn--sm" onclick="orderStatus(${r.id},'preparing')"><i class="ph-thin ph-user-plus"></i> 安排人员</button>`;
+        }
+
+        return `<div class="saas-request-card ${statusClass}">
+            <span class="saas-request-icon">${icon}</span>
+            <div class="saas-request-info">
+                <div class="saas-request-name">${r.name}</div>
+                <div class="saas-request-meta">
+                    <span><i class="ph-thin ph-clock"></i> ${r.time}</span>
+                    <span><i class="ph-thin ph-door"></i> ${r.room || '未填'}</span>
+                    ${badge}
+                    ${handlerLabel}
+                </div>
+            </div>
+            <div class="saas-request-actions">${actions}</div>
+        </div>`;
+    }).join('');
+}
+
+function renderCompleted(svcList, orderList) {
+    const el = document.getElementById('completedList');
+    const items = [];
+    (svcList || []).forEach(r => {
+        items.push({icon:'<i class="ph-thin ph-check-circle"></i>', name:r.service_name, time:r.created_at, room:r.room_number, handler:r.handler});
+    });
+    (orderList || []).forEach(o => {
+        const names = (o.items || []).map(i => i.name+'×'+i.quantity).join(', ');
+        items.push({icon:'<i class="ph-thin ph-fork-knife"></i>', name:names||'订单', time:o.created_at, room:o.room_number, handler:'前台'});
+    });
+    if (items.length === 0) {
+        el.innerHTML = '<div class="saas-empty"><div class="saas-empty-icon"><i class="ph-thin ph-tray"></i></div><p class="saas-empty-text">今天还没有完成记录</p></div>';
+        return;
+    }
+    el.innerHTML = items.reverse().slice(0, 30).map(r => `
+        <div class="saas-request-card status-completed">
+            <span class="saas-request-icon">${r.icon}</span>
+            <div class="saas-request-info">
+                <div class="saas-request-name">${r.name}</div>
+                <div class="saas-request-meta">
+                    <span><i class="ph-thin ph-clock"></i> ${r.time}</span>
+                    <span><i class="ph-thin ph-door"></i> ${r.room || '未填'}</span>
+                    <span><i class="ph-thin ph-user"></i> ${r.handler || '系统'}</span>
+                </div>
+            </div>
+        </div>`).join('');
+}
+
+function showAlert(totalPending) {
+    const banner = document.getElementById('alertBanner');
+    document.getElementById('alertText').innerHTML = `<i class="ph-thin ph-bell-ringing"></i> 有 ${totalPending} 条新请求需要处理！`;
+    banner.classList.add('show');
+    setTimeout(() => banner.classList.remove('show'), 5000);
+}
+
+// ══════════════════════════════════════════════════════════
+//  Dashboard 操作
+// ══════════════════════════════════════════════════════════
+async function ackRequest(id) {
+    await fetch('/api/staff/acknowledge', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-Staff-Key': localStorage.getItem('staff_key') || ''},
+        body: JSON.stringify({id, handler: '主理人'})
+    });
+    fetchDashboardData();
+}
+
+async function assignRequest(id, assignedTo) {
+    if (!assignedTo) return;
+    await fetch('/api/staff/assign', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-Staff-Key': localStorage.getItem('staff_key') || ''},
+        body: JSON.stringify({id, assigned_to: assignedTo})
+    });
+    fetchDashboardData();
+}
+
+async function confirmComplete(id) {
+    await fetch('/api/staff/confirm-complete', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-Staff-Key': localStorage.getItem('staff_key') || ''},
+        body: JSON.stringify({id})
+    });
+    fetchDashboardData();
+}
+
+async function doneRequest(id) {
+    await fetch('/api/staff/complete', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-Staff-Key': localStorage.getItem('staff_key') || ''},
+        body: JSON.stringify({id})
+    });
+    fetchDashboardData();
+}
+
+async function orderStatus(id, status) {
+    await fetch('/api/order/' + id + '/status', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({status: status})
+    });
+    fetchDashboardData();
+}
+
+async function confirmBooking(bookingId) {
+    // 确认预订 — 跳转到已确认状态
+    try {
+        const resp = await fetch(`/api/booking/${bookingId}/checkin`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'X-Staff-Key': localStorage.getItem('staff_key') || ''},
+            body: JSON.stringify({room_number: ''})
+        });
+        const data = await resp.json();
+        if (data.success) {
+            fetchDashboardData();
+        } else {
+            alert('确认预订失败: ' + (data.message || '未知错误'));
+        }
+    } catch(e) {
+        console.error('确认预订失败:', e);
+    }
+}
+
+// ══════════════════════════════════════════════════════════
+//  Orders 面板（复用 orders.html 逻辑）
+// ══════════════════════════════════════════════════════════
+async function fetchOrdersData() {
+    try {
+        const resp = await fetch('/api/orders/dashboard');
+        const d = await resp.json();
+        renderOrderStats(d);
+        renderCalendar(d.calendar);
+        renderOrders();
+    } catch(e) {
+        console.error('获取订单数据失败:', e);
+    }
+}
+
+function renderOrderStats(d) {
+    document.getElementById('orderStatsRow').innerHTML = `
+        <div class="saas-stat-card saas-stat--primary">
+            <div class="saas-stat-value">${d.today_arrivals}</div>
+            <div class="saas-stat-label"><i class="ph-thin ph-arrow-down"></i> 今日到店</div>
+        </div>
+        <div class="saas-stat-card saas-stat--danger">
+            <div class="saas-stat-value">${d.today_departures}</div>
+            <div class="saas-stat-label"><i class="ph-thin ph-arrow-up"></i> 今日离店</div>
+        </div>
+        <div class="saas-stat-card saas-stat--warning">
+            <div class="saas-stat-value">${d.currently_in}</div>
+            <div class="saas-stat-label"><i class="ph-thin ph-users"></i> 当前在住</div>
+        </div>
+        <div class="saas-stat-card saas-stat--success">
+            <div class="saas-stat-value">¥${(d.month_revenue||0).toLocaleString()}</div>
+            <div class="saas-stat-label"><i class="ph-thin ph-currency-cny"></i> 本月收入(${d.month_orders||0}单)</div>
+        </div>`;
+}
+
+function renderCalendar(days) {
+    if (!days || days.length === 0) return;
+    document.getElementById('calendar').innerHTML = days.map(d => `
+        <div style="flex:1;min-width:55px;background:var(--color-white);border:1px solid var(--color-border);border-radius:6px;padding:0.4rem;text-align:center;font-size:0.72rem;${d.date===days[0].date?'border-color:var(--color-primary);border-width:2px':''}">
+            <div style="color:var(--color-text-lighter)">${d.weekday}</div>
+            <div style="font-weight:700;font-size:0.85rem">${d.date.slice(5)}</div>
+            <div style="font-size:0.68rem;color:var(--color-accent);font-weight:600">${d.staying}间</div>
+            <div style="height:3px;background:var(--color-bg-dark);border-radius:2px;margin-top:2px"><div style="height:100%;border-radius:2px;background:${d.occupancy>80?'var(--color-danger)':d.occupancy>50?'var(--color-warning)':'var(--color-success)'};width:${d.occupancy}%"></div></div>
+            ${d.arrivals>0?`<div style="color:var(--color-primary);font-size:0.65rem">+${d.arrivals}</div>`:''}
+        </div>
+    `).join('');
+}
+
+async function renderOrders() {
+    const resp = await fetch('/api/orders?limit=30');
+    const orders = await resp.json();
+    const statusColors = {
+        confirmed: 'var(--color-warning)',
+        checked_in: 'var(--color-success)',
+        checked_out: 'var(--color-text-lighter)',
+        cancelled: 'var(--color-danger)'
+    };
+    const el = document.getElementById('orderList');
+    if (!orders || orders.length === 0) {
+        el.innerHTML = '<div class="saas-empty"><div class="saas-empty-icon"><i class="ph-thin ph-notepad"></i></div><p class="saas-empty-text">暂无订单，使用右侧表单录入～</p></div>';
+        return;
+    }
+    el.innerHTML = orders.map(o => {
+        const color = statusColors[o.status] || 'var(--color-border)';
+        let actionBtn = '';
+        if (o.status === 'confirmed') {
+            actionBtn = `<button class="saas-btn saas-btn--default saas-btn--sm" onclick="updateOrderStatus(${o.id},'checked_in')"><i class="ph-thin ph-arrow-down"></i> 入住</button>`;
+        } else if (o.status === 'checked_in') {
+            actionBtn = `<button class="saas-btn saas-btn--secondary saas-btn--sm" onclick="updateOrderStatus(${o.id},'checked_out')"><i class="ph-thin ph-arrow-up"></i> 退房</button>`;
+        }
+        return `<div style="background:var(--color-white);border:1px solid var(--color-border);border-left:4px solid ${color};border-radius:var(--radius-sm);padding:0.7rem 0.8rem;display:flex;align-items:center;gap:0.6rem;font-size:0.82rem;margin-bottom:0.4rem">
+            <span style="font-size:1.2rem">${o.platform_icon||'🏨'}</span>
+            <div style="flex:1">
+                <strong>${o.guest_name}</strong>
+                <span style="color:var(--color-text-light);margin-left:0.4rem">${o.room_type||'未指定'}</span>
+                <div style="font-size:0.72rem;color:var(--color-text-lighter)">${o.check_in}→${o.check_out} · ${o.nights}晚 · ${o.total_amount?('¥'+o.total_amount):''}</div>
+            </div>
+            <span class="saas-badge ${o.status==='confirmed'?'saas-badge--warning':o.status==='checked_in'?'saas-badge--active':'saas-badge--done'}">${o.status_label}</span>
+            ${actionBtn}
+        </div>`;
+    }).join('');
+}
+
+async function updateOrderStatus(id, status) {
+    await fetch(`/api/orders/${id}/status`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({status})
+    });
+    fetchOrdersData();
+}
+
+async function addOrder(e) {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const data = Object.fromEntries(fd.entries());
+    data.nights = Math.max(1, Math.round((new Date(data.check_out)-new Date(data.check_in))/86400000));
+    data.guest_count = 1;
+    try {
+        const resp = await fetch('/api/orders', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        const r = await resp.json();
+        if (r.success) {
+            e.target.reset();
+            fetchOrdersData();
+            alert('订单录入成功！');
+        } else {
+            alert(r.message || '录入失败');
+        }
+    } catch(e) {
+        console.error('录入订单失败:', e);
+    }
+}
+
+// ══════════════════════════════════════════════════════════
+//  Pricing 面板（今日房价）
+// ══════════════════════════════════════════════════════════
+async function fetchPricingData() {
+    try {
+        const bnbId = document.documentElement.getAttribute('data-bnb') || 'guishu';
+        // 加载房型列表
+        const roomsResp = await fetch(`/api/rooms?bnb_id=${bnbId}`);
+        const roomsData = await roomsResp.json();
+        roomTypes = (roomsData.rooms || roomsData || []).map(r => r.name || r.room_type).filter(Boolean);
+        // 更新表单下拉
+        const select = document.getElementById('pricingRoomType');
+        if (select) {
+            select.innerHTML = '<option value="">选择房型</option>' + roomTypes.map(t => `<option value="${t}">${t}</option>`).join('');
+        }
+
+        // 加载今日房价
+        const resp = await fetch(`/api/pricing/today?bnb_id=${bnbId}`);
+        const data = await resp.json();
+        const now = new Date();
+        document.getElementById('pricingDate').textContent = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        renderPricingTable(data.pricing || []);
+
+        // 加载调价历史
+        const histResp = await fetch(`/api/pricing/history?bnb_id=${bnbId}&days=7`);
+        const histData = await histResp.json();
+        renderPricingHistory(histData.history || []);
+    } catch(e) {
+        console.error('获取房价数据失败:', e);
+    }
+}
+
+function renderPricingTable(pricing) {
+    const tbody = document.getElementById('pricingTableBody');
+    if (!pricing || pricing.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7"><div class="saas-empty"><div class="saas-empty-icon"><i class="ph-thin ph-currency-cny"></i></div><p class="saas-empty-text">暂无今日房价数据，请从下方房型列表录入</p></div></td></tr>';
+        return;
+    }
+    tbody.innerHTML = pricing.map(p => `
+        <tr>
+            <td><strong>${p.room_type}</strong></td>
+            <td><span style="color:var(--color-primary);font-weight:600">¥${p.base_price}</span></td>
+            <td>${p.weekend_price ? '¥'+p.weekend_price : '<span style="color:var(--color-text-lighter)">—</span>'}</td>
+            <td>${p.holiday_price ? '¥'+p.holiday_price : '<span style="color:var(--color-text-lighter)">—</span>'}</td>
+            <td>${p.special_price ? '¥'+p.special_price : '<span style="color:var(--color-text-lighter)">—</span>'}</td>
+            <td style="font-size:0.75rem;color:var(--color-text-light)">${p.updated_by || '系统'}<br><span style="color:var(--color-text-lighter)">${p.updated_at||''}</span></td>
+            <td>
+                <button class="saas-btn saas-btn--outline saas-btn--sm" onclick="editPricing('${p.room_type}', ${p.base_price}, ${p.weekend_price||'null'}, ${p.holiday_price||'null'}, ${p.special_price||'null'})"><i class="ph-thin ph-pencil"></i></button>
+            </td>
+        </tr>`).join('');
+}
+
+function renderPricingHistory(history) {
+    const el = document.getElementById('pricingHistory');
+    if (!history || history.length === 0) {
+        el.innerHTML = '<div class="saas-empty"><p class="saas-empty-text">暂无调价记录</p></div>';
+        return;
+    }
+    el.innerHTML = `<table class="saas-data-table saas-data-table--striped">
+        <thead><tr><th>日期</th><th>房型</th><th>平日价</th><th>周末价</th><th>节假日价</th><th>更新人</th><th>备注</th><th>时间</th></tr></thead>
+        <tbody>${history.map(h => `
+            <tr>
+                <td>${h.date}</td>
+                <td>${h.room_type}</td>
+                <td>¥${h.base_price}</td>
+                <td>${h.weekend_price ? '¥'+h.weekend_price : '—'}</td>
+                <td>${h.holiday_price ? '¥'+h.holiday_price : '—'}</td>
+                <td>${h.updated_by || '—'}</td>
+                <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.notes || '—'}</td>
+                <td style="font-size:0.72rem">${h.updated_at||''}</td>
+            </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+function editPricing(roomType, basePrice, weekendPrice, holidayPrice, specialPrice) {
+    document.getElementById('pricingRoomType').value = roomType;
+    document.getElementById('pricingBasePrice').value = basePrice || '';
+    document.getElementById('pricingWeekendPrice').value = weekendPrice || '';
+    document.getElementById('pricingHolidayPrice').value = holidayPrice || '';
+    document.getElementById('pricingSpecialPrice').value = specialPrice || '';
+    document.getElementById('pricingNotes').value = '';
+    // 滚动到表单
+    document.getElementById('pricingForm').scrollIntoView({behavior:'smooth'});
+}
+
+async function savePricing() {
+    const roomType = document.getElementById('pricingRoomType').value;
+    const basePrice = document.getElementById('pricingBasePrice').value;
+    if (!roomType || !basePrice) {
+        alert('请选择房型并输入基准价格');
+        return;
+    }
+    const data = {
+        room_type: roomType,
+        base_price: parseFloat(basePrice),
+        weekend_price: document.getElementById('pricingWeekendPrice').value || null,
+        holiday_price: document.getElementById('pricingHolidayPrice').value || null,
+        special_price: document.getElementById('pricingSpecialPrice').value || null,
+        notes: document.getElementById('pricingNotes').value,
+        updated_by: '主理人'
+    };
+    // 清理 null 值
+    Object.keys(data).forEach(k => { if (data[k] === null || data[k] === '') delete data[k]; });
+    // 确保至少有一个价格字段
+    if (!data.weekend_price) data.weekend_price = null;
+    if (!data.holiday_price) data.holiday_price = null;
+    if (!data.special_price) data.special_price = null;
+
+    try {
+        const resp = await fetch('/api/pricing/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Staff-Key': localStorage.getItem('staff_key') || ''
+            },
+            body: JSON.stringify(data)
+        });
+        const r = await resp.json();
+        if (r.success) {
+            // 清空表单
+            document.getElementById('pricingRoomType').value = '';
+            document.getElementById('pricingBasePrice').value = '';
+            document.getElementById('pricingWeekendPrice').value = '';
+            document.getElementById('pricingHolidayPrice').value = '';
+            document.getElementById('pricingSpecialPrice').value = '';
+            document.getElementById('pricingNotes').value = '';
+            fetchPricingData();
+        } else {
+            alert('保存失败: ' + (r.message || '未知错误'));
+        }
+    } catch(e) {
+        console.error('保存房价失败:', e);
+    }
+}
+
+// ══════════════════════════════════════════════════════════
+//  山纪茶场核验
+// ══════════════════════════════════════════════════════════
+{% if bnb_id == 'shanji' %}
+async function teaCheckin() {
+    const code = document.getElementById('teaCheckinInput').value.trim().toUpperCase();
+    const msg = document.getElementById('teaCheckinMsg');
+    if (!code || code.length < 6) { msg.textContent = '请输入6位预约码'; msg.style.color = 'var(--color-danger)'; return; }
+    try {
+        const r = await fetch('/api/tea/reservation/checkin?bnb_id=shanji', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'X-Staff-Key': localStorage.getItem('staff_key') || ''},
+            body: JSON.stringify({ reservation_code: code }),
+        }).then(r => r.json());
+        if (r.success) {
+            msg.textContent = r.message || '核验成功！点单已解锁';
+            msg.style.color = 'var(--color-success)';
+            document.getElementById('teaCheckinInput').value = '';
+        } else {
+            msg.textContent = r.error || '核验失败';
+            msg.style.color = 'var(--color-danger)';
+        }
+    } catch(e) { msg.textContent = '网络错误'; msg.style.color = 'var(--color-danger)'; }
+}
+document.getElementById('teaCheckinInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') teaCheckin();
+});
+{% endif %}
+
+// ══════════════════════════════════════════════════════════
+//  初始化
+// ══════════════════════════════════════════════════════════
+fetchDashboardData();
+setInterval(() => {
+    if (currentPanel === 'dashboard') fetchDashboardData();
+}, REFRESH_INTERVAL);
+</script>
+
+</body>
+</html>

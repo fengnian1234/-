@@ -34,7 +34,7 @@ def get_pending_requests(bnb_id=None):
     """获取待处理的服务请求，可按 BnB 过滤"""
     with get_db() as db:
         q = db.query(ServiceRequest).filter(
-            ServiceRequest.status.in_(["pending", "acknowledged"])
+            ServiceRequest.status.in_(["pending", "acknowledged", "in_progress"])
         )
         if bnb_id:
             q = q.filter(ServiceRequest.bnb_id == bnb_id)
@@ -87,6 +87,20 @@ def complete_request(request_id: int, notes: str = ""):
         return False
 
 
+def assign_request(request_id: int, assigned_to: str = "", bnb_id=None) -> bool:
+    """主理人确认收到后，指派工单给具体员工"""
+    with get_db() as db:
+        req = db.query(ServiceRequest).filter(
+            ServiceRequest.id == request_id
+        ).first()
+        if req:
+            req.handler = assigned_to
+            req.status = "in_progress"
+            db.commit()
+            return True
+        return False
+
+
 def get_pending_count() -> int:
     """获取待处理请求数量（用于角标显示）"""
     with get_db() as db:
@@ -111,11 +125,15 @@ def get_notification_stats(bnb_id=None) -> dict:
             return q.count()
 
         pending = _count("pending")
+        acknowledged = _count("acknowledged")
+        in_progress = _count("in_progress")
         today_total = _count(None, date_filter=True)
         today_completed = _count("completed", date_filter=True)
 
         return {
             "pending": pending,
+            "acknowledged": acknowledged,
+            "in_progress": in_progress,
             "today_total": today_total,
             "today_completed": today_completed,
             "completion_rate": f"{today_completed/today_total*100:.0f}%"

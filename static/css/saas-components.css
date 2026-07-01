@@ -1,0 +1,903 @@
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  SaaS 主理人面板 — 组件样式库
+ *  借鉴 shadcn/ui 设计语言，纯 CSS 实现
+ *  所有颜色通过 var(--color-xxx) 引用，零硬编码 hex
+ *  依赖：style.css 的 CSS 变量体系（:root / [data-bnb] / [data-theme]）
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   设计令牌映射（shadcn 命名 → 项目 CSS 变量）
+   --background → var(--color-bg)
+   --foreground → var(--color-text)
+   --card       → var(--color-white)
+   --primary    → var(--color-primary)
+   --secondary  → var(--color-bg-light)
+   --muted      → var(--color-bg-dark)
+   --accent     → var(--color-accent)
+   --destructive→ var(--color-danger)
+   --border     → var(--color-border)
+   --input      → var(--color-border)
+   --ring       → var(--color-primary)
+   --radius     → var(--radius-md)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   布局系统
+   ═══════════════════════════════════════════════════════════════════ */
+.saas-layout {
+    display: flex;
+    min-height: 100vh;
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+/* ── 侧边栏 ── */
+.saas-sidebar {
+    width: 220px;
+    background: var(--color-white);
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 50;
+    flex-shrink: 0;
+    transition: width 0.25s ease;
+}
+
+.saas-sidebar-brand {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color-primary-dark);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.saas-sidebar-brand i {
+    font-size: 1.3rem;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.saas-sidebar-nav {
+    flex: 1;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    overflow-y: auto;
+}
+
+.saas-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-light);
+    text-decoration: none;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+    width: 100%;
+    text-align: left;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.saas-nav-item i {
+    font-size: 1.15rem;
+    flex-shrink: 0;
+    width: 1.3rem;
+    text-align: center;
+}
+
+.saas-nav-item:hover {
+    background: var(--color-bg-light);
+    color: var(--color-text);
+}
+
+.saas-nav-item.active {
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.saas-sidebar-footer {
+    padding: 0.7rem 1.2rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.7rem;
+    color: var(--color-text-lighter);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── 顶栏 ── */
+.saas-topbar {
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-border);
+    padding: 0.55rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    min-height: 48px;
+}
+
+.saas-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.saas-topbar-title {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-text);
+}
+
+.saas-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+/* ── 主内容区 ── */
+.saas-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.saas-content {
+    flex: 1;
+    padding: 1.2rem 1.5rem;
+    overflow-y: auto;
+    max-width: 1100px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   1. StatCard — 统计卡片
+   ═══════════════════════════════════════════════════════════════════ */
+.saas-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.saas-stat-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.1rem;
+    transition: box-shadow 0.2s ease;
+}
+
+.saas-stat-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.saas-stat-value {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-text);
+}
+
+.saas-stat-label {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    margin-top: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* 语义色变体 */
+.saas-stat-card.saas-stat--danger .saas-stat-value { color: var(--color-danger); }
+.saas-stat-card.saas-stat--success .saas-stat-value { color: var(--color-success); }
+.saas-stat-card.saas-stat--primary .saas-stat-value { color: var(--color-primary); }
+.saas-stat-card.saas-stat--warning .saas-stat-value { color: var(--color-warning); }
+.saas-stat-card.saas-stat--danger { border-left: 3px solid var(--color-danger); }
+.saas-stat-card.saas-stat--success { border-left: 3px solid var(--color-success); }
+.saas-stat-card.saas-stat--primary { border-left: 3px solid var(--color-primary); }
+.saas-stat-card.saas-stat--warning { border-left: 3px solid var(--color-warning); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   2. RequestCard — 工单卡片
+   ═══════════════════════════════════════════════════════════════════ */
+.saas-request-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 0.9rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    transition: all 0.2s ease;
+}
+
+.saas-request-card:hover {
+    box-shadow: var(--shadow-sm);
+}
+
+/* 状态色条 */
+.saas-request-card.status-pending { border-left-color: var(--color-danger); }
+.saas-request-card.status-acknowledged { border-left-color: var(--color-warning); }
+.saas-request-card.status-in_progress { border-left-color: var(--color-primary); }
+.saas-request-card.status-completed {
+    border-left-color: var(--color-success);
+    opacity: 0.6;
+}
+
+.saas-request-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    width: 2rem;
+    text-align: center;
+}
+
+.saas-request-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.saas-request-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-text);
+    margin-bottom: 0.15rem;
+}
+
+.saas-request-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    color: var(--color-text-light);
+}
+
+.saas-request-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.saas-request-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   3. BookingCard — 预订确认卡片
+   ═══════════════════════════════════════════════════════════════════ */
+.saas-booking-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-warning);
+    border-radius: var(--radius-md);
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.saas-booking-card:hover {
+    box-shadow: var(--shadow-sm);
+}
+
+.saas-booking-icon {
+    font-size: 1.8rem;
+    color: var(--color-warning);
+    flex-shrink: 0;
+}
+
+.saas-booking-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.saas-booking-guest {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.saas-booking-guest .saas-booking-phone {
+    font-weight: 400;
+    color: var(--color-text-light);
+    font-size: 0.8rem;
+    margin-left: 0.4rem;
+}
+
+.saas-booking-meta {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    margin-top: 0.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+}
+
+.saas-booking-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.saas-booking-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   4. DataTable — 数据表格
+   ═══════════════════════════════════════════════════════════════════ */
+.saas-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+
+.saas-data-table thead th {
+    background: var(--color-bg-light);
+    color: var(--color-text-light);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.75rem;
+    border-bottom: 2px solid var(--color-border);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+}
+
+.saas-data-table tbody td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.saas-data-table tbody tr:hover {
+    background: var(--color-bg-light);
+}
+
+/* 斑马纹 */
+.saas-data-table--striped tbody tr:nth-child(even) {
+    background: rgb(from var(--color-bg-light) r g b / 0.4);
+}
+
+.saas-data-table--striped tbody tr:hover {
+    background: var(--color-bg-light);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   5. Badge — 状态徽章
+   ═══════════════════════════════════════════════════════════════════ */
+.saas-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.12rem 0.55rem;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+
+.saas-badge--pending {
+    background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+    color: var(--color-danger);
+}
+
+.saas-badge--active {
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    color: var(--color-primary);
+}
+
+.saas-badge--done {
+    background: color-mix(in srgb, var(--color-success) 12%, transparent);
+    color: var(--color-success);
+}
+
+.saas-badge--info {
+    background: color-mix(in srgb, var(--color-sky) 15%, transparent);
+    color: var(--color-primary-dark);
+}
+
+.saas-badge--warning {
+    background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+    color: var(--color-warning);
+}
+
+.saas-badge--danger {
+    background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+    color: var(--color-danger);
+}
+
+.saas-badge--dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    padding: 0;
+    display: inline-block;
+}
+
+.saas-badge--dot.saas-badge--pending { background: var(--color-danger); }
+.saas-badge--dot.saas-badge--active { background: var(--color-primary); }
+.saas-badge--dot.saas-badge--done { background: var(--color-success); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   6. Button — 按钮
+   ═══════════════════════════════════════════════════════════════════ */
+.saas-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.42rem 0.95rem;
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: inherit;
+    line-height: 1.5;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.saas-btn:active {
+    transform: scale(0.97);
+}
+
+/* 变体 */
+.saas-btn--default {
+    background: var(--color-primary);
+    color: #fff;
+}
+.saas-btn--default:hover {
+    background: var(--color-primary-dark);
+    color: #fff;
+}
+
+.saas-btn--secondary {
+    background: var(--color-bg-light);
+    color: var(--color-text);
+}
+.saas-btn--secondary:hover {
+    background: var(--color-bg-dark);
+}
+
+.saas-btn--outline {
+    background: transparent;
+    border: 1.5px solid var(--color-border);
+    color: var(--color-text);
+}
+.saas-btn--outline:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+}
+
+.saas-btn--ghost {
+    background: transparent;
+    color: var(--color-text-light);
+}
+.saas-btn--ghost:hover {
+    background: var(--color-bg-light);
+    color: var(--color-text);
+}
+
+.saas-btn--destructive {
+    background: var(--color-danger);
+    color: #fff;
+}
+.saas-btn--destructive:hover {
+    background: color-mix(in srgb, var(--color-danger) 85%, black);
+}
+
+/* 尺寸 */
+.saas-btn--sm { padding: 0.25rem 0.65rem; font-size: 0.72rem; }
+.saas-btn--lg { padding: 0.55rem 1.3rem; font-size: 0.9rem; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   7. Select — 下拉选择
+   ═══════════════════════════════════════════════════════════════════ */
+.saas-select {
+    padding: 0.4rem 2rem 0.4rem 0.65rem;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    background: var(--color-white);
+    color: var(--color-text);
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.45rem center;
+    background-size: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.saas-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.saas-select--sm {
+    padding: 0.25rem 1.6rem 0.25rem 0.5rem;
+    font-size: 0.72rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   8. Input — 输入框
+   ═══════════════════════════════════════════════════════════════════ */
+.saas-input {
+    padding: 0.45rem 0.65rem;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    background: var(--color-white);
+    color: var(--color-text);
+    font-family: inherit;
+    width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.saas-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.saas-input::placeholder {
+    color: var(--color-text-lighter);
+}
+
+.saas-input--sm {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   9. Alert — 通知横幅
+   ═══════════════════════════════════════════════════════════════════ */
+.saas-alert {
+    padding: 0.65rem 1rem;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    margin-bottom: 0.8rem;
+    border: 1px solid transparent;
+}
+
+.saas-alert--info {
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+    color: var(--color-primary-dark);
+}
+
+.saas-alert--warning {
+    background: color-mix(in srgb, var(--color-warning) 10%, transparent);
+    border-color: color-mix(in srgb, var(--color-warning) 20%, transparent);
+    color: var(--color-warning);
+}
+
+.saas-alert--danger {
+    background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+    border-color: color-mix(in srgb, var(--color-danger) 25%, transparent);
+    color: var(--color-danger);
+}
+
+.saas-alert i {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   10. EmptyState — 空状态
+   ═══════════════════════════════════════════════════════════════════ */
+.saas-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--color-text-lighter);
+}
+
+.saas-empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.4;
+}
+
+.saas-empty-text {
+    font-size: 0.82rem;
+    line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   通用工具
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 双队列面板 */
+.saas-dual-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.saas-panel-title {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 600;
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.6rem;
+    border-bottom: 2px solid var(--color-bg-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-text);
+}
+
+.saas-panel-title small {
+    font-weight: 400;
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    font-family: var(--font-sans);
+}
+
+.saas-panel-title i {
+    color: var(--color-primary);
+    font-size: 1.1rem;
+}
+
+.saas-section {
+    margin-bottom: 1.5rem;
+}
+
+/* 警报横幅（闪烁效果） */
+.saas-alert-banner {
+    padding: 0.65rem 1.2rem;
+    background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-danger) 25%, transparent);
+    color: var(--color-danger);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.8rem;
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    animation: saas-pulse 1.5s ease-in-out 3;
+}
+
+.saas-alert-banner.show {
+    display: flex;
+}
+
+@keyframes saas-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 茶场核验区 */
+.saas-tea-checkin {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.saas-tea-checkin label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--color-text);
+    white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   响应式
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 平板 — 侧边栏收窄为图标模式 */
+@media (max-width: 768px) {
+    .saas-sidebar {
+        width: 56px;
+    }
+    .saas-sidebar-brand {
+        justify-content: center;
+        padding: 0.7rem 0;
+    }
+    .saas-sidebar-brand span,
+    .saas-sidebar-footer {
+        display: none;
+    }
+    .saas-nav-item {
+        justify-content: center;
+        padding: 0.55rem 0;
+    }
+    .saas-nav-item span {
+        display: none;
+    }
+    .saas-nav-item i {
+        font-size: 1.25rem;
+    }
+    .saas-topbar {
+        padding: 0.5rem 0.8rem;
+    }
+    .saas-content {
+        padding: 0.8rem;
+    }
+    .saas-stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+    .saas-stat-card {
+        padding: 0.7rem 0.8rem;
+    }
+    .saas-stat-value {
+        font-size: 1.4rem;
+    }
+    .saas-dual-panel {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+}
+
+/* 手机 — 侧边栏变为横向 Tab 栏 */
+@media (max-width: 480px) {
+    .saas-layout {
+        flex-direction: column;
+    }
+    .saas-sidebar {
+        width: 100%;
+        height: auto;
+        position: sticky;
+        top: 0;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+    }
+    .saas-sidebar-brand,
+    .saas-sidebar-footer {
+        display: none;
+    }
+    .saas-sidebar-nav {
+        flex-direction: row;
+        padding: 0.25rem;
+        gap: 0;
+        overflow-x: auto;
+        flex: 1;
+    }
+    .saas-nav-item {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        width: auto;
+        justify-content: center;
+    }
+    .saas-nav-item span {
+        display: inline;
+    }
+    .saas-nav-item i {
+        font-size: 1rem;
+    }
+    .saas-topbar {
+        padding: 0.4rem 0.7rem;
+        min-height: 40px;
+    }
+    .saas-topbar-title {
+        font-size: 0.82rem;
+    }
+    .saas-topbar-right .saas-btn--ghost span {
+        display: none;
+    }
+    .saas-content {
+        padding: 0.6rem;
+    }
+    .saas-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.4rem;
+    }
+    .saas-stat-value {
+        font-size: 1.3rem;
+    }
+    .saas-stat-label {
+        font-size: 0.7rem;
+    }
+    .saas-dual-panel {
+        grid-template-columns: 1fr;
+    }
+    .saas-request-card {
+        flex-wrap: wrap;
+        padding: 0.6rem 0.7rem;
+    }
+    .saas-request-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 0.3rem;
+    }
+    .saas-booking-card {
+        flex-wrap: wrap;
+        padding: 0.7rem;
+    }
+    .saas-booking-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 0.3rem;
+    }
+    .saas-data-table {
+        font-size: 0.72rem;
+    }
+    .saas-data-table thead th,
+    .saas-data-table tbody td {
+        padding: 0.4rem 0.5rem;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   深色模式
+   ═══════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] .saas-sidebar {
+    background: var(--color-white);
+}
+[data-theme="dark"] .saas-topbar {
+    background: var(--color-white);
+}
+[data-theme="dark"] .saas-data-table thead th {
+    background: var(--color-bg-dark);
+}
+[data-theme="dark"] .saas-data-table tbody tr:hover {
+    background: var(--color-bg-dark);
+}
+[data-theme="dark"] .saas-select {
+    background: var(--color-white);
+}
+[data-theme="dark"] .saas-input {
+    background: var(--color-white);
+}
+[data-theme="dark"] .saas-alert-banner {
+    background: color-mix(in srgb, var(--color-danger) 15%, transparent);
+}
