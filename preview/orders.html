@@ -71,6 +71,38 @@ a{color:var(--color-primary);text-decoration:none}
 .footer-copy{color:rgba(255,255,255,0.4);font-size:0.72rem!important;margin-top:0.4rem}
 .fade-up{opacity:0;transform:translateY(12px);transition:opacity 0.6s ease,transform 0.6s ease}
 .fade-up.visible{opacity:1;transform:translateY(0)}
+@media (max-width: 480px) {
+    .header-inner { padding: 0.4rem 0.75rem; }
+    .logo-text { font-size: 1rem; }
+    .nav-links { gap: 0; }
+    .nav-links a { font-size: 0.78rem; padding: 0.3rem 0.45rem; }
+    .page-header { padding: 2rem 0.75rem 1.5rem; }
+    .page-header h1 { font-size: 1.35rem; }
+    .page-header p { font-size: 0.85rem; }
+    .container { padding: 0 0.75rem; }
+    h1 { font-size: 1.4rem; }
+    body { line-height: 1.6; font-size: 0.9rem; }
+    .section-padding { padding: 1.5rem 0; }
+    .stats-grid { grid-template-columns: 1fr; gap: 0.4rem; }
+    .stat-card { padding: 0.8rem; }
+    .stat-num { font-size: 1.3rem; }
+    .filters { gap: 0.3rem; }
+    .filter-btn { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+    .order-row { padding: 0.7rem 0.8rem; }
+    .order-guest { font-size: 0.88rem; }
+    .order-row-detail { font-size: 0.78rem; }
+    .order-amount { font-size: 0.85rem; }
+    .order-platform { font-size: 0.68rem; }
+    .order-status { font-size: 0.68rem; }
+    .btn { font-size: 0.85rem; padding: 0.5rem 1rem; }
+    .footer { padding: 1.5rem 0.75rem; }
+    .footer p { font-size: 0.72rem; }
+}
+@media (max-width: 380px) {
+    .order-row-detail { font-size: 0.72rem; }
+    .order-platform { font-size: 0.65rem; padding: 0.08rem 0.3rem; }
+    .filter-btn { padding: 0.25rem 0.5rem; font-size: 0.7rem; }
+}
 </style>
 </head>
 <body>
