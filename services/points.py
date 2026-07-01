@@ -86,7 +86,11 @@ def earn_points(openid: str, action: str, amount: int = None, description: str =
             }
 
         # 基础积分（EARN_RULES 中的原始值）
-        base_pts = amount or rule["points"]
+        # 入住消费：每5元5积分，不足5元补足5分
+        if action == "booking" and amount:
+            base_pts = ((amount + 4) // 5) * 5
+        else:
+            base_pts = amount or rule["points"]
 
         # 生日月 1.5 倍（先于等级加成）
         now = dt.now(UTC)
