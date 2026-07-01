@@ -8,7 +8,8 @@ from models import SessionLocal, TeaType, TeaExperience, TeaProduct
 from bnb_context import get_service_bnb_id
 
 # 茶场模块专属山纪，覆写默认值
-_get_bnb_id = lambda bnb_id=None: get_service_bnb_id(bnb_id, "shanji")
+def _get_bnb_id(bnb_id=None):
+    return get_service_bnb_id(bnb_id, "shanji")
 
 
 def get_tea_types(bnb_id=None):

@@ -10,7 +10,8 @@ from datetime import date, datetime, timedelta, UTC
 from models import SessionLocal, TeaReservation
 from bnb_context import get_service_bnb_id
 
-_get_bnb_id = lambda bnb_id=None: get_service_bnb_id(bnb_id, "shanji")
+def _get_bnb_id(bnb_id=None):
+    return get_service_bnb_id(bnb_id, "shanji")
 
 # ── 营业时间常量 ──
 MORNING_START = 7   # 早场 7:00

@@ -337,3 +337,16 @@ def format_booking_platforms_text(bnb_id="guishu") -> str:
     lines.append("  · 本服务号不支持直接支付房费，请通过平台预订")
 
     return "\n".join(lines)
+
+
+def send_review_reminder(openid: str, bnb_id: str, message: str):
+    """
+    通过微信客服消息发送好评提醒。
+    当前为 stub 实现，需微信认证后通过 wechatpy 发送。
+    """
+    from services.logger import info as _info
+    _info(f"好评推送 [{bnb_id}] openid={openid[:12]}: {message[:80]}...")
+    # TODO: 微信认证后替换为:
+    # from wechatpy import WeChatClient
+    # client = WeChatClient(app_id, app_secret)
+    # client.message.send_text(openid, message)

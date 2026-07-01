@@ -175,7 +175,7 @@ def build_keyword_routes(bnb_id="guishu"):
         (r"^(退房|离店|退宿)$",
          lambda msg, m: _guard_service("退房", bnb_id=bnb_id)(msg, m)),
         (r"^(加床|加被|婴儿床|儿童床)$",
-         lambda msg, m: "· 温馨提示：本民宿所有房型不可加床，不提供婴儿床。\n\n如需额外被褥枕头，可回复「补充用品」或「人工」联系前台～"),
+         lambda msg, m: format_extra_bed_policy(bnb_id=bnb_id)),
         (r"^(送餐|送饭)$",
          lambda msg, m: _guard_service("送餐", bnb_id=bnb_id)(msg, m)),
         (r"^(wifi|WiFi|无线|网络)$",
@@ -395,6 +395,17 @@ def format_wifi_info(bnb_id: str = "guishu") -> str:
         f"网络名称：{ssid}\n"
         f"密码：{pwd}\n\n"
         "连接后即可畅享高速网络～"
+    )
+
+
+def format_extra_bed_policy(bnb_id: str = "guishu") -> str:
+    """返回加床政策，从 BNB_CONFIGS 获取"""
+    from bnb_context import get_bnb_config
+    cfg = get_bnb_config(bnb_id)
+    policy = cfg.get("extra_bed_policy", "本民宿所有房型不可加床，不提供婴儿床")
+    return (
+        f"· 温馨提示：{policy}\n\n"
+        "如需额外被褥枕头，可回复「补充用品」或「人工」联系前台～"
     )
 
 
@@ -637,8 +648,12 @@ def check_and_send_review_reminders():
         # 生成好评推送消息
         message = generate_review_message(booking)
 
-        # 实际发送：通过微信客服消息API推送
-        # send_wechat_customer_message(booking.openid, message)
+        # 发送：通过微信客服消息API推送（需微信认证后启用）
+        try:
+            from services.booking import send_review_reminder
+            send_review_reminder(booking.openid, booking.bnb_id or "guishu", message)
+        except Exception:
+            debug(f"好评推送发送失败 openid={booking.openid[:12]}，消息已记录")
 
         # 标记已发送
         mark_review_sent(booking.id, booking.platform or "")
